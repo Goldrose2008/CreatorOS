@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Vite
+.vite/
+
+# Tauri build artifacts
+src-tauri/target/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SQLite runtime/database files
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
