@@ -2,10 +2,10 @@ export interface Project {
     id: number;
     name: string;
     description?: string;
-    project_type: string;
+    owner_id?: number | null;
+    planned_release_at?: string | null;
     status: string;
-    planned_publication_date?: string;
-    owner_id?: number;
+    progress: number;
     created_at: string;
     updated_at: string;
 }

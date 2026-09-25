@@ -1,57 +1,67 @@
 import Database from "@tauri-apps/plugin-sql";
-import { DATABASE_SCHEMA } from "../config/databaseSchema";
+import { invoke } from "@tauri-apps/api/core";
+import { DATABASE_SCHEMA_VERSION } from "../config/databaseSchema";
 
-let db: Database | null = null;
+const DATABASE_NAME = "sqlite:creator.db";
+const SCHEMA_VERSION_KEY = "creatoros_database_schema_version";
 
-async function ensureDatabaseSchema(database: Database): Promise<void> {
-    for (const [tableName, columns] of Object.entries(DATABASE_SCHEMA)) {
-        const tableExists =await database.select<{ name: string }[]>(
-                `SELECT name
-                FROM sqlite_master
-                WHERE type = 'table'
-                AND name = ?`,
-                [tableName]
-            );
+let databasePromise: Promise<Database> | null = null;
 
-        if (tableExists.length === 0) {
-            continue;
-        }
+async function getDatabaseSchemaVersion(database: Database): Promise<number> {
+    const result = await database.select<{ user_version: number }[]>("PRAGMA user_version");
+    return Number(result[0]?.user_version ?? 0);
+}
 
-        const existingColumns = await database.select<{ name: string }[]>(
-                `PRAGMA table_info(${tableName})`
-            );
+async function initializeDatabase(): Promise<Database> {
+    const storedVersion = Number(localStorage.getItem(SCHEMA_VERSION_KEY) ?? "0");
 
-        const existingColumnNames =new Set(existingColumns.map(column => column.name));
+    if (storedVersion !== DATABASE_SCHEMA_VERSION) {
+        console.log(
+            `Версия схемы приложения ${DATABASE_SCHEMA_VERSION}, ` +
+            `сохранённая версия ${storedVersion}. ` +
+            `База данных будет пересоздана.`
+        );
 
-        for (const [columnName, columnDefinition] of Object.entries(columns)) {
-            if (existingColumnNames.has(columnName)) {
-                continue;
-            }
-
-            await database.execute(
-                `ALTER TABLE ${tableName}
-                ADD COLUMN ${columnName} ${columnDefinition}`
-            );
-        }
+        await invoke("reset_database");
     }
+
+    const database = await Database.load(DATABASE_NAME);
+
+    const actualVersion = await getDatabaseSchemaVersion(database);
+
+    if (actualVersion !== DATABASE_SCHEMA_VERSION) {
+        await database.close();
+
+        throw new Error(
+            `Версия созданной БД ${actualVersion} ` +
+            `не соответствует ожидаемой версии ` +
+            `${DATABASE_SCHEMA_VERSION}.`
+        );
+    }
+
+    localStorage.setItem(SCHEMA_VERSION_KEY, String(DATABASE_SCHEMA_VERSION));
+
+    return database;
 }
 
 export async function getDatabase(): Promise<Database> {
-    if (!db) {
-        db = await Database.load("sqlite:creator.db");
-        await ensureDatabaseSchema(db);
+    if (!databasePromise) {
+        databasePromise = initializeDatabase();
     }
-    return db;
+
+    return databasePromise;
 }
 
 export async function checkProjectsTable(): Promise<boolean> {
     const database = await getDatabase();
+
     const result = await database.select<{ name: string }[]>(
         `SELECT name
         FROM sqlite_master
-        WHERE type='table'
-        AND name=?`,
+        WHERE type = 'table'
+        AND name = ?`,
         ["projects"]
     );
+
     return result.length > 0;
 }

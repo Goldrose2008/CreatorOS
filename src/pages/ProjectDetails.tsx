@@ -13,7 +13,7 @@ import Card from "../components/Card";
 import type { Project } from "../models/Project";
 import { getProjectById, updateProject } from "../services/projectService";
 
-function formatDate(value?: string): string {
+function formatDate(value?: string | null): string {
     if (!value) {
         return "Не указана";
     }
@@ -26,15 +26,6 @@ function formatDate(value?: string): string {
     }
 
     return `${day}.${month}.${year}`;
-}
-
-function getProjectTypeLabel(type: string): string {
-    switch (type) {
-        case "video":
-            return "Видео";
-        default:
-            return type;
-    }
 }
 
 function getProjectStatusLabel(status: string): string {
@@ -50,7 +41,7 @@ function getProjectStatusLabel(status: string): string {
     }
 }
 
-function getResponsibleLabel(ownerId?: number): string {
+function getResponsibleLabel(ownerId?: number | null): string {
     if (ownerId === undefined || ownerId === null) {
         return "Не назначен";
     }
@@ -58,7 +49,7 @@ function getResponsibleLabel(ownerId?: number): string {
     return `Пользователь #${ownerId}`;
 }
 
-function getDateInputValue(value?: string): string {
+function getDateInputValue(value?: string | null): string {
     if (!value) {
         return "";
     }
@@ -76,9 +67,8 @@ function ProjectDetails() {
     const [formError, setFormError] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [projectType, setProjectType] = useState("video");
     const [status, setStatus] = useState("active");
-    const [plannedPublicationDate, setPlannedPublicationDate] = useState("");
+    const [plannedReleaseAt, setPlannedReleaseAt] = useState("");
 
     useEffect(() => {
         async function loadProject() {
@@ -123,9 +113,8 @@ function ProjectDetails() {
 
         setName(project.name);
         setDescription(project.description || "");
-        setProjectType(project.project_type);
         setStatus(project.status);
-        setPlannedPublicationDate(getDateInputValue(project.planned_publication_date));
+        setPlannedReleaseAt(getDateInputValue(project.planned_release_at));
         setFormError("");
         setIsEditing(true);
     }
@@ -155,9 +144,8 @@ function ProjectDetails() {
                 project.id,
                 trimmedName,
                 description.trim(),
-                projectType,
                 status,
-                plannedPublicationDate || null
+                plannedReleaseAt || null
             );
 
             const updatedProject = await getProjectById(project.id);
@@ -218,13 +206,6 @@ function ProjectDetails() {
                                 <label className="project-form-label" htmlFor="project-description">Описание</label>
                                 <textarea id="project-description" className="ui-textarea" value={description} onChange={(event) => setDescription(event.target.value)} rows={4} disabled={saving}/>
                             </div>
-    {/* Редактирование типа проекта */}
-                            <div className="project-form-field">
-                                <label className="project-form-label" htmlFor="project-type">Тип проекта</label>
-                                <select id="project-type" className="ui-select" value={projectType} onChange={(event) => setProjectType(event.target.value)} disabled={saving}>
-                                    <option value="video">Видео</option>
-                                </select>
-                            </div>
     {/* Редактирование статуса проекта */}            
                             <div className="project-form-field">
                                 <label className="project-form-label" htmlFor="project-status">Статус</label>
@@ -236,8 +217,8 @@ function ProjectDetails() {
                             </div>
     {/* Редактирование даты публикации */}            
                             <div className="project-form-field">
-                                <label className="project-form-label" htmlFor="project-publication-date">Планируемая дата публикации</label>
-                                <input id="project-publication-date" className="ui-input" type="date" value={plannedPublicationDate} onChange={(event) => setPlannedPublicationDate(event.target.value)} disabled={saving}/>
+                                <label className="project-form-label" htmlFor="project-release-date">Планируемая дата выхода</label>
+                                <input id="project-release-date" className="ui-input" type="date" value={plannedReleaseAt} onChange={(event) => setPlannedReleaseAt(event.target.value)} disabled={saving}/>
                             </div>
                         </div>
                 {/* Форма ошибки */}
@@ -257,20 +238,15 @@ function ProjectDetails() {
                         <h1 className="page-title">{project.name}</h1>
                         <p className="page-description">{project.description || "Описание проекта отсутствует."}</p>
                         <div className="project-details-meta">
-                {/* Тип проекта */}
-                            <span className="project-meta">
-                            <Video size={15} />
-                            {getProjectTypeLabel(project.project_type)}
-                        </span>
                 {/* Статус */}
                         <span className="project-meta">
                             <span className="project-status-dot"/>
                             {getProjectStatusLabel(project.status)}
                         </span>
-                {/* Дата публикации */}
+                {/* Планируемая дата выхода */}
                         <span className="project-meta">
                             <CalendarDays size={15} />
-                            Публикация:{" "}{formatDate(project.planned_publication_date)}
+                            Планируемая дата выхода:{" "}{formatDate(project.planned_release_at)}
                         </span>
                 {/* Ответственный */}
                         <span className="project-meta">

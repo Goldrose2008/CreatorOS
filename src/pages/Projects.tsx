@@ -79,9 +79,8 @@ function Projects() {
                 id, 
                 name, 
                 description,
-                project.project_type,
                 project.status,
-                project.planned_publication_date ?? null
+                project.planned_release_at || null
             );
             await loadProjects();
         } 

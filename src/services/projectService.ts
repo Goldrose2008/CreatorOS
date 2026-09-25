@@ -47,9 +47,8 @@ export async function updateProject(
     id: number, 
     name: string, 
     description: string, 
-    projectType: string,
     status: string,
-    plannedPublicationDate: string | null
+    plannedReleaseAt: string | null
 ): Promise<void> {
     const database = await getDatabase();
 
@@ -58,17 +57,15 @@ export async function updateProject(
         SET
             name = ?,
             description = ?,
-            project_type = ?,
             status = ?,
-            planned_publication_date = ?,
+            planned_release_at = ?,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?`,
         [
             name, 
             description, 
-            projectType,
             status,
-            plannedPublicationDate,
+            plannedReleaseAt,
             id
         ]
     );

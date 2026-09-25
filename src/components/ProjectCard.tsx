@@ -63,7 +63,6 @@ function ProjectCard({ project, onDelete, onUpdate }: Props) {
                 </h3>
                 <p className="project-card__description">{project.description || "Описание отсутствует."}</p>
                 <div className="project-card__meta">
-                    <span>Тип: {project.project_type}</span>
                     <span>Статус: {project.status}</span>
                 </div>
                 <div className="project-card__actions">
