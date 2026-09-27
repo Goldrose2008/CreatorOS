@@ -1,4 +1,4 @@
-@import "./styles/theme.css";
+@import "./theme.css";
 
 * {
     box-sizing: border-box;
@@ -16,13 +16,9 @@ body,
 body {
     min-height: 100vh;
     min-height: 100dvh;
-
     font-family: var(--font-family);
-
     color: var(--color-text);
-
     background: var(--color-workspace);
-
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
