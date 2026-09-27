@@ -29,16 +29,22 @@ export async function getProjectById(id: number): Promise<Project | null> {
 
 export async function createProject(
     name: string, 
-    description: string
+    description: string,
+    plannedReleaseAt: string
 ): Promise<void> {
     const database = await getDatabase();
 
     await database.execute(
-        `INSERT INTO projects(name, description)
-        VALUES(?, ?)`,
+        `INSERT INTO projects(
+            name, 
+            description,
+            planned_release_at
+        )
+        VALUES(?, ?, ?)`,
         [
             name,
-            description
+            description,
+            plannedReleaseAt
         ]
     );
 }
@@ -47,8 +53,7 @@ export async function updateProject(
     id: number, 
     name: string, 
     description: string, 
-    status: string,
-    plannedReleaseAt: string | null
+    plannedReleaseAt: string
 ): Promise<void> {
     const database = await getDatabase();
 
@@ -57,15 +62,32 @@ export async function updateProject(
         SET
             name = ?,
             description = ?,
-            status = ?,
             planned_release_at = ?,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?`,
         [
             name, 
             description, 
-            status,
             plannedReleaseAt,
+            id
+        ]
+    );
+}
+
+export async function updateProjectStatus(
+    id: number,
+    status: string
+): Promise<void> {
+    const database = await getDatabase();
+
+    await database.execute(
+        `UPDATE projects
+        SET
+            status = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?`,
+        [
+            status,
             id
         ]
     );

@@ -1,60 +1,64 @@
-import { useEffect, useState } from "react";
 import {
-    ArrowLeft, 
-    CalendarDays, 
-    FileText, 
-    ListTodo, 
-    UserRound, 
+    useEffect,
+    useState,
+} from "react";
+import {
+    Archive,
+    ArrowLeft,
+    CalendarDays,
+    FileText,
+    ListTodo,
+    Play,
+    RotateCcw,
+    UserRound,
     Video,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import Button from "../components/Button";
-import Card from "../components/Card";
+import {
+    Button,
+    Card,
+    Modal,
+    EntityForm,
+    EmptyState,
+} from "../components/ui";
+import { Workspace,} from "../components/layout";
+import { EntityHeader } from "../components/entity";
 import type { Project } from "../models/Project";
-import { getProjectById, updateProject } from "../services/projectService";
+import {
+    PROJECT_FORM_FIELDS,
+    PROJECT_STATUS_ACTIONS,
+    getProjectStatusConfig,
+    type ProjectFormValues,
+    type ProjectStatus,
+} from "../config/entities/projectConfig";
+import {
+    getProjectById,
+    updateProject,
+    updateProjectStatus,
+} from "../services/projectService";
+import styles from "./ProjectDetails.module.css";
 
 function formatDate(value?: string | null): string {
-    if (!value) {
-        return "Не указана";
-    }
+    if (!value) { return "Не указана"; }
 
     const datePart = value.slice(0, 10);
     const [year, month, day] = datePart.split("-");
 
-    if (!year || !month || !day) {
-        return value;
-    }
-
+    if (!year || !month || !day) { return value; }
     return `${day}.${month}.${year}`;
 }
 
-function getProjectStatusLabel(status: string): string {
-    switch (status) {
-        case "active":
-            return "В работе";
-        case "draft":
-            return "Черновик";
-        case "archived":
-            return "Архив";
-        default:
-            return status;
-    }
-}
-
 function getResponsibleLabel(ownerId?: number | null): string {
-    if (ownerId === undefined || ownerId === null) {
-        return "Не назначен";
-    }
-
+    if (ownerId === undefined || ownerId === null) { return "Не назначен"; }
     return `Пользователь #${ownerId}`;
 }
 
-function getDateInputValue(value?: string | null): string {
-    if (!value) {
-        return "";
-    }
-
-    return value.slice(0, 10);
+function getEditValues(project: Project): ProjectFormValues {
+    return {
+        name: project.name,
+        description: project.description ?? "",
+        planned_release_at: project.planned_release_at.slice(0, 10),
+    };
 }
 
 function ProjectDetails() {
@@ -62,13 +66,9 @@ function ProjectDetails() {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [isEditing, setIsEditing] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [status, setStatus] = useState("active");
-    const [plannedReleaseAt, setPlannedReleaseAt] = useState("");
 
     useEffect(() => {
         async function loadProject() {
@@ -88,53 +88,33 @@ function ProjectDetails() {
 
             try {
                 const data = await getProjectById(projectId);
+
                 setProject(data);
-
-                if (!data) {
-                    setError("Проект не найден.");
-                }
-            } 
-            catch (error) {
-                console.error("Ошибка загрузки проекта:", error);
-                setError("Не удалось загрузить проект.");
-            } 
-            finally {
-                setLoading(false);
+                if (!data) { setError("Проект не найден."); }
             }
+            catch (loadError) {
+                console.error("Ошибка загрузки проекта:", loadError);
+                setError("Не удалось загрузить проект.");
+            }
+            finally { setLoading(false); }
         }
-
         loadProject();
     }, [id]);
 
-    function startEditing() {
-        if (!project) {
-            return;
-        }
-
-        setName(project.name);
-        setDescription(project.description || "");
-        setStatus(project.status);
-        setPlannedReleaseAt(getDateInputValue(project.planned_release_at));
+    function openEditModal() {
+        if (!project) { return; }
         setFormError("");
-        setIsEditing(true);
+        setEditOpen(true);
     }
 
-    function cancelEditing() {
+    function closeEditModal() {
+        if (saving) { return; }
         setFormError("");
-        setIsEditing(false);
+        setEditOpen(false);
     }
 
-    async function handleSave() {
-        if (!project) {
-            return;
-        }
-
-        const trimmedName = name.trim();
-
-        if (!trimmedName) {
-            setFormError("Название проекта не может быть пустым.");
-            return;
-        }
+    async function handleSave(values: ProjectFormValues) {
+        if (!project) { return;}
 
         try {
             setSaving(true);
@@ -142,178 +122,245 @@ function ProjectDetails() {
 
             await updateProject(
                 project.id,
-                trimmedName,
-                description.trim(),
-                status,
-                plannedReleaseAt || null
+                values.name.trim(),
+                values.description.trim(),
+                values.planned_release_at
             );
 
             const updatedProject = await getProjectById(project.id);
 
             setProject(updatedProject);
-            setIsEditing(false);
-        } 
-        catch (error) {
-            console.error("Ошибка сохранения проекта:", error);
-            setFormError("Не удалось сохранить изменения.");
-        } 
-        finally {
-            setSaving(false);
+            setEditOpen(false);
         }
+        catch (saveError) {
+            console.error("Ошибка сохранения проекта:", saveError);
+            setFormError("Не удалось сохранить изменения.");
+        }
+        finally { setSaving(false); }
+    }
+
+    async function handleStatusChange(newStatus: ProjectStatus) {
+        if (!project) { return; }
+
+        try {
+            setSaving(true);
+            setFormError("");
+
+            await updateProjectStatus(
+                project.id,
+                newStatus
+            );
+
+            const updatedProject = await getProjectById(project.id);
+            setProject(updatedProject);
+        }
+        catch (statusError) {
+            console.error("Ошибка изменения статуса проекта:", statusError);
+            setFormError("Не удалось изменить статус проекта.");
+        }
+        finally { setSaving(false); }
     }
 
     if (loading) {
         return (
-            <div className="page">
-                <div className="empty-state">Загрузка проекта...</div>
-            </div>
+            <Workspace>
+                <div className={styles.page}>
+                    <EmptyState description="Загрузка проекта..."/>
+                </div>
+            </Workspace>
         );
     }
 
     if (error || !project) {
         return (
-            <div className="page">
-                <Link className="page-back-link" to="/projects"><ArrowLeft size={16} /> Вернуться к проектам</Link>
-                <div className="empty-state">
-                    <h2>Проект не найден</h2>
-                    <p>{error || "Проект не найден."}</p>
+            <Workspace navigation={
+              <Link className={styles.backLink} to="/projects">
+                <ArrowLeft size={16} /> 
+                Вернуться к проектам
+              </Link>}>
+                <div className={styles.page}>                    
+                    <EmptyState title="Проект не найден" description={error || "Проект не найден."}/>
                 </div>
-            </div>
+            </Workspace>
         );
     }
 
+    const status = getProjectStatusConfig(project.status);
+    const statusActions = PROJECT_STATUS_ACTIONS[project.status as ProjectStatus] ?? [];
+
     return (
-        <div className="page">
-            <Link className="page-back-link" to="/projects"><ArrowLeft size={16} /> Вернуться к проектам</Link>
-{/* Форма редактирования */}
-            {isEditing ? (
-                <Card className="project-edit-card">
-                    <div className="project-edit-card__header">
-                        <div>
-                            <h1 className="page-title">Редактирование проекта</h1>
-                            <p className="page-description">Измените основные параметры проекта.</p>
-                        </div>
-                    </div>
-                    <form className="project-edit-form" onSubmit={(event) => {event.preventDefault(); handleSave();}}>
-                        <div className="project-edit-form__grid">
-    {/* Редактирование названия */}
-                            <div className="project-form-field project-form-field--full">
-                                <label className="project-form-label" htmlFor="project-name">Название</label>
-                                <input id="project-name" className="ui-input" type="text" value={name} onChange={(event) => setName(event.target.value)} disabled={saving}/>
-                            </div>
-    {/* Редактирование описания */}
-                            <div className="project-form-field project-form-field--full">
-                                <label className="project-form-label" htmlFor="project-description">Описание</label>
-                                <textarea id="project-description" className="ui-textarea" value={description} onChange={(event) => setDescription(event.target.value)} rows={4} disabled={saving}/>
-                            </div>
-    {/* Редактирование статуса проекта */}            
-                            <div className="project-form-field">
-                                <label className="project-form-label" htmlFor="project-status">Статус</label>
-                                <select id="project-status" className="ui-select" value={status} onChange={(event) => setStatus(event.target.value)} disabled={saving}>
-                                    <option value="active">Активен</option>
-                                    <option value="draft">Черновик</option>
-                                    <option value="archived">Архив</option>
-                                </select>
-                            </div>
-    {/* Редактирование даты публикации */}            
-                            <div className="project-form-field">
-                                <label className="project-form-label" htmlFor="project-release-date">Планируемая дата выхода</label>
-                                <input id="project-release-date" className="ui-input" type="date" value={plannedReleaseAt} onChange={(event) => setPlannedReleaseAt(event.target.value)} disabled={saving}/>
-                            </div>
-                        </div>
-                {/* Форма ошибки */}
-                        {formError && (
-                            <div className="project-form-error">{formError}</div>
-                        )}
-    {/* Кнопки управления*/}    
-                        <div className="project-edit-form__actions">
-                            <Button type="submit" disabled={saving}>{saving ? "Сохранение..." : "Сохранить"}</Button>
-                            <Button type="button" variant="secondary" onClick={cancelEditing} disabled={saving}>Отмена</Button>
-                        </div>
-                    </form>
-                </Card>
-            ) : (
-                <header className="project-details-header">
-                    <div className="project-details-header__main">
-                        <h1 className="page-title">{project.name}</h1>
-                        <p className="page-description">{project.description || "Описание проекта отсутствует."}</p>
-                        <div className="project-details-meta">
-                {/* Статус */}
-                        <span className="project-meta">
-                            <span className="project-status-dot"/>
-                            {getProjectStatusLabel(project.status)}
-                        </span>
-                {/* Планируемая дата выхода */}
-                        <span className="project-meta">
+        <Workspace navigation={
+            <Link className={styles.backLink} to="/projects">
+                <ArrowLeft size={16} />
+                Вернуться к проектам
+            </Link>}>           
+            <div className={styles.page}>
+                <EntityHeader
+                    title={project.name}
+                    description={project.description}
+                    status={{
+                        label: status.label,
+                        variant: status.variant,
+                    }}
+                    meta={[
+                        <span key="progress">
+                            Прогресс:{" "}
+                            {project.progress}%
+                        </span>,
+
+                        <span key="release">
                             <CalendarDays size={15} />
-                            Планируемая дата выхода:{" "}{formatDate(project.planned_release_at)}
-                        </span>
-                {/* Ответственный */}
-                        <span className="project-meta">
+                            Планируемая дата выхода:{" "}
+                            {formatDate(project.planned_release_at)}
+                        </span>,
+
+                        <span key="owner">
                             <UserRound size={15} />
-                            Ответственный:{" "}{getResponsibleLabel(project.owner_id)}
-                        </span>
-                {/* Дата создания */}
-                        <span className="project-meta">
+                            Ответственный:{" "}
+                            {getResponsibleLabel(project.owner_id)}
+                        </span>,
+
+                        <span key="created">
                             <CalendarDays size={15} />
-                            Создано:{" "}{formatDate(project.created_at)}
-                        </span>
+                            Создано:{" "}
+                            {formatDate(project.created_at)}
+                        </span>,
+
+                        <span key="updated">
+                            <CalendarDays size={15} />
+                            Изменено:{" "}
+                            {formatDate(project.updated_at)}
+                        </span>,
+                    ]}
+                    actions={
+                        <>
+                            <Button onClick={openEditModal} disabled={saving}>
+                                Редактировать
+                            </Button>
+
+                            {statusActions.map(
+                                (action) => {
+                                    let icon;
+
+                                    switch (action.action) {
+                                        case "activate":
+                                            icon = (<Play size={16}/>);
+                                            break;
+                                        case "archive":
+                                            icon = (<Archive size={16}/>);
+                                            break;
+                                        case "restore":
+                                            icon = (<RotateCcw size={16}/>);
+                                            break;
+                                    }
+
+                                    return (
+                                        <Button key={action.action} variant="secondary" onClick={() => handleStatusChange(action.nextStatus)} disabled={saving}>
+                                            {icon}
+                                            {action.label}
+                                        </Button>
+                                    );
+                                }
+                            )}
+                        </>
+                    }
+                />
+                {formError && (
+                    <div className={styles.error}>
+                        {formError}
                     </div>
+                )}
+
+                <div className={styles.grid}>
+                    <Card className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <div className={styles.sectionIcon}>
+                                <Video size={18} />
+                            </div>
+                            <div>
+                                <h2>
+                                    Основной контент
+                                </h2>
+                                <p>
+                                    Главный результат проекта.
+                                </p>
+                            </div>
+                        </div>
+                        <div className={styles.sectionEmpty}>
+                            <p>
+                                Основной контент проекта пока не создан.
+                            </p>
+                            <Button>
+                                Добавить контент
+                            </Button>
+                        </div>
+                    </Card>
+                    <Card className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <div className={styles.sectionIcon}>
+                                <FileText size={18} />
+                            </div>
+                            <div>
+                                <h2>
+                                    Дополнительный контент
+                                </h2>
+                                <p>
+                                    Материалы, связанные с основным контентом.
+                                </p>
+                            </div>
+                        </div>
+                        <div className={styles.sectionEmpty}>
+                            <p>
+                                Дополнительного контента пока нет.
+                            </p>
+                            <Button variant="secondary">
+                                Добавить
+                            </Button>
+                        </div>
+                    </Card>
+                    <Card className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <div className={styles.sectionIcon}>
+                                <ListTodo size={18} />
+                            </div>
+                            <div>
+                                <h2>
+                                    Задачи
+                                </h2>
+                                <p>
+                                    Здесь появятся задачи проекта.
+                                </p>
+                            </div>
+                        </div>
+                        <div className={styles.sectionEmpty}>
+                            <p>
+                                Задач пока нет.
+                            </p>
+                            <Button variant="secondary">
+                                Добавить задачу
+                            </Button>
+                        </div>
+                    </Card>
                 </div>
-        {/* Кнопки управления */}    
-                <div className="project-details-header__actions">
-                    <Button onClick={startEditing}> Редактировать </Button>
-                </div>
-            </header>
-        )}
-            <div className="project-details-grid">
-                <Card className="project-section">
-                    <div className="project-section__header">
-                        <div className="project-section__icon">
-                            <Video size={18} />
-                        </div>
-                        <div>
-                            <h2>Основной контент</h2>
-                            <p>Главный результат проекта.</p>
-                        </div>
-                    </div>
-                    <div className="project-section__empty">
-                        <p>Основной контент проекта пока не создан.</p>
-                        <Button>Добавить контент</Button>
-                    </div>
-                </Card>
-                <Card className="project-section">
-                    <div className="project-section__header">
-                        <div className="project-section__icon">
-                            <FileText size={18} />
-                        </div>
-                        <div>
-                            <h2>Дополнительный контент</h2>
-                            <p>Материалы, связанные с основным контентом.</p>
-                        </div>
-                    </div>
-                    <div className="project-section__empty">
-                        <p>Дополнительного контента пока нет.</p>
-                        <Button variant="secondary">Добавить</Button>
-                    </div>
-                </Card>
-                 <Card className="project-section">
-                    <div className="project-section__header">
-                        <div className="project-section__icon">
-                            <ListTodo size={18} />
-                        </div>
-                        <div>
-                            <h2>Задачи</h2>
-                            <p>Здесь появятся задачи проекта.</p>
-                        </div>
-                    </div>
-                    <div className="project-section__empty">
-                        <p>Задач пока нет.</p>
-                        <Button variant="secondary">Добавить задачу</Button>
-                    </div>
-                 </Card>
-            </div>  
-        </div>
+                <Modal
+                    open={editOpen}
+                    title="Редактирование проекта"
+                    onClose={closeEditModal}
+                >
+                    <EntityForm<ProjectFormValues>
+                        key={`edit-project-${project.id}`}
+                        fields={PROJECT_FORM_FIELDS}
+                        initialValues={getEditValues(project)}
+                        submitLabel="Сохранить"
+                        saving={saving}
+                        error={formError}
+                        onSubmit={handleSave}
+                        onCancel={closeEditModal}
+                    />
+                </Modal>
+            </div>
+        </Workspace>
     );
 }
+
 export default ProjectDetails;

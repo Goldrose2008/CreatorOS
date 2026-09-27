@@ -8,7 +8,8 @@ import {
     Settings
 } from "lucide-react";
 import {NavLink} from "react-router-dom";
-import { APP_NAME } from "../config/appConfig";
+import styles from "./Sidebar.module.css";
+import { APP_NAME } from "../../../config/appConfig";
 
 const navigation = [
     {
@@ -45,13 +46,13 @@ const navigation = [
 
 function Sidebar() {
     return (
-        <aside className="sidebar">
-            <div className="sidebar__brand">
-                <span className="sidebar__brand-mark" />
+        <aside className={styles.sidebar}>
+            <div className={styles.brand}>
+                <span className={styles.brandMark} />
                 <span>{APP_NAME}</span>
             </div>
-            <nav className="sidebar__nav">
-                <div className="sidebar__section-title">Рабочее пространство</div>
+            <nav className={styles.nav}>
+                <div className={styles.sectionTitle}>Рабочее пространство</div>
                 {navigation.map((item) => {
                     const Icon = item.icon;
                     return (
@@ -60,9 +61,9 @@ function Sidebar() {
                             to={item.path}
                             className={({ isActive }) =>
                                 [
-                                    "nav-link",
+                                    styles.navLink,
                                     isActive
-                                        ? "nav-link--active"
+                                        ? styles.navLinkActive
                                         : ""
                                 ]
                                     .filter(Boolean)
@@ -73,15 +74,15 @@ function Sidebar() {
                         </NavLink>
                     );
                 })}
-                <div className="sidebar__section-title sidebar__section-title--settings">
+                <div className={styles.sectionTitleSettings}>
                     Система
                 </div>
                 <NavLink to="/settings"
                     className={({ isActive }) =>
                         [
-                            "nav-link",
+                            styles.navLink,
                             isActive
-                                ? "nav-link--active"
+                                ? styles.navLinkActive
                                 : ""
                         ]
                             .filter(Boolean)

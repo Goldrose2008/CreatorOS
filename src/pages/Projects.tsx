@@ -1,143 +1,225 @@
-import { useEffect, useState } from "react";
-import {getProjects, createProject, deleteProject, updateProject} from "../services/projectService";
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
+import {
+    Button,
+    Modal,
+    EntityForm,
+    EmptyState,
+} from "../components/ui";
+import { Workspace } from "../components/layout";
+import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
-import ProjectCard from "../components/ProjectCard";
-import Button from "../components/Button";
+import {
+    PROJECT_FORM_FIELDS,
+    type ProjectFormValues,
+} from "../config/entities/projectConfig";
+import {
+    createProject,
+    deleteProject,
+    getProjects,
+    updateProject,
+} from "../services/projectService";
+import styles from "./Projects.module.css";
+
+function getCreateProjectValues(): ProjectFormValues {
+    return {
+        name: "",
+        description: "",
+        planned_release_at: "",
+    };
+}
+
+function getEditProjectValues(project: Project): ProjectFormValues {
+    return {
+        name: project.name,
+        description: project.description ?? "",
+        planned_release_at: project.planned_release_at.slice(0, 10),
+    };
+}
 
 function Projects() {
     const [projects, setProjects] = useState<Project[]>([]);
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [editingProject, setEditingProject] = useState<Project | null>(null);
+    const [saving, setSaving] = useState(false);
+    const [formError, setFormError] = useState("");
+    const loadProjects = useCallback(async () => {
+            const data = await getProjects();
+            setProjects(data);
+        },
+        []
+    );
 
-    async function loadProjects() {
-        const data = await getProjects();
-        setProjects(data);
+    useEffect(() => {
+        async function loadInitialProjects() {
+
+            try { await loadProjects();}
+            catch (error) { console.error("Ошибка загрузки проектов:", error); }
+            finally { setLoading(false); }
+        }
+
+        loadInitialProjects();
+
+    }, [loadProjects]);
+
+    function openCreateModal() {
+        setFormError("");
+        setCreateOpen(true);
     }
 
-    async function addProject() {
-      console.log("Создание проекта:", name, description);
-
-      if (!name.trim()) {
-         console.log("Название пустое");
-         return;
-      }
-      try {
-          await createProject(name, description);
-
-         console.log("Проект создан");
-
-          setName("");
-          setDescription("");
-
-          await loadProjects();
-
-          console.log("Список обновлён");
-
-      } 
-      catch (error) {
-
-        console.error("Ошибка создания проекта:", error);
-
-      }
+    function closeCreateModal() {
+        if (saving) { return; }
+        setFormError("");
+        setCreateOpen(false);
     }
 
-    async function removeProject(id: number) {
-        const project = projects.find(project => project.id === id);
-
-        if (!project) {
-            return;
-        }
-
-        const confirmed = window.confirm(`Удалить проект "${project.name}"?`);
-
-        if (!confirmed) {
-            return;
-        }
-
-         try {
-             await deleteProject(id);
-            await loadProjects();
-        } 
-        catch (error) {
-            console.error("Ошибка удаления проекта:", error);
-        }
+    function openEditModal(project: Project) {
+        setFormError("");
+        setEditingProject(project);
     }
 
-    async function editProject(
-        id: number, 
-        name: string, 
-        description: string
-    ) {
-        const project = projects.find(project => project.id === id);
+    function closeEditModal() {
+        if (saving) { return; }
+        setFormError("");
+        setEditingProject(null);
+    }
 
-        if (!project) {
-            return;
-        }
-
+    async function handleCreate(values: ProjectFormValues) {
         try {
-            await updateProject(
-                id, 
-                name, 
-                description,
-                project.status,
-                project.planned_release_at || null
+            setSaving(true);
+            setFormError("");
+
+            await createProject(
+                values.name.trim(),
+                values.description.trim(),
+                values.planned_release_at
             );
+
             await loadProjects();
-        } 
+            setCreateOpen(false);
+        }
+        catch (error) {
+            console.error("Ошибка создания проекта:", error);
+            setFormError("Не удалось создать проект.");
+
+        }
+        finally { setSaving(false); }
+    }
+
+    async function handleEdit(values: ProjectFormValues) {
+        if (!editingProject) { return; }
+        try {
+            setSaving(true);
+            setFormError("");
+
+            await updateProject(
+                editingProject.id,
+                values.name.trim(),
+                values.description.trim(),
+                values.planned_release_at
+            );
+
+            await loadProjects();
+            setEditingProject(null);
+        }
         catch (error) {
             console.error("Ошибка обновления проекта:", error);
-            throw error;
+            setFormError("Не удалось сохранить изменения.");
         }
+        finally { setSaving(false); }
     }
 
-    useEffect(() => {async function loadInitialProjects() {
+    async function handleDelete(id: number) {
+        const project = projects.find((item) => item.id === id);
+        if (!project) { return; }
+
+        const confirmed = window.confirm(`Удалить проект "${project.name}"?`);
+        if (!confirmed) { return; }
+
         try {
+            await deleteProject(id);
             await loadProjects();
-        } 
-        catch (error) {
-            console.error("Ошибка загрузки проектов:", error);
         }
+        catch (error) { console.error("Ошибка удаления проекта:", error); }
     }
-
-    loadInitialProjects();
-}, []);
 
     return (
-        <div className="page">
-            <header className="page-header">
-                <div className="page-header__main">
-                    <h1 className="page-title">Проекты</h1>
-                    <p className="page-description">Контентные проекты и их производство</p>
-                </div>
-            </header>
-            <section className="ui-card project-create">
-                <div className="project-create__body">
-                    <div className="project-create__fields">
-                        <input className="ui-input" placeholder="Название проекта" value={name} onChange={(e) => setName(e.target.value)}/>
-                        <input className="ui-input" placeholder="Описание проекта" value={description} onChange={(e) => setDescription(e.target.value)}/>
+        <Workspace>
+            <div className={styles.page}>
+                <header className={styles.header}>
+                    <div>
+                        <h1 className={styles.title}>
+                            Проекты
+                        </h1>
                     </div>
-                    <div className="project-create__actions">
-                        <Button onClick={addProject} disabled={!name.trim()}>Создать проект</Button>
-                    </div>  
-                </div>
-            </section>
-            <section className="projects-list">
-                {projects.length === 0 ? (
-                    <div className="empty-state">
-                        <h2>Проектов пока нет</h2>
-                        <p>Создай первый проект, чтобы начать работу.</p>
-                    </div>
-                    ) : (projects.map(project => (
-                        <ProjectCard 
-                            key={project.id} 
-                            project={project} 
-                            onDelete={removeProject}
-                            onUpdate={editProject}
+                    <Button onClick={openCreateModal}>
+                        Создать новый проект
+                    </Button>
+                </header>
+
+                <section className={styles.list}>
+                    {loading ? (
+                        <div className={styles.emptyState}>
+                            <p>Загрузка проектов...</p>
+                        </div>
+                    ) : projects.length === 0 ? (
+                        <EmptyState
+                            title="Проектов пока нет"
+                            description="Создай первый проект, чтобы начать работу."
                         />
-                    ))
-                )}       
-            </section>
-        </div>
+                    ) : (
+                        projects.map((project) => (
+                            <ProjectCard
+                                key={project.id}
+                                project={project}
+                                onEdit={openEditModal}
+                                onDelete={handleDelete}
+                            />
+                        ))
+                    )}
+                </section>
+                <Modal
+                    open={createOpen}
+                    title="Новый проект"
+                    onClose={closeCreateModal}
+                >
+                    <EntityForm<ProjectFormValues>
+                        key="create-project"
+                        fields={PROJECT_FORM_FIELDS}
+                        initialValues={getCreateProjectValues()}
+                        submitLabel="Создать проект"
+                        saving={saving}
+                        error={formError}
+                        onSubmit={handleCreate}
+                        onCancel={closeCreateModal}
+                    />
+                </Modal>
+
+                <Modal
+                    open={editingProject !== null}
+                    title="Редактирование проекта"
+                    onClose={closeEditModal}
+                >
+                    {editingProject && (
+                        <EntityForm<ProjectFormValues>
+                            key={`edit-project-${editingProject.id}`}
+                            fields={PROJECT_FORM_FIELDS}
+                            initialValues={getEditProjectValues(editingProject)}
+                            submitLabel="Сохранить"
+                            saving={saving}
+                            error={formError}
+                            onSubmit={handleEdit}
+                            onCancel={closeEditModal}
+                        />
+                    )}
+                </Modal>
+            </div>
+        </Workspace>
     );
 }
+
 export default Projects;

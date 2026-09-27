@@ -1,0 +1,30 @@
+.workspace {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background: var(--color-background);
+}
+
+.navigation {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    box-sizing: border-box;
+}
+
+.content {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 32px 32px;
+}
+
+@media (max-width: 700px) {
+    .navigation {
+        min-height: 44px;
+        padding: 0 20px;
+    }
+    .content {padding:0 20px 24px;}
+}

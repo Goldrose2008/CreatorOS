@@ -3,7 +3,7 @@ export interface Project {
     name: string;
     description?: string;
     owner_id?: number | null;
-    planned_release_at?: string | null;
+    planned_release_at: string;
     status: string;
     progress: number;
     created_at: string;

@@ -10,7 +10,8 @@ import {
     Users,
     Sparkles
 } from "lucide-react";
-import { APP_NAME } from "../config/appConfig";
+import { APP_NAME } from "../../config/appConfig";
+import styles from "./SettingsLayout.module.css";
 
 interface SettingsNavigationItem {
     label: string;
@@ -96,23 +97,23 @@ const navigationGroups: SettingsNavigationGroup[] = [
 
 function SettingsLayout() {
     return (
-        <div className="settings-layout">
-            <aside className="settings-sidebar">
-                <div className="settings-sidebar__header">
-                    <h1 className="settings-sidebar__title">Настройки</h1>
-                    <p className="settings-sidebar__description">Настрой {APP_NAME} под свой рабочий процесс.</p>
+        <div className={styles.layout}>
+            <aside className={styles.sidebar}>
+                <div className={styles.sidebarHeader}>
+                    <h1 className={styles.sidebarTitle}>Настройки</h1>
+                    <p className={styles.sidebarDescription}>Настрой {APP_NAME} под свой рабочий процесс.</p>
                 </div>
-                <nav className="settings-nav">
+                <nav className={styles.nav}>
                     {navigationGroups.map((group) => (
-                        <div key={group.title} className="settings-nav__group">
-                            <div className="settings-nav__group-title">
+                        <div key={group.title} className={styles.navGroup}>
+                            <div className={styles.navGroupTitle}>
                                 {group.title}
                             </div>
-                            <div className="settings-nav__items">
+                            <div className={styles.navItems}>
                                 {group.items.map((item) => {
                                     const Icon = item.icon;
                                     return (
-                                        <NavLink key={item.path} to={item.path} className={({ isActive }) => ["settings-nav__link", isActive ? "settings-nav__link--active" : ""].filter(Boolean).join(" ")}>
+                                        <NavLink key={item.path} to={item.path} className={({ isActive }) => [styles.navLink, isActive ? styles.navLinkActive : ""].filter(Boolean).join(" ")}>
                                             <Icon size={17} strokeWidth={1.9}/>
                                             <span>{item.label}</span>
                                         </NavLink>
@@ -123,7 +124,7 @@ function SettingsLayout() {
                     ))}
                 </nav>
             </aside>
-            <main className="settings-content">
+            <main className={styles.content}>
                 <Outlet />
             </main>
         </div>

@@ -1,0 +1,89 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding:
+        var(--space-5)
+        var(--space-3);
+    color: #f4f6f9;
+    background: var(--color-sidebar);
+    overflow-y: auto;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding:
+        var(--space-2)
+        var(--space-2)
+        var(--space-6);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.brandMark {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow:
+        0 0 0 4px
+        rgba(15, 139, 141, 0.14);
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.sectionTitle {
+    padding:
+        var(--space-3)
+        var(--space-3)
+        var(--space-2);
+    color: #858d9d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.sectionTitleSettings {
+    margin-top: var(--space-4);
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 42px;
+    padding:
+        0
+        var(--space-3);
+    color: #c4cad4;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    transition:
+        color 140ms ease,
+        background-color 140ms ease;
+}
+
+.navLink:hover {
+    color: #ffffff;
+    background: var(--color-sidebar-hover);
+}
+
+.navLinkActive {
+    color: #ffffff;
+    background: var(--color-sidebar-active);
+}
+
+.navLinkActive svg {
+    color: var(--color-accent);
+}

@@ -1,4 +1,5 @@
-import type {HTMLAttributes} from "react";
+import type { HTMLAttributes } from "react";
+import styles from "./Card.module.css";
 
 type CardProps = HTMLAttributes<HTMLDivElement>;
 
@@ -8,8 +9,8 @@ function Card({
 }: CardProps) {
 
     const classes = [
-        "ui-card",
-        className
+        styles.card,
+        className,
     ]
         .filter(Boolean)
         .join(" ");
@@ -18,4 +19,5 @@ function Card({
         <div className={classes} {...props}/>
     );
 }
+
 export default Card;

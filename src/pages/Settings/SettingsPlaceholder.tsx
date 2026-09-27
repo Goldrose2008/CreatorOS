@@ -1,5 +1,6 @@
-import Card from "../components/Card";
-import { APP_NAME } from "../config/appConfig";
+import { Card } from "../../components/ui";
+import { APP_NAME } from "../../config/appConfig";
+import styles from "./Settings.module.css";
 
 interface Props {
     title: string;
@@ -8,13 +9,13 @@ interface Props {
 
 function SettingsPlaceholder({title, description}: Props) {
     return (
-        <div className="settings-page">
-            <header className="settings-page__header">
-                <h2 className="settings-page__title">{title}</h2>
-                <p className="settings-page__description">{description}</p>
+        <div className={styles.page}>
+            <header className={styles.pageHeader}>
+                <h2 className={styles.pageTitle}>{title}</h2>
+                <p className={styles.pageDescription}>{description}</p>
             </header>
-            <Card className="settings-card">
-                <div className="settings-placeholder-page">
+            <Card className={styles.card}>
+                <div className={styles.placeholderPage}>
                     <h3>Раздел находится в разработке</h3>
                     <p>Здесь появятся соответствующие настройки {APP_NAME}.</p>
                 </div>

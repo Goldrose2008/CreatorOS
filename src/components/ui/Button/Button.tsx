@@ -1,6 +1,11 @@
-import type {ButtonHTMLAttributes, ReactNode} from "react";
+import type {
+    ButtonHTMLAttributes,
+    ReactNode,
+} from "react";
 
-type ButtonVariant =
+import styles from "./Button.module.css";
+
+export type ButtonVariant =
     | "primary"
     | "secondary"
     | "ghost"
@@ -15,19 +20,22 @@ function Button({
     variant = "primary",
     className = "",
     children,
+    type = "button",
     ...props
 }: ButtonProps) {
 
     const classes = [
-        "ui-button",
-        `ui-button--${variant}`,
-        className
+        styles.button,
+        styles[variant],
+        className,
     ]
         .filter(Boolean)
         .join(" ");
 
     return (
-        <button className={classes} {...props}>{children}</button>
+        <button type={type} className={classes} {...props}>
+            {children}
+        </button>
     );
 }
 
