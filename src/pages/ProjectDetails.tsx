@@ -21,8 +21,8 @@ import {
     EntityForm,
     EmptyState,
 } from "../components/ui";
-import { Workspace,} from "../components/layout";
-import { EntityHeader } from "../components/entity";
+import Workspace from "../components/layout/Workspace/Workspace";
+import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
 import type { 
     Project,
     ProjectStatus
