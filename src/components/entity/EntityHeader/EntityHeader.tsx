@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import Badge, { type BadgeVariant } from "../../ui/Badge/Badge";
+import Badge from "../../ui/Badge/Badge";
+import type { StatusTone } from "../../../types/status";
 import styles from "./EntityHeader.module.css";
 
 interface EntityHeaderStatus {
     label: string;
-    variant?: BadgeVariant;
+    variant?: StatusTone;
 }
 
 interface EntityHeaderProps {
