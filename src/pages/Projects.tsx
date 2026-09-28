@@ -10,8 +10,13 @@ import EmptyState from "../components/ui/EmptyState/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
+import type { ContentType } from "../models/ContentType";
+import { getContentTypes } from "../services/contentTypeService";
+import { createContent } from "../services/contentService";
 import {
     PROJECT_FORM_FIELDS,
+    getProjectCreateFormFields,
+    type ProjectCreateFormValues,
     type ProjectFormValues,
 } from "../config/entities/projectConfig";
 import {
@@ -22,11 +27,12 @@ import {
 } from "../services/projectService";
 import styles from "./Projects.module.css";
 
-function getCreateProjectValues(): ProjectFormValues {
+function getCreateProjectValues(contentTypes: ContentType[]): ProjectCreateFormValues {
     return {
         name: "",
         description: "",
         planned_release_at: "",
+        mainContentTypeId: contentTypes[0]?.id ?? 0,
     };
 }
 
@@ -45,6 +51,8 @@ function Projects() {
     const [editingProject, setEditingProject] = useState<Project | null>(null);
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
+    const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
+    const [loadingContentTypes, setLoadingContentTypes] = useState(false);
     const loadProjects = useCallback(async () => {
             const data = await getProjects();
             setProjects(data);
@@ -64,10 +72,27 @@ function Projects() {
 
     }, [loadProjects]);
 
-    function openCreateModal() {
-        setFormError("");
+    async function openCreateModal() {
+    setFormError("");
+
+    try {
+        setLoadingContentTypes(true);
+        const types = await getContentTypes();
+        setContentTypes(types);
+        
+        if (types.length === 0) {
+            setFormError("Невозможно создать проект: нет типов контента.");
+            return;
+        }
+
         setCreateOpen(true);
     }
+    catch (error) {
+        console.error("Ошибка загрузки типов контента:", error);
+        setFormError("Не удалось загрузить типы контента.");
+    }
+    finally { setLoadingContentTypes(false); }
+}
 
     function closeCreateModal() {
         if (saving) { return; }
@@ -86,27 +111,41 @@ function Projects() {
         setEditingProject(null);
     }
 
-    async function handleCreate(values: ProjectFormValues) {
+    async function handleCreate(values: ProjectCreateFormValues) {
+    try {
+        setSaving(true);
+        setFormError("");
+
+        const projectId = await createProject(
+            values.name.trim(),
+            values.description.trim(),
+            values.planned_release_at
+        );
+
         try {
-            setSaving(true);
-            setFormError("");
-
-            await createProject(
+            await createContent(
+                projectId,
+                values.mainContentTypeId,
+                "main",
                 values.name.trim(),
-                values.description.trim(),
-                values.planned_release_at
+                ""
             );
-
-            await loadProjects();
-            setCreateOpen(false);
         }
-        catch (error) {
-            console.error("Ошибка создания проекта:", error);
-            setFormError("Не удалось создать проект.");
-
+        catch (contentError) {
+            console.error("Ошибка создания основного контента:", contentError);
+            await deleteProject(projectId);
+            throw contentError;
         }
-        finally { setSaving(false); }
+
+        await loadProjects();
+        setCreateOpen(false);
     }
+    catch (error) {
+        console.error("Ошибка создания проекта:", error);
+        setFormError("Не удалось создать проект.");
+    }
+    finally {setSaving(false);}
+}
 
     async function handleEdit(values: ProjectFormValues) {
         if (!editingProject) { return; }
@@ -154,8 +193,8 @@ function Projects() {
                             Проекты
                         </h1>
                     </div>
-                    <Button onClick={openCreateModal}>
-                        Создать новый проект
+                    <Button onClick={openCreateModal} disabled={loadingContentTypes}>
+                        {loadingContentTypes ? "Загрузка..." : "Создать новый проект"}
                     </Button>
                 </header>
 
@@ -185,10 +224,10 @@ function Projects() {
                     title="Новый проект"
                     onClose={closeCreateModal}
                 >
-                    <EntityForm<ProjectFormValues>
+                    <EntityForm<ProjectCreateFormValues>
                         key="create-project"
-                        fields={PROJECT_FORM_FIELDS}
-                        initialValues={getCreateProjectValues()}
+                        fields={getProjectCreateFormFields(contentTypes)}
+                        initialValues={getCreateProjectValues(contentTypes)}
                         submitLabel="Создать проект"
                         saving={saving}
                         error={formError}

@@ -1,41 +1,70 @@
 import type { EntityField } from "../../types/form";
 import type { StatusTone } from "../../types/status";
 import type { ProjectStatus } from "../../models/Project";
+import type { ContentType } from "../../models/ContentType";
 
-export interface ProjectFormValues {
+export interface ProjectBaseFormValues  {
     name: string;
     description: string;
     planned_release_at: string;
 }
 
-export const PROJECT_FORM_FIELDS: EntityField<ProjectFormValues>[] = [
+export interface ProjectFormValues extends ProjectBaseFormValues {}
 
-    {
-        name: "name",
-        label: "Название",
-        type: "text",
-        required: true,
-        placeholder: "Название проекта",
-        description: "Короткое название, по которому проект будет легко найти.",
-    },
+export interface ProjectCreateFormValues
+    extends ProjectBaseFormValues {
+    mainContentTypeId: number;
+}
 
-    {
-        name: "description",
-        label: "Описание",
-        type: "textarea",
-        rows: 5,
-        placeholder: "Кратко опишите проект.",
-    },
+function getProjectBaseFields<TValues extends ProjectBaseFormValues>(): EntityField<TValues>[] {
+    return [
+        {
+            name: "name",
+            label: "Название",
+            type: "text",
+            required: true,
+            placeholder: "Название проекта",
+            description: "Короткое название, по которому проект будет легко найти.",
+        },
 
-    {
-        name: "planned_release_at",
-        label: "Планируемая дата выхода",
-        type: "date",
-        required: true,
-        description: "Дата планируемого выхода основного контента проекта.",
-    },
+        {
+            name: "description",
+            label: "Описание",
+            type: "textarea",
+            rows: 5,
+            placeholder: "Кратко опишите проект.",
+        },
 
-];
+        {
+            name: "planned_release_at",
+            label: "Планируемая дата выхода",
+            type: "date",
+            required: true,
+            description: "Дата планируемого выхода основного контента проекта.",
+        },
+    ];
+}
+
+export const PROJECT_FORM_FIELDS = getProjectBaseFields<ProjectFormValues>();
+
+export function getProjectCreateFormFields(contentTypes: ContentType[]): EntityField<ProjectCreateFormValues>[] {
+    return [
+        ...getProjectBaseFields<ProjectCreateFormValues>(),
+
+        {
+            name: "mainContentTypeId",
+            label: "Основной тип контента",
+            type: "select",
+            required: true,
+            options: contentTypes.map((contentType) => ({
+                value: String(contentType.id),
+                label: contentType.name,
+            })),
+            parse: (value) => Number(value),
+            description: "Тип основного контента, который будет создан вместе с проектом.",
+        },
+    ];
+}
 
 export const PROJECT_STATUSES: Record <ProjectStatus,{
         label: string;

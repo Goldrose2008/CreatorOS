@@ -32,7 +32,7 @@ export async function createProject(
     name: string, 
     description: string,
     plannedReleaseAt: string
-): Promise<void> {
+): Promise<number> {
     const database = await getDatabase();
 
     await database.execute(
@@ -48,6 +48,11 @@ export async function createProject(
             plannedReleaseAt
         ]
     );
+    const result = await database.select<{ id: number }[]>(
+        `SELECT last_insert_rowid() AS id`
+    );
+    
+    return result[0].id;
 }
 
 export async function updateProject(
