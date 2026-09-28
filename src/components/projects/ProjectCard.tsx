@@ -1,7 +1,7 @@
 import { CalendarDays, Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "../ui";
-import { EntityCard } from "../entity";
+import Button from "../ui/Button/Button";
+import EntityCard from "../entity/EntityCard/EntityCard";
 import type { Project } from "../../models/Project";
 import { getProjectStatusConfig } from "../../config/entities/projectConfig";
 import styles from "./ProjectCard.module.css";
