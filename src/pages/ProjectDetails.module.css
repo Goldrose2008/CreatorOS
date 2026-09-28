@@ -44,6 +44,11 @@
     gap: 12px;
 }
 
+.sectionHeaderActions {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 .sectionIcon {
     display: inline-flex;
     align-items: center;
@@ -87,6 +92,13 @@
     color: var(--color-text-muted);
 }
 
+.contentList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 @media (max-width: 900px) {
     .grid {grid-template-columns: 1fr;}
 }
@@ -96,4 +108,5 @@
         align-items: flex-start;
         flex-direction: column;
     }
+    .sectionHeaderActions {margin-left: 0;}
 }

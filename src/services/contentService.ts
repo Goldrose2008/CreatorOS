@@ -13,8 +13,7 @@ export async function getProjectContent(projectId: number): Promise<Content[]> {
                 WHEN 'main' THEN 0
                 ELSE 1
             END,
-            created_at ASC,
-            id ASC`,
+            created_at ASC, id ASC`,
         [projectId]
     );
 }

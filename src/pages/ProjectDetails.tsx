@@ -14,6 +14,7 @@ import {
     Video,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import ContentCard from "../components/content/ContentCard/ContentCard";
 import Button from "../components/ui/Button/Button";
 import Card from "../components/ui/Card/Card";
 import Modal from "../components/ui/Modal/Modal";
@@ -21,10 +22,9 @@ import EntityForm from "../components/ui/EntityForm/EntityForm";
 import EmptyState from "../components/ui/EmptyState/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
 import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
-import type { 
-    Project,
-    ProjectStatus
- } from "../models/Project";
+import type { Project, ProjectStatus } from "../models/Project";
+import type { Content, ContentRole } from "../models/Content";
+import type { ContentType } from "../models/ContentType";
 import {
     PROJECT_FORM_FIELDS,
     PROJECT_STATUS_ACTIONS,
@@ -32,10 +32,21 @@ import {
     type ProjectFormValues
 } from "../config/entities/projectConfig";
 import {
+    getContentFormFields,
+    type ContentFormValues,
+} from "../config/entities/contentConfig";
+import {
     getProjectById,
     updateProject,
     updateProjectStatus,
 } from "../services/projectService";
+import { getContentTypes } from "../services/contentTypeService";
+import {
+    createContent,
+    deleteContent,
+    getProjectContent,
+    updateContent,
+} from "../services/contentService";
 import styles from "./ProjectDetails.module.css";
 
 function formatDate(value?: string | null): string {
@@ -69,6 +80,14 @@ function ProjectDetails() {
     const [editOpen, setEditOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [formError, setFormError] = useState("");
+    const [content, setContent] = useState<Content[]>([]);
+    const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
+    const [contentLoading, setContentLoading] = useState(true);
+    const [contentError, setContentError] = useState("");
+    const [contentSaving, setContentSaving] = useState(false);
+    const [createContentRole, setCreateContentRole] = useState<ContentRole | null>(null);
+    const [editingContent, setEditingContent] = useState<Content | null>(null);
+    const [contentFormError, setContentFormError] = useState("");
 
     useEffect(() => {
         async function loadProject() {
@@ -99,6 +118,38 @@ function ProjectDetails() {
             finally { setLoading(false); }
         }
         loadProject();
+    }, [id]);
+
+        useEffect(() => {
+        async function loadContentData() {
+            if (!id) { return; }
+
+            const projectId = Number(id);
+            if (!Number.isInteger(projectId)) { return; }
+
+            try {
+                setContentLoading(true);
+                setContentError("");
+
+                const [
+                    projectContent,
+                    types,
+                ] = await Promise.all([
+                    getProjectContent(projectId),
+                    getContentTypes(),
+                ]);
+
+                setContent(projectContent);
+                setContentTypes(types);
+            }
+            catch (loadError) {
+                console.error("Ошибка загрузки контента проекта:", loadError);
+                setContentError("Не удалось загрузить контент проекта.");
+            }
+            finally { setContentLoading(false); }
+        }
+
+        loadContentData();
     }, [id]);
 
     function openEditModal() {
@@ -187,6 +238,120 @@ function ProjectDetails() {
 
     const status = getProjectStatusConfig(project.status);
     const statusActions = PROJECT_STATUS_ACTIONS[project.status];
+    const mainContent = content.find((item) => item.content_role === "main");
+    const additionalContent = content.filter((item) => item.content_role === "additional");
+    const contentFormFields = getContentFormFields(contentTypes);
+
+    function getContentType(contentItem: Content): ContentType | undefined {
+        return contentTypes.find((type) => type.id === contentItem.content_type_id);
+    }
+
+    function openCreateContent(role: ContentRole) {
+        setContentFormError("");
+        setCreateContentRole(role);
+    }
+
+    function closeCreateContent() {
+        if (contentSaving) { return; }
+
+        setContentFormError("");
+        setCreateContentRole(null);
+    }
+
+    function openEditContent(contentItem: Content) {
+        setContentFormError("");
+        setEditingContent(contentItem);
+    }
+
+    function closeEditContent() {
+        if (contentSaving) { return; }
+
+        setContentFormError("");
+        setEditingContent(null);
+    }
+
+    function getCreateContentValues(): ContentFormValues {
+        return {
+            contentTypeId: contentTypes[0]?.id ?? 0,
+            name: "",
+            description: "",
+        };
+    }
+
+    function getEditContentValues(contentItem: Content): ContentFormValues {
+        return {
+            contentTypeId: contentItem.content_type_id,
+            name: contentItem.name,
+            description: contentItem.description ?? "",
+        };
+    }
+
+    async function handleCreateContent(values: ContentFormValues) {
+        if (!project || !createContentRole) { return; }
+
+        try {
+            setContentSaving(true);
+            setContentFormError("");
+
+            await createContent(
+                project.id,
+                values.contentTypeId,
+                createContentRole,
+                values.name.trim(),
+                values.description.trim()
+            );
+
+            const updatedContent = await getProjectContent(project.id);
+
+            setContent(updatedContent);
+            setCreateContentRole(null);
+        }
+        catch (createError) {
+            console.error("Ошибка создания контента:", createError);
+            setContentFormError("Не удалось создать контент.");
+        }
+        finally { setContentSaving(false); }
+    }
+
+    async function handleEditContent(values: ContentFormValues) {
+        if (!project || !editingContent) { return; }
+
+        try {
+            setContentSaving(true);
+            setContentFormError("");
+
+            await updateContent(
+                editingContent.id,
+                values.contentTypeId,
+                values.name.trim(),
+                values.description.trim()
+            );
+
+            const updatedContent = await getProjectContent(project.id);
+
+            setContent(updatedContent);
+            setEditingContent(null);
+        }
+        catch (updateError) {
+            console.error("Ошибка обновления контента:", updateError);
+            setContentFormError("Не удалось сохранить изменения.");
+        }
+        finally { setContentSaving(false); }
+    }
+
+    async function handleDeleteContent(contentItem: Content) {
+        if (contentItem.content_role === "main") { return; }
+
+        const confirmed = window.confirm(`Удалить контент "${contentItem.name}"?`);
+        if (!confirmed) { return; }
+
+        try {
+            await deleteContent(contentItem.id);
+            const updatedContent = await getProjectContent(project.id);
+            setContent(updatedContent);
+        }
+        catch (deleteError) { console.error("Ошибка удаления контента:", deleteError); }
+    }
 
     return (
         <Workspace navigation={
@@ -285,15 +450,43 @@ function ProjectDetails() {
                                     Главный результат проекта.
                                 </p>
                             </div>
+                            {!mainContent && (
+                                <div className={styles.sectionHeaderActions}>
+                                    <Button onClick={() => openCreateContent("main")} disabled={contentTypes.length === 0}>
+                                        Добавить
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-                        <div className={styles.sectionEmpty}>
-                            <p>
-                                Основной контент проекта пока не создан.
-                            </p>
-                            <Button>
-                                Добавить контент
-                            </Button>
-                        </div>
+
+                        {contentLoading ? (
+                            <EmptyState description="Загрузка контента..."/>
+                        ) : contentError ? (
+                            <EmptyState title="Не удалось загрузить контент" description={contentError}/>
+                        ) : mainContent ? (
+                            <div className={styles.contentList}>
+                                {getContentType(mainContent) ? (
+                                    <ContentCard
+                                        content={mainContent}
+                                        contentType={getContentType(mainContent)!}
+                                        canDelete={false}
+                                        onEdit={openEditContent}
+                                        onDelete={handleDeleteContent}
+                                    />
+                                ) : (
+                                    <EmptyState
+                                        title="Неизвестный тип контента"
+                                        description="Тип контента отсутствует в справочнике."
+                                    />
+                                )}
+                            </div>
+                        ) : (
+                            <div className={styles.sectionEmpty}>
+                                <p>
+                                    Основной контент проекта пока не создан.
+                                </p>
+                            </div>
+                        )}  
                     </Card>
                     <Card className={styles.section}>
                         <div className={styles.sectionHeader}>
@@ -308,15 +501,50 @@ function ProjectDetails() {
                                     Материалы, связанные с основным контентом.
                                 </p>
                             </div>
+                            <div className={styles.sectionHeaderActions}>
+                                <Button variant="secondary" onClick={() => openCreateContent("additional")} disabled={contentTypes.length === 0}>
+                                    Добавить
+                                </Button>
+                            </div>
                         </div>
-                        <div className={styles.sectionEmpty}>
-                            <p>
-                                Дополнительного контента пока нет.
-                            </p>
-                            <Button variant="secondary">
-                                Добавить
-                            </Button>
-                        </div>
+
+                        {contentLoading ? (
+                            <EmptyState description="Загрузка контента..."/>
+                        ) : contentError ? (
+                            <EmptyState title="Не удалось загрузить контент" description={contentError}/>
+                        ) : additionalContent.length > 0 ? (
+                            <div className={styles.contentList}>
+                                {additionalContent.map((contentItem) => {
+                                    const contentType = getContentType(contentItem);
+
+                                    if (!contentType) {
+                                        return (
+                                            <EmptyState
+                                                key={contentItem.id}
+                                                title="Неизвестный тип контента"
+                                                description="Тип контента отсутствует в справочнике."
+                                            />
+                                        );
+                                    }
+
+                                    return (
+                                        <ContentCard
+                                            key={contentItem.id}
+                                            content={contentItem}
+                                            contentType={contentType}
+                                            onEdit={openEditContent}
+                                            onDelete={handleDeleteContent}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className={styles.sectionEmpty}>
+                                <p>
+                                    Дополнительного контента пока нет.
+                                </p>
+                            </div>
+                        )}
                     </Card>
                     <Card className={styles.section}>
                         <div className={styles.sectionHeader}>
@@ -342,6 +570,44 @@ function ProjectDetails() {
                         </div>
                     </Card>
                 </div>
+                <Modal
+                    open={createContentRole !== null}
+                    title={
+                        createContentRole === "main"
+                            ? "Новый основной контент"
+                            : "Новый дополнительный контент"
+                    }
+                    onClose={closeCreateContent}
+                >
+                    <EntityForm<ContentFormValues>
+                        key={`create-content-${createContentRole}`}
+                        fields={contentFormFields}
+                        initialValues={getCreateContentValues()}
+                        submitLabel="Добавить"
+                        saving={contentSaving}
+                        error={contentFormError}
+                        onSubmit={handleCreateContent}
+                        onCancel={closeCreateContent}
+                    />
+                </Modal>
+                <Modal
+                    open={editingContent !== null}
+                    title="Редактирование контента"
+                    onClose={closeEditContent}
+                >
+                    {editingContent && (
+                        <EntityForm<ContentFormValues>
+                            key={`edit-content-${editingContent.id}`}
+                            fields={contentFormFields}
+                            initialValues={getEditContentValues(editingContent)}
+                            submitLabel="Сохранить"
+                            saving={contentSaving}
+                            error={contentFormError}
+                            onSubmit={handleEditContent}
+                            onCancel={closeEditContent}
+                        />
+                    )}
+                </Modal>
                 <Modal
                     open={editOpen}
                     title="Редактирование проекта"
