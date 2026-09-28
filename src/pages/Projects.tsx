@@ -3,12 +3,10 @@ import {
     useEffect,
     useState,
 } from "react";
-import {
-    Button,
-    Modal,
-    EntityForm,
-    EmptyState,
-} from "../components/ui";
+import Button from "../components/ui/Button/Button";
+import Modal from "../components/ui/Modal/Modal";
+import EntityForm from "../components/ui/EntityForm/EntityForm";
+import EmptyState from "../components/ui/EmptyState/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
