@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AppShell } from "./components/layout";
+import AppShell from "./components/layout/AppShell/AppShell";
 import Analytics from "./pages/Analytics";
 import Dashboard from "./pages/Dashboard";
 import Library from "./pages/Library";
