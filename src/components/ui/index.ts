@@ -9,7 +9,3 @@ export { default as EmptyState } from "./EmptyState/EmptyState";
 
 export type {ButtonVariant} from "./Button/Button";
 export type {BadgeVariant} from "./Badge/Badge";
-export type {
-    EntityField,
-    EntityFieldType,
-} from "./EntityForm/EntityForm";

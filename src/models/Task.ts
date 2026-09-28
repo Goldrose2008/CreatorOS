@@ -1,7 +1,9 @@
+import type { EntityType } from "./Entity";
+
 export interface Task {
     id: number;
     parent_id: number;
-    parent_type: string;
+    parent_type: EntityType;
     parent_task_id?: number;
     title: string;
     description?: string;

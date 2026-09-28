@@ -1,5 +1,6 @@
-import type { BadgeVariant } from "../../components/ui/Badge/Badge";
-import type { EntityField } from "../../components/ui/EntityForm/EntityForm";
+import type { EntityField } from "../../types/form";
+import type { StatusTone } from "../../types/status";
+import type { ProjectStatus } from "../../models/Project";
 
 export interface ProjectFormValues {
     name: string;
@@ -36,7 +37,11 @@ export const PROJECT_FORM_FIELDS: EntityField<ProjectFormValues>[] = [
 
 ];
 
-export const PROJECT_STATUSES = {
+export const PROJECT_STATUSES: Record <ProjectStatus,{
+        label: string;
+        variant: StatusTone;
+    }> = 
+{
     draft: {
         label: "Черновик",
         variant: "neutral",
@@ -51,15 +56,7 @@ export const PROJECT_STATUSES = {
         label: "Архив",
         variant: "neutral",
     },
-} as const satisfies Record<
-    string,
-    {
-        label: string;
-        variant: BadgeVariant;
-    }
->;
-
-export type ProjectStatus = keyof typeof PROJECT_STATUSES;
+}
 
 export interface ProjectStatusAction {
     action: string;
@@ -94,11 +91,6 @@ export const PROJECT_STATUS_ACTIONS: Record<ProjectStatus, ProjectStatusAction[]
     ],
 };
 
-export function getProjectStatusConfig(status: string) {
-    if (status in PROJECT_STATUSES) { return PROJECT_STATUSES[status as ProjectStatus]; }
-
-    return {
-        label: status,
-        variant: "neutral" as BadgeVariant,
-    };
+export function getProjectStatusConfig(status: ProjectStatus) {
+    return PROJECT_STATUSES[status];
 }

@@ -19,13 +19,6 @@
     color: var(--color-text);
 }
 
-.description {
-    margin: 7px 0 0;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--color-text-muted);
-}
-
 .list {
     display: flex;
     flex-direction: column;

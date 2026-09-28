@@ -23,13 +23,15 @@ import {
 } from "../components/ui";
 import { Workspace,} from "../components/layout";
 import { EntityHeader } from "../components/entity";
-import type { Project } from "../models/Project";
+import type { 
+    Project,
+    ProjectStatus
+ } from "../models/Project";
 import {
     PROJECT_FORM_FIELDS,
     PROJECT_STATUS_ACTIONS,
     getProjectStatusConfig,
-    type ProjectFormValues,
-    type ProjectStatus,
+    type ProjectFormValues
 } from "../config/entities/projectConfig";
 import {
     getProjectById,
@@ -186,7 +188,7 @@ function ProjectDetails() {
     }
 
     const status = getProjectStatusConfig(project.status);
-    const statusActions = PROJECT_STATUS_ACTIONS[project.status as ProjectStatus] ?? [];
+    const statusActions = PROJECT_STATUS_ACTIONS[project.status];
 
     return (
         <Workspace navigation={

@@ -13,9 +13,9 @@ function AppShell({
     return (
         <div className={styles.shell}>
             <Sidebar />
-            <main className={styles.content}>
+            <div  className={styles.content}>
                 {children}
-            </main>
+            </div>
         </div>
     );
 }

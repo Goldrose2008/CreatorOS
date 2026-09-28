@@ -6,39 +6,7 @@ import {
 import Button from "../Button/Button";
 import FormField from "../FormField/FormField";
 import styles from "./EntityForm.module.css";
-
-export type EntityFieldType =
-    | "text"
-    | "textarea"
-    | "date"
-    | "number"
-    | "select";
-
-export interface EntityField<TValues extends object> {
-    name: keyof TValues & string;
-    label: string;
-    type: EntityFieldType;
-
-    required?: boolean;
-
-    placeholder?: string;
-    description?: string;
-
-    rows?: number;
-
-    options?: Array<{
-        value: string;
-        label: string;
-    }>;
-
-    parse?: (value: string) => unknown;
-    format?: (value: unknown) => string;
-
-    validate?: (
-        value: unknown,
-        values: TValues
-    ) => string | undefined;
-}
+import type { EntityField } from "../../../types/form";
 
 interface EntityFormProps<TValues extends object> {
     fields: EntityField<TValues>[];

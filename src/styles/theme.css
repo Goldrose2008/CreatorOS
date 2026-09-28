@@ -1,27 +1,35 @@
 :root {
+    /* Основной акцент */
+    --color-accent: #0F8B8D;
+    --color-accent-hover: #0B7375;
+    --color-accent-soft: #E7F6F6;
+    
     /* Основные цвета */
+    --color-background: var(--color-workspace);
+
+    --color-border: #e3e6eb;
+
+    --color-danger: #d9534f;
+    --color-danger-hover: #c64541;
+
+    --color-focus: rgba(15, 139, 141, 0.22);
+
     --color-sidebar: #1f2430;
     --color-sidebar-hover: #2a3040;
     --color-sidebar-active: #343b4d;
 
-    --color-workspace: #f5f6f8;
+    --color-success: #3a8f5c;
+
     --color-surface: #ffffff;
+    --color-surface-hover: #f0f2f5;
 
     --color-text: #20242c;
     --color-text-secondary: #697180;
     --color-text-muted: #9aa1ad;
 
-    /* Один основной акцент */
-    --color-accent: #0F8B8D;
-    --color-accent-hover: #0B7375;
-    --color-accent-soft: #E7F6F6;
+    --color-warning: #c58a2c;
 
-    /* Состояния */
-    --color-danger: #d9534f;
-    --color-danger-hover: #c64541;
-
-    --color-border: #e3e6eb;
-    --color-focus: rgba(15, 139, 141, 0.22);
+    --color-workspace: #f5f6f8;
 
     /* Скругления */
     --radius-sm: 8px;
@@ -42,11 +50,18 @@
     --shadow-card:
         0 2px 8px rgba(20, 24, 35, 0.05),
         0 8px 24px rgba(20, 24, 35, 0.06);
-
     --shadow-card-hover:
         0 4px 12px rgba(20, 24, 35, 0.07),
         0 12px 30px rgba(20, 24, 35, 0.08);
+    
+    --shadow-lg:
+        0 16px 40px
+        rgba(20, 24, 35, 0.14);
 
+    --shadow-sm:
+        0 1px 3px
+        rgba(20, 24, 35, 0.06);
+    
     /* Размер Sidebar */
     --sidebar-width: 248px;
 

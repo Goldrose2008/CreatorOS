@@ -1,5 +1,6 @@
 import type { Project } from "../models/Project";
 import { getDatabase } from "./databaseService";
+import type { ProjectStatus } from "../models/Project";
 
 export async function getProjects(): Promise<Project[]> {
     const database = await getDatabase();
@@ -76,7 +77,7 @@ export async function updateProject(
 
 export async function updateProjectStatus(
     id: number,
-    status: string
+    status: ProjectStatus
 ): Promise<void> {
     const database = await getDatabase();
 

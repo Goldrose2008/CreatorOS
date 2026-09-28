@@ -1,12 +1,8 @@
 import type { ReactNode } from "react";
 import styles from "./Badge.module.css";
+import type { StatusTone } from "../../../types/status";
 
-export type BadgeVariant =
-    | "neutral"
-    | "accent"
-    | "success"
-    | "warning"
-    | "danger";
+export type BadgeVariant = StatusTone;
 
 interface BadgeProps {
     children: ReactNode;

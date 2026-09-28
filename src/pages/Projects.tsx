@@ -163,9 +163,9 @@ function Projects() {
 
                 <section className={styles.list}>
                     {loading ? (
-                        <div className={styles.emptyState}>
-                            <p>Загрузка проектов...</p>
-                        </div>
+                        <EmptyState 
+                            description="Загрузка проектов..."
+                        />
                     ) : projects.length === 0 ? (
                         <EmptyState
                             title="Проектов пока нет"
