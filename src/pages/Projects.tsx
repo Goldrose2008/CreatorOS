@@ -9,7 +9,7 @@ import {
     EntityForm,
     EmptyState,
 } from "../components/ui";
-import { Workspace } from "../components/layout";
+import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
 import {
