@@ -53,13 +53,11 @@ function ContentCard({
                 )}
 
                 <div className={styles.meta}>
-                    {content.production_deadline_at && (
                         <span className={styles.metaItem}>
                             <CalendarDays size={14} />
                             Планируемый выход:{" "}
                             {formatDate(content.planned_release_at)}
                         </span>
-                    )}
 
                     <span className={styles.metaItem}>
                         Прогресс: {content.progress}%
