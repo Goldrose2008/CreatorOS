@@ -10,6 +10,7 @@ import Projects from "./pages/Projects";
 import SettingsAppearance from "./pages/Settings/SettingsAppearance";
 import SettingsLayout from "./pages/Settings/SettingsLayout";
 import SettingsPlaceholder from "./pages/Settings/SettingsPlaceholder";
+import ContentTypes from "./pages/Settings/ContentTypes";
 import Tasks from "./pages/Tasks";
 import { applyAccentColor, getAccentColor } from "./services/themeService";
 
@@ -33,7 +34,7 @@ function App() {
             <Route path="appearance" element={<SettingsAppearance />} />
             <Route path="shortcuts" element={<SettingsPlaceholder title="Горячие клавиши" description="Настройки сочетания клавиш для быстрых действий."/>} />
             <Route path="projects" element={<SettingsPlaceholder title="Проекты" description="Настройки поведения и структуры контентных проектов."/>} />
-            <Route path="content" element={<SettingsPlaceholder title="Типы контента" description="Настройки типов контента."/>} />
+            <Route path="content" element={<ContentTypes />}/>
             <Route path="automation" element={<SettingsPlaceholder title="Автоматизация" description="Правила, шаблоны и автоматические действия."/>} />
             <Route path="integrations" element={<SettingsPlaceholder title="Площадки" description="Подключение YouTube, Telegram и других платформ."/>} />
             <Route path="team" element={<SettingsPlaceholder title="Команда" description="Участники, роли и права доступа."/>} />
