@@ -14,13 +14,11 @@ import {
     Video,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import {
-    Button,
-    Card,
-    Modal,
-    EntityForm,
-    EmptyState,
-} from "../components/ui";
+import Button from "../components/ui/Button/Button";
+import Card from "../components/ui/Card/Card";
+import Modal from "../components/ui/Modal/Modal";
+import EntityForm from "../components/ui/EntityForm/EntityForm";
+import EmptyState from "../components/ui/EmptyState/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
 import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
 import type { 
