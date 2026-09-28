@@ -7,6 +7,7 @@ export interface Content {
     content_role: ContentRole;
     name: string;
     description?: string;
+    planned_release_at: string;
     priority: number;
     production_deadline_at?: string;
     status: string;

@@ -5,15 +5,20 @@ export async function getProjectContent(projectId: number): Promise<Content[]> {
     const database = await getDatabase();
 
     return database.select<Content[]>(
-        `SELECT *
+        `SELECT
+            content_items.*,
+            projects.planned_release_at AS planned_release_at
         FROM content_items
-        WHERE project_id = ?
+        INNER JOIN projects
+            ON projects.id = content_items.project_id
+        WHERE content_items.project_id = ?
         ORDER BY
-            CASE content_role
+            CASE content_items.content_role
                 WHEN 'main' THEN 0
                 ELSE 1
             END,
-            created_at ASC, id ASC`,
+            content_items.created_at ASC,
+            content_items.id ASC`,
         [projectId]
     );
 }

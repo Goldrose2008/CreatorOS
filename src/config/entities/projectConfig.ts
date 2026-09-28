@@ -14,6 +14,7 @@ export interface ProjectFormValues extends ProjectBaseFormValues {}
 export interface ProjectCreateFormValues
     extends ProjectBaseFormValues {
     mainContentTypeId: number;
+    mainContentName: string;
 }
 
 function getProjectBaseFields<TValues extends ProjectBaseFormValues>(): EntityField<TValues>[] {
@@ -62,6 +63,14 @@ export function getProjectCreateFormFields(contentTypes: ContentType[]): EntityF
             })),
             parse: (value) => Number(value),
             description: "Тип основного контента, который будет создан вместе с проектом.",
+        },
+        {
+            name: "mainContentName",
+            label: "Название основного контента",
+            type: "text",
+            required: true,
+            placeholder: "Название основного контента",
+            description: "Название главного материала, который создаётся в рамках проекта.",
         },
     ];
 }

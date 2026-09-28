@@ -56,8 +56,8 @@ function ContentCard({
                     {content.production_deadline_at && (
                         <span className={styles.metaItem}>
                             <CalendarDays size={14} />
-                            Производство до:{" "}
-                            {formatDate(content.production_deadline_at)}
+                            Планируемый выход:{" "}
+                            {formatDate(content.planned_release_at)}
                         </span>
                     )}
 

@@ -33,6 +33,7 @@ function getCreateProjectValues(contentTypes: ContentType[]): ProjectCreateFormV
         description: "",
         planned_release_at: "",
         mainContentTypeId: contentTypes[0]?.id ?? 0,
+        mainContentName: "",
     };
 }
 
@@ -127,7 +128,7 @@ function Projects() {
                 projectId,
                 values.mainContentTypeId,
                 "main",
-                values.name.trim(),
+                values.mainContentName.trim(),
                 ""
             );
         }
