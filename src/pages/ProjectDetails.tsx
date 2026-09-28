@@ -340,14 +340,15 @@ function ProjectDetails() {
     }
 
     async function handleDeleteContent(contentItem: Content) {
-        if (contentItem.content_role === "main") { return; }
-
+        if (!project || contentItem.content_role === "main") { return; }
+        
+        const projectId = project.id;
         const confirmed = window.confirm(`Удалить контент "${contentItem.name}"?`);
         if (!confirmed) { return; }
 
         try {
             await deleteContent(contentItem.id);
-            const updatedContent = await getProjectContent(project.id);
+            const updatedContent = await getProjectContent(projectId);
             setContent(updatedContent);
         }
         catch (deleteError) { console.error("Ошибка удаления контента:", deleteError); }
