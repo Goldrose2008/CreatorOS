@@ -60,6 +60,23 @@
     color: var(--color-text-secondary);
 }
 
+.sectionLink {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+.sectionLink:hover {
+    color: var(--color-accent-hover);
+}
+
+.projectsList {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 @media (max-width: 800px) {
     .grid {grid-template-columns: 1fr;}
     .section, .section:nth-child(n + 3) {min-height: 260px;}

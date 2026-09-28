@@ -1,9 +1,38 @@
+import {
+    useEffect,
+    useState,
+} from "react";
+import { Link } from "react-router-dom";
 import Card from "../components/ui/Card/Card";
 import EmptyState from "../components/ui/EmptyState/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
+import ProjectSummary from "../components/projects/ProjectSummary";
+import type { Project } from "../models/Project";
+import { getProjects } from "../services/projectService";
 import styles from "./Dashboard.module.css";
 
 function Dashboard() {
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [loadingProjects, setLoadingProjects] = useState(true);
+    const [projectsError, setProjectsError] = useState("");
+
+    useEffect(() => {
+        async function loadProjects() {
+            try {
+                const data = await getProjects();
+                const currentProjects = data.filter((project) => project.status !== "archived");
+                setProjects(currentProjects);
+            }
+            catch (error) {
+                console.error("Ошибка загрузки проектов для Главной:", error);
+                setProjectsError("Не удалось загрузить проекты.");
+            }
+            finally { setLoadingProjects(false); }
+        }
+
+        loadProjects();
+    }, []);
+
     return (
         <Workspace>
             <div className={styles.page}>
@@ -63,12 +92,24 @@ function Dashboard() {
                                     Проекты, над которыми сейчас ведётся работа.
                                 </p>
                             </div>
+                            <Link to="/projects" className={styles.sectionLink}>
+                                Все проекты
+                            </Link>
                         </div>
 
-                        <EmptyState
-                            title="Здесь будут активные проекты"
-                            description="Проекты в работе будут отображаться здесь."
-                        />
+                        {loadingProjects ? (
+                            <EmptyState description="Загрузка проектов..." />
+                        ) : projectsError ? (
+                            <EmptyState title="Не удалось загрузить проекты" description={projectsError}/>
+                        ) : projects.length === 0 ? (
+                            <EmptyState title="Активных проектов пока нет" description="Создай проект, чтобы он появился здесь."/>
+                        ) : (
+                            <div className={styles.projectsList}>
+                                {projects.slice(0, 5).map((project) => (
+                                    <ProjectSummary key={project.id} project={project}/>
+                                ))}
+                            </div>
+                        )}
                     </Card>
 
                     <Card className={styles.section}>

@@ -7,7 +7,7 @@ export async function getProjects(): Promise<Project[]> {
     const projects = await database.select<Project[]>(
         `SELECT *
         FROM projects
-        ORDER BY created_at DESC`
+        ORDER BY created_at ASC, id ASC`
     );
     return projects;
 }
