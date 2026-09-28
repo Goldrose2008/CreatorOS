@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import Card from "../../ui/Card/Card";
-import Badge, { type BadgeVariant } from "../../ui/Badge/Badge";
+import Badge from "../../ui/Badge/Badge";
+import type { StatusTone } from "../../../types/status";
 import ProgressBar from "../../ui/ProgressBar/ProgressBar";
 import styles from "./EntityCard.module.css";
 
 interface EntityCardStatus {
     label: string;
-    variant?: BadgeVariant;
+    variant?: StatusTone;
 }
 
 interface EntityCardProps {
