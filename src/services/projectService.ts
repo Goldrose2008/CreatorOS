@@ -35,7 +35,7 @@ export async function createProject(
 ): Promise<number> {
     const database = await getDatabase();
 
-    await database.execute(
+    const result = await database.execute(
         `INSERT INTO projects(
             name, 
             description,
@@ -48,11 +48,10 @@ export async function createProject(
             plannedReleaseAt
         ]
     );
-    const result = await database.select<{ id: number }[]>(
-        `SELECT last_insert_rowid() AS id`
-    );
-    
-    return result[0].id;
+
+    if (result.lastInsertId === undefined) { throw new Error("Не удалось получить ID созданного проекта."); }
+
+    return result.lastInsertId;
 }
 
 export async function updateProject(
