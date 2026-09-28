@@ -7,10 +7,8 @@ import {
     getAccentColor,
     saveAccentColor
 } from "../../services/themeService";
-import {
-    Button,
-    Card
-} from "../../components/ui";
+import Button from "../../components/ui/Button/Button";
+import Card from "../../components/ui/Card/Card";
 import styles from "./Settings.module.css";
 
 function SettingsAppearance() {
