@@ -66,7 +66,7 @@ function ProjectCard({
                     </span>
                 </span>,
             ]}
-
+    /* Блок действий */
             actions={
                 <>
                     <Link to={`/projects/${project.id}`} className={styles.linkButton}>
@@ -78,7 +78,7 @@ function ProjectCard({
                         Редактировать
                     </Button>
 
-                    <Button variant="danger" onClick={() => onDelete(project.id)}>
+                    <Button variant="danger" className={styles.deleteButton} onClick={() => onDelete(project.id)}>
                         <Trash2 size={15} />
                         Удалить
                     </Button>

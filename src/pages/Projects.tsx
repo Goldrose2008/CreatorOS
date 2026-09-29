@@ -7,6 +7,7 @@ import Button from "../components/ui/Button/Button";
 import Modal from "../components/ui/Modal/Modal";
 import EntityForm from "../components/ui/EntityForm/EntityForm";
 import EmptyState from "../components/ui/EmptyState/EmptyState";
+import ConfirmModal from "../components/ui/ConfirmModal/ConfirmModal";
 import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
@@ -55,6 +56,8 @@ function Projects() {
     const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
     const [loadingContentTypes, setLoadingContentTypes] = useState(false);
     const [syncMainContentName, setSyncMainContentName] = useState(true);
+    const [deletingProject, setDeletingProject] = useState<Project | null>(null);
+    const [deleteSaving, setDeleteSaving] = useState(false);
     const loadProjects = useCallback(async () => {
         const data = await getProjects(); setProjects(data); }, []);
 
@@ -182,18 +185,30 @@ function Projects() {
         finally { setSaving(false); }
     }
 
-    async function handleDelete(id: number) {
+    function handleDelete(id: number) {
         const project = projects.find((item) => item.id === id);
+
         if (!project) { return; }
 
-        const confirmed = window.confirm(`Удалить проект "${project.name}"?`);
-        if (!confirmed) { return; }
+        setDeletingProject(project);
+    }
+
+    function closeDeleteModal() {
+        if (deleteSaving) { return; }
+        setDeletingProject(null);
+    }
+
+    async function handleDeleteConfirm() {
+        if (!deletingProject) { return; }
 
         try {
-            await deleteProject(id);
+            setDeleteSaving(true);
+            await deleteProject(deletingProject.id);
             await loadProjects();
+            setDeletingProject(null);
         }
         catch (error) { console.error("Ошибка удаления проекта:", error); }
+        finally { setDeleteSaving(false); }
     }
 
     return (
@@ -231,6 +246,7 @@ function Projects() {
                         ))
                     )}
                 </section>
+        {/* Открытие проекта */}
                 <Modal
                     open={createOpen}
                     title="Новый проект"
@@ -248,7 +264,7 @@ function Projects() {
                         onCancel={closeCreateModal}
                     />
                 </Modal>
-
+        {/* Редактирование проекта */}
                 <Modal
                     open={editingProject !== null}
                     title="Редактирование проекта"
@@ -267,6 +283,22 @@ function Projects() {
                         />
                     )}
                 </Modal>
+        {/* Окно-запрос подтверждения удаления */}
+                <ConfirmModal
+                    open={deletingProject !== null}
+                    title="Удаление проекта"
+                    message={
+                        <>
+                            Удалить проект{" "}
+                            <strong>«{deletingProject?.name}»</strong>?
+                            <br />
+                            Это действие нельзя отменить.
+                        </>
+                    }
+                    saving={deleteSaving}
+                    onConfirm={handleDeleteConfirm}
+                    onCancel={closeDeleteModal}
+                />
             </div>
         </Workspace>
     );

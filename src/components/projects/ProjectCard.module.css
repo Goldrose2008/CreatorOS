@@ -34,3 +34,7 @@
 .linkButton:hover {
     background: var(--color-surface-hover);
 }
+
+.deleteButton {
+    margin-left: auto;
+}
