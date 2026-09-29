@@ -1,5 +1,4 @@
 import {
-    ArrowRight,
     CalendarDays,
     Pencil,
     Trash2,
@@ -79,11 +78,6 @@ function ContentCard({
             </div>
     {/* Блок действий */}
             <div className={styles.actions}>
-        {/* Кнопка открыть контент */}
-                <Button variant="secondary" onClick={(event) => { event.stopPropagation(); openContent();}}>
-                    <ArrowRight size={15} />
-                    Открыть
-                </Button>
         {/* Кнопка редактировать контент */}
                 <Button variant="secondary" onClick={(event) => { event.stopPropagation(); onEdit(content); }}>
                     <Pencil size={15} />
