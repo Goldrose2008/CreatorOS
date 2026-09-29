@@ -70,7 +70,7 @@ export function getProjectCreateFormFields(contentTypes: ContentType[]): EntityF
             type: "text",
             required: true,
             placeholder: "Название основного контента",
-            description: "Название главного материала, который создаётся в рамках проекта.",
+            description: "По умолчанию повторяет название проекта. Можно изменить вручную.",
         },
     ];
 }

@@ -7,6 +7,17 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     background: var(--color-surface);
+    cursor: pointer;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-card-hover);
+    background: var(--color-surface-hover);
 }
 
 .main {

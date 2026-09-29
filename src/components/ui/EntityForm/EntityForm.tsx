@@ -20,6 +20,11 @@ interface EntityFormProps<TValues extends object> {
     error?: string;
 
     onSubmit: (values: TValues) => Promise<void> | void;
+    onFieldChange?: (
+        fieldName: keyof TValues & string,
+        value: unknown,
+        values: TValues
+    ) => Partial<TValues> | void;
     onCancel: () => void;
 }
 
@@ -31,6 +36,7 @@ function EntityForm<TValues extends object>({
     saving = false,
     error,
     onSubmit,
+    onFieldChange,
     onCancel,
 }: EntityFormProps<TValues>) {
 
@@ -47,17 +53,17 @@ function EntityForm<TValues extends object>({
 
     function handleChange(field: EntityField<TValues>, rawValue: string) {
         const parsedValue = field.parse ? field.parse(rawValue) : rawValue;
+        const nextValues = { ...values, [field.name]: parsedValue } as TValues;
+        const fieldChanges = onFieldChange?.(field.name, parsedValue, nextValues);
 
-        setValues((current) => ({
-            ...current,
-            [field.name]: parsedValue,
-        }));
+        setValues({
+            ...nextValues,
+            ...(fieldChanges ?? {}),
+        });
 
         setFieldErrors((current) => {
             const next = { ...current };
-
             delete next[field.name];
-
             return next;
         });
     }

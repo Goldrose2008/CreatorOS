@@ -1,5 +1,10 @@
-import { CalendarDays, Pencil, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+    ArrowRight,
+    CalendarDays,
+    Pencil,
+    Trash2,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../ui/Button/Button";
 import Badge from "../../ui/Badge/Badge";
 import ProgressBar from "../../ui/ProgressBar/ProgressBar";
@@ -33,11 +38,15 @@ function ContentCard({
     onEdit,
     onDelete,
 }: ContentCardProps) {
+    const navigate = useNavigate();
+
+    function openContent() { navigate(`/content/${content.id}`); }
+
     return (
-        <div className={styles.card}>
+        <div className={styles.card} onClick={openContent}>
             <div className={styles.main}>
                 <div className={styles.titleRow}>
-                    <Link to={`/projects/${content.project_id}`} className={styles.title}>
+                    <Link to={`/content/${content.id}`} className={styles.title} onClick={(event) => event.stopPropagation()}>
                         {content.name}
                     </Link>
 
@@ -68,21 +77,21 @@ function ContentCard({
                     <ProgressBar value={content.progress} />
                 </div>
             </div>
-
+    {/* Блок действий */}
             <div className={styles.actions}>
-                <Button
-                    variant="secondary"
-                    onClick={() => onEdit(content)}
-                >
+        {/* Кнопка открыть контент */}
+                <Button variant="secondary" onClick={(event) => { event.stopPropagation(); openContent();}}>
+                    <ArrowRight size={15} />
+                    Открыть
+                </Button>
+        {/* Кнопка редактировать контент */}
+                <Button variant="secondary" onClick={(event) => { event.stopPropagation(); onEdit(content); }}>
                     <Pencil size={15} />
                     Редактировать
                 </Button>
-
+        {/* Кнопка удалить контент (только для доп.контента)*/}
                 {canDelete && (
-                    <Button
-                        variant="danger"
-                        onClick={() => onDelete(content)}
-                    >
+                    <Button variant="danger" onClick={(event) => { event.stopPropagation(); onDelete(content); }}>
                         <Trash2 size={15} />
                         Удалить
                     </Button>

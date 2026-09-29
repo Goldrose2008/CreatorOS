@@ -54,12 +54,9 @@ function Projects() {
     const [formError, setFormError] = useState("");
     const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
     const [loadingContentTypes, setLoadingContentTypes] = useState(false);
+    const [syncMainContentName, setSyncMainContentName] = useState(true);
     const loadProjects = useCallback(async () => {
-            const data = await getProjects();
-            setProjects(data);
-        },
-        []
-    );
+        const data = await getProjects(); setProjects(data); }, []);
 
     useEffect(() => {
         async function loadInitialProjects() {
@@ -74,26 +71,27 @@ function Projects() {
     }, [loadProjects]);
 
     async function openCreateModal() {
-    setFormError("");
+        setSyncMainContentName(true);
+        setFormError("");
 
-    try {
-        setLoadingContentTypes(true);
-        const types = await getContentTypes();
-        setContentTypes(types);
-        
-        if (types.length === 0) {
-            setFormError("Невозможно создать проект: нет типов контента.");
-            return;
+        try {
+            setLoadingContentTypes(true);
+            const types = await getContentTypes();
+            setContentTypes(types);
+            
+            if (types.length === 0) {
+                setFormError("Невозможно создать проект: нет типов контента.");
+                return;
+            }
+
+            setCreateOpen(true);
         }
-
-        setCreateOpen(true);
+        catch (error) {
+            console.error("Ошибка загрузки типов контента:", error);
+            setFormError("Не удалось загрузить типы контента.");
+        }
+        finally { setLoadingContentTypes(false); }
     }
-    catch (error) {
-        console.error("Ошибка загрузки типов контента:", error);
-        setFormError("Не удалось загрузить типы контента.");
-    }
-    finally { setLoadingContentTypes(false); }
-}
 
     function closeCreateModal() {
         if (saving) { return; }
@@ -111,6 +109,19 @@ function Projects() {
         setFormError("");
         setEditingProject(null);
     }
+
+    function handleCreateProjectFieldChange(
+    fieldName: keyof ProjectCreateFormValues & string,
+    value: unknown
+): Partial<ProjectCreateFormValues> | undefined {
+    if (fieldName === "name" && syncMainContentName) {
+        return { mainContentName: String(value ?? ""), };
+    }
+
+    if (fieldName === "mainContentName") { setSyncMainContentName(false); }
+
+    return undefined;
+}
 
     async function handleCreate(values: ProjectCreateFormValues) {
     try {
@@ -233,6 +244,7 @@ function Projects() {
                         saving={saving}
                         error={formError}
                         onSubmit={handleCreate}
+                        onFieldChange={handleCreateProjectFieldChange}
                         onCancel={closeCreateModal}
                     />
                 </Modal>

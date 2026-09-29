@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "./components/layout/AppShell/AppShell";
 import Analytics from "./pages/Analytics";
+import ContentDetails from "./pages/ContentDetails";
 import Dashboard from "./pages/Dashboard";
 import Library from "./pages/Library";
 import Planning from "./pages/Planning";
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />}/>
+          <Route path="/content/:id" element={<ContentDetails />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/planning" element={<Planning />} />
           <Route path="/library" element={<Library />} />

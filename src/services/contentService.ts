@@ -23,6 +23,24 @@ export async function getProjectContent(projectId: number): Promise<Content[]> {
     );
 }
 
+export async function getContentById(id: number): Promise<Content | null> {
+    const database = await getDatabase();
+    const content = await database.select<Content[]>(
+        `SELECT
+            content_items.*,
+            projects.planned_release_at AS planned_release_at
+        FROM content_items
+        INNER JOIN projects
+            ON projects.id = content_items.project_id
+        WHERE content_items.id = ?`,
+        [id]
+    );
+
+    if (content.length === 0) { return null; }
+
+    return content[0];
+}
+
 export async function createContent(
     projectId: number,
     contentTypeId: number,
