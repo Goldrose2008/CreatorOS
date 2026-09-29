@@ -9,9 +9,9 @@ import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectSummary from "../components/projects/ProjectSummary";
 import type { Project } from "../models/Project";
 import { getProjects } from "../services/projectService";
-import styles from "./Dashboard.module.css";
+import styles from "./DashboardPage.module.css";
 
-function Dashboard() {
+function DashboardPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loadingProjects, setLoadingProjects] = useState(true);
     const [projectsError, setProjectsError] = useState("");
@@ -136,4 +136,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default DashboardPage;

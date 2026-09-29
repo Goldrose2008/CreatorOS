@@ -1,4 +1,4 @@
-function Library() {
+function LibraryPage() {
   return (
     <div>
       <h1>Библиотека</h1>
@@ -7,4 +7,4 @@ function Library() {
   );
 }
 
-export default Library;
+export default LibraryPage;

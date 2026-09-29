@@ -1,4 +1,4 @@
-function Tasks() {
+function TasksPage() {
   return (
     <div>
       <h1>Задачи</h1>
@@ -7,4 +7,4 @@ function Tasks() {
   );
 }
 
-export default Tasks;
+export default TasksPage;

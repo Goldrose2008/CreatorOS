@@ -1,4 +1,4 @@
-function Planning() {
+function PlanningPage() {
   return (
     <div>
       <h1>Планирование</h1>
@@ -7,4 +7,4 @@ function Planning() {
   );
 }
 
-export default Planning;
+export default PlanningPage;

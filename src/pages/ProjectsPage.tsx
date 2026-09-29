@@ -26,7 +26,7 @@ import {
     getProjects,
     updateProject,
 } from "../services/projectService";
-import styles from "./Projects.module.css";
+import styles from "./ProjectsPage.module.css";
 
 function getCreateProjectValues(contentTypes: ContentType[]): ProjectCreateFormValues {
     return {
@@ -46,7 +46,7 @@ function getEditProjectValues(project: Project): ProjectFormValues {
     };
 }
 
-function Projects() {
+function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [createOpen, setCreateOpen] = useState(false);
@@ -304,4 +304,4 @@ function Projects() {
     );
 }
 
-export default Projects;
+export default ProjectsPage;

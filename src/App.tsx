@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "./components/layout/AppShell/AppShell";
-import Analytics from "./pages/Analytics";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import ContentDetails from "./pages/ContentDetails";
-import Dashboard from "./pages/Dashboard";
-import Library from "./pages/Library";
-import Planning from "./pages/Planning";
+import DashboardPage from "./pages/DashboardPage";
+import LibraryPage from "./pages/LibraryPage";
+import PlanningPage from "./pages/PlanningPage";
 import ProjectDetails from "./pages/ProjectDetails";
-import Projects from "./pages/Projects";
+import ProjectsPage from "./pages/ProjectsPage";
 import SettingsAppearance from "./pages/Settings/SettingsAppearance";
 import SettingsLayout from "./pages/Settings/SettingsLayout";
 import SettingsPlaceholder from "./pages/Settings/SettingsPlaceholder";
 import ContentTypes from "./pages/Settings/ContentTypes";
-import Tasks from "./pages/Tasks";
+import Tasks from "./pages/TasksPage";
 import { applyAccentColor, getAccentColor } from "./services/themeService";
 
 function App() {
@@ -22,14 +22,14 @@ function App() {
     <BrowserRouter>
       <AppShell>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectDetails />}/>
           <Route path="/content/:id" element={<ContentDetails />} />
           <Route path="/tasks" element={<Tasks />} />
-          <Route path="/planning" element={<Planning />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/planning" element={<PlanningPage />} />
+          <Route path="/library" element={<LibraryPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/settings" element={<SettingsLayout />} >
             <Route index element={<Navigate to="/settings/appearance" replace/>} />
             <Route path="general" element={<SettingsPlaceholder title="Общие" description="Основные настройки приложения и рабочего пространства."/>} />
