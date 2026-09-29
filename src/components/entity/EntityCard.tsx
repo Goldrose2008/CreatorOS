@@ -1,44 +1,34 @@
 import type { ReactNode } from "react";
-import Card from "../../ui/Card/Card";
-import Badge from "../../ui/Badge/Badge";
-import type { StatusTone } from "../../../types/status";
-import ProgressBar from "../../ui/ProgressBar/ProgressBar";
-import styles from "./EntityCard.module.css";
+import Card from "../ui/Card/Card";
+import Badge from "../ui/Badge/Badge";
+import type { StatusTone } from "../../types/status";
+import ProgressBar from "../ui/ProgressBar/ProgressBar";
+import styles from "../../../styles/entities/EntityCard.module.css";
 
-interface EntityCardStatus {
+export interface EntityCardStatus {
     label: string;
     variant?: StatusTone;
 }
 
-interface EntityCardProps {
+export interface InitialCardProps {
     title: ReactNode;
     description?: ReactNode;
     status?: EntityCardStatus;
     progress?: number;
     meta?: ReactNode[];
     actions?: ReactNode;
-    className?: string;
 }
 
-function EntityCard({
+export function InitialCard({
     title,
     description,
     status,
     progress,
     meta = [],
     actions,
-    className = "",
-}: EntityCardProps) {
-
-    const classes = [
-        styles.card,
-        className,
-    ]
-        .filter(Boolean)
-        .join(" ");
-
+}: InitialCardProps) {
     return (
-        <Card className={classes}>
+        <Card className={styles.card}>
             <div className={styles.header}>
                 <div className={styles.titleBlock}>
                     <h3 className={styles.title}>
@@ -57,12 +47,11 @@ function EntityCard({
                         {status.label}
                     </Badge>
                 )}
-
             </div>
 
             {progress !== undefined && (
                 <div className={styles.progress}>
-                    <ProgressBar value={progress}/>
+                    <ProgressBar value={progress} />
                 </div>
             )}
 
@@ -84,5 +73,3 @@ function EntityCard({
         </Card>
     );
 }
-
-export default EntityCard;
