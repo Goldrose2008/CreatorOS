@@ -9,7 +9,7 @@ import Badge from "../../ui/Badge/Badge";
 import ProgressBar from "../../ui/ProgressBar/ProgressBar";
 import type { Content } from "../../../models/Content";
 import type { ContentType } from "../../../models/ContentType";
-import styles from "./ContentCard.module.css";
+import { formatDate } from "../../../utils/date";
 
 interface ContentCardProps {
     content: Content;
@@ -17,17 +17,6 @@ interface ContentCardProps {
     canDelete?: boolean;
     onEdit: (content: Content) => void;
     onDelete: (content: Content) => void;
-}
-
-function formatDate(value?: string | null): string {
-    if (!value) { return "Не указана"; }
-
-    const datePart = value.slice(0, 10);
-    const [year, month, day] = datePart.split("-");
-
-    if (!year || !month || !day) { return value; }
-
-    return `${day}.${month}.${year}`;
 }
 
 function ContentCard({
@@ -42,10 +31,10 @@ function ContentCard({
     function openContent() { navigate(`/content/${content.id}`); }
 
     return (
-        <div className={styles.card} onClick={openContent}>
-            <div className={styles.main}>
-                <div className={styles.titleRow}>
-                    <Link to={`/content/${content.id}`} className={styles.title} onClick={(event) => event.stopPropagation()}>
+        <div className={"content-card"} onClick={openContent}>
+            <div className={"content-card__main"}>
+                <div className={"content-card__title-row"}>
+                    <Link to={`/content/${content.id}`} className={"content-card__title"} onClick={(event) => event.stopPropagation()}>
                         {content.name}
                     </Link>
 
@@ -55,13 +44,13 @@ function ContentCard({
                 </div>
 
                 {content.description && (
-                    <p className={styles.description}>
+                    <p className={"content-card__description"}>
                         {content.description}
                     </p>
                 )}
 
-                <div className={styles.meta}>
-                        <span className={styles.metaItem}>
+                <div className={"content-card__meta"}>
+                        <span className={"content-card__meta-item"}>
                             <CalendarDays size={14} />
                             Планируемый выход:{" "}
                             {formatDate(content.planned_release_at)}
@@ -72,12 +61,12 @@ function ContentCard({
                     </span>
                 </div>
 
-                <div className={styles.progress}>
+                <div className={"content-card__progress"}>
                     <ProgressBar value={content.progress} />
                 </div>
             </div>
     {/* Блок действий */}
-            <div className={styles.actions}>
+            <div className={"content-card__actions"}>
         {/* Кнопка редактировать контент */}
                 <Button variant="secondary" onClick={(event) => { event.stopPropagation(); onEdit(content); }}>
                     <Pencil size={15} />
