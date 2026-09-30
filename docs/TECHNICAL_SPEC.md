@@ -2,7 +2,7 @@
 
 **Рабочее название:** CreatorOS  
 **Версия приложения:** 0.1  
-**Версия документа:** 1.4  
+**Версия документа:** 1.5  
 **Статус:** Принято новое технологическое решение  
 **Тип продукта:** Desktop-приложение  
 **Целевые платформы:** Windows / macOS / Linux
@@ -91,7 +91,7 @@
 	50. Основной технологический стек новой версии CreatorOS: TypeScript + React + Electron.
 	51. Electron используется как desktop-shell для Windows, macOS и Linux; Node.js-возможности Electron используются в безопасном main/preload-слое для системных функций.
 	52. Vite может использоваться как инструмент сборки и разработки React renderer-части, поскольку он уже является частью legacy-структуры; заменять его без практической причины не требуется.
-	53. CSS является основным средством визуального оформления интерфейса. Общие стили, дизайн-токены, типографика, цвета темы и общие состояния хранятся централизованно; стили отдельных компонентов и страниц находятся рядом с их владельцами.
+	53. CSS является основным средством визуального оформления интерфейса. Все CSS-файлы хранятся только в src/styles/ и его подкаталогах. Общие стили, дизайн-токены, типографика, цвета темы и общие состояния хранятся централизованно; уникальные стили компонентов и страниц хранятся в src/styles/ в соответствующих разделах ответственности.
 	54. На первом этапе реализуется только тёмная тема. Архитектура темы использует семантические CSS-переменные/токены, чтобы светлую тему и переключение между темами можно было добавить позднее без переделки страниц.
 	55. Работа с внешними API является фундаментальным архитектурным слоем CreatorOS. Предусматриваются HTTP/REST API, JSON, OAuth 2.0/PKCE, загрузка больших файлов, асинхронные операции, статусы публикаций и получение статистики в пределах возможностей конкретной площадки.
 	56. Каждая внешняя площадка подключается через отдельный интеграционный адаптер с единым внутренним контрактом. UI не должен содержать прямые вызовы API YouTube, VK, RuTube, Дзена и других площадок.
@@ -582,36 +582,48 @@ TaskCard
 
 ## 17. Стили
 
-Стили строятся на CSS и организуются по ответственности.
+Стили строятся на CSS и централизуются в src/styles/.
 
-Примерная структура:
+Все CSS-файлы CreatorOS находятся только внутри src/styles/ и его подкаталогов. Компоненты и страницы не имеют CSS-файлов рядом с .tsx.
 
-```text
+Целевая структура:
+
+~~~text
 src/
-├── styles/
-│   ├── theme/
-│   ├── globals.css
-│   ├── typography.css
-│   ├── components/
-│   └── ...
-└── pages/
-    ├── Dashboard/
-    │   ├── Dashboard.tsx
-    │   └── Dashboard.css
-    └── ...
-```
+└── styles/
+    ├── index.css
+    ├── theme.css
+    ├── entities.css
+    ├── ui/
+    │   ├── button.css
+    │   ├── badge.css
+    │   ├── card.css
+    │   └── ...
+    ├── layout/
+    │   ├── app-shell.css
+    │   ├── sidebar.css
+    │   ├── workspace.css
+    │   └── ...
+    ├── pages/
+    │   ├── dashboard.css
+    │   ├── projects.css
+    │   └── ...
+    └── settings/
+        └── ...
+~~~
 
-Общие правила:
+Правила:
 
-1. Глобальные дизайн-токены и цвета темы определяются централизованно.
-2. Общие стили компонентов не копируются в конкретных страницах.
-3. Уникальный стиль страницы хранится рядом со страницей.
-4. Уникальный стиль конкретного компонента хранится рядом с компонентом.
-5. CSS Modules допускаются для локальной изоляции, когда это упрощает поддержку.
-6. На первом этапе активна только тёмная тема.
-7. Светлая тема и переключение между темами откладываются на более поздний этап.
-8. Для темы используются семантические переменные, например `--app-background`, `--sidebar-background`, `--primary-text`, `--accent-color`, чтобы смена темы не требовала переписывания компонентов.
+1. theme.css содержит дизайн-токены, цвета темы, типографику, размеры и другие централизованные визуальные значения.
+2. entities.css содержит общие стили основных сущностных объектов, если они действительно общие для нескольких сущностей.
+3. Уникальный стиль отдельного UI-компонента хранится в src/styles/ui/ или другом соответствующем разделе, а не рядом с .tsx.
+4. Уникальный стиль страницы хранится в src/styles/pages/ или соответствующем подразделе.
+5. CSS Modules допускаются, но файл всё равно должен находиться внутри src/styles/. Выбор между обычным CSS и CSS Modules определяется реальной потребностью в изоляции.
+6. Общая визуальная структура не копируется между специализированными компонентами.
+7. Визуальные исключения создаются только при доказанной уникальной ответственности.
+8. Перенос, изменение или переиспользование общего визуального элемента должно по возможности выполняться в одном месте.
 
+Текущий репозиторий содержит исторически оставшиеся .module.css внутри components/ и pages/. Их перенос в src/styles/ является отдельной задачей рефакторинга и на данном этапе не выполняется автоматически.
 
 ## 18. База данных
 
@@ -961,3 +973,863 @@ electron/preload.cts   ограниченный API preload для renderer
 Для будущего варианта C native-слой добавляется ниже существующих application/infrastructure boundaries. React UI и сервисы не должны напрямую зависеть от конкретной реализации C++/Rust; native adapter подключается через отдельный контракт/bridge.
 
 Вложенные каталоги создаются только при появлении соответствующей ответственности. Структура не расширяется заранее без практической необходимости.
+
+## 28. Архитектура UI-конструктора CreatorOS
+
+### 28.1 Цель
+
+Интерфейс CreatorOS строится как конструктор из независимых переиспользуемых компонентов. Компонент более высокого уровня собирается из компонентов более низкого уровня через композицию.
+
+Основная цель:
+
+~~~text
+один общий визуальный/функциональный механизм
+                ↓
+        одна реализация
+                ↓
+    много специализированных использований
+~~~
+
+Изменение общего компонента должно автоматически отражаться во всех его использованиях. Специализированные компоненты не копируют общий JSX и CSS.
+
+React UI не использует классическое наследование как основной механизм повторного использования. Наследование и ООП применяются преимущественно в domain/service/repository/integration слоях.
+
+### 28.2 Уровни конструктора
+
+~~~text
+Уровень 0 — UI primitives
+        ↓
+Уровень 1 — Common UI components
+        ↓
+Уровень 2 — Layout / page patterns
+        ↓
+Уровень 3 — Entity components
+        ↓
+Pages — сборка пользовательских сценариев
+~~~
+
+Параллельно существует отдельный поток данных и бизнес-логики:
+
+~~~text
+Page / Component
+        ↓
+Application Service
+        ↓
+Repository / Adapter
+        ↓
+SQLite / External API
+~~~
+
+UI-компонент не должен напрямую зависеть от SQLite, файловой системы, OAuth или внешнего API.
+
+### 28.3 Уровень 0 — UI primitives
+
+Минимальные универсальные элементы:
+
+| Компонент | Ответственность | Данные/props | Состояния |
+|---|---|---|---|
+| Button | действие пользователя | label/children, variant, disabled, type, icon | normal, hover, disabled, focus |
+| Badge | короткая метка/статус | label/children, tone | neutral, accent, success, warning, danger |
+| ProgressBar | визуализация прогресса | value, showValue | 0–100 |
+| Input | ввод короткого значения | value, placeholder, disabled, onChange | normal, focus, error, disabled |
+| Textarea | многострочный ввод | value, rows, placeholder, disabled, onChange | normal, focus, error, disabled |
+| Select | выбор из вариантов | value, options, disabled, onChange | normal, focus, error, disabled |
+| Icon | отдельного универсального wrapper сейчас не создавать | — | Lucide используется напрямую |
+
+Input, Textarea и Select могут быть выделены из EntityForm, когда повторное использование будет подтверждено. Их предварительно не нужно создавать только ради формальной полноты списка.
+
+### 28.4 Уровень 1 — общие составные UI-компоненты
+
+~~~text
+Card
+Panel
+Section
+PageHeader
+Toolbar
+EntityList
+Modal
+ConfirmModal
+EmptyState
+LoadingState
+ErrorState
+FormField
+EntityForm
+~~~
+
+#### Card
+
+Общий визуальный контейнер:
+
+~~~text
+Card
+├── Header?
+├── Content
+└── Footer / Actions?
+~~~
+
+Все области, кроме основного содержимого, опциональны. Card не знает о Project, Content или Task.
+
+#### Section
+
+Повторяемый блок страницы:
+
+~~~text
+Section
+├── Header
+│   ├── title
+│   ├── description?
+│   └── actions?
+└── Content
+~~~
+
+#### PageHeader
+
+Единая структура заголовка страницы:
+
+~~~text
+PageHeader
+├── title
+├── description?
+└── actions?
+~~~
+
+#### Toolbar
+
+Панель управления списком/представлением:
+
+~~~text
+Toolbar
+├── search?
+├── filters?
+├── sorting?
+└── actions?
+~~~
+
+#### EntityList
+
+Универсальный контейнер списка:
+
+~~~text
+EntityList<T>
+├── loading?
+├── error?
+├── empty?
+└── items
+      └── renderItem(item)
+~~~
+
+EntityList не знает, является ли item Project, Content или Task.
+
+#### Modal
+
+Общий механизм модального окна:
+
+~~~text
+Modal
+├── Header
+├── Close
+└── Content
+~~~
+
+#### ConfirmModal
+
+Специализация Modal для подтверждения:
+
+~~~text
+ConfirmModal
+└── Modal
+    ├── message
+    └── actions
+~~~
+
+Внутри не хранится логика удаления конкретной сущности.
+
+#### EmptyState, LoadingState, ErrorState
+
+Это независимые состояния, которые могут использоваться в любом списке, Section или Page. Удаление одного из них не должно ломать сам список.
+
+### 28.5 Уровень 2 — layout и шаблоны
+
+#### AppShell
+
+Единый корневой каркас приложения:
+
+~~~text
+AppShell
+├── Sidebar
+├── Header?
+└── Workspace
+      └── Current Route
+~~~
+
+Страницы не знают, где физически расположен Sidebar. Перемещение Sidebar, изменение его ширины или перенос в другую область выполняется в AppShell/layout-слое.
+
+#### Workspace
+
+Рабочая область между глобальным layout и конкретной страницей. Она отвечает за техническое размещение страницы и контекстную навигацию, но не за данные Project/Content.
+
+#### PageLayout
+
+Единый шаблон содержательной страницы:
+
+~~~text
+PageLayout
+├── context navigation?
+├── PageHeader
+├── Toolbar?
+└── Content
+~~~
+
+### 28.6 Уровень 3 — общие сущностные компоненты
+
+#### EntityHeader
+
+~~~text
+EntityHeader
+├── title
+├── description?
+├── status?
+├── meta?
+└── actions?
+~~~
+
+#### EntityCard
+
+Общий каркас карточки сущности:
+
+~~~text
+EntityCard
+├── Header
+│   ├── title
+│   └── status?
+├── description?
+├── content?
+├── progress?
+├── meta?
+└── actions?
+~~~
+
+Все секции, кроме основной идентификации, по возможности опциональны.
+
+#### EntityDetails
+
+Общий каркас подробного представления:
+
+~~~text
+EntityDetails
+├── context navigation?
+├── EntityHeader
+├── error?
+├── summary / info?
+├── sections[]
+└── modals / overlays?
+~~~
+
+Специализированный EntityDetails передаёт уникальные секции и действия через composition.
+
+#### EntityActions
+
+Набор действий конкретной сущности. Это не обязательно отдельный файл для каждого типа. Отдельный компонент создаётся только тогда, когда действия имеют самостоятельную повторяемую структуру.
+
+### 28.7 Project — целевая структура
+
+Данные модели:
+
+~~~text
+Project
+├── id
+├── name
+├── description?
+├── owner_id?
+├── planned_release_at
+├── status
+├── progress
+├── created_at
+└── updated_at
+~~~
+
+Статусы текущей модели:
+
+~~~text
+draft → Черновик
+active → В работе
+archived → Архив
+~~~
+
+Действия состояния:
+
+~~~text
+draft
+└── Взять в работу → active
+
+active
+└── Архивировать → archived
+
+archived
+└── Восстановить → draft
+~~~
+
+#### ProjectsPage
+
+~~~text
+ProjectsPage
+├── PageLayout
+│   ├── PageHeader
+│   │   ├── title: "Проекты"
+│   │   └── actions
+│   │       └── Button: "Создать новый проект"
+│   │
+│   └── EntityList<Project>
+│       ├── LoadingState?
+│       ├── EmptyState?
+│       └── ProjectCard[]
+│
+└── Modal / ConfirmModal
+    ├── создать проект
+    ├── редактировать проект
+    └── подтвердить удаление
+~~~
+
+ProjectsPage отвечает за загрузку списка и сценарии CRUD, но не рисует собственную альтернативную версию карточки.
+
+#### ProjectCard
+
+~~~text
+ProjectCard
+└── EntityCard
+    ├── title
+    │   └── ссылка на ProjectDetails
+    ├── description
+    ├── status → Badge
+    ├── progress → ProgressBar
+    ├── meta
+    │   └── planned_release_at + Date
+    └── actions
+        ├── Открыть
+        ├── Редактировать
+        └── Удалить
+~~~
+
+ProjectCard определяет, какие данные Project показать, но не копирует каркас EntityCard.
+
+#### ProjectDetails
+
+~~~text
+ProjectDetails
+└── EntityDetails
+    ├── context navigation
+    │   └── "Вернуться к проектам"
+    ├── EntityHeader
+    │   ├── title
+    │   ├── description
+    │   ├── status → Badge
+    │   ├── meta
+    │   │   ├── progress
+    │   │   ├── planned_release_at
+    │   │   ├── owner_id
+    │   │   ├── created_at
+    │   │   └── updated_at
+    │   └── actions
+    │       ├── Редактировать
+    │       ├── Взять в работу / Архивировать / Восстановить
+    │
+    ├── Section: Основной контент
+    │   └── ContentCard
+    │
+    ├── Section: Дополнительный контент
+    │   └── ContentCard[]
+    │
+    └── Section: Задачи
+        └── TaskList / TaskCard[] (будет реализовано на этапе Tasks)
+~~~
+
+Дополнительные модальные сценарии ProjectDetails:
+- создание основного/дополнительного Content;
+- редактирование Content;
+- подтверждение удаления дополнительного Content;
+- редактирование Project.
+
+### 28.8 Content — целевая структура
+
+Данные модели:
+
+~~~text
+Content
+├── id
+├── project_id
+├── content_type_id
+├── content_role
+├── name
+├── description?
+├── planned_release_at
+├── priority
+├── production_deadline_at?
+├── status
+├── progress
+├── created_at
+└── updated_at
+~~~
+
+Роли:
+
+~~~text
+main
+additional
+~~~
+
+Правило: один Project имеет ровно один main Content.
+
+#### ContentCard
+
+~~~text
+ContentCard
+└── EntityCard
+    ├── title
+    │   └── ссылка на ContentDetails
+    ├── description
+    ├── status/type → Badge
+    ├── progress → ProgressBar
+    ├── meta
+    │   ├── content type
+    │   └── planned_release_at
+    └── actions
+        ├── Редактировать
+        └── Удалить? (только для additional)
+~~~
+
+Текущий ContentCard визуально реализует значительную часть каркаса EntityCard самостоятельно. Это одно из главных мест будущего устранения дублирования.
+
+#### ContentDetails
+
+~~~text
+ContentDetails
+└── EntityDetails
+    ├── context navigation
+    │   └── "Вернуться к проекту"
+    ├── EntityHeader
+    │   ├── title
+    │   ├── description
+    │   ├── meta
+    │   │   ├── content type
+    │   │   ├── role
+    │   │   ├── planned_release_at
+    │   │   └── progress
+    │   └── actions
+    │       └── Редактировать
+    └── Section: Информация о контенте
+        ├── Тип контента
+        ├── Роль
+        ├── Планируемый выход
+        └── Прогресс
+~~~
+
+### 28.9 ContentType
+
+Модель:
+
+~~~text
+ContentType
+├── id
+├── name
+├── description?
+├── created_at
+└── updated_at
+~~~
+
+Представление в Settings:
+
+~~~text
+ContentTypesPage
+├── PageLayout
+│   ├── PageHeader
+│   │   ├── title
+│   │   └── actions
+│   │       └── "Добавить тип"
+│   └── EntityList<ContentType>
+│       ├── LoadingState?
+│       ├── EmptyState?
+│       └── ContentTypeItem[]
+│
+└── Modal
+    └── EntityForm<ContentType>
+~~~
+
+Элемент ContentType показывает:
+- название;
+- описание / особенности;
+- действия: Редактировать, Удалить.
+
+Правила удаления и ограничения определяются бизнес-слоем, а не UI.
+
+### 28.10 Task — целевая структура MVP
+
+Модель:
+
+~~~text
+Task
+├── id
+├── parent_id
+├── parent_type
+├── parent_task_id?
+├── title
+├── description?
+├── status
+├── assigned_user_id?
+├── start_date?
+├── due_date?
+├── completed_at?
+├── created_at
+└── updated_at
+~~~
+
+#### TasksPage
+
+~~~text
+TasksPage
+├── PageLayout
+│   ├── PageHeader
+│   │   ├── title: "Задачи"
+│   │   └── actions
+│   │       └── "Создать задачу"
+│   ├── Toolbar
+│   │   ├── поиск
+│   │   ├── фильтры
+│   │   └── сортировка
+│   └── EntityList<Task>
+│       └── TaskCard[]
+~~~
+
+#### TaskCard
+
+~~~text
+TaskCard
+└── EntityCard
+    ├── title
+    ├── status → Badge
+    ├── description?
+    ├── meta
+    │   ├── parent entity
+    │   ├── assigned user?
+    │   ├── due date?
+    │   └── priority/context (расчётная)
+    └── actions
+        ├── Открыть
+        ├── Редактировать
+        └── Удалить
+~~~
+
+#### TaskDetails
+
+~~~text
+TaskDetails
+└── EntityDetails
+    ├── EntityHeader
+    ├── task information
+    ├── parent entity context
+    └── actions
+        ├── Изменить статус
+        ├── Редактировать
+        └── Удалить
+~~~
+
+Статусы и реальные переходы определяются общей системой workflow; свободный ввод статуса не используется.
+
+### 28.11 Asset / Library — целевая структура MVP
+
+Asset — базовая сущность материалов/ресурсов, связанных с производством контента.
+
+Предварительная UI-модель:
+
+~~~text
+LibraryPage
+├── PageLayout
+│   ├── PageHeader
+│   │   ├── title: "Библиотека"
+│   │   └── actions
+│   │       └── "Добавить материал"
+│   ├── Toolbar
+│   │   ├── поиск
+│   │   ├── фильтры
+│   │   └── сортировка
+│   └── EntityList<Asset>
+│       └── AssetCard[]
+~~~
+
+AssetCard:
+
+~~~text
+AssetCard
+└── EntityCard
+    ├── preview / icon
+    ├── title
+    ├── asset type
+    ├── metadata
+    └── actions
+        ├── Открыть
+        ├── Редактировать
+        └── Удалить
+~~~
+
+Точная модель полей Asset ещё не утверждена. Нельзя придумывать окончательные поля до отдельного этапа проектирования Library.
+
+### 28.12 Planning — целевая структура
+
+PlanningPage показывает производственный план и календарное представление:
+
+~~~text
+PlanningPage
+├── PageLayout
+│   ├── PageHeader
+│   ├── Toolbar
+│   │   ├── период
+│   │   ├── фильтры
+│   │   └── переключатель представления
+│   └── PlanningView
+│       ├── Calendar / Timeline
+│       └── PlannedItem[]
+~~~
+
+PlanningView работает с Project, Content и Task и их системными датами. Он не становится новым источником бизнес-данных.
+
+### 28.13 Dashboard — целевая структура
+
+~~~text
+DashboardPage
+└── PageLayout
+    ├── PageHeader
+    │   └── title: "Главная"
+    └── DashboardGrid
+        ├── Section: Сегодня
+        │   └── TaskList
+        ├── Section: Требует внимания
+        │   └── AttentionList
+        ├── Section: Активные проекты
+        │   └── ProjectSummary[]
+        └── Section: Ближайшие публикации
+            └── PublicationSummary[] (после появления Publication)
+~~~
+
+DashboardPage является обзором системы и не должна становиться отдельным источником данных.
+
+### 28.14 Analytics — текущая граница
+
+AnalyticsPage входит в навигацию, но расширенная аналитика платформ откладывается.
+
+~~~text
+AnalyticsPage
+└── PageLayout
+    ├── PageHeader
+    ├── Toolbar
+    └── AnalyticsView
+        ├── Summary
+        ├── Charts
+        └── Details
+~~~
+
+Конкретные графики, показатели и источники данных утверждаются после проектирования Analytics.
+
+### 28.15 Settings — общая структура
+
+~~~text
+Settings
+└── SettingsLayout
+    ├── SettingsSidebar
+    └── SettingsWorkspace
+         └── SettingsPage
+~~~
+
+Текущие категории:
+
+~~~text
+Общие
+Внешний вид
+Горячие клавиши
+Проекты
+Типы контента
+Автоматизация
+Площадки
+Команда
+AI
+~~~
+
+Не реализованные категории пока остаются заглушками и не должны получать псевдофункциональность.
+
+### 28.16 Global layout и навигация
+
+Целевая зависимость:
+
+~~~text
+App
+└── AppShell
+    ├── Sidebar
+    └── Workspace
+        └── PageLayout
+            └── Current Page
+~~~
+
+Страница не содержит Sidebar.
+
+Страница не знает его расположение.
+
+Страница не должна самостоятельно задавать глобальный workspace-layout.
+
+Это позволяет изменить:
+
+~~~text
+Sidebar слева
+        ↓
+Sidebar справа
+~~~
+
+изменив только layout-слой.
+
+### 28.17 Правило слабой связанности
+
+Компоненты строятся по правилу:
+
+~~~text
+Page
+ ↓
+Domain Component
+ ↓
+Common Component
+ ↓
+Primitive
+~~~
+
+Низкоуровневый компонент не импортирует специализированный компонент высокого уровня.
+
+Примеры:
+
+~~~text
+Button ❌→ ProjectCard
+Card ❌→ Project
+EntityList ❌→ Content
+EntityCard ❌→ ProjectService
+~~~
+
+Разрешено:
+
+~~~text
+ProjectCard → EntityCard
+ProjectCard → Project model
+ProjectPage → ProjectService
+~~~
+
+### 28.18 Правило опциональных частей
+
+Базовый компонент не должен требовать все возможные части.
+
+~~~text
+EntityCard
+├── title                 обязательный
+├── description?          optional
+├── status?               optional
+├── progress?             optional
+├── meta?                 optional
+├── content?              optional
+└── actions?              optional
+~~~
+
+Это означает:
+- карточка без progress остаётся рабочей;
+- карточка без status остаётся рабочей;
+- карточка без actions остаётся рабочей.
+
+Удаление одного необязательного элемента не должно приводить к разрушению базового компонента.
+
+### 28.19 Что считается самостоятельным компонентом
+
+Самостоятельный файл/компонент создаётся только если выполняется хотя бы одно условие:
+
+1. компонент используется в нескольких местах;
+2. компонент имеет самостоятельную визуальную ответственность;
+3. компонент имеет самостоятельное состояние/поведение;
+4. компонент представляет устойчивый архитектурный шаблон.
+
+Если блок используется один раз и не имеет самостоятельной ответственности, он может оставаться частью родительского компонента.
+
+### 28.20 Что НЕ создаём заранее
+
+Пока не создаются без подтверждённой необходимости:
+
+~~~text
+BaseComponent
+BasePage
+BaseEntity
+UniversalWidget
+UniversalIcon
+UniversalText
+UniversalContainer
+~~~
+
+Также не создаются отдельные wrappers только ради увеличения количества файлов.
+
+### 28.21 Текущая карта реализации
+
+~~~text
+                          App
+                           │
+                       AppShell
+                    ┌──────┴──────┐
+                 Sidebar       Workspace
+                                 │
+                            PageLayout
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+            PageHeader        Toolbar          Content
+                                                   │
+                     ┌─────────────────────────────┼─────────────┐
+                     │                             │             │
+                EntityList                     Section       DashboardGrid
+                     │                             │
+          ┌──────────┼───────────┐                 │
+          │          │           │                 │
+      ProjectCard ContentCard TaskCard        EntityDetails
+          │          │           │                 │
+          └──────────┼───────────┘                 │
+                     │                        ┌────┴────┐
+                 EntityCard              ProjectDetails  ContentDetails
+                     │
+        ┌────────────┼─────────────┐
+        │            │             │
+      Badge      ProgressBar    Actions
+~~~
+
+Эта схема является целевой, а не требованием немедленно создавать каждый прямоугольник отдельным .tsx-файлом.
+
+### 28.22 Приоритет ближайшей реализации
+
+Работа выполняется снизу вверх:
+
+~~~text
+1. UI primitives
+   Button / Badge / ProgressBar / form controls
+
+2. Common UI
+   Card / Section / PageHeader / EntityList /
+   Modal / EmptyState / FormField
+
+3. Layout
+   AppShell / Workspace / PageLayout
+
+4. Entity framework
+   EntityHeader / EntityCard / EntityDetails
+
+5. Project
+   ProjectCard / ProjectDetails / ProjectsPage
+
+6. Content
+   ContentCard / ContentDetails / Content integration into Project
+
+7. Task
+   TaskCard / TaskDetails / TasksPage
+
+8. Planning / Library / Dashboard expansion
+
+9. Publication / Platform / Account / Analytics integrations
+~~~
+
+На каждом шаге существующие компоненты сначала проверяются на возможность повторного использования; новый компонент создаётся только после такой проверки.
+

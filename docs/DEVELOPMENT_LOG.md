@@ -136,3 +136,22 @@
 	✅ Удалена последняя ссылка ContentCard на удалённый CSS Module.
 	✅ Повторно проверено дерево репозитория: старые расположения EntityCard, ProjectCard и ProjectSummary, а также удалённые CSS-модули отсутствуют.
 	Результат: структура рефакторинга приведена в согласованное состояние; требуется повторная локальная сборка для проверки TypeScript/Vite.
+
+
+## 30.09.2026
+
+### Проектирование UI-конструктора CreatorOS
+	✅ Проведён аудит фактической структуры src/ после рефакторинга и сверка с актуальными TECHNICAL_SPEC.md и DEVELOPMENT_LOG.md.
+	✅ Зафиксирован принцип UI-конструктора из независимых компонентов с композиционным переиспользованием вместо классического наследования React-компонентов.
+	✅ Определены уровни: UI primitives → Common UI → Layout/Page patterns → Entity components → Pages.
+	✅ Определены базовые строительные блоки: Button, Badge, ProgressBar, Card, Section, PageHeader, Toolbar, EntityList, Modal, ConfirmModal, EmptyState, LoadingState, ErrorState, FormField, EntityForm, AppShell, Workspace, PageLayout, EntityHeader, EntityCard, EntityDetails.
+	✅ Определена целевая декомпозиция Project, Content, ContentType, Task, Asset/Library, Planning, Dashboard, Analytics и Settings.
+	✅ Зафиксировано правило, что специализированные EntityCard используют общий EntityCard через composition и не копируют его JSX/CSS.
+	✅ Зафиксировано аналогичное правило для EntityDetails.
+	✅ Выявлено текущее дублирование: ContentCard самостоятельно реализует большую часть структуры карточки, уже существующей в EntityCard; это является задачей будущего рефакторинга.
+	✅ Выявлено, что ProjectCard должен использовать EntityCard как React-компонент через JSX/composition, а не вызывать функцию компонента напрямую.
+	✅ Зафиксировано правило слабой связанности и опциональных частей: отсутствие одного необязательного блока не должно разрушать базовый компонент.
+	✅ Зафиксировано новое правило: все CSS-файлы CreatorOS находятся только в src/styles/ и его подкаталогах.
+	✅ Подготовлена подробная карта компонентов и зависимостей, включая схемы ProjectsPage, ProjectCard, ProjectDetails, ContentCard, ContentDetails, Task, Library, Planning, Dashboard и Settings.
+	⚠️ Исходный код по итогам данного этапа не изменялся; выполнено только архитектурное проектирование и документирование.
+	Результат: целевая модель UI-конструктора CreatorOS зафиксирована в технической спецификации; дальнейшее изменение кода будет выполняться после отдельного согласования состава и интерфейсов базовых компонентов.
