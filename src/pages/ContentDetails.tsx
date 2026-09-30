@@ -28,19 +28,9 @@ import {
 } from "../services/contentService";
 import { getContentTypes } from "../services/contentTypeService";
 import styles from "./ContentDetails.module.css";
+import { formatDate } from "../utils/date";
 
-function formatDate(value?: string | null): string {
-    if (!value) { return "Не указана"; }
-
-    const datePart = value.slice(0, 10);
-    const [year, month, day] = datePart.split("-");
-
-    if (!year || !month || !day) { return value; }
-
-    return `${day}.${month}.${year}`;
-}
-
-function getRoleLabel(content: Content): string {
+function getRoleLabel/(content: Content): string {
     return content.content_role === "main"
         ? "Основной контент"
         : "Дополнительный контент";
