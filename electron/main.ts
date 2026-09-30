@@ -69,18 +69,19 @@ function initializeDatabase(): void {
     }
 }
 
+function normalizeSqlParams(params: SqlValue[]): Array<string | number | null> {
+    return params.map((value) =>
+        typeof value === "boolean" ? Number(value) : value
+    );
+}
+
 function registerDatabaseHandlers(): void {
     ipcMain.handle(
         "database:select",
         (_event, request: DatabaseRequest) => {
             const statement = getDatabase().prepare(request.sql);
 
-            try {
-                return statement.all(...request.params);
-            }
-            finally {
-                statement.close();
-            }
+            return statement.all(...normalizeSqlParams(request.params));
         }
     );
 
@@ -88,18 +89,12 @@ function registerDatabaseHandlers(): void {
         "database:execute",
         (_event, request: DatabaseRequest) => {
             const statement = getDatabase().prepare(request.sql);
+            const result = statement.run(...normalizeSqlParams(request.params));
 
-            try {
-                const result = statement.run(...request.params);
-
-                return {
-                    changes: Number(result.changes),
-                    lastInsertId: Number(result.lastInsertRowid),
-                };
-            }
-            finally {
-                statement.close();
-            }
+            return {
+                changes: Number(result.changes),
+                lastInsertId: Number(result.lastInsertRowid),
+            };
         }
     );
 }
