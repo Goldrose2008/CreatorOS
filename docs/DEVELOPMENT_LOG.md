@@ -158,3 +158,10 @@
 	✅ scripts/dev-electron.mjs переведён на запуск npm.cmd через cmd.exe на Windows для Vite и build:electron.
 	✅ Прямой запуск исполняемого файла Electron сохранён.
 	Результат: dev-скрипт больше не пытается запускать Windows .cmd-файл как самостоятельный executable.
+
+
+### Исправление запуска Electron через штатный launcher
+	✅ Обнаружено, что прямой запуск node_modules/electron/dist/electron.exe завершается ENOENT, поскольку бинарник Electron не был доступен по ожидаемому пути.
+	✅ scripts/dev-electron.mjs теперь запускает node_modules/electron/cli.js через текущий Node.js.
+	✅ Такой запуск использует штатный launcher Electron, предусмотренный npm-пакетом.
+	Результат: dev-скрипт больше не зависит от жёстко заданного пути к загруженному Electron-бинарнику.
