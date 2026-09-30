@@ -151,3 +151,10 @@
 	✅ В electron/main.ts параметры SQLite теперь нормализуются: boolean преобразуется в 0/1 перед передачей в node:sqlite.
 	✅ Удалён вызов statement.close(): актуальный StatementSync не предоставляет этот метод в используемых TypeScript-типах; подготовленные statements остаются управляемыми самим API.
 	Результат: Electron database handlers соответствуют установленным типам @types/node и runtime Node 24.21.0.
+
+
+### Исправление запуска npm в Windows
+	✅ Установлено, что ошибка spawn EINVAL возникает на строке запуска npm.cmd, а не на запуске Electron.
+	✅ scripts/dev-electron.mjs переведён на запуск npm.cmd через cmd.exe на Windows для Vite и build:electron.
+	✅ Прямой запуск исполняемого файла Electron сохранён.
+	Результат: dev-скрипт больше не пытается запускать Windows .cmd-файл как самостоятельный executable.
