@@ -1,8 +1,8 @@
 import type { ContentType } from "../models/ContentType";
-import { getDatabase } from "./databaseService";
+import { getDatabaseClient } from "../infrastructure/database/databaseClient";
 
 export async function getContentTypes(): Promise<ContentType[]> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
     const contentTypes = await database.select<ContentType>(
         `SELECT *
         FROM content_types
@@ -16,7 +16,7 @@ export async function createContentType(
     name: string,
     description: string
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `INSERT INTO content_types(
@@ -36,7 +36,7 @@ export async function updateContentType(
     name: string,
     description: string
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `UPDATE content_types
@@ -54,7 +54,7 @@ export async function updateContentType(
 }
 
 export async function deleteContentType(id: number): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `DELETE FROM content_types
