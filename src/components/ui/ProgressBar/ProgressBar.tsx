@@ -1,9 +1,9 @@
+import type { CSSProperties } from "react";
+
 interface ProgressBarProps {
     value: number;
     showValue?: boolean;
 }
-
-import styles from "./ProgressBar.module.css";
 
 function ProgressBar({
     value,
@@ -12,14 +12,18 @@ function ProgressBar({
 
     const normalizedValue = Math.min(100, Math.max(0, value));
 
+    const valueStyle: CSSProperties = {
+        width: `${normalizedValue}%`,
+    };
+
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.track}>
-                <div className={styles.value} style={{width: `${normalizedValue}%`}}/>
+        <div className="ui-progress">
+            <div className="ui-progress__track">
+                <div className="ui-progress__value" style={valueStyle}/>
             </div>
 
             {showValue && (
-                <span className={styles.label}>
+                <span className="ui-progress__label">
                     {normalizedValue}%
                 </span>
             )}

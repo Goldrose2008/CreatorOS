@@ -5,6 +5,9 @@ import {
 
 import Button from "../Button/Button";
 import FormField from "../FormField/FormField";
+import Input from "../Input/Input";
+import Textarea from "../Textarea/Textarea";
+import Select from "../Select/Select";
 import styles from "./EntityForm.module.css";
 import type { EntityField } from "../../../types/form";
 
@@ -106,14 +109,39 @@ function EntityForm<TValues extends object>({
 
         switch (field.type) {
             case "textarea":
-                return (<textarea {...commonProps} rows={field.rows ?? 4} className={styles.textarea} onChange={(event) => handleChange(field, event.target.value)}/>);
+                return (
+                    <Textarea
+                        {...commonProps}
+                        rows={field.rows ?? 4}
+                        invalid={Boolean(fieldErrors[field.name])}
+                        onChange={(event) => handleChange(field, event.target.value)}
+                    />
+                );
             case "date":
-                return (<input {...commonProps} type="date" className={styles.input} onChange={(event) => handleChange(field, event.target.value)}/>);
+                return (
+                    <Input
+                        {...commonProps}
+                        type="date"
+                        invalid={Boolean(fieldErrors[field.name])}
+                        onChange={(event) => handleChange(field, event.target.value)}
+                    />
+                );
             case "number":
-                return (<input {...commonProps} type="number" className={styles.input} onChange={(event) => handleChange(field, event.target.value)}/>);
+                return (
+                    <Input
+                        {...commonProps}
+                        type="number"
+                        invalid={Boolean(fieldErrors[field.name])}
+                        onChange={(event) => handleChange(field, event.target.value)}
+                    />
+                );
             case "select":
                 return (
-                    <select {...commonProps} className={styles.input} onChange={(event) => handleChange(field, event.target.value)}>
+                    <Select
+                        {...commonProps}
+                        invalid={Boolean(fieldErrors[field.name])}
+                        onChange={(event) => handleChange(field, event.target.value)}
+                    >
                         {field.options?.map(
                             (option) => (
                                 <option key={option.value} value={option.value}>
@@ -121,11 +149,18 @@ function EntityForm<TValues extends object>({
                                 </option>
                             )
                         )}
-                    </select>
+                    </Select>
                 );
             case "text":
             default:
-                return (<input {...commonProps} type="text" className={styles.input} onChange={(event) => handleChange(field, event.target.value)}/>);
+                return (
+                    <Input
+                        {...commonProps}
+                        type="text"
+                        invalid={Boolean(fieldErrors[field.name])}
+                        onChange={(event) => handleChange(field, event.target.value)}
+                    />
+                );
         }
     }
 

@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./Badge.module.css";
 import type { StatusTone } from "../../../types/status";
-
 
 interface BadgeProps {
     children: ReactNode;
@@ -14,8 +12,8 @@ function Badge({
 }: BadgeProps) {
 
     const classes = [
-        styles.badge,
-        styles[variant],
+        "ui-badge",
+        `ui-badge--${variant}`,
     ].join(" ");
 
     return (

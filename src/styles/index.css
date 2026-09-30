@@ -1,4 +1,5 @@
 @import "./theme.css";
+@import "./ui-primitives.css";
 @import "./entities.css";
 
 * {

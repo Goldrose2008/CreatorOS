@@ -3,8 +3,6 @@ import type {
     ReactNode,
 } from "react";
 
-import styles from "./Button.module.css";
-
 export type ButtonVariant =
     | "primary"
     | "secondary"
@@ -25,8 +23,8 @@ function Button({
 }: ButtonProps) {
 
     const classes = [
-        styles.button,
-        styles[variant],
+        "ui-button",
+        `ui-button--${variant}`,
         className,
     ]
         .filter(Boolean)
