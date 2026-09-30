@@ -5,7 +5,6 @@ import {
 
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
-import styles from "./Modal.module.css";
 
 interface ModalProps {
     open: boolean;
@@ -54,19 +53,19 @@ function Modal({
     }
 
     return createPortal(
-        <div className={styles.overlay} onMouseDown={handleOverlayClick}>
-            <div className={[styles.modal, styles[width]].join(" ")} role="dialog" aria-modal="true" aria-labelledby="modal-title" onMouseDown={(event) => event.stopPropagation() }>
-                <header className={styles.header}>
-                    <h2 id="modal-title" className={styles.title}>
+        <div className="ui-modal__overlay" onMouseDown={handleOverlayClick}>
+            <div className={["ui-modal", `ui-modal--${width}`].join(" ")} role="dialog" aria-modal="true" aria-labelledby="modal-title" onMouseDown={(event) => event.stopPropagation() }>
+                <header className="ui-modal__header">
+                    <h2 id="modal-title" className="ui-modal__title">
                         {title}
                     </h2>
 
-                    <button type="button" className={styles.closeButton} onClick={onClose} aria-label="Закрыть">
+                    <button type="button" className="ui-modal__close-button" onClick={onClose} aria-label="Закрыть">
                         <X size={18} />
                     </button>
                 </header>
 
-                <div className={styles.content}>
+                <div className="ui-modal__content">
                     {children}
                 </div>
             </div>

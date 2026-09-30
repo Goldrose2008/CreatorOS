@@ -3,8 +3,8 @@ import {
     useState,
 } from "react";
 import { Link } from "react-router-dom";
-import Card from "../components/ui/Card/Card";
-import EmptyState from "../components/ui/EmptyState/EmptyState";
+import Card from "../components/ui/layout/Card";
+import EmptyState from "../components/ui/states/EmptyState";
 import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectSummary from "../components/projects/ProjectSummary/ProjectSummary";
 import type { Project } from "../models/Project";

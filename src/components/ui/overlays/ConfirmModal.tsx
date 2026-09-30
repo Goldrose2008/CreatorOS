@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
-import Button from "../Button/Button";
-import Modal from "../Modal/Modal";
-import styles from "./ConfirmModal.module.css";
+import Button from "../primitives/Button";
+import Modal from "../overlays/Modal";
 
 interface ConfirmModalProps {
     open: boolean;
@@ -27,16 +26,16 @@ function ConfirmModal({
 }: ConfirmModalProps) {
     return (
         <Modal open={open} title={title} onClose={onCancel} width="small">
-            <div className={styles.content}>
-                <div className={styles.icon}>
+            <div className="ui-confirm-modal">
+                <div className="ui-confirm-modal__icon">
                     <AlertTriangle size={20} />
                 </div>
 
-                <div className={styles.message}>
+                <div className="ui-confirm-modal__message">
                     {message}
                 </div>
 
-                <div className={styles.actions}>
+                <div className="ui-confirm-modal__actions">
                     <Button variant="danger" onClick={onConfirm} disabled={saving}>
                         {saving ? "Удаление..." : confirmLabel}
                     </Button>

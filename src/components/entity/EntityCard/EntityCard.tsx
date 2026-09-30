@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import Card from "../../ui/Card/Card";
-import Badge from "../../ui/Badge/Badge";
+import Card from "../../ui/layout/Card";
+import Badge from "../../ui/primitives/Badge";
 import type { StatusTone } from "../../../types/status";
-import ProgressBar from "../../ui/ProgressBar/ProgressBar";
+import ProgressBar from "../../ui/primitives/ProgressBar";
 
 export interface EntityCardStatus {
     label: string;

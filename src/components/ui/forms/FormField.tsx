@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import styles from "./FormField.module.css";
 
 interface FormFieldProps {
     label: string;
@@ -20,24 +19,24 @@ function FormField({
 }: FormFieldProps) {
 
     return (
-        <div className={styles.field}>
-            <label className={styles.label} htmlFor={htmlFor}>
+        <div className="ui-form-field">
+            <label className="ui-form-field__label" htmlFor={htmlFor}>
                 {label}
                 {required && (
-                    <span className={styles.required} aria-hidden="true">
+                    <span className="ui-form-field__required" aria-hidden="true">
                         *
                     </span>
                 )}
             </label>
             {children}
             {description && (
-                <div className={styles.description}>
+                <div className="ui-form-field__description">
                     {description}
                 </div>
             )}
 
             {error && (
-                <div className={styles.error}>
+                <div className="ui-form-field__error">
                     {error}
                 </div>
             )}

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import Badge from "../../ui/Badge/Badge";
+import Badge from "../../ui/primitives/Badge";
 import type { StatusTone } from "../../../types/status";
 
 interface EntityHeaderStatus {

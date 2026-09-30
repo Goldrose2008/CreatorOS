@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import styles from "./EmptyState.module.css";
 
 interface EmptyStateProps {
     title?: ReactNode;
@@ -14,21 +13,21 @@ function EmptyState({
 }: EmptyStateProps) {
 
     return (
-        <div className={styles.container}>
+        <div className="ui-empty-state">
             {title && (
-                <h2 className={styles.title}>
+                <h2 className="ui-empty-state__title">
                     {title}
                 </h2>
             )}
 
             {description && (
-                <p className={styles.description}>
+                <p className="ui-empty-state__description">
                     {description}
                 </p>
             )}
 
             {action && (
-                <div className={styles.action}>
+                <div className="ui-empty-state__action">
                     {action}
                 </div>
             )}

@@ -3,11 +3,11 @@ import {
     useEffect,
     useState,
 } from "react";
-import Button from "../components/ui/Button/Button";
-import Modal from "../components/ui/Modal/Modal";
-import EntityForm from "../components/ui/EntityForm/EntityForm";
-import EmptyState from "../components/ui/EmptyState/EmptyState";
-import ConfirmModal from "../components/ui/ConfirmModal/ConfirmModal";
+import Button from "../components/ui/primitives/Button";
+import Modal from "../components/ui/overlays/Modal";
+import EntityForm from "../components/ui/forms/EntityForm";
+import EmptyState from "../components/ui/states/EmptyState";
+import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import Workspace from "../components/layout/Workspace/Workspace";
 import ProjectCard from "../components/projects/ProjectCard/ProjectCard";
 import type { Project } from "../models/Project";

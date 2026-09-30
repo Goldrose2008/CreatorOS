@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { EntityCard } from "../../entity/EntityCard/EntityCard";
-import Button from "../../ui/Button/Button";
+import Button from "../../ui/primitives/Button";
 import type { Project } from "../../../models/Project";
 import { getProjectStatusConfig } from "../../../config/entities/projectConfig";
 import { formatDate } from "../../../utils/date";

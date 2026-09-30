@@ -3,11 +3,11 @@ import {
     useEffect,
     useState,
 } from "react";
-import Button from "../../components/ui/Button/Button";
-import Card from "../../components/ui/Card/Card";
-import Modal from "../../components/ui/Modal/Modal";
-import EntityForm from "../../components/ui/EntityForm/EntityForm";
-import EmptyState from "../../components/ui/EmptyState/EmptyState";
+import Button from "../../components/ui/primitives/Button";
+import Card from "../../components/ui/layout/Card";
+import Modal from "../../components/ui/overlays/Modal";
+import EntityForm from "../../components/ui/forms/EntityForm";
+import EmptyState from "../../components/ui/states/EmptyState";
 import type { ContentType } from "../../models/ContentType";
 import {
     CONTENT_TYPE_FORM_FIELDS,

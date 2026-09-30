@@ -1,4 +1,4 @@
-import Card from "../../components/ui/Card/Card";
+import Card from "../../components/ui/layout/Card";
 import { APP_NAME } from "../../config/appConfig";
 import styles from "./Settings.module.css";
 

@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
-import Button from "../components/ui/Button/Button";
-import Card from "../components/ui/Card/Card";
-import EmptyState from "../components/ui/EmptyState/EmptyState";
-import EntityForm from "../components/ui/EntityForm/EntityForm";
-import Modal from "../components/ui/Modal/Modal";
+import Button from "../components/ui/primitives/Button";
+import Card from "../components/ui/layout/Card";
+import EmptyState from "../components/ui/states/EmptyState";
+import EntityForm from "../components/ui/forms/EntityForm";
+import Modal from "../components/ui/overlays/Modal";
 import Workspace from "../components/layout/Workspace/Workspace";
 import type { Content } from "../models/Content";
 import type { ContentType } from "../models/ContentType";

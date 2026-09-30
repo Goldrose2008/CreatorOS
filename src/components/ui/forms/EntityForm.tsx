@@ -3,12 +3,11 @@ import {
     type SubmitEvent,
 } from "react";
 
-import Button from "../Button/Button";
-import FormField from "../FormField/FormField";
-import Input from "../Input/Input";
-import Textarea from "../Textarea/Textarea";
-import Select from "../Select/Select";
-import styles from "./EntityForm.module.css";
+import Button from "../primitives/Button";
+import FormField from "../forms/FormField";
+import Input from "../primitives/Input";
+import Textarea from "../primitives/Textarea";
+import Select from "../primitives/Select";
 import type { EntityField } from "../../../types/form";
 
 interface EntityFormProps<TValues extends object> {
@@ -165,8 +164,8 @@ function EntityForm<TValues extends object>({
     }
 
     return (
-        <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.fields}>
+        <form className="ui-entity-form" onSubmit={handleSubmit}>
+            <div className="ui-entity-form__fields">
 
                 {fields.map((field) => (
                     <FormField
@@ -192,12 +191,12 @@ function EntityForm<TValues extends object>({
             </div>
 
             {error && (
-                <div className={styles.formError}>
+                <div className="ui-entity-form__error">
                     {error}
                 </div>
             )}
 
-            <div className={styles.actions}>
+            <div className="ui-entity-form__actions">
                 <Button type="submit" disabled={saving}>
                     {saving ? "Сохранение..." : submitLabel}
                 </Button>

@@ -15,12 +15,12 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import ContentCard from "../components/content/ContentCard/ContentCard";
-import Button from "../components/ui/Button/Button";
-import Card from "../components/ui/Card/Card";
-import Modal from "../components/ui/Modal/Modal";
-import EntityForm from "../components/ui/EntityForm/EntityForm";
-import EmptyState from "../components/ui/EmptyState/EmptyState";
-import ConfirmModal from "../components/ui/ConfirmModal/ConfirmModal";
+import Button from "../components/ui/primitives/Button";
+import Card from "../components/ui/layout/Card";
+import Modal from "../components/ui/overlays/Modal";
+import EntityForm from "../components/ui/forms/EntityForm";
+import EmptyState from "../components/ui/states/EmptyState";
+import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import Workspace from "../components/layout/Workspace/Workspace";
 import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";

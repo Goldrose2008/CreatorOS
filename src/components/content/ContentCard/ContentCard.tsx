@@ -4,9 +4,9 @@ import {
     Trash2,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "../../ui/Button/Button";
-import Badge from "../../ui/Badge/Badge";
-import ProgressBar from "../../ui/ProgressBar/ProgressBar";
+import Button from "../../ui/primitives/Button";
+import Badge from "../../ui/primitives/Badge";
+import ProgressBar from "../../ui/primitives/ProgressBar";
 import type { Content } from "../../../models/Content";
 import type { ContentType } from "../../../models/ContentType";
 import { formatDate } from "../../../utils/date";
