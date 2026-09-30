@@ -3,14 +3,13 @@ import Card from "../ui/Card/Card";
 import Badge from "../ui/Badge/Badge";
 import type { StatusTone } from "../../types/status";
 import ProgressBar from "../ui/ProgressBar/ProgressBar";
-import styles from "../../styles/entities/EntityCard.module.css";
 
 export interface EntityCardStatus {
     label: string;
     variant?: StatusTone;
 }
 
-export interface InitialCardProps {
+export export interface EntityCardProps {
     title: ReactNode;
     description?: ReactNode;
     status?: EntityCardStatus;
@@ -19,24 +18,24 @@ export interface InitialCardProps {
     actions?: ReactNode;
 }
 
-export function InitialCard({
+export function EntityCard({
     title,
     description,
     status,
     progress,
     meta = [],
     actions,
-}: InitialCardProps) {
+}: EntityCardProps) {
     return (
-        <Card className={styles.card}>
-            <div className={styles.header}>
-                <div className={styles.titleBlock}>
-                    <h3 className={styles.title}>
+        <Card className={"entity-card"}>
+            <div className={"entity-card__header"}>
+                <div className={"entity-card__title-block"}>
+                    <h3 className={"entity-card__title"}>
                         {title}
                     </h3>
 
                     {description && (
-                        <p className={styles.description}>
+                        <p className={"entity-card__description"}>
                             {description}
                         </p>
                     )}
@@ -50,15 +49,15 @@ export function InitialCard({
             </div>
 
             {progress !== undefined && (
-                <div className={styles.progress}>
+                <div className={"entity-card__progress"}>
                     <ProgressBar value={progress} />
                 </div>
             )}
 
             {meta.length > 0 && (
-                <div className={styles.meta}>
+                <div className={"entity-card__meta"}>
                     {meta.map((item, index) => (
-                        <div key={index} className={styles.metaItem}>
+                        <div key={index} className={"entity-card__meta-item"}>
                             {item}
                         </div>
                     ))}
@@ -66,7 +65,7 @@ export function InitialCard({
             )}
 
             {actions && (
-                <div className={styles.actions}>
+                <div className={"entity-card__actions"}>
                     {actions}
                 </div>
             )}
