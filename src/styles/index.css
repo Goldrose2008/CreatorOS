@@ -1,4 +1,5 @@
 @import "./theme.css";
+@import "./entities.css";
 
 * {
     box-sizing: border-box;
