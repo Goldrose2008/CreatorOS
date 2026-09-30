@@ -169,3 +169,13 @@
 	✅ Стили primitives централизованы в `src/styles/ui-primitives.css`.
 	✅ EntityForm использует Input, Textarea и Select как переиспользуемые базовые элементы.
 	Результат: шаг 1 завершён; можно переходить к Common UI.
+
+### Завершение шага 2 — Common UI
+	✅ Common UI-компоненты реализованы и сгруппированы по ответственности в `src/components/ui/`.
+	✅ Группы: `primitives`, `layout`, `forms`, `states`, `overlays`, `lists`.
+	✅ Существующие Card, Modal, ConfirmModal, EmptyState, FormField и EntityForm переведены на централизованные стили.
+	✅ Созданы Section, PageHeader, Toolbar, EntityList, LoadingState и ErrorState.
+	✅ CSS Common UI централизован в `src/styles/common-ui.css`; CSS-файлы компонентов Common UI не хранятся рядом с `.tsx`.
+	✅ Локальная сборка после шага выполнена успешно.
+	✅ Код шага 2 закоммичен и запушен в `main`.
+	Результат: шаг 2 завершён; следующий этап — глобальный layout.
