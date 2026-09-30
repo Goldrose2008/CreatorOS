@@ -1,10 +1,15 @@
 import { spawn, execFileSync } from "node:child_process";
+import path from "node:path";
 import process from "node:process";
 
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-const electronCommand = process.platform === "win32"
-    ? "node_modules/.bin/electron.cmd"
-    : "node_modules/.bin/electron";
+const electronCommand = path.resolve(
+    process.cwd(),
+    "node_modules",
+    "electron",
+    "dist",
+    process.platform === "win32" ? "electron.exe" : "electron"
+);
 
 const rendererUrl = "http://127.0.0.1:5173";
 
