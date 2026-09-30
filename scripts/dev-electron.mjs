@@ -61,9 +61,33 @@ const vite = spawn(
 );
 
 function cleanup() {
-    if (!vite.killed) {
-        vite.kill();
+    if (vite.exitCode !== null || vite.signalCode !== null) {
+        return;
     }
+
+    if (isWindows && vite.pid) {
+        try {
+            execFileSync(shellCommand, [
+                "/d",
+                "/s",
+                "/c",
+                "taskkill",
+                "/PID",
+                String(vite.pid),
+                "/T",
+                "/F",
+            ], {
+                stdio: "ignore",
+            });
+        }
+        catch {
+            // Процесс уже мог завершиться самостоятельно.
+        }
+
+        return;
+    }
+
+    vite.kill("SIGTERM");
 }
 
 process.on("SIGINT", cleanup);
