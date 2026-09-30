@@ -3,7 +3,7 @@ import { getDatabase } from "./databaseService";
 
 export async function getContentTypes(): Promise<ContentType[]> {
     const database = await getDatabase();
-    const contentTypes = await database.select<ContentType[]>(
+    const contentTypes = await database.select<ContentType>(
         `SELECT *
         FROM content_types
         ORDER BY created_at ASC, id ASC`
