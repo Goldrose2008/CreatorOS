@@ -855,33 +855,47 @@ APP_NAME
 
 ## 27. Структура корня исходного проекта
 
-Базовая структура репозитория новой версии:
+Фактическая структура текущей Electron-версии:
 
 ```text
 CreatorOS/
 ├── docs/
+├── electron/
+│   ├── database/
+│   │   └── schema.sql
+│   ├── main.ts
+│   ├── preload.cts
+│   └── tsconfig.json
+├── public/
+├── scripts/
+│   └── dev-electron.mjs
 ├── src/
-├── tests/
-└── CreatorOS.slnx
+│   ├── components/
+│   ├── config/
+│   ├── models/
+│   ├── pages/
+│   ├── services/
+│   ├── styles/
+│   ├── types/
+│   ├── App.tsx
+│   └── main.tsx
+├── index.html
+├── package.json
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+└── vite.config.ts
 ```
 
-Каталог `src/` является непосредственным корнем исходного кода основной реализации:
+Назначение основных областей:
 
 ```text
-src/
-├── Components/
-├── Domain/
-├── Services/
-├── Infrastructure/
-├── Pages/
-├── Styles/
-├── App.axaml
-├── App.axaml.cs
-├── MainWindow.axaml
-├── MainWindow.axaml.cs
-├── Program.cs
-├── app.manifest
-└── CreatorOS.csproj
+src/              React renderer и прикладной UI-код
+electron/         Electron Main, Preload и локальная инфраструктура
+electron/database SQLite-схема
+scripts/          вспомогательные команды разработки
+public/           статические ресурсы
+docs/             техническая и пользовательская документация
 ```
 
 Вложенные каталоги создаются только при появлении соответствующей ответственности. Структура не расширяется заранее без практической необходимости.
