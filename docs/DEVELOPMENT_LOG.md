@@ -127,3 +127,9 @@
 	✅ В src/services/projectService.ts исправлены оба вызова database.select(): вместо Project[] используется Project.
 	✅ Устранена ещё одна ошибка с экранированным template literal в electron/main.ts.
 	Результат: сервисный слой приведён в соответствие с контрактом database.select<T>(): Promise<T[]>.
+
+
+### Исправление пути CSS-модуля EntityCard
+	✅ Исправлен путь импорта src/styles/entities/EntityCard.module.css в src/components/entity/EntityCard.tsx: использован корректный относительный путь ../../styles/...
+	✅ По дереву репозитория подтверждено, что сам CSS-файл существует.
+	Результат: устранена причина ошибки Vite UNRESOLVED_IMPORT для EntityCard.module.css.
