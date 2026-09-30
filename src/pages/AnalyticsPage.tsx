@@ -1,4 +1,4 @@
-function AnaliticsPage() {
+function AnalyticsPage {
   return (
     <div>
       <h1>Аналитика</h1>
@@ -7,4 +7,4 @@ function AnaliticsPage() {
   );
 }
 
-export default AnaliticsPage;
+export default AnalyticsPage;
