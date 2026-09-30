@@ -4,24 +4,16 @@ import {
     Trash2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { EntityCard } from "../entity/EntityCard/EntityCard";
-import Button from "../ui/Button/Button";
-import type { Project } from "../../models/Project";
-import { getProjectStatusConfig } from "../../config/entities/projectConfig";
+import { EntityCard } from "../../entity/EntityCard/EntityCard";
+import Button from "../../ui/Button/Button";
+import type { Project } from "../../../models/Project";
+import { getProjectStatusConfig } from "../../../config/entities/projectConfig";
+import { formatDate } from "../../../utils/date";
 
 interface ProjectCardProps {
     project: Project;
     onEdit: (project: Project) => void;
     onDelete: (id: number) => void;
-}
-
-function formatProjectDate(value: string): string {
-    const datePart = value.slice(0, 10);
-    const [year, month, day] = datePart.split("-");
-
-    if (!year || !month || !day) { return value;}
-
-    return `${day}.${month}.${year}`;
 }
 
 function ProjectCard({
@@ -58,7 +50,7 @@ function ProjectCard({
                 <CalendarDays size={14} />
 
                 <span>
-                    Выход: {formatProjectDate(project.planned_release_at)}
+                    Выход: {formatDate(project.planned_release_at)}
                 </span>
             </span>,
         ],
