@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import Sidebar from "../Sidebar/Sidebar";
-import styles from "./AppShell.module.css";
+import Sidebar from "./Sidebar";
+import Workspace from "./Workspace";
+import styles from "../../styles/layout/AppShell.module.css";
 
 interface AppShellProps {
     children: ReactNode;
@@ -13,9 +14,9 @@ function AppShell({
     return (
         <div className={styles.shell}>
             <Sidebar />
-            <div  className={styles.content}>
+            <Workspace>
                 {children}
-            </div>
+            </Workspace>
         </div>
     );
 }

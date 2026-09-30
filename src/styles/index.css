@@ -1,6 +1,7 @@
 @import "./theme.css";
 @import "./ui-primitives.css";
 @import "./common-ui.css";
+@import "./layout/page-layout.css";
 @import "./entities.css";
 
 * {

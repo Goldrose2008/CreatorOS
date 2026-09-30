@@ -15,7 +15,7 @@ import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";
 import EntityForm from "../components/ui/forms/EntityForm";
 import Modal from "../components/ui/overlays/Modal";
-import Workspace from "../components/layout/Workspace/Workspace";
+import PageLayout from "../components/ui/layout/PageLayout";
 import type { Content } from "../models/Content";
 import type { ContentType } from "../models/ContentType";
 import {
@@ -139,17 +139,17 @@ function ContentDetails() {
 
     if (loading) {
         return (
-            <Workspace>
+            <PageLayout>
                 <div className={styles.page}>
                     <EmptyState description="Загрузка контента..." />
                 </div>
-            </Workspace>
+            </PageLayout>
         );
     }
 
     if (error || !content) {
         return (
-            <Workspace>
+            <PageLayout>
                 <div className={styles.page}>
                     <Link to="/projects" className={styles.backLink}>
                         <ArrowLeft size={16} />
@@ -158,14 +158,14 @@ function ContentDetails() {
 
                     <EmptyState title="Контент не найден" description={error || "Контент не найден."}/>
                 </div>
-            </Workspace>
+            </PageLayout>
         );
     }
 
     const contentType = getContentType();
 
     return (
-        <Workspace
+        <PageLayout
             navigation={
                 <Link to={`/projects/${content.project_id}`} className={styles.backLink}>
                     <ArrowLeft size={16} />
@@ -272,7 +272,7 @@ function ContentDetails() {
                     />
                 </Modal>
             </div>
-        </Workspace>
+        </PageLayout>
     );
 }
 

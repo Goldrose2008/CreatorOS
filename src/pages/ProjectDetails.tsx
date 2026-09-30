@@ -21,7 +21,7 @@ import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
-import Workspace from "../components/layout/Workspace/Workspace";
+import PageLayout from "../components/ui/layout/PageLayout";
 import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";
 import type { Content, ContentRole } from "../models/Content";
@@ -208,25 +208,28 @@ function ProjectDetails() {
 
     if (loading) {
         return (
-            <Workspace>
+            <PageLayout>
                 <div className={styles.page}>
                     <EmptyState description="Загрузка проекта..."/>
                 </div>
-            </Workspace>
+            </PageLayout>
         );
     }
 
     if (error || !project) {
         return (
-            <Workspace navigation={
-              <Link className={styles.backLink} to="/projects">
-                <ArrowLeft size={16} /> 
-                Вернуться к проектам
-              </Link>}>
+            <PageLayout
+                navigation={
+                    <Link className={styles.backLink} to="/projects">
+                        <ArrowLeft size={16} />
+                        Вернуться к проектам
+                    </Link>
+                }
+            >
                 <div className={styles.page}>                    
                     <EmptyState title="Проект не найден" description={error || "Проект не найден."}/>
                 </div>
-            </Workspace>
+            </PageLayout>
         );
     }
 
@@ -360,11 +363,14 @@ function ProjectDetails() {
     }
 
     return (
-        <Workspace navigation={
-            <Link className={styles.backLink} to="/projects">
-                <ArrowLeft size={16} />
-                Вернуться к проектам
-            </Link>}>           
+        <PageLayout
+            navigation={
+                <Link className={styles.backLink} to="/projects">
+                    <ArrowLeft size={16} />
+                    Вернуться к проектам
+                </Link>
+            }
+        >          
             <div className={styles.page}>
                 <EntityHeader
                     title={project.name}
@@ -648,7 +654,7 @@ function ProjectDetails() {
                 />
 
             </div>
-        </Workspace>
+        </PageLayout>
     );
 }
 

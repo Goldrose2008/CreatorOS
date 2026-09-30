@@ -8,7 +8,8 @@ import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
-import Workspace from "../components/layout/Workspace/Workspace";
+import PageLayout from "../components/ui/layout/PageLayout";
+import PageHeader from "../components/ui/layout/PageHeader";
 import ProjectCard from "../components/projects/ProjectCard/ProjectCard";
 import type { Project } from "../models/Project";
 import type { ContentType } from "../models/ContentType";
@@ -212,24 +213,22 @@ function ProjectsPage() {
     }
 
     return (
-        <Workspace>
+        <PageLayout
+            header={
+                <PageHeader
+                    title="Проекты"
+                    actions={
+                        <Button onClick={openCreateModal} disabled={loadingContentTypes}>
+                            {loadingContentTypes ? "Загрузка..." : "Создать новый проект"}
+                        </Button>
+                    }
+                />
+            }
+        >
             <div className={styles.page}>
-                <header className={styles.header}>
-                    <div>
-                        <h1 className={styles.title}>
-                            Проекты
-                        </h1>
-                    </div>
-                    <Button onClick={openCreateModal} disabled={loadingContentTypes}>
-                        {loadingContentTypes ? "Загрузка..." : "Создать новый проект"}
-                    </Button>
-                </header>
-
                 <section className={styles.list}>
                     {loading ? (
-                        <EmptyState 
-                            description="Загрузка проектов..."
-                        />
+                        <EmptyState description="Загрузка проектов..."/>
                     ) : projects.length === 0 ? (
                         <EmptyState
                             title="Проектов пока нет"
@@ -300,7 +299,7 @@ function ProjectsPage() {
                     onCancel={closeDeleteModal}
                 />
             </div>
-        </Workspace>
+        </PageLayout>
     );
 }
 

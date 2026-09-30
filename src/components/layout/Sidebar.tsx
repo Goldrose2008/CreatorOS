@@ -8,8 +8,8 @@ import {
     Settings
 } from "lucide-react";
 import {NavLink} from "react-router-dom";
-import styles from "./Sidebar.module.css";
-import { APP_NAME } from "../../../config/appConfig";
+import styles from "../../styles/layout/Sidebar.module.css";
+import { APP_NAME } from "../../config/appConfig";
 
 const navigation = [
     {

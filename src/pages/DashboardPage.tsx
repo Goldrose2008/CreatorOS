@@ -5,7 +5,8 @@ import {
 import { Link } from "react-router-dom";
 import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";
-import Workspace from "../components/layout/Workspace/Workspace";
+import PageLayout from "../components/ui/layout/PageLayout";
+import PageHeader from "../components/ui/layout/PageHeader";
 import ProjectSummary from "../components/projects/ProjectSummary/ProjectSummary";
 import type { Project } from "../models/Project";
 import { getProjects } from "../services/projectService";
@@ -34,14 +35,8 @@ function DashboardPage() {
     }, []);
 
     return (
-        <Workspace>
+        <PageLayout header={<PageHeader title="Главная" />}>
             <div className={styles.page}>
-                <header className={styles.header}>
-                    <h1 className={styles.title}>
-                        Главная
-                    </h1>
-                </header>
-
                 <div className={styles.grid}>
                     <Card className={styles.section}>
                         <div className={styles.sectionHeader}>
@@ -132,7 +127,7 @@ function DashboardPage() {
                     </Card>
                 </div>
             </div>
-        </Workspace>
+        </PageLayout>
     );
 }
 

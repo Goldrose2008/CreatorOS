@@ -1,15 +1,13 @@
 import type { ReactNode } from "react";
-import styles from "./Workspace.module.css";
+import styles from "../../styles/layout/Workspace.module.css";
 
 interface WorkspaceProps {
     children: ReactNode;
-    navigation?: ReactNode;
     className?: string;
 }
 
 function Workspace({
     children,
-    navigation,
     className = "",
 }: WorkspaceProps) {
 
@@ -21,16 +19,9 @@ function Workspace({
         .join(" ");
 
     return (
-        <div className={classes}>
-            <div className={styles.navigation}>
-                {navigation}
-            </div>
-            
-            <main className={styles.content}>
-                {children}
-            </main>
-
-        </div>
+        <main className={classes}>
+            {children}
+        </main>
     );
 }
 
