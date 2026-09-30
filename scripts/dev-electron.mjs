@@ -2,7 +2,12 @@ import { spawn, execFileSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const isWindows = process.platform === "win32";
+const npmCommand = isWindows ? "npm.cmd" : "npm";
+const shellCommand = isWindows
+    ? (process.env.ComSpec ?? "cmd.exe")
+    : npmCommand;
+
 const electronCommand = path.resolve(
     process.cwd(),
     "node_modules",
@@ -37,9 +42,20 @@ function waitForRenderer() {
     });
 }
 
+const viteArgs = [
+    "run",
+    "dev",
+    "--",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "5173",
+    "--strictPort",
+];
+
 const vite = spawn(
-    npmCommand,
-    ["run", "dev", "--", "--host", "127.0.0.1", "--port", "5173", "--strictPort"],
+    shellCommand,
+    isWindows ? ["/d", "/s", "/c", npmCommand, ...viteArgs] : viteArgs,
     {
         stdio: "inherit",
     }
@@ -55,9 +71,23 @@ process.on("SIGINT", cleanup);
 process.on("SIGTERM", cleanup);
 
 try {
-    execFileSync(npmCommand, ["run", "build:electron"], {
-        stdio: "inherit",
-    });
+    const buildElectronArgs = ["run", "build:electron"];
+
+    if (isWindows) {
+        execFileSync(shellCommand, [
+            "/d",
+            "/s",
+            "/c",
+            npmCommand,
+            ...buildElectronArgs,
+        ], {
+            stdio: "inherit",
+        });
+    } else {
+        execFileSync(npmCommand, buildElectronArgs, {
+            stdio: "inherit",
+        });
+    }
 
     await waitForRenderer();
 
