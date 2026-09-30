@@ -133,3 +133,8 @@
 	✅ Исправлен путь импорта src/styles/entities/EntityCard.module.css в src/components/entity/EntityCard.tsx: использован корректный относительный путь ../../styles/...
 	✅ По дереву репозитория подтверждено, что сам CSS-файл существует.
 	Результат: устранена причина ошибки Vite UNRESOLVED_IMPORT для EntityCard.module.css.
+
+
+### Исправление пути Electron TypeScript-конфигурации
+	✅ Исправлен script build:electron в package.json: вместо отсутствующего корневого tsconfig.electron.json используется существующий electron/tsconfig.json.
+	Результат: сборка Electron теперь обращается к фактической конфигурации TypeScript.
