@@ -4,7 +4,7 @@ import { getDatabase } from "./databaseService";
 export async function getProjectContent(projectId: number): Promise<Content[]> {
     const database = await getDatabase();
 
-    return database.select<Content[]>(
+    return database.select<Content>(
         `SELECT
             content_items.*,
             projects.planned_release_at AS planned_release_at
@@ -25,7 +25,7 @@ export async function getProjectContent(projectId: number): Promise<Content[]> {
 
 export async function getContentById(id: number): Promise<Content | null> {
     const database = await getDatabase();
-    const content = await database.select<Content[]>(
+    const content = await database.select<Content>(
         `SELECT
             content_items.*,
             projects.planned_release_at AS planned_release_at
