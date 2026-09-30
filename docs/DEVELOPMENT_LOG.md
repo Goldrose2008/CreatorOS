@@ -10,6 +10,20 @@
 
 ## 30.09.2026
 
+### Завершение аудита и первый шаг миграции
+	✅ Подтверждено, что legacy-проект содержит полезную React/TypeScript/Vite-структуру: Pages, UI Components, Models, Services, CSS, React Router и Lucide.
+	✅ Tauri-слой локализован в src-tauri и в текущем renderer-слое базы данных; он не является частью целевой архитектуры.
+	✅ Принято решение сохранить существующий renderer и UI-структуру и заменить только desktop/system boundary.
+	✅ Из main удалены 30 файлов src-tauri.
+	✅ Добавлены Electron main/preload и безопасный contextBridge/IPC boundary с contextIsolation, nodeIntegration=false и sandbox=true.
+	✅ Доступ к SQLite перенесён из renderer/Tauri в Electron Main; текущий слой сервисов сохранён по максимально совместимому контракту select/execute.
+	✅ Начальная SQLite-схема перенесена в electron/database/schema.sql.
+	✅ Создан dev-скрипт без дополнительных process-management пакетов: scripts/dev-electron.mjs запускает Vite и Electron.
+	✅ Ветка legacy-react-tauri не изменялась.
+	✅ Текущая main содержит новую архитектурную документацию из backup-before-electron-migration и миграционные изменения Electron.
+	Результат: техническая основа миграции создана; следующим локальным шагом является npm install для обновления package-lock, затем сборка и запуск Electron-версии.
+
+
 ### Пересмотр технологического решения
 	✅ После дополнительного сравнения технологических стеков и с учётом будущей роли API-интеграций принято новое окончательное решение: CreatorOS разрабатывается по варианту B — TypeScript + React + Electron.
 	✅ CSS становится основным средством оформления интерфейса; общие стили, темы и дизайн-токены организуются централизованно, а уникальные стили страниц и компонентов хранятся рядом с владельцами.
