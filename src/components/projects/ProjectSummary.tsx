@@ -4,34 +4,20 @@ import Badge from "../ui/Badge/Badge";
 import ProgressBar from "../ui/ProgressBar/ProgressBar";
 import type { Project } from "../../models/Project";
 import { getProjectStatusConfig } from "../../config/entities/projectConfig";
-import styles from "./ProjectSummary.module.css";
+import { formatDate } from "../../utils/date";
 
 interface ProjectSummaryProps {
     project: Project;
-}
-
-function formatProjectDate(value: string): string {
-    const datePart = value.slice(0, 10);
-
-    const [
-        year,
-        month,
-        day,
-    ] = datePart.split("-");
-
-    if (!year || !month || !day) { return value; }
-
-    return `${day}.${month}.${year}`;
 }
 
 function ProjectSummary({ project }: ProjectSummaryProps) {
     const status = getProjectStatusConfig(project.status);
 
     return (
-        <div className={styles.item}>
-            <div className={styles.main}>
-                <div className={styles.titleRow}>
-                    <Link to={`/projects/${project.id}`} className={styles.title}>
+        <div className={"project-summary"}>
+            <div className={"project-summary__main"}>
+                <div className={"project-summary__title-row"}>
+                    <Link to={`/projects/${project.id}`} className={"project-summary__title"}>
                         {project.name}
                     </Link>
 
@@ -40,11 +26,11 @@ function ProjectSummary({ project }: ProjectSummaryProps) {
                     </Badge>
                 </div>
 
-                <div className={styles.meta}>
-                    <span className={styles.date}>
+                <div className={"project-summary__meta"}>
+                    <span className={"project-summary__date"}>
                         <CalendarDays size={14} />
                         <span>
-                            Выход: {formatProjectDate(project.planned_release_at)}
+                            Выход: {formatDate(project.planned_release_at)}
                         </span>
                     </span>
 
