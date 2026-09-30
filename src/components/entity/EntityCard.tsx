@@ -3,7 +3,7 @@ import Card from "../ui/Card/Card";
 import Badge from "../ui/Badge/Badge";
 import type { StatusTone } from "../../types/status";
 import ProgressBar from "../ui/ProgressBar/ProgressBar";
-import styles from "../../../styles/entities/EntityCard.module.css";
+import styles from "../../styles/entities/EntityCard.module.css";
 
 export interface EntityCardStatus {
     label: string;
