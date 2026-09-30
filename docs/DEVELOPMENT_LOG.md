@@ -145,3 +145,9 @@
 	✅ Исправлен outDir: сборка Electron направляется в корневую папку dist-electron, которую использует package.json.
 	✅ Исправлен путь tsBuildInfoFile в node_modules/.tmp.
 	Результат: TypeScript должен находить electron/main.ts и electron/preload.cts и собирать их в ожидаемую структуру.
+
+
+### Исправление совместимости node:sqlite с TypeScript-типами
+	✅ В electron/main.ts параметры SQLite теперь нормализуются: boolean преобразуется в 0/1 перед передачей в node:sqlite.
+	✅ Удалён вызов statement.close(): актуальный StatementSync не предоставляет этот метод в используемых TypeScript-типах; подготовленные statements остаются управляемыми самим API.
+	Результат: Electron database handlers соответствуют установленным типам @types/node и runtime Node 24.21.0.
