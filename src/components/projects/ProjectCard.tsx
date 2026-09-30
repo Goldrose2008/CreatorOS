@@ -4,11 +4,10 @@ import {
     Trash2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { InitialCard } from "../entity/EntityCard";
+import { EntityCard } from "../entity/EntityCard";
 import Button from "../ui/Button/Button";
 import type { Project } from "../../models/Project";
 import { getProjectStatusConfig } from "../../config/entities/projectConfig";
-import styles from "../../styles/entities/EntityCard.module.css";
 
 interface ProjectCardProps {
     project: Project;
@@ -25,18 +24,18 @@ function formatProjectDate(value: string): string {
     return `${day}.${month}.${year}`;
 }
 
-function InitialProjectCard({
+function ProjectCard({
     project,
     onEdit,
     onDelete,
 }: ProjectCardProps) {
     const status = getProjectStatusConfig(project.status);
 
-    return InitialCard({
+    return EntityCard({
         title: (
             <Link
                 to={`/projects/${project.id}`}
-                className={styles.titleLink}
+                className={"entity-card__title-link"}
             >
                 {project.name}
             </Link>
@@ -54,7 +53,7 @@ function InitialProjectCard({
         meta: [
             <span
                 key="release-date"
-                className={styles.metaContent}
+                className={"entity-card__meta-content"}
             >
                 <CalendarDays size={14} />
 
@@ -68,7 +67,7 @@ function InitialProjectCard({
             <>
                 <Link
                     to={`/projects/${project.id}`}
-                    className={styles.linkButton}
+                    className={"entity-card__link-button"}
                 >
                     Открыть
                 </Link>
@@ -83,7 +82,7 @@ function InitialProjectCard({
 
                 <Button
                     variant="danger"
-                    className={styles.deleteButton}
+                    className={"entity-card__delete-button"}
                     onClick={() => onDelete(project.id)}
                 >
                     <Trash2 size={15} />
