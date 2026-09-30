@@ -161,3 +161,11 @@
 	✅ Существующие Button, Badge и ProgressBar переводятся на централизованный CSS в `src/styles`.
 	✅ Input, Textarea и Select выделяются как самостоятельные primitives и подключаются к EntityForm.
 	⚠️ Локальная проверка сборки и запуска после этих изменений ещё не выполнена; этап будет отмечен завершённым после проверки.
+
+### Завершение шага 1 — UI primitives
+	✅ Локальная сборка после реализации шага 1 выполнена успешно.
+	✅ Код шага 1 закоммичен и запушен в `main`.
+	✅ Button, Badge, ProgressBar, Input, Textarea и Select являются реализованными UI primitives.
+	✅ Стили primitives централизованы в `src/styles/ui-primitives.css`.
+	✅ EntityForm использует Input, Textarea и Select как переиспользуемые базовые элементы.
+	Результат: шаг 1 завершён; можно переходить к Common UI.
