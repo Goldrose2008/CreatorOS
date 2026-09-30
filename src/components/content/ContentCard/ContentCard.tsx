@@ -56,7 +56,7 @@ function ContentCard({
                             {formatDate(content.planned_release_at)}
                         </span>
 
-                    <span className={styles.metaItem}>
+                    <span className={"content-card__meta-item"}>
                         Прогресс: {content.progress}%
                     </span>
                 </div>
