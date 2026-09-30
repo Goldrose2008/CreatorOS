@@ -85,4 +85,4 @@ function ProjectCard({
     });
 }
 
-export default InitialProjectCard;
+export default ProjectCard;
