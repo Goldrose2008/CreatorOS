@@ -8,12 +8,11 @@ const shellCommand = isWindows
     ? (process.env.ComSpec ?? "cmd.exe")
     : npmCommand;
 
-const electronCommand = path.resolve(
+const electronCli = path.resolve(
     process.cwd(),
     "node_modules",
     "electron",
-    "dist",
-    process.platform === "win32" ? "electron.exe" : "electron"
+    "cli.js"
 );
 
 const rendererUrl = "http://127.0.0.1:5173";
@@ -91,7 +90,7 @@ try {
 
     await waitForRenderer();
 
-    const electron = spawn(electronCommand, ["."], {
+    const electron = spawn(process.execPath, [electronCli, "."], {
         env: {
             ...process.env,
             ELECTRON_RENDERER_URL: rendererUrl,
