@@ -138,3 +138,10 @@
 ### Исправление пути Electron TypeScript-конфигурации
 	✅ Исправлен script build:electron в package.json: вместо отсутствующего корневого tsconfig.electron.json используется существующий electron/tsconfig.json.
 	Результат: сборка Electron теперь обращается к фактической конфигурации TypeScript.
+
+
+### Исправление путей Electron TypeScript-конфигурации
+	✅ В electron/tsconfig.json исправлены относительные пути include: конфигурация теперь ищет исходники внутри папки electron.
+	✅ Исправлен outDir: сборка Electron направляется в корневую папку dist-electron, которую использует package.json.
+	✅ Исправлен путь tsBuildInfoFile в node_modules/.tmp.
+	Результат: TypeScript должен находить electron/main.ts и electron/preload.cts и собирать их в ожидаемую структуру.
