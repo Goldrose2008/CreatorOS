@@ -25,10 +25,10 @@ export async function checkProjectsTable(): Promise<boolean> {
     const database = await getDatabase();
 
     const result = await database.select<{ name: string }>(
-        \`SELECT name
+        `SELECT name
         FROM sqlite_master
         WHERE type = 'table'
-        AND name = ?\`,
+        AND name = ?`,
         ["projects"]
     );
 
