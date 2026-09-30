@@ -120,23 +120,32 @@ Renderer отвечает за представление, UI-состояние
 
 React используется как компонентная UI-модель, TypeScript — как основной язык интерфейса и прикладной логики, CSS — как основной язык визуального оформления.
 
-Общие стили организуются отдельно от page-specific стилей:
+Стили организуются по ответственности:
 
 ```text
 src/
 ├── styles/
-│   ├── theme/
-│   ├── globals.css
-│   ├── typography.css
-│   ├── components/
-│   └── ...
+│   ├── theme.css
+│   ├── index.css
+│   └── entities.css
+│
+├── components/
+│   ├── entity/
+│   ├── content/
+│   ├── projects/
+│   ├── layout/
+│   └── ui/
+│
 └── pages/
     └── <Page>/
-        ├── <Page>.tsx
-        └── <Page>.css
+        └── <Page>.module.css
 ```
 
-Точная структура каталогов уточняется при миграции legacy-структуры и не усложняется заранее.
+Основные сущностные объекты используют один общий файл `src/styles/entities.css`. В него входят общие стили EntityCard, EntityHeader и основных представлений Project/Content.
+
+Если конкретной странице или компоненту требуется визуальное исключение, оно хранится в отдельном файле рядом с владельцем. Общий файл сущностей не используется для разовых исключений.
+
+Визуальные значения темы и дизайн-токены остаются централизованными в `theme.css`. Текущий рефакторинг не меняет выбранную визуальную тему.
 
 ### Принцип API и интеграций
 
@@ -862,7 +871,10 @@ CreatorOS/
 ├── docs/
 ├── electron/
 │   ├── database/
+│   │   ├── database.ts
 │   │   └── schema.sql
+│   ├── ipc/
+│   │   └── databaseHandlers.ts
 │   ├── main.ts
 │   ├── preload.cts
 │   └── tsconfig.json
@@ -871,12 +883,20 @@ CreatorOS/
 │   └── dev-electron.mjs
 ├── src/
 │   ├── components/
+│   │   ├── content/
+│   │   ├── entity/
+│   │   ├── layout/
+│   │   ├── projects/
+│   │   └── ui/
 │   ├── config/
+│   ├── infrastructure/
+│   │   └── database/
 │   ├── models/
 │   ├── pages/
 │   ├── services/
 │   ├── styles/
 │   ├── types/
+│   ├── utils/
 │   ├── App.tsx
 │   └── main.tsx
 ├── index.html
@@ -890,12 +910,20 @@ CreatorOS/
 Назначение основных областей:
 
 ```text
-src/              React renderer и прикладной UI-код
-electron/         Electron Main, Preload и локальная инфраструктура
-electron/database SQLite-схема
-scripts/          вспомогательные команды разработки
-public/           статические ресурсы
-docs/             техническая и пользовательская документация
+src/components/       переиспользуемый UI и layout
+src/config/            конфигурация форм и сущностей
+src/infrastructure/    renderer-side адаптеры системных возможностей
+src/models/            доменные модели и типы предметной области
+src/services/          application services и сценарии работы с сущностями
+src/pages/             точки сборки пользовательских сценариев
+src/styles/            глобальные, тематические и общие object styles
+src/utils/             переиспользуемые utilities
+electron/database/     SQLite infrastructure Electron Main
+electron/ipc/          IPC handlers и граница процессов
+electron/main.ts       запуск приложения и сборка системных компонентов
+electron/preload.cts   ограниченный API preload для renderer
 ```
+
+Для будущего варианта C native-слой добавляется ниже существующих application/infrastructure boundaries. React UI и сервисы не должны напрямую зависеть от конкретной реализации C++/Rust; native adapter подключается через отдельный контракт/bridge.
 
 Вложенные каталоги создаются только при появлении соответствующей ответственности. Структура не расширяется заранее без практической необходимости.
