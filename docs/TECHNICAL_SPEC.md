@@ -2316,27 +2316,66 @@ src/components/ui/
 
 CSS-файлы не помещаются в эти папки: все CSS остаются в `src/styles/` и его подкаталогах.
 
-### 28.30 Следующий этап — глобальный layout
+### 28.30 Глобальный layout
 
-После завершения Common UI следующий этап — глобальный layout:
+Глобальный layout реализуется по схеме:
 
 ~~~text
 App
 └── AppShell
     ├── Sidebar
     └── Workspace
-        └── PageLayout
-            ├── Context Navigation?
-            ├── PageHeader?
-            ├── Toolbar?
-            └── Content
+        └── Routes
+            └── Current Page
+                └── PageLayout
+                    ├── Context Navigation?
+                    ├── PageHeader?
+                    ├── Toolbar?
+                    └── Content
 ~~~
 
-Задача этапа:
-- AppShell становится единственным владельцем глобального расположения Sidebar и Workspace;
-- Workspace используется один раз на уровне приложения, а не оборачивается вокруг каждой страницы;
-- PageLayout становится единым шаблоном содержательной страницы;
-- существующие страницы перестают создавать собственный Workspace;
-- контекстная навигация конкретной страницы переносится в PageLayout;
-- CSS AppShell/Sidebar/Workspace/PageLayout хранится только в `src/styles/`;
-- бизнес-логика страниц на этом этапе не меняется.
+Структура файлов:
+
+~~~text
+src/components/layout/
+├── AppShell.tsx
+├── Sidebar.tsx
+└── Workspace.tsx
+~~~
+
+AppShell является единственным владельцем Sidebar и Workspace. Workspace создаётся один раз вокруг `Routes`. Страницы не создают Workspace самостоятельно.
+
+PageLayout является Common UI-компонентом и используется внутри конкретных страниц.
+
+На этапе глобального layout:
+- существующая бизнес-логика страниц сохраняется;
+- страницы постепенно переводятся с собственного Workspace на PageLayout;
+- контекстная навигация страницы передаётся в PageLayout;
+- CSS layout хранится только в `src/styles/layout/`;
+- изменения визуала глобального каркаса выполняются в AppShell/Workspace/PageLayout, а не копируются в страницах.
+
+### 28.31 Завершение глобального layout
+
+Перед переходом к Entity Framework все основные routes рабочего пространства должны использовать единый глобальный каркас:
+
+~~~text
+App
+└── AppShell
+    ├── Sidebar
+    └── Workspace
+        └── Routes
+            └── PageLayout
+~~~
+
+Минимальная проверка этапа:
+- Dashboard;
+- Projects;
+- ProjectDetails;
+- ContentDetails;
+- Tasks;
+- Planning;
+- Library;
+- Analytics.
+
+Settings сохраняет собственный вложенный `SettingsLayout` до отдельного рефакторинга Settings.
+
