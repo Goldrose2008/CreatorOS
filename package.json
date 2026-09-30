@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && npm run build:electron",
-    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:electron": "tsc -p electron/tsconfig.json",
     "electron:dev": "node scripts/dev-electron.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
