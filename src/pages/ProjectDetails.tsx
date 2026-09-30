@@ -51,7 +51,7 @@ import {
 import styles from "./ProjectDetails.module.css";
 import { formatDate } from "../utils/date";
 
-function getResponsibleLabel/(ownerId?: number | null): string {
+function getResponsibleLabel(ownerId?: number | null): string {
     if (ownerId === undefined || ownerId === null) { return "Не назначен"; }
     return `Пользователь #${ownerId}`;
 }
