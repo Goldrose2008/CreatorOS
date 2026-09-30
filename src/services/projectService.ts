@@ -1,9 +1,9 @@
 import type { Project } from "../models/Project";
-import { getDatabase } from "./databaseService";
+import { getDatabaseClient } from "../infrastructure/database/databaseClient";
 import type { ProjectStatus } from "../models/Project";
 
 export async function getProjects(): Promise<Project[]> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
     const projects = await database.select<Project>(
         `SELECT *
         FROM projects
@@ -13,7 +13,7 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function getProjectById(id: number): Promise<Project | null> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
     const projects = await database.select<Project>(
         `SELECT *
         FROM projects
@@ -33,7 +33,7 @@ export async function createProject(
     description: string,
     plannedReleaseAt: string
 ): Promise<number> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     const result = await database.execute(
         `INSERT INTO projects(
@@ -60,7 +60,7 @@ export async function updateProject(
     description: string, 
     plannedReleaseAt: string
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `UPDATE projects
@@ -83,7 +83,7 @@ export async function updateProjectStatus(
     id: number,
     status: ProjectStatus
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `UPDATE projects
@@ -99,7 +99,7 @@ export async function updateProjectStatus(
 }
 
 export async function deleteProject(id: number): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `DELETE FROM projects
