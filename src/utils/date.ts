@@ -13,10 +13,3 @@ export function formatDate(value?: string | null): string {
     return `${day}.${month}.${year}`;
 }
 
-export function formatDateTime(value?: string | null): string {
-    if (!value) {
-        return "Не указана";
-    }
-
-    return formatDate(value);
-}
