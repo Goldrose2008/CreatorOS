@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Badge from "../../ui/Badge/Badge";
 import type { StatusTone } from "../../../types/status";
-import styles from "./EntityHeader.module.css";
 
 interface EntityHeaderStatus {
     label: string;
@@ -27,7 +26,7 @@ function EntityHeader({
 }: EntityHeaderProps) {
 
     const classes = [
-        styles.header,
+        "entity-header",
         className,
     ]
         .filter(Boolean)
@@ -35,9 +34,9 @@ function EntityHeader({
 
     return (
         <header className={classes}>
-            <div className={styles.main}>
-                <div className={styles.titleRow}>
-                    <h1 className={styles.title}>
+            <div className={"entity-header__main"}>
+                <div className={"entity-header__title-row"}>
+                    <h1 className={"entity-header__title"}>
                         {title}
                     </h1>
                     {status && (
@@ -49,15 +48,15 @@ function EntityHeader({
                 </div>
 
                 {description && (
-                    <p className={styles.description}>
+                    <p className={"entity-header__description"}>
                         {description}
                     </p>
                 )}
 
                 {meta.length > 0 && (
-                    <div className={styles.meta}>
+                    <div className={"entity-header__meta"}>
                         {meta.map((item, index) => (
-                            <span key={index} className={styles.metaItem}>
+                            <span key={index} className={"entity-header__meta-item"}>
                                 {item}
                             </span>
                         ))}
@@ -66,7 +65,7 @@ function EntityHeader({
             </div>
 
             {actions && (
-                <div className={styles.actions}>
+                <div className={"entity-header__actions"}>
                     {actions}
                 </div>
             )}
