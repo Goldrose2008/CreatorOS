@@ -1,9 +1,9 @@
 import { CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
-import Badge from "../ui/Badge/Badge";
-import ProgressBar from "../ui/ProgressBar/ProgressBar";
-import type { Project } from "../../models/Project";
-import { getProjectStatusConfig } from "../../config/entities/projectConfig";
+import Badge from "../../ui/Badge/Badge";
+import ProgressBar from "../../ui/ProgressBar/ProgressBar";
+import type { Project } from "../../../models/Project";
+import { getProjectStatusConfig } from "../../../config/entities/projectConfig";
 import { formatDate } from "../../utils/date";
 
 interface ProjectSummaryProps {
