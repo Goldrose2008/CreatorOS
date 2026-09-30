@@ -4,7 +4,7 @@ import type { ProjectStatus } from "../models/Project";
 
 export async function getProjects(): Promise<Project[]> {
     const database = await getDatabase();
-    const projects = await database.select<Project[]>(
+    const projects = await database.select<Project>(
         `SELECT *
         FROM projects
         ORDER BY created_at ASC, id ASC`
@@ -14,7 +14,7 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProjectById(id: number): Promise<Project | null> {
     const database = await getDatabase();
-    const projects = await database.select<Project[]>(
+    const projects = await database.select<Project>(
         `SELECT *
         FROM projects
         WHERE id = ?`,
