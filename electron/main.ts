@@ -64,7 +64,7 @@ function initializeDatabase(): void {
         database = null;
 
         throw new Error(
-            \`Версия БД \${currentVersion} не поддерживается. Ожидается \${DATABASE_SCHEMA_VERSION}.\`
+            `Версия БД ${currentVersion} не поддерживается. Ожидается ${DATABASE_SCHEMA_VERSION}.`
         );
     }
 }
