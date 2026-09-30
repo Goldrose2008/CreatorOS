@@ -9,7 +9,7 @@ import EntityForm from "../components/ui/EntityForm/EntityForm";
 import EmptyState from "../components/ui/EmptyState/EmptyState";
 import ConfirmModal from "../components/ui/ConfirmModal/ConfirmModal";
 import Workspace from "../components/layout/Workspace/Workspace";
-import ProjectCard from "../components/projects/ProjectCard";
+import ProjectCard from "../components/projects/ProjectCard/ProjectCard";
 import type { Project } from "../models/Project";
 import type { ContentType } from "../models/ContentType";
 import { getContentTypes } from "../services/contentTypeService";
