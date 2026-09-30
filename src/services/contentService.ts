@@ -1,8 +1,8 @@
 import type { Content, ContentRole } from "../models/Content";
-import { getDatabase } from "./databaseService";
+import { getDatabaseClient } from "../infrastructure/database/databaseClient";
 
 export async function getProjectContent(projectId: number): Promise<Content[]> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     return database.select<Content>(
         `SELECT
@@ -24,7 +24,7 @@ export async function getProjectContent(projectId: number): Promise<Content[]> {
 }
 
 export async function getContentById(id: number): Promise<Content | null> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
     const content = await database.select<Content>(
         `SELECT
             content_items.*,
@@ -48,7 +48,7 @@ export async function createContent(
     name: string,
     description: string
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `INSERT INTO content_items(
@@ -75,7 +75,7 @@ export async function updateContent(
     name: string,
     description: string
 ): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `UPDATE content_items
@@ -95,7 +95,7 @@ export async function updateContent(
 }
 
 export async function deleteContent(id: number): Promise<void> {
-    const database = await getDatabase();
+    const database = await getDatabaseClient();
 
     await database.execute(
         `DELETE FROM content_items
