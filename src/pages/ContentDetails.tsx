@@ -30,7 +30,7 @@ import { getContentTypes } from "../services/contentTypeService";
 import styles from "./ContentDetails.module.css";
 import { formatDate } from "../utils/date";
 
-function getRoleLabel/(content: Content): string {
+function getRoleLabel(content: Content): string {
     return content.content_role === "main"
         ? "Основной контент"
         : "Дополнительный контент";
