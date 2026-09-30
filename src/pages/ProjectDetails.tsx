@@ -49,18 +49,9 @@ import {
     updateContent,
 } from "../services/contentService";
 import styles from "./ProjectDetails.module.css";
+import { formatDate } from "../utils/date";
 
-function formatDate(value?: string | null): string {
-    if (!value) { return "Не указана"; }
-
-    const datePart = value.slice(0, 10);
-    const [year, month, day] = datePart.split("-");
-
-    if (!year || !month || !day) { return value; }
-    return `${day}.${month}.${year}`;
-}
-
-function getResponsibleLabel(ownerId?: number | null): string {
+function getResponsibleLabel/(ownerId?: number | null): string {
     if (ownerId === undefined || ownerId === null) { return "Не назначен"; }
     return `Пользователь #${ownerId}`;
 }
