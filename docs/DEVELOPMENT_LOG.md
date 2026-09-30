@@ -119,3 +119,11 @@
 	✅ Сборка `CreatorOS` для `net10.0` завершилась успешно.
 	✅ Выполнен запуск нового Avalonia-приложения через `dotnet run --project src/CreatorOS.csproj`.
 	Результат: техническая основа нового проекта собирается и запускается; можно переходить к Этапу 0.
+
+
+### Исправление типов database.select
+	✅ Исправлен вызов generic-типа database.select() в src/services/contentService.ts: вместо Content[] передаётся тип одной строки Content.
+	✅ То же исправление выполнено в src/services/contentTypeService.ts для ContentType.
+	✅ В src/services/projectService.ts исправлены оба вызова database.select(): вместо Project[] используется Project.
+	✅ Устранена ещё одна ошибка с экранированным template literal в electron/main.ts.
+	Результат: сервисный слой приведён в соответствие с контрактом database.select<T>(): Promise<T[]>.
