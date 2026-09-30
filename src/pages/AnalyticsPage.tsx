@@ -1,4 +1,4 @@
-function AnalyticsPage {
+function AnalyticsPage() {
   return (
     <div>
       <h1>Аналитика</h1>
