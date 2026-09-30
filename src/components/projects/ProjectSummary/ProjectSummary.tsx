@@ -39,7 +39,9 @@ function ProjectSummary({ project }: ProjectSummaryProps) {
                     </span>
                 </div>
 
-                <ProgressBar value={project.progress} />
+                <div className={"project-summary__progress"}>
+                    <ProgressBar value={project.progress} />
+                </div>
             </div>
         </div>
     );
