@@ -9,7 +9,7 @@ export interface EntityCardStatus {
     variant?: StatusTone;
 }
 
-export export interface EntityCardProps {
+export interface EntityCardProps {
     title: ReactNode;
     description?: ReactNode;
     status?: EntityCardStatus;
