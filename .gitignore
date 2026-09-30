@@ -3,13 +3,11 @@ node_modules/
 
 # Build
 dist/
+dist-electron/
 build/
 
 # Vite
 .vite/
-
-# Tauri build artifacts
-src-tauri/target/
 
 # Environment files
 .env
