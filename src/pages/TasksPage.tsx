@@ -1,10 +1,16 @@
+import PageLayout from "../components/ui/layout/PageLayout";
+import PageHeader from "../components/ui/layout/PageHeader";
+
 function TasksPage() {
-  return (
-    <div>
-      <h1>Задачи</h1>
-      <p>Здесь будут задачи</p>
-    </div>
-  );
+    return (
+        <PageLayout
+            header={
+                <PageHeader title="Задачи" />
+            }
+        >
+            <p>Здесь будут задачи</p>
+        </PageLayout>
+    );
 }
 
 export default TasksPage;

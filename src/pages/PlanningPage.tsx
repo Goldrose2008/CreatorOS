@@ -1,10 +1,16 @@
+import PageLayout from "../components/ui/layout/PageLayout";
+import PageHeader from "../components/ui/layout/PageHeader";
+
 function PlanningPage() {
-  return (
-    <div>
-      <h1>Планирование</h1>
-      <p>Здесь будет контент-план</p>
-    </div>
-  );
+    return (
+        <PageLayout
+            header={
+                <PageHeader title="Планирование" />
+            }
+        >
+            <p>Здесь будет контент-план</p>
+        </PageLayout>
+    );
 }
 
 export default PlanningPage;
