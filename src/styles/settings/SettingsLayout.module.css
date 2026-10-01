@@ -84,7 +84,7 @@
 
 .navLink:hover {
     color: var(--color-text);
-    background: #f3f4f6;
+    background: var(--color-surface-hover);
 }
 
 .navLinkActive {
@@ -94,7 +94,7 @@
 
 .content {
     min-width: 0;
-    padding: var(--space-8);
+    padding-top: var(--space-2);
 }
 
 @media (max-width: 800px) {

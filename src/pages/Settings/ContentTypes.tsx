@@ -10,6 +10,7 @@ import EntityForm from "../../components/ui/forms/EntityForm";
 import EmptyState from "../../components/ui/states/EmptyState";
 import ConfirmModal from "../../components/ui/overlays/ConfirmModal";
 import EntityList from "../../components/ui/lists/EntityList";
+import PageLayout from "../../components/ui/layout/PageLayout";
 import type { ContentType } from "../../models/ContentType";
 import {
     CONTENT_TYPE_FORM_FIELDS,
@@ -161,104 +162,106 @@ function ContentTypes() {
     }
 
     return (
-        <div className={styles.page}>
-            <header className={styles.header}>
-                <div>
-                    <h2 className={styles.title}>
-                        Типы контента
-                    </h2>
+        <PageLayout>
+            <div className={styles.page}>
+                <header className={styles.header}>
+                    <div>
+                        <h2 className={styles.title}>
+                            Типы контента
+                        </h2>
 
-                    <p className={styles.description}>
-                        Определи форматы контента, которые используются в CreatorOS.
-                    </p>
-                </div>
+                        <p className={styles.description}>
+                            Определи форматы контента, которые используются в CreatorOS.
+                        </p>
+                    </div>
 
-                <Button onClick={openCreateModal}>
-                    Добавить тип
-                </Button>
-            </header>
+                    <Button onClick={openCreateModal}>
+                        Добавить тип
+                    </Button>
+                </header>
 
-            <EntityList<ContentType>
-                items={contentTypes}
-                className={styles.list}
-                loading={loading}
-                loadingState={
-                    <EmptyState description="Загрузка типов контента..." />
-                }
-                emptyState={
-                    <Card className={styles.emptyCard}>
-                        <EmptyState title="Типов контента пока нет" description="Добавь первый тип контента."
-                            action={
-                                <Button onClick={openCreateModal}>
-                                    Добавить тип
+                <EntityList<ContentType>
+                    items={contentTypes}
+                    className={styles.list}
+                    loading={loading}
+                    loadingState={
+                        <EmptyState description="Загрузка типов контента..." />
+                    }
+                    emptyState={
+                        <Card className={styles.emptyCard}>
+                            <EmptyState title="Типов контента пока нет" description="Добавь первый тип контента."
+                                action={
+                                    <Button onClick={openCreateModal}>
+                                        Добавить тип
+                                    </Button>
+                                }
+                            />
+                        </Card>
+                    }
+                    renderItem={(contentType) => (
+                        <Card key={contentType.id} className={styles.item}>
+                            <div className={styles.itemMain}>
+                                <h3 className={styles.itemTitle}>
+                                    {contentType.name}
+                                </h3>
+
+                                {contentType.description && (
+                                    <p className={styles.itemDescription}>
+                                        {contentType.description}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className={styles.actions}>
+                                <Button variant="secondary" onClick={() => openEditModal(contentType)}>
+                                    Редактировать
                                 </Button>
-                            }
-                        />
-                    </Card>
-                }
-                renderItem={(contentType) => (
-                    <Card key={contentType.id} className={styles.item}>
-                        <div className={styles.itemMain}>
-                            <h3 className={styles.itemTitle}>
-                                {contentType.name}
-                            </h3>
 
-                            {contentType.description && (
-                                <p className={styles.itemDescription}>
-                                    {contentType.description}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className={styles.actions}>
-                            <Button variant="secondary" onClick={() => openEditModal(contentType)}>
-                                Редактировать
-                            </Button>
-
-                            <Button variant="danger" onClick={() => handleDelete(contentType)}>
-                                Удалить
-                            </Button>
-                        </div>
-                    </Card>
-                )}
-            />
-
-            <Modal
-                open={createOpen}
-                title="Новый тип контента"
-                onClose={closeCreateModal}
-            >
-                <EntityForm<ContentTypeFormValues>
-                    key="create-content-type"
-                    fields={CONTENT_TYPE_FORM_FIELDS}
-                    initialValues={getCreateValues()}
-                    submitLabel="Добавить"
-                    saving={saving}
-                    error={formError}
-                    onSubmit={handleCreate}
-                    onCancel={closeCreateModal}
+                                <Button variant="danger" onClick={() => handleDelete(contentType)}>
+                                    Удалить
+                                </Button>
+                            </div>
+                        </Card>
+                    )}
                 />
-            </Modal>
 
-            <Modal
-                open={editingType !== null}
-                title="Редактирование типа контента"
-                onClose={closeEditModal}
-            >
-                {editingType && (
+                <Modal
+                    open={createOpen}
+                    title="Новый тип контента"
+                    onClose={closeCreateModal}
+                >
                     <EntityForm<ContentTypeFormValues>
-                        key={`edit-content-type-${editingType.id}`}
+                        key="create-content-type"
                         fields={CONTENT_TYPE_FORM_FIELDS}
-                        initialValues={getEditValues(editingType)}
-                        submitLabel="Сохранить"
+                        initialValues={getCreateValues()}
+                        submitLabel="Добавить"
                         saving={saving}
                         error={formError}
-                        onSubmit={handleEdit}
-                        onCancel={closeEditModal}
+                        onSubmit={handleCreate}
+                        onCancel={closeCreateModal}
                     />
-                )}
-            </Modal>
-        </div>
+                </Modal>
+
+                <Modal
+                    open={editingType !== null}
+                    title="Редактирование типа контента"
+                    onClose={closeEditModal}
+                >
+                    {editingType && (
+                        <EntityForm<ContentTypeFormValues>
+                            key={`edit-content-type-${editingType.id}`}
+                            fields={CONTENT_TYPE_FORM_FIELDS}
+                            initialValues={getEditValues(editingType)}
+                            submitLabel="Сохранить"
+                            saving={saving}
+                            error={formError}
+                            onSubmit={handleEdit}
+                            onCancel={closeEditModal}
+                        />
+                    )}
+                </Modal>
+            </div>
+        </PageLayout>
     );
 }
 
