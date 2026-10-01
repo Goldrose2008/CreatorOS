@@ -14,7 +14,7 @@ import {
     Video,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import ContentCard from "../components/content/ContentCard/ContentCard";
+import ContentCard from "../components/content/ContentCard";
 import Button from "../components/ui/primitives/Button";
 import Card from "../components/ui/layout/Card";
 import Modal from "../components/ui/overlays/Modal";

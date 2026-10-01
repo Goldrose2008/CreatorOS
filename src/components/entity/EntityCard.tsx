@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+import type {
+    MouseEventHandler,
+    ReactNode,
+} from "react";
 import Card from "../ui/layout/Card";
 import Badge from "../ui/primitives/Badge";
 import type { StatusTone } from "../../types/status";
@@ -17,6 +20,7 @@ export interface EntityCardProps {
     progress?: number;
     meta?: ReactNode[];
     actions?: ReactNode;
+    onClick?: MouseEventHandler<HTMLDivElement>;
     className?: string;
 }
 
@@ -28,16 +32,19 @@ export function EntityCard({
     progress,
     meta = [],
     actions,
+    onClick,
     className = "",
 }: EntityCardProps) {
     return (
     <Card
         className={[
             "entity-card",
+            onClick ? "entity-card--clickable" : "",
             className,
         ]
             .filter(Boolean)
             .join(" ")}
+        onClick={onClick}
     >
             <div className={"entity-card__header"}>
                 <div className={"entity-card__title-block"}>
