@@ -400,75 +400,64 @@ Content
 
 ## 9. EntityCard
 
-EntityCard — базовый переиспользуемый React-компонент карточки сущности.
+EntityCard — базовый переиспользуемый HTML/CSS-шаблон карточки сущности.
 
 Он содержит:
-
-- общий визуальный шаблон;
-- общие поля карточки;
-- общие действия через props;
-- общие правила поведения, не зависящие от конкретной сущности.
+- общий визуальный каркас;
+- общие области заголовка, описания, статуса, прогресса, метаданных и действий;
+- точки расширения через данные и небольшие функции представления.
 
 Принцип использования:
 
-```text
+~~~text
 EntityCard
-   ↓ props
+   ↓ data/view configuration
 ProjectCard
 ContentCard
 TaskCard
 ...
-```
+~~~
 
-ProjectCard, ContentCard, TaskCard и другие специализированные карточки не копируют общий шаблон, а используют EntityCard через композицию.
-
+EntityCard не содержит бизнес-логику и не знает о конкретной сущности. Общий HTML/CSS не копируется в специализированных карточках.
 
 ## 10. EntityDetails
 
-EntityDetails — переиспользуемый React-компонент подробного представления сущности.
+EntityDetails — базовый переиспользуемый HTML/CSS-шаблон подробного представления сущности.
 
 Он содержит:
-
 - общую структуру Details;
-- общие свойства через props;
-- общие действия;
-- точки расширения через composition.
+- общие свойства представления;
+- стандартные области действий;
+- точки расширения через HTML-фрагменты и конфигурацию представления.
 
-Конкретное представление сущности добавляет только уникальные элементы и поведение.
-
+Конкретное представление сущности добавляет только уникальные секции и действия. Бизнес-логика находится в C++ application/domain слоях.
 
 ## 11. ConfirmModal
 
-ConfirmModal является единым общим механизмом подтверждения действий.
+ConfirmModal является единым механизмом подтверждения действий в web UI.
 
-Концептуальный вызов:
+Концептуальный поток:
 
-```ts
-ConfirmModal.startEvent(
-    "Удаление проекта",
-    "Удалить проект «Мой проект»?",
-    () => deleteProject(project.id)
-);
-```
-
-startEvent не знает, какое именно действие выполняется. Он отвечает только за:
-
-```text
-показ подтверждения
+~~~text
+C++ Application Service
 ↓
-ожидание решения пользователя
+WebBridge
 ↓
-отмена ИЛИ выполнение callback
-```
+ConfirmModal
+↓
+решение пользователя
+↓
+WebBridge
+↓
+C++ действие
+~~~
 
-Страницы и сущности не дублируют состояние открытия, закрытия и подтверждения ConfirmModal.
-
+JavaScript отвечает только за отображение и передачу результата. Само удаление или изменение сущности выполняется C++ service после проверки правил.
 
 ## 12. Pages
 
 Основные страницы:
-
-```text
+~~~text
 DashboardPage
 ProjectsPage
 ProjectDetails
@@ -478,17 +467,17 @@ PlanningPage
 LibraryPage
 AnalyticsPage
 Settings
-```
+~~~
 
-Page является точкой сборки и навигации.
+Page является точкой сборки web-представления пользовательского сценария.
 
-Page не дублирует общий UI базовых сущностных компонентов.
+Page не содержит SQL, сетевых вызовов, работы с файлами или бизнес-правил.
 
 ## 13. Навигация
 
 Основная навигация:
 
-```text
+~~~text
 Главная
 Проекты
 Планирование
@@ -496,15 +485,15 @@ Page не дублирует общий UI базовых сущностных �
 Библиотека
 Аналитика
 Настройки
-```
+~~~
 
-Дополнительные разделы появляются по мере реализации соответствующих модулей.
+Навигация выполняется внутри локального web UI. Право на выполнение действия и доступность данных определяются C++ application layer.
 
 ## 14. Settings
 
 Предполагаемые категории:
 
-```text
+~~~text
 Общие
 Внешний вид
 Проекты
@@ -513,160 +502,194 @@ Page не дублирует общий UI базовых сущностных �
 Интеграции
 Команда
 AI
-```
+~~~
 
-Нереализованные разделы не должны создавать ложного ощущения законченной функциональности.
+Нереализованные разделы не должны создавать ложного ощущения законченной функциональности. Настройки читаются и изменяются через C++ application services.
 
 ## 15. Архитектура приложения
 
-Общая структура:
+CreatorOS строится как C++ desktop-приложение с разделёнными слоями:
 
-```text
+~~~text
 Application
 │
-├── React UI
-│   ├── Pages
-│   ├── Components
-│   └── Styles
+├── Presentation
+│   ├── Qt MainWindow / Widgets shell
+│   ├── QWebEngineView
+│   ├── WebBridge / QWebChannel
+│   └── HTML/CSS/Minimal JS
 │
-├── Application / Domain
+├── Application
+│   ├── Services / Use Cases
+│   ├── DTO / View data
+│   └── orchestration
+│
+├── Domain
 │   ├── Models
-│   ├── Services
-│   └── State
-│
-├── Integrations
-│   ├── YouTube
-│   ├── RuTube
-│   ├── VK Video
-│   ├── Dzen
-│   └── ...
+│   ├── rules
+│   └── domain services
 │
 ├── Infrastructure
-│   ├── SQLite
+│   ├── SQLite / Qt SQL
 │   ├── File System
-│   └── Secure Storage
+│   ├── Security / Secure Storage
+│   └── configuration
 │
-└── Electron
-    ├── Main
-    └── Preload / IPC
-```
+└── Integrations
+    ├── YouTube
+    ├── RuTube
+    ├── VK Video
+    ├── Dzen
+    └── ...
+~~~
 
-Ответственность:
+Поток пользовательского сценария:
 
-```text
-React Page / Component
-↓
-Application Service / State
-├── Repository → SQLite
-├── File Service → File System
-└── Integration Adapter → Platform API
-```
+~~~text
+HTML/CSS/JS
+   ↓
+QWebChannel / WebBridge
+   ↓
+Application Service / Use Case
+   ↓
+Domain + Repository / Adapter
+   ↓
+SQLite / File System / External API
+   ↓
+result / event
+   ↓
+WebBridge
+   ↓
+HTML/CSS/JS
+~~~
 
-React UI не обращается напрямую к SQLite, файловой системе, секретам или внешним API. Для системных операций используется Electron preload/IPC boundary.
-
+Qt Widgets используются для desktop-оболочки, системных окон, меню, диалогов и технического размещения web-интерфейса. Основное прикладное содержимое интерфейса рисуется HTML/CSS.
 
 ## 16. ООП-архитектура CreatorOS
 
-ООП остаётся частью архитектуры CreatorOS, но применяется там, где это естественно соответствует задаче.
+C++ является естественной ООП-основой CreatorOS.
 
-TypeScript используется с:
-
-```text
+Используются:
+~~~text
 class
-interface
-abstract class
+struct
+абстрактные интерфейсы
 composition
 инкапсуляция
-```
+RAII
+Qt signals/slots
+явные зависимости / dependency injection
+~~~
 
-в доменных моделях, сервисах, репозиториях и интеграционных адаптерах.
-
-React-компоненты новой версии в основном являются функциональными компонентами. Для переиспользования UI используется композиция и props, а не искусственное наследование компонентов.
+Основные domain-классы не зависят от web UI. Где возможно, domain layer использует стандартную библиотеку C++ и не знает о WebEngine.
 
 Пример:
 
-```text
-EntityCard
-   ↓ props
-ProjectCard
-ContentCard
-TaskCard
-...
-```
+~~~text
+Project Web UI
+        ↓
+ProjectService
+        ↓
+IProjectRepository
+        ↓
+ProjectRepository
+        ↓
+Qt SQL
+~~~
 
-Общие бизнес-правила не должны находиться внутри JSX-компонентов только потому, что компонент их использует.
+Интерфейсы репозиториев и интеграций вводятся там, где они дают реальную заменяемость и тестируемость. Искусственные абстракции для каждого класса не создаются.
 
+QObject/Q_OBJECT применяется там, где нужны signals/slots, свойства, события или WebChannel. Доменный объект не становится QObject только ради ООП.
 
 ## 17. Стили
 
-Стили строятся на CSS и централизуются в src/styles/.
+Визуальное оформление прикладного интерфейса выполняется HTML/CSS.
 
-Все CSS-файлы CreatorOS находятся только внутри src/styles/ и его подкаталогов. Компоненты и страницы не имеют CSS-файлов рядом с .tsx.
-
-Целевая структура:
+Целевая организация:
 
 ~~~text
-src/
-└── styles/
-    ├── index.css
-    ├── theme.css
-    ├── entities.css
-    ├── ui/
-    │   ├── button.css
-    │   ├── badge.css
-    │   ├── card.css
-    │   └── ...
-    ├── layout/
-    │   ├── app-shell.css
-    │   ├── sidebar.css
-    │   ├── workspace.css
-    │   └── ...
-    ├── pages/
-    │   ├── dashboard.css
-    │   ├── projects.css
-    │   └── ...
-    └── settings/
-        └── ...
+src/ui/web/styles/
+├── theme.css
+├── base.css
+├── entities.css
+├── ui/
+├── layout/
+└── pages/
 ~~~
 
-Правила:
+theme.css содержит семантические CSS-переменные, цвета, типографику, размеры, радиусы, состояния и другие дизайн-токены.
 
-1. theme.css содержит дизайн-токены, цвета темы, типографику, размеры и другие централизованные визуальные значения.
-2. entities.css содержит общие стили основных сущностных объектов, если они действительно общие для нескольких сущностей.
-3. Уникальный стиль отдельного UI-компонента хранится в src/styles/ui/ или другом соответствующем разделе, а не рядом с .tsx.
-4. Уникальный стиль страницы хранится в src/styles/pages/ или соответствующем подразделе.
-5. CSS Modules допускаются, но файл всё равно должен находиться внутри src/styles/. Выбор между обычным CSS и CSS Modules определяется реальной потребностью в изоляции.
-6. Общая визуальная структура не копируется между специализированными компонентами.
-7. Визуальные исключения создаются только при доказанной уникальной ответственности.
-8. Перенос, изменение или переиспользование общего визуального элемента должно по возможности выполняться в одном месте.
+На первом этапе реализуется тёмная тема. Архитектура допускает светлую тему позднее без переписывания HTML.
 
-Текущий репозиторий содержит исторически оставшиеся .module.css внутри components/ и pages/. Их перенос в src/styles/ является отдельной задачей рефакторинга и на данном этапе не выполняется автоматически.
+Qt Style Sheets используются только для ограниченной части native Qt Widgets. Основной прикладной визуальный слой не переводится в QSS.
+
+JavaScript не содержит бизнес-правил и не хранит дублирующую систему визуальных токенов.
 
 ## 18. База данных
 
-SQLite является локальным хранилищем приложения.
+SQLite является локальной основной БД MVP.
 
-На Этапе 0 используется встроенный модуль `node:sqlite` из Node.js, который поставляется внутри выбранной версии Electron. В документации Node.js 24.21.0 `node:sqlite` имеет статус Release Candidate; решение используется на текущем этапе без добавления отдельного native SQLite-пакета, а пригодность для production дополнительно оценивается перед первым стабильным релизом.
+Доступ к БД строится только через C++ infrastructure/repository layer:
 
-
-Доступ к базе:
-
-```text
-React UI
+~~~text
+Web UI
 ↓
-Application Service / Repository
+WebBridge
 ↓
-Electron Main / Node.js
+Application Service
 ↓
-SQLite driver
+Repository
+↓
+Qt SQL / QSQLITE
 ↓
 SQLite
-```
+~~~
 
-UI-компоненты и страницы не работают с БД напрямую.
+UI-компоненты и страницы не работают с БД напрямую. JavaScript не выполняет SQL.
 
-Конкретный SQLite-драйвер и способ миграций выбираются на Этапе 0 после проверки совместимости с Electron, требований к производительности и удобства резервного копирования/обновления.
+### DatabaseManager
 
+Отдельный инфраструктурный объект отвечает за:
+~~~text
+открытие подключения
+↓
+проверку/создание схемы
+↓
+применение миграций
+↓
+управление транзакциями
+↓
+закрытие подключения
+~~~
+
+Репозитории отвечают за операции конкретных сущностей:
+
+~~~text
+IProjectRepository
+IContentRepository
+ITaskRepository
+...
+~~~
+
+SQLite-файл хранится в пользовательском каталоге данных приложения, а не рядом с исполняемым файлом.
+
+### Миграции
+
+Структура БД изменяется последовательными SQL-миграциями. Версия схемы хранится в самой БД.
+
+~~~text
+schema v1
+↓
+migration 2
+↓
+schema v2
+↓
+migration 3
+↓
+...
+~~~
+
+Миграции контролируются механизмом версии схемы и выполняются транзакционно, когда это возможно.
 
 ## 19. Минимальная версия приложения
 
@@ -690,146 +713,200 @@ Local SQLite
 
 Целевые desktop-платформы:
 
-```text
+~~~text
 Windows
 macOS
 Linux
-```
+~~~
 
-Electron используется как общий desktop-shell. Одна кодовая база должна использовать общие React-компоненты, доменные модели, сервисы и интеграционный слой.
+Qt используется как основной кроссплатформенный framework.
 
-Platform-specific код допускается только там, где он действительно нужен конкретной ОС или системной возможности.
+Platform-specific код допускается только через явно выделенные adapters.
 
+Для каждой ОС отдельно проверяются:
+
+~~~text
+window management
+file dialogs
+secure storage
+browser/OAuth callback
+font rendering
+WebEngine deployment
+application data directory
+packaging
+~~~
+
+Общая предметная модель, application services, repositories и большая часть web UI должны оставаться платформонезависимыми.
 
 ## 21. Лицензирование
 
-Базовый стек новой версии состоит из open-source технологий:
+CreatorOS планируется как proprietary/closed-source приложение, поэтому лицензии сторонних компонентов должны позволять такое распространение.
 
-```text
-TypeScript
-React
-Electron
-Vite
-```
+### Qt
 
-Конкретные версии библиотек и сторонние зависимости проверяются перед выпуском.
+Основной open-source вариант — использование LGPL v3 компонентов Qt при полном соблюдении LGPL.
 
-Проект не должен иметь обязательную архитектурную зависимость от платного IDE, коммерческого UI-конструктора или другой платной части основного стека.
+Qt не является однородно лицензированным пакетом: в актуальном Qt 6.12 часть модулей доступна open-source пользователям только под GPL v3. Эти GPL-only модули не включаются в базовую proprietary-сборку без отдельного лицензионного решения.
 
-Для каждой добавляемой зависимости отдельно проверяются лицензия, права на коммерческое распространение, требования к атрибуции и совместимость с лицензиями остальных компонентов.
+Для CreatorOS принимаются следующие практические меры:
 
+~~~text
+Qt DLLs
+↓
+динамическая поставка
+↓
+license notices
+↓
+информация об исходниках LGPL-компонентов
+↓
+возможность замены/relinking согласно LGPL
+~~~
+
+Особое внимание:
+~~~text
+модульный состав Qt
+Qt WebEngine и third-party/Chromium лицензии
+Qt Network Authorization
+изменения исходного кода Qt
+~~~
+
+### SQLite
+
+SQLite используется через Qt SQL/QSQLITE. В документации Qt 6.12 SQLite указан как third-party компонент под SQLite Blessing.
+
+### Прочие зависимости
+
+Каждая дополнительная библиотека проверяется до включения в основной target:
+
+~~~text
+license
+commercial redistribution
+source/notice obligations
+static/dynamic linking requirements
+platform compatibility
+~~~
+
+В релизе CreatorOS должен существовать раздел О программе → Лицензии.
+
+Этот раздел является архитектурным правилом проекта, а не индивидуальным юридическим заключением. Перед первым коммерческим релизом итоговый набор распространяемых компонентов и их лицензий проверяется по актуальным лицензионным текстам.
 
 ## 22. Миграция с legacy-react-tauri
 
-Ветка `legacy-react-tauri` является исходной точкой для миграции, а не только архивом.
+Ветка legacy-react-tauri сохраняется как исходный материал.
 
 Из неё анализируются и при необходимости сохраняются:
-
-```text
-React
-TypeScript
-Vite
-UI-компоненты
-CSS
-ассеты
-навигация
-полезные сценарии
-```
+~~~text
+предметная модель
+бизнес-правила
+UX-решения
+названия сущностей
+SQL/schema-идеи
+полезные изображения/ассеты
+описания пользовательских сценариев
+~~~
 
 Не переносятся как обязательная часть новой архитектуры:
 
-```text
+~~~text
+React
+TypeScript
+Vite
+Electron
 Tauri
-src-tauri
 Rust-код Tauri
 Tauri-specific IPC
-Tauri-specific configuration
-неиспользуемые зависимости
-устаревшие или дублирующие abstractions
-```
+Node.js runtime
+web framework state
+~~~
 
 Цель миграции:
 
-```text
-legacy React/Tauri
+~~~text
+legacy React/Tauri/Electron
         ↓
 аудит существующей структуры
         ↓
-сохранение полезного
+сохранение предметной модели и UX
         ↓
-замена Tauri на Electron
+перенос полезных данных/разметки/стилей
         ↓
-очистка лишнего
+C++ domain/application
         ↓
-CreatorOS на React + TypeScript + Electron
-```
+Qt 6 + CMake
+        ↓
+SQLite / repositories / integrations
+        ↓
+HTML/CSS + minimal JS
+~~~
 
+Миграция не является механическим переводом TypeScript-кода в C++. Legacy используется как источник требований и готовых решений, а структура нового C++ проекта определяется настоящей архитектурой.
 
 ## 23. Этапы развития
 
-### Новый Этап 0 — Миграция и архитектурная основа
+### Новый Этап 0 — архитектурная основа C++/Qt
 
-```text
-legacy-react-tauri
+~~~text
+legacy audit
 ↓
-аудит структуры
+подготовка Qt 6 + CMake
 ↓
-удаление Tauri-зависимостей
+структура C++ слоёв
 ↓
-добавление Electron
+SQLite / DatabaseManager
 ↓
-проверка React/TypeScript/Vite
+QWebEngineView
 ↓
-организация общих CSS и темы
+HTML/CSS
 ↓
-безопасный preload/IPC
+QWebChannel bridge
 ↓
-SQLite boundary
-↓
-интеграционный слой
-```
+первый рабочий shell
+~~~
 
 ### Этап 1 — Project
-
-```text
+~~~text
 Project
 ↓
-ProjectCard
+ProjectRepository
 ↓
-ProjectDetails
+ProjectService
+↓
+Project UI
 ↓
 CRUD
-```
+~~~
 
 ### Этап 2 — Content
-
-```text
+~~~text
 Content
 ↓
-ContentCard
+ContentRepository
 ↓
-ContentDetails
+ContentService
+↓
+Content UI
 ↓
 ContentType
-```
+~~~
 
 ### Этап 3 — Tasks
-
-```text
+~~~text
 Task
 ↓
-TaskCard
+TaskRepository
 ↓
-TaskDetails
+TaskService
+↓
+Task UI
 ↓
 Task workflow
-```
+~~~
 
 ### Этап 4 — Планирование и библиотека
 
 ### Этап 5 — Публикации и интеграции
 
-```text
+~~~text
 Publication
 ↓
 Platform / Account
@@ -841,7 +918,7 @@ OAuth
 Upload / Publish
 ↓
 Status / Analytics
-```
+~~~
 
 ### Этап 6 — Автоматизация
 
@@ -849,14 +926,13 @@ Status / Analytics
 
 ### Этап 8 — AI и расширенная аналитика
 
-
 ## 24. Главный принцип проекта
 
 CreatorOS строится вокруг процесса производства контента, а не вокруг отдельных экранов.
 
 Главная цепочка:
 
-```text
+~~~text
 Project
 ↓
 Content
@@ -866,45 +942,49 @@ Production
 Publication
 ↓
 Analytics
-```
+~~~
 
-Программная архитектура строится вокруг разделения ответственности:
+Программная архитектура:
 
-```text
-React UI
+~~~text
+HTML/CSS/JS presentation
 ↓
-Application Services / State
+WebChannel Bridge
+↓
+Application Services / Use Cases
+↓
+Domain
 ↓
 Repository / Integration Adapter
 ↓
-SQLite / Platform API
-```
+SQLite / File System / Platform API
+~~~
 
-Общая UI-функциональность переиспользуется через композицию. ООП применяется там, где оно естественно подходит для доменных моделей, сервисов, репозиториев и интеграций.
-
+Общая UI-функциональность переиспользуется через web-шаблоны, CSS и небольшие функции представления. ООП применяется прежде всего в C++ domain/application/infrastructure/integration слоях.
 
 ## 25. Миграционная стратегия и сохранение legacy
 
-Ветка `legacy-react-tauri` сохраняется без изменений.
+Ветка legacy-react-tauri сохраняется без изменений.
 
-Работа над новой версией выполняется в `main`.
+Работа над новой версией выполняется в main.
 
-Новая `main` не пересоздаётся с нуля без необходимости. В качестве исходного материала используется структура `legacy-react-tauri`, после чего:
+Новая main не пересоздаётся с нуля без необходимости. В качестве исходного материала используется legacy-структура:
 
-```text
+~~~text
 1. сохранить legacy как контрольную точку;
-2. взять полезную React/TypeScript/Vite-структуру;
-3. определить части UI и бизнес-логики, которые сохраняются;
-4. удалить Tauri и связанные с ним файлы/зависимости;
-5. добавить Electron main/preload;
-6. организовать API, SQLite, файловый и secure-storage слои;
-7. удалить неиспользуемый и дублирующий код;
-8. проверить сборку, запуск и основные пользовательские сценарии;
-9. зафиксировать новую архитектурную основу коммитом.
-```
+2. взять полезную предметную модель, UX и данные;
+3. определить web-разметку и стили, которые можно перенести;
+4. создать C++/Qt/CMake основу;
+5. перенести SQLite schema и repository contracts;
+6. организовать Qt WebEngine + WebChannel;
+7. перенести прикладные сценарии в C++ services;
+8. добавить C++ integrations и security adapters;
+9. удалить устаревший Electron/Tauri/Node.js слой из новой main;
+10. проверить сборку, запуск и основные пользовательские сценарии;
+11. зафиксировать новую архитектурную основу коммитом.
+~~~
 
 Предметная модель, бизнес-правила, UX-цели и требования из настоящей спецификации сохраняются независимо от технологического перехода.
-
 
 ## 26. Правило имени приложения в USER_GUIDE
 
@@ -927,94 +1007,93 @@ APP_NAME
 
 ## 27. Структура корня исходного проекта
 
-Фактическая структура текущей Electron-версии:
+Целевая структура новой C++/Qt версии:
 
-```text
+~~~text
 CreatorOS/
 ├── docs/
-├── electron/
-│   ├── database/
-│   │   ├── database.ts
-│   │   └── schema.sql
-│   ├── ipc/
-│   │   └── databaseHandlers.ts
-│   ├── main.ts
-│   ├── preload.cts
-│   └── tsconfig.json
-├── public/
-├── scripts/
-│   └── dev-electron.mjs
+│   ├── TECHNICAL_SPEC.md
+│   ├── DEVELOPMENT_LOG.md
+│   └── USER_GUIDE.md
+├── cmake/
+│   ├── modules/
+│   └── helpers/
 ├── src/
-│   ├── components/
-│   │   ├── content/
-│   │   ├── entity/
-│   │   ├── layout/
+│   ├── app/
+│   ├── domain/
+│   │   ├── models/
+│   │   ├── rules/
+│   │   └── services/
+│   ├── application/
 │   │   ├── projects/
-│   │   └── ui/
-│   ├── config/
+│   │   ├── content/
+│   │   ├── tasks/
+│   │   ├── publications/
+│   │   └── common/
 │   ├── infrastructure/
-│   │   └── database/
-│   ├── models/
-│   ├── pages/
-│   ├── services/
-│   ├── styles/
-│   ├── types/
-│   ├── utils/
-│   ├── App.tsx
-│   └── main.tsx
-├── index.html
-├── package.json
-├── tsconfig.json
-├── tsconfig.app.json
-├── tsconfig.node.json
-└── vite.config.ts
-```
+│   │   ├── database/
+│   │   ├── filesystem/
+│   │   ├── security/
+│   │   └── configuration/
+│   ├── integrations/
+│   │   ├── youtube/
+│   │   ├── rutube/
+│   │   ├── vk_video/
+│   │   ├── dzen/
+│   │   └── common/
+│   ├── ui/
+│   │   ├── shell/
+│   │   ├── bridge/
+│   │   └── web/
+│   │       ├── pages/
+│   │       ├── components/
+│   │       ├── styles/
+│   │       └── js/
+│   └── common/
+├── resources/
+│   ├── web.qrc
+│   ├── icons/
+│   └── licenses/
+├── database/
+│   ├── schema/
+│   └── migrations/
+├── tests/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   └── integrations/
+├── CMakeLists.txt
+└── README.md
+~~~
 
-Назначение основных областей:
+Назначение областей:
 
-```text
-src/components/       переиспользуемый UI и layout
-src/config/            конфигурация форм и сущностей
-src/infrastructure/    renderer-side адаптеры системных возможностей
-src/models/            доменные модели и типы предметной области
-src/services/          application services и сценарии работы с сущностями
-src/pages/             точки сборки пользовательских сценариев
-src/styles/            глобальные, тематические и общие object styles
-src/utils/             переиспользуемые utilities
-electron/database/     SQLite infrastructure Electron Main
-electron/ipc/          IPC handlers и граница процессов
-electron/main.ts       запуск приложения и сборка системных компонентов
-electron/preload.cts   ограниченный API preload для renderer
-```
+~~~text
+src/app/              запуск приложения и root window
+src/domain/           предметная модель и правила
+src/application/      пользовательские сценарии / use cases
+src/infrastructure/   SQLite, файлы, настройки, security
+src/integrations/     внешние площадки
+src/ui/shell/         Qt Widgets shell
+src/ui/bridge/        C++ WebChannel API
+src/ui/web/           HTML/CSS/minimal JS
+database/             schema и SQL migrations
+resources/licenses/   license notices / third-party information
+tests/                автоматические тесты
+~~~
 
-Для будущего варианта C native-слой добавляется ниже существующих application/infrastructure boundaries. React UI и сервисы не должны напрямую зависеть от конкретной реализации C++/Rust; native adapter подключается через отдельный контракт/bridge.
-
-Вложенные каталоги создаются только при появлении соответствующей ответственности. Структура не расширяется заранее без практической необходимости.
+Каталоги создаются по мере появления соответствующей ответственности.
 
 ## 28. Архитектура UI-конструктора CreatorOS
 
 ### 28.1 Цель
 
-Интерфейс CreatorOS строится как конструктор из независимых переиспользуемых компонентов. Компонент более высокого уровня собирается из компонентов более низкого уровня через композицию.
-
-Основная цель:
-
-~~~text
-один общий визуальный/функциональный механизм
-                ↓
-        одна реализация
-                ↓
-    много специализированных использований
-~~~
-
-Изменение общего компонента должно автоматически отражаться во всех его использованиях. Специализированные компоненты не копируют общий JSX и CSS.
-
-React UI не использует классическое наследование как основной механизм повторного использования. Наследование и ООП применяются преимущественно в domain/service/repository/integration слоях.
+Интерфейс CreatorOS строится как конструктор из независимых переиспользуемых web-компонентов представления. Компонент более высокого уровня собирается из HTML-фрагментов, CSS-классов и небольших JS-функций.
 
 ### 28.2 Уровни конструктора
 
 ~~~text
-Уровень 0 — UI primitives
+Уровень 0 — HTML primitives
         ↓
 Уровень 1 — Common UI components
         ↓
@@ -1025,10 +1104,12 @@ React UI не использует классическое наследован
 Pages — сборка пользовательских сценариев
 ~~~
 
-Параллельно существует отдельный поток данных и бизнес-логики:
+Поток данных:
 
 ~~~text
 Page / Component
+        ↓
+WebBridge
         ↓
 Application Service
         ↓
@@ -1037,23 +1118,20 @@ Repository / Adapter
 SQLite / External API
 ~~~
 
-UI-компонент не должен напрямую зависеть от SQLite, файловой системы, OAuth или внешнего API.
-
 ### 28.3 Уровень 0 — UI primitives
 
-Минимальные универсальные элементы:
+~~~text
+button
+badge
+progress
+input
+textarea
+select
+icon
+link
+~~~
 
-| Компонент | Ответственность | Данные/props | Состояния |
-|---|---|---|---|
-| Button | действие пользователя | label/children, variant, disabled, type, icon | normal, hover, disabled, focus |
-| Badge | короткая метка/статус | label/children, tone | neutral, accent, success, warning, danger |
-| ProgressBar | визуализация прогресса | value, showValue | 0–100 |
-| Input | ввод короткого значения | value, placeholder, disabled, onChange | normal, focus, error, disabled |
-| Textarea | многострочный ввод | value, rows, placeholder, disabled, onChange | normal, focus, error, disabled |
-| Select | выбор из вариантов | value, options, disabled, onChange | normal, focus, error, disabled |
-| Icon | отдельного универсального wrapper сейчас не создавать | — | Lucide используется напрямую |
-
-Input, Textarea и Select выделены в отдельные primitives, поскольку они уже используются как самостоятельные элементы EntityForm. Они не содержат бизнес-логики и отвечают только за базовый ввод.
+Они не содержат бизнес-логики. Семантический HTML и доступность используются там, где это возможно.
 
 ### 28.4 Уровень 1 — общие составные UI-компоненты
 
@@ -1073,146 +1151,23 @@ FormField
 EntityForm
 ~~~
 
-#### Card
-
-Общий визуальный контейнер:
-
-~~~text
-Card
-├── Header?
-├── Content
-└── Footer / Actions?
-~~~
-
-Все области, кроме основного содержимого, опциональны. Card не знает о Project, Content или Task.
-
-#### Section
-
-Повторяемый блок страницы:
-
-~~~text
-Section
-├── Header
-│   ├── title
-│   ├── description?
-│   └── actions?
-└── Content
-~~~
-
-#### PageHeader
-
-Единая структура заголовка страницы:
-
-~~~text
-PageHeader
-├── title
-├── description?
-└── actions?
-~~~
-
-#### Toolbar
-
-Панель управления списком/представлением:
-
-~~~text
-Toolbar
-├── search?
-├── filters?
-├── sorting?
-└── actions?
-~~~
-
-#### EntityList
-
-Универсальный контейнер списка:
-
-~~~text
-EntityList<T>
-├── loading?
-├── error?
-├── empty?
-└── items
-      └── renderItem(item)
-~~~
-
-EntityList не знает, является ли item Project, Content или Task.
-
-#### Modal
-
-Общий механизм модального окна:
-
-~~~text
-Modal
-├── Header
-├── Close
-└── Content
-~~~
-
-#### ConfirmModal
-
-Специализация Modal для подтверждения:
-
-~~~text
-ConfirmModal
-└── Modal
-    ├── message
-    └── actions
-~~~
-
-Внутри не хранится логика удаления конкретной сущности.
-
-#### EmptyState, LoadingState, ErrorState
-
-Это независимые состояния, которые могут использоваться в любом списке, Section или Page. Удаление одного из них не должно ломать сам список.
+Эти элементы являются повторно используемыми HTML-шаблонами/функциями представления. Они не знают о конкретном Project, Content или Task.
 
 ### 28.5 Уровень 2 — layout и шаблоны
-
-#### AppShell
-
-Единый корневой каркас приложения:
 
 ~~~text
 AppShell
 ├── Sidebar
 ├── Header?
 └── Workspace
-      └── Current Route
+      └── Current Page
 ~~~
 
-Страницы не знают, где физически расположен Sidebar. Перемещение Sidebar, изменение его ширины или перенос в другую область выполняется в AppShell/layout-слое.
-
-#### Workspace
-
-Рабочая область между глобальным layout и конкретной страницей. Она отвечает за техническое размещение страницы и контекстную навигацию, но не за данные Project/Content.
-
-#### PageLayout
-
-Единый шаблон содержательной страницы:
-
-~~~text
-PageLayout
-├── context navigation?
-├── PageHeader
-├── Toolbar?
-└── Content
-~~~
+AppShell отвечает за глобальный layout, Workspace — за размещение текущей страницы.
 
 ### 28.6 Уровень 3 — общие сущностные компоненты
 
-#### EntityHeader
-
-~~~text
-EntityHeader
-├── title
-├── description?
-├── status?
-├── meta?
-└── actions?
-~~~
-
-#### EntityCard
-
-Общий каркас карточки сущности:
+EntityHeader, EntityCard и EntityDetails являются общими механизмами представления.
 
 ~~~text
 EntityCard
@@ -1226,12 +1181,6 @@ EntityCard
 └── actions?
 ~~~
 
-Все секции, кроме основной идентификации, по возможности опциональны.
-
-#### EntityDetails
-
-Общий каркас подробного представления:
-
 ~~~text
 EntityDetails
 ├── context navigation?
@@ -1239,992 +1188,263 @@ EntityDetails
 ├── error?
 ├── summary / info?
 ├── sections[]
-└── modals / overlays?
+└── overlays?
 ~~~
 
-Специализированный EntityDetails передаёт уникальные секции и действия через composition.
+ProjectCard, ContentCard, TaskCard и специализированные Details используют общий шаблон и передают только уникальные данные/секции.
 
-#### EntityActions
-
-Набор действий конкретной сущности. Это не обязательно отдельный файл для каждого типа. Отдельный компонент создаётся только тогда, когда действия имеют самостоятельную повторяемую структуру.
-
-### 28.7 Project — целевая структура
-
-Данные модели:
-
-~~~text
-Project
-├── id
-├── name
-├── description?
-├── owner_id?
-├── planned_release_at
-├── status
-├── progress
-├── created_at
-└── updated_at
-~~~
-
-Статусы текущей модели:
-
-~~~text
-draft → Черновик
-active → В работе
-archived → Архив
-~~~
-
-Действия состояния:
-
-~~~text
-draft
-└── Взять в работу → active
-
-active
-└── Архивировать → archived
-
-archived
-└── Восстановить → draft
-~~~
-
-#### ProjectsPage
+### 28.7 Project — UI
 
 ~~~text
 ProjectsPage
-├── PageLayout
-│   ├── PageHeader
-│   │   ├── title: "Проекты"
-│   │   └── actions
-│   │       └── Button: "Создать новый проект"
-│   │
-│   └── EntityList<Project>
-│       ├── LoadingState?
-│       ├── EmptyState?
-│       └── ProjectCard[]
-│
+├── PageHeader
+├── Toolbar
+├── EntityList<Project>
+│   └── ProjectCard[]
 └── Modal / ConfirmModal
-    ├── создать проект
-    ├── редактировать проект
-    └── подтвердить удаление
 ~~~
 
-ProjectsPage отвечает за загрузку списка и сценарии CRUD, но не рисует собственную альтернативную версию карточки.
+ProjectCard показывает название, описание, статус, прогресс, плановую дату и действия.
 
-#### ProjectCard
+ProjectDetails использует EntityDetails и показывает основной контент, дополнительный контент и задачи.
 
-~~~text
-ProjectCard
-└── EntityCard
-    ├── title
-    │   └── ссылка на ProjectDetails
-    ├── description
-    ├── status → Badge
-    ├── progress → ProgressBar
-    ├── meta
-    │   └── planned_release_at + Date
-    └── actions
-        ├── Открыть
-        ├── Редактировать
-        └── Удалить
-~~~
-
-ProjectCard определяет, какие данные Project показать, но не копирует каркас EntityCard.
-
-#### ProjectDetails
-
-~~~text
-ProjectDetails
-└── EntityDetails
-    ├── context navigation
-    │   └── "Вернуться к проектам"
-    ├── EntityHeader
-    │   ├── title
-    │   ├── description
-    │   ├── status → Badge
-    │   ├── meta
-    │   │   ├── progress
-    │   │   ├── planned_release_at
-    │   │   ├── owner_id
-    │   │   ├── created_at
-    │   │   └── updated_at
-    │   └── actions
-    │       ├── Редактировать
-    │       ├── Взять в работу / Архивировать / Восстановить
-    │
-    ├── Section: Основной контент
-    │   └── ContentCard
-    │
-    ├── Section: Дополнительный контент
-    │   └── ContentCard[]
-    │
-    └── Section: Задачи
-        └── TaskList / TaskCard[] (будет реализовано на этапе Tasks)
-~~~
-
-Дополнительные модальные сценарии ProjectDetails:
-- создание основного/дополнительного Content;
-- редактирование Content;
-- подтверждение удаления дополнительного Content;
-- редактирование Project.
-
-### 28.8 Content — целевая структура
-
-Данные модели:
-
-~~~text
-Content
-├── id
-├── project_id
-├── content_type_id
-├── content_role
-├── name
-├── description?
-├── planned_release_at
-├── priority
-├── production_deadline_at?
-├── status
-├── progress
-├── created_at
-└── updated_at
-~~~
-
-Роли:
-
-~~~text
-main
-additional
-~~~
-
-Правило: один Project имеет ровно один main Content.
-
-#### ContentCard
-
-~~~text
-ContentCard
-└── EntityCard
-    ├── title
-    │   └── ссылка на ContentDetails
-    ├── description
-    ├── status/type → Badge
-    ├── progress → ProgressBar
-    ├── meta
-    │   ├── content type
-    │   └── planned_release_at
-    └── actions
-        ├── Редактировать
-        └── Удалить? (только для additional)
-~~~
-
-Текущий ContentCard визуально реализует значительную часть каркаса EntityCard самостоятельно. Это одно из главных мест будущего устранения дублирования.
-
-#### ContentDetails
+### 28.8 Content — UI
 
 ~~~text
 ContentDetails
-└── EntityDetails
-    ├── context navigation
-    │   └── "Вернуться к проекту"
-    ├── EntityHeader
-    │   ├── title
-    │   ├── description
-    │   ├── meta
-    │   │   ├── content type
-    │   │   ├── role
-    │   │   ├── planned_release_at
-    │   │   └── progress
-    │   └── actions
-    │       └── Редактировать
-    └── Section: Информация о контенте
-        ├── Тип контента
-        ├── Роль
-        ├── Планируемый выход
-        └── Прогресс
+├── EntityHeader
+├── Content information
+├── Production data
+├── Publications
+└── Tasks
 ~~~
 
 ### 28.9 ContentType
 
-Модель:
+ContentType является справочником и редактируется через Settings. UI вызывает application service через WebBridge.
 
-~~~text
-ContentType
-├── id
-├── name
-├── description?
-├── created_at
-└── updated_at
-~~~
-
-Представление в Settings:
-
-~~~text
-ContentTypesPage
-├── PageLayout
-│   ├── PageHeader
-│   │   ├── title
-│   │   └── actions
-│   │       └── "Добавить тип"
-│   └── EntityList<ContentType>
-│       ├── LoadingState?
-│       ├── EmptyState?
-│       └── ContentTypeItem[]
-│
-└── Modal
-    └── EntityForm<ContentType>
-~~~
-
-Элемент ContentType показывает:
-- название;
-- описание / особенности;
-- действия: Редактировать, Удалить.
-
-Правила удаления и ограничения определяются бизнес-слоем, а не UI.
-
-### 28.10 Task — целевая структура MVP
-
-Модель:
-
-~~~text
-Task
-├── id
-├── parent_id
-├── parent_type
-├── parent_task_id?
-├── title
-├── description?
-├── status
-├── assigned_user_id?
-├── start_date?
-├── due_date?
-├── completed_at?
-├── created_at
-└── updated_at
-~~~
-
-#### TasksPage
+### 28.10 Task — UI
 
 ~~~text
 TasksPage
-├── PageLayout
-│   ├── PageHeader
-│   │   ├── title: "Задачи"
-│   │   └── actions
-│   │       └── "Создать задачу"
-│   ├── Toolbar
-│   │   ├── поиск
-│   │   ├── фильтры
-│   │   └── сортировка
-│   └── EntityList<Task>
-│       └── TaskCard[]
+├── PageHeader
+├── Toolbar
+├── EntityList<Task>
+│   └── TaskCard[]
+└── TaskDetails / Form
 ~~~
 
-#### TaskCard
+Приоритет, сроки и статусы отображаются по данным C++-слоя.
 
-~~~text
-TaskCard
-└── EntityCard
-    ├── title
-    ├── status → Badge
-    ├── description?
-    ├── meta
-    │   ├── parent entity
-    │   ├── assigned user?
-    │   ├── due date?
-    │   └── priority/context (расчётная)
-    └── actions
-        ├── Открыть
-        ├── Редактировать
-        └── Удалить
-~~~
-
-#### TaskDetails
-
-~~~text
-TaskDetails
-└── EntityDetails
-    ├── EntityHeader
-    ├── task information
-    ├── parent entity context
-    └── actions
-        ├── Изменить статус
-        ├── Редактировать
-        └── Удалить
-~~~
-
-Статусы и реальные переходы определяются общей системой workflow; свободный ввод статуса не используется.
-
-### 28.11 Asset / Library — целевая структура MVP
-
-Asset — базовая сущность материалов/ресурсов, связанных с производством контента.
-
-Предварительная UI-модель:
+### 28.11 Asset / Library — UI
 
 ~~~text
 LibraryPage
-├── PageLayout
-│   ├── PageHeader
-│   │   ├── title: "Библиотека"
-│   │   └── actions
-│   │       └── "Добавить материал"
-│   ├── Toolbar
-│   │   ├── поиск
-│   │   ├── фильтры
-│   │   └── сортировка
-│   └── EntityList<Asset>
-│       └── AssetCard[]
+├── Toolbar
+├── filters / search
+└── AssetCard[]
 ~~~
 
-AssetCard:
+Работа с файлами выполняется C++ File Service.
+
+### 28.12 Planning — UI
+
+Planning объединяет Project, Content и Task во временной последовательности. Расчёты сроков выполняются application/domain layer.
+
+### 28.13 Dashboard — UI
 
 ~~~text
-AssetCard
-└── EntityCard
-    ├── preview / icon
-    ├── title
-    ├── asset type
-    ├── metadata
-    └── actions
-        ├── Открыть
-        ├── Редактировать
-        └── Удалить
+Dashboard
+├── Today
+├── Attention
+├── Active Projects
+└── Upcoming Publications
 ~~~
 
-Точная модель полей Asset ещё не утверждена. Нельзя придумывать окончательные поля до отдельного этапа проектирования Library.
+Источником данных являются application services.
 
-### 28.12 Planning — целевая структура
+### 28.14 Analytics
 
-PlanningPage показывает производственный план и календарное представление:
+Analytics получает данные от C++ integration/application слоя и не содержит прямых вызовов API площадок.
 
-~~~text
-PlanningPage
-├── PageLayout
-│   ├── PageHeader
-│   ├── Toolbar
-│   │   ├── период
-│   │   ├── фильтры
-│   │   └── переключатель представления
-│   └── PlanningView
-│       ├── Calendar / Timeline
-│       └── PlannedItem[]
-~~~
+### 28.15 Settings
 
-PlanningView работает с Project, Content и Task и их системными датами. Он не становится новым источником бизнес-данных.
-
-### 28.13 Dashboard — целевая структура
-
-~~~text
-DashboardPage
-└── PageLayout
-    ├── PageHeader
-    │   └── title: "Главная"
-    └── DashboardGrid
-        ├── Section: Сегодня
-        │   └── TaskList
-        ├── Section: Требует внимания
-        │   └── AttentionList
-        ├── Section: Активные проекты
-        │   └── ProjectSummary[]
-        └── Section: Ближайшие публикации
-            └── PublicationSummary[] (после появления Publication)
-~~~
-
-DashboardPage является обзором системы и не должна становиться отдельным источником данных.
-
-### 28.14 Analytics — текущая граница
-
-AnalyticsPage входит в навигацию, но расширенная аналитика платформ откладывается.
-
-~~~text
-AnalyticsPage
-└── PageLayout
-    ├── PageHeader
-    ├── Toolbar
-    └── AnalyticsView
-        ├── Summary
-        ├── Charts
-        └── Details
-~~~
-
-Конкретные графики, показатели и источники данных утверждаются после проектирования Analytics.
-
-### 28.15 Settings — общая структура
-
-~~~text
-Settings
-└── SettingsLayout
-    ├── SettingsSidebar
-    └── SettingsWorkspace
-         └── SettingsPage
-~~~
-
-Текущие категории:
+Предполагаемые категории:
 
 ~~~text
 Общие
 Внешний вид
-Горячие клавиши
 Проекты
 Типы контента
 Автоматизация
-Площадки
+Интеграции
 Команда
 AI
 ~~~
 
-Не реализованные категории пока остаются заглушками и не должны получать псевдофункциональность.
-
 ### 28.16 Global layout и навигация
 
-Целевая зависимость:
-
 ~~~text
-App
-└── AppShell
-    ├── Sidebar
-    └── Workspace
-        └── PageLayout
-            └── Current Page
+Главная
+Проекты
+Планирование
+Задачи
+Библиотека
+Аналитика
+Настройки
 ~~~
 
-Страница не содержит Sidebar.
-
-Страница не знает его расположение.
-
-Страница не должна самостоятельно задавать глобальный workspace-layout.
-
-Это позволяет изменить:
-
-~~~text
-Sidebar слева
-        ↓
-Sidebar справа
-~~~
-
-изменив только layout-слой.
+Текущий route/page выбирается JS-слоем представления, но данные и допустимость операций определяются C++ application layer.
 
 ### 28.17 Правило слабой связанности
 
-Компоненты строятся по правилу:
+UI знает только WebBridge contract.
 
 ~~~text
-Page
- ↓
-Domain Component
- ↓
-Common Component
- ↓
-Primitive
+HTML/JS
+   ↓
+WebBridge
+   ↓
+Application services
 ~~~
 
-Низкоуровневый компонент не импортирует специализированный компонент высокого уровня.
-
-Примеры:
-
-~~~text
-Button ❌→ ProjectCard
-Card ❌→ Project
-EntityList ❌→ Content
-EntityCard ❌→ ProjectService
-~~~
-
-Разрешено:
-
-~~~text
-ProjectCard → EntityCard
-ProjectCard → Project model
-ProjectPage → ProjectService
-~~~
+UI не зависит от конкретного SQLite-класса, SQL-запроса или implementation класса интеграции.
 
 ### 28.18 Правило опциональных частей
 
-Базовый компонент не должен требовать все возможные части.
-
-~~~text
-EntityCard
-├── title                 обязательный
-├── description?          optional
-├── status?               optional
-├── progress?             optional
-├── meta?                 optional
-├── content?              optional
-└── actions?              optional
-~~~
-
-Это означает:
-- карточка без progress остаётся рабочей;
-- карточка без status остаётся рабочей;
-- карточка без actions остаётся рабочей.
-
-Удаление одного необязательного элемента не должно приводить к разрушению базового компонента.
+Если блок не имеет данных, он не должен создавать визуальную пустоту без необходимости. Опциональность определяется данными.
 
 ### 28.19 Что считается самостоятельным компонентом
 
-Самостоятельный файл/компонент создаётся только если выполняется хотя бы одно условие:
+Компонент выделяется отдельно только при наличии самостоятельной ответственности, реального повторного использования, собственного поведения представления, независимого тестирования или заметной сложности разметки.
 
-1. компонент используется в нескольких местах;
-2. компонент имеет самостоятельную визуальную ответственность;
-3. компонент имеет самостоятельное состояние/поведение;
-4. компонент представляет устойчивый архитектурный шаблон.
-
-Если блок используется один раз и не имеет самостоятельной ответственности, он может оставаться частью родительского компонента.
-
-### 28.20 Что НЕ создаём заранее
-
-Пока не создаются без подтверждённой необходимости:
+### 28.20 Что не создаём заранее
 
 ~~~text
-BaseComponent
-BasePage
-BaseEntity
-UniversalWidget
-UniversalIcon
-UniversalText
-UniversalContainer
+универсальный UI framework
+глубокий JS state manager
+сложный template engine
+отдельные классы C++ для каждого DOM-элемента
+универсальный bridge на весь application API
+лишние abstraction layers
 ~~~
 
-Также не создаются отдельные wrappers только ради увеличения количества файлов.
+### 28.21 C++ API bridge
 
-### 28.21 Текущая карта реализации
+WebBridge : QObject является контролируемой точкой входа web UI.
 
 ~~~text
-                          App
-                           │
-                       AppShell
-                    ┌──────┴──────┐
-                 Sidebar       Workspace
-                                 │
-                            PageLayout
-                                 │
-                ┌────────────────┼────────────────┐
-                │                │                │
-            PageHeader        Toolbar          Content
-                                                   │
-                     ┌─────────────────────────────┼─────────────┐
-                     │                             │             │
-                EntityList                     Section       DashboardGrid
-                     │                             │
-          ┌──────────┼───────────┐                 │
-          │          │           │                 │
-      ProjectCard ContentCard TaskCard        EntityDetails
-          │          │           │                 │
-          └──────────┼───────────┘                 │
-                     │                        ┌────┴────┐
-                 EntityCard              ProjectDetails  ContentDetails
-                     │
-        ┌────────────┼─────────────┐
-        │            │             │
-      Badge      ProgressBar    Actions
+WebBridge
+├── projects()
+├── createProject(...)
+├── updateProject(...)
+├── deleteProject(...)
+├── content()
+├── tasks()
+├── settings()
+└── notifications / events
 ~~~
 
-Эта схема является целевой, а не требованием немедленно создавать каждый прямоугольник отдельным .tsx-файлом.
+По мере роста приложения bridge разделяется на небольшие специализированные объекты.
 
-### 28.22 Приоритет ближайшей реализации
+### 28.22 События
 
-Работа выполняется снизу вверх:
+Для push-обновлений UI C++ использует Qt signals/slots, которые публикуются в web-слой через WebChannel при необходимости.
 
 ~~~text
-1. UI primitives
-   Button / Badge / ProgressBar / form controls
-
-2. Common UI
-   Card / Section / PageHeader / EntityList /
-   Modal / EmptyState / FormField
-
-3. Layout
-   AppShell / Workspace / PageLayout
-
-4. Entity framework
-   EntityHeader / EntityCard / EntityDetails
-
-5. Project
-   ProjectCard / ProjectDetails / ProjectsPage
-
-6. Content
-   ContentCard / ContentDetails / Content integration into Project
-
-7. Task
-   TaskCard / TaskDetails / TasksPage
-
-8. Planning / Library / Dashboard expansion
-
-9. Publication / Platform / Account / Analytics integrations
+Service
+↓ signal
+Bridge
+↓ WebChannel
+JavaScript event handler
+↓
+DOM update
 ~~~
 
-На каждом шаге существующие компоненты сначала проверяются на возможность повторного использования; новый компонент создаётся только после такой проверки.
+### 28.23 Безопасность web-слоя
 
+Web UI загружает локальные доверенные ресурсы CreatorOS.
 
-
-### 28.23 Статус реализации UI-конструктора
-
-Текущие компоненты и целевое состояние:
-
-| Объект | Сейчас | Целевое состояние |
-|---|---|---|
-| Button | реализован | UI primitive |
-| Badge | реализован | UI primitive |
-| ProgressBar | реализован | UI primitive |
-| Card | реализован как простой контейнер | общий Common UI |
-| Modal | реализован | общий Common UI |
-| ConfirmModal | реализован | общий Common UI |
-| EmptyState | реализован | общий Common UI |
-| FormField | реализован | общий Common UI |
-| EntityForm | реализован | общий Common UI; использует Input/Textarea/Select |
-| AppShell | реализован частично | единый глобальный layout |
-| Sidebar | реализован | часть AppShell |
-| Workspace | реализован частично | часть глобального layout |
-| PageLayout | отсутствует | создать |
-| PageHeader | отсутствует | создать |
-| Toolbar | отсутствует | создать по мере появления сценария |
-| EntityList | отсутствует | создать |
-| EntityHeader | реализован | общий Entity UI |
-| EntityCard | реализован частично | полноценный общий шаблон |
-| EntityDetails | отсутствует | создать |
-| ProjectCard | реализован | собрать поверх EntityCard |
-| ProjectDetails | реализован | собрать поверх EntityDetails |
-| ContentCard | реализован | собрать поверх EntityCard |
-| ContentDetails | реализован | собрать поверх EntityDetails |
-| TaskCard | отсутствует | создать на этапе Tasks |
-| TaskDetails | отсутствует | создать на этапе Tasks |
-| AssetCard | отсутствует | создать после утверждения модели Asset |
-| ProjectSummary | реализован | сохранить до доказанной необходимости EntitySummary |
-| DashboardGrid / аналогичный контейнер | отсутствует | создать только после определения реального повторного использования |
-| PlanningView | отсутствует | определить на этапе Planning |
-| AnalyticsView | отсутствует | определить после проектирования Analytics |
-| SettingsLayout | реализован | привести к общему page/layout принципу при необходимости |
-
-### 28.24 Границы текущей реализации
-
-В текущем этапе непосредственно реализуются и приводятся к единому конструктору:
+Запрещено:
 
 ~~~text
-AppShell
-Workspace
-PageLayout
-PageHeader
-
-Button
-Badge
-ProgressBar
-Card
-Section
-Toolbar
-EntityList
-Modal
-ConfirmModal
-EmptyState
-FormField
-EntityForm
-
-EntityHeader
-EntityCard
-EntityDetails
-
-Project
-Content
-ContentType
-Task
-
-ProjectsPage
-ProjectCard
-ProjectDetails
-ContentCard
-ContentDetails
-TasksPage
-
-DashboardPage
-PlanningPage
-LibraryPage
-AnalyticsPage
-Settings
+произвольно загружать удалённые страницы в основном UI
+передавать секреты в JS
+исполнять SQL из JS
+разрешать произвольный filesystem API
+открывать универсальный eval-like command bridge
 ~~~
 
-Publication, Platform, Account, Team, Series, AI, расширенная Analytics и сложная Automation остаются отдельными последующими этапами согласно общей спецификации.
+Внешние ссылки, OAuth и удалённый контент проходят через явно разрешённые сценарии/отдельные окна или системный браузер.
 
-Объекты, которые пока имеют только модель или заглушку, не получают придуманных полей и не объявляются реализованными раньше соответствующего этапа.
+### 28.24 Работа с HTML/CSS
+
+Рекомендуемая схема:
+
+~~~text
+CMake
+↓
+qt_add_resources
+↓
+application resource
+↓
+QWebEngineView
+↓
+local HTML/CSS/JS
+~~~
+
+Web assets не должны зависеть от локального dev server после production-сборки.
 
 ### 28.25 Принцип изменения визуала
 
-Любое изменение, которое относится к общему визуальному шаблону, выполняется в базовом компоненте или общем стиле.
-
-Примеры:
-
-~~~text
-изменили Card
-   ↓
-ProjectCard
-ContentCard
-TaskCard
-AssetCard
-PublicationCard
-получают изменение
-
-изменили PageHeader
-   ↓
-ProjectsPage
-TasksPage
-PlanningPage
-LibraryPage
-получают изменение
-
-изменили AppShell
-   ↓
-все страницы получают новый глобальный layout
-~~~
-
-Специализированная сущность не должна реализовывать собственную копию базовой разметки только ради изменения внешнего вида. Для уникального представления используются props/composition и отдельные стили только для действительно уникальной части.
+Изменения выполняются преимущественно в HTML templates, CSS и небольших JS view helpers. Изменение цвета, размера, отступов или сетки не требует изменения C++.
 
 ### 28.26 Рабочая визуальная схема CreatorOS
 
-Этот раздел является визуальной картой, на которую опирается реализация UI-конструктора. Схемы описывают размещение, состав и основные действия, а не пиксельные размеры.
-
-#### Глобальный экран
-
 ~~~text
-CreatorOS
-└── App
-    │
+MainWindow (Qt)
+└── QWebEngineView
     └── AppShell
-        │
         ├── Sidebar
-        │   ├── Brand
-        │   ├── Главная
-        │   ├── Проекты
-        │   ├── Задачи
-        │   ├── Планирование
-        │   ├── Библиотека
-        │   ├── Аналитика
-        │   └── Настройки
-        │
         └── Workspace
-            │
             └── PageLayout
                 ├── Context Navigation?
                 ├── PageHeader
                 ├── Toolbar?
-                └── Current Page Content
+                └── Content
 ~~~
 
-#### AppShell
-
-~~~text
-AppShell
-┌──────────────────────────────────────────────────────────────┐
-│                                                              │
-│ ┌──────────────────┐ ┌─────────────────────────────────────┐ │
-│ │     Sidebar      │ │             Workspace               │ │
-│ │  • Главная       │ │                                     │ │
-│ │  • Проекты       │ │       текущая страница              │ │
-│ │  • Задачи        │ │                                     │ │
-│ │  • Планирование  │ │                                     │ │
-│ │  • Библиотека    │ │                                     │ │
-│ │  • Аналитика     │ │                                     │ │
-│ │  Система         │ │                                     │ │
-│ │  • Настройки     │ │                                     │ │
-│ └──────────────────┘ └─────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────┘
-~~~
-
-#### PageLayout и PageHeader
-
-~~~text
-PageLayout
-┌──────────────────────────────────────────────────────────────┐
-│ Context Navigation?                                          │
-├──────────────────────────────────────────────────────────────┤
-│ PageHeader                                                    │
-│ Заголовок страницы                         [ Действия ]       │
-│ Описание страницы?                                           │
-├──────────────────────────────────────────────────────────────┤
-│ Toolbar?                                                      │
-├──────────────────────────────────────────────────────────────┤
-│ Content                                                       │
-└──────────────────────────────────────────────────────────────┘
-~~~
-
-#### EntityCard
-
-~~~text
-EntityCard
-┌──────────────────────────────────────────────────────┐
-│  TITLE                                  [STATUS]     │
-│  Description                                         │
-│  ███████████████████░░░░░░ 72%                       │
-│  META1                  META2                        │
-├──────────────────────────────────────────────────────┤
-│ [Action] [Action]                         [Delete]   │
-└──────────────────────────────────────────────────────┘
-~~~
-
-#### ProjectsPage
-
-~~~text
-ProjectsPage
-┌────────────────────────────────────────────────────────────────┐
-│  место под контекстную навигацию                                │
-├────────────────────────────────────────────────────────────────┤
-│  ПРОЕКТЫ                                      [Создать проект]  │
-├────────────────────────────────────────────────────────────────┤
-│ [Фильтр ▼] [Сортировка ▼] [Поиск.........................]     │
-├────────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ PROJECT CARD №1                                          │  │
-│  │ Название проекта                         [В работе]      │  │
-│  │ Описание проекта                                           │  │
-│  │ █████████████████░░░░░░░ 68%                             │  │
-│  │ 📅 Выход: 12.10.2026                                    │  │
-│  ├──────────────────────────────────────────────────────────┤  │
-│  │ [Открыть] [Редактировать]                    [Удалить]  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                │
-│  ...                                                           │
-└────────────────────────────────────────────────────────────────┘
-~~~
-
-#### ProjectDetails
-
-~~~text
-ProjectDetails
-┌───────────────────────────────────────────────────────────────┐
-│ ← Вернуться к проектам                                       │
-├───────────────────────────────────────────────────────────────┤
-│ Мой проект                                      [Редактировать]│
-│ Описание проекта                                               │
-│ [В работе]                                                     │
-│ Прогресс: 72%                                                  │
-│ Планируемая дата выхода: 12.10.2026                            │
-│ Ответственный: Пользователь #1                                │
-│ Создано: 01.09.2026                                            │
-│ Изменено: 28.09.2026                                           │
-├───────────────────────────────────────────────────────────────┤
-│ Основной контент                                    [Добавить] │
-│   ContentCard                                                  │
-├───────────────────────────────────────────────────────────────┤
-│ Дополнительный контент                             [Добавить] │
-│   ContentCard                                                  │
-│   ContentCard                                                  │
-├───────────────────────────────────────────────────────────────┤
-│ Задачи                                                         │
-│   [Добавить задачу]                                           │
-└───────────────────────────────────────────────────────────────┘
-~~~
-
-#### ContentCard
-
-~~~text
-ContentCard
-┌──────────────────────────────────────────────────────────────┐
-│ Название контента                              [Видео]        │
-│ Описание                                                      │
-│ 📅 Планируемый выход: 12.10.2026                             │
-│ Прогресс: 55%                                                 │
-│ ███████████████░░░░░░                                        │
-├──────────────────────────────────────────────────────────────┤
-│                              [Редактировать] [Удалить]         │
-└──────────────────────────────────────────────────────────────┘
-~~~
-
-Для main Content действие удаления отсутствует; для additional Content оно доступно согласно бизнес-правилам.
-
-#### ContentDetails
-
-~~~text
-ContentDetails
-┌──────────────────────────────────────────────────────────────┐
-│ ← Вернуться к проекту                                        │
-├──────────────────────────────────────────────────────────────┤
-│ Видео: Обзор нового проекта                    [Редактировать]│
-│ Описание                                                      │
-│ Тип: Видео                                                    │
-│ Роль: Основной контент                                       │
-│ Планируемый выход: 12.10.2026                               │
-│ Прогресс: 55%                                                 │
-├──────────────────────────────────────────────────────────────┤
-│ КОНТЕНТ                                                       │
-│ Тип контента          Видео                                   │
-│ Роль                  Основной контент                        │
-│ Планируемый выход     12.10.2026                              │
-│ Прогресс              55%                                     │
-└──────────────────────────────────────────────────────────────┘
-~~~
-
-#### TasksPage
-
-~~~text
-TasksPage
-┌──────────────────────────────────────────────────────────────┐
-│ ЗАДАЧИ                                         [Создать задачу]│
-├──────────────────────────────────────────────────────────────┤
-│ [Фильтр] [Сортировка] [Поиск.................................]│
-├──────────────────────────────────────────────────────────────┤
-│ TaskCard...                                                   │
-│ TaskCard...                                                   │
-└──────────────────────────────────────────────────────────────┘
-~~~
-
-#### DashboardPage
-
-~~~text
-DashboardPage
-┌──────────────────────────────────────────────────────────────┐
-│ Главная                                                       │
-├──────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────┐ ┌───────────────────────────────────┐│
-│ │ СЕГОДНЯ              │ │ ТРЕБУЕТ ВНИМАНИЯ                 ││
-│ │ TaskList             │ │ AttentionList                    ││
-│ └──────────────────────┘ └───────────────────────────────────┘│
-│ ┌────────────────────────────────────────────────────────────┐│
-│ │ АКТИВНЫЕ ПРОЕКТЫ                            [Все проекты]  ││
-│ │ ProjectSummary                                             ││
-│ │ ProjectSummary                                             ││
-│ └────────────────────────────────────────────────────────────┘│
-│ ┌────────────────────────────────────────────────────────────┐│
-│ │ БЛИЖАЙШИЕ ПУБЛИКАЦИИ                                       ││
-│ │ PublicationSummary — после появления Publication          ││
-│ └────────────────────────────────────────────────────────────┘│
-└──────────────────────────────────────────────────────────────┘
-~~~
+Native Qt controls добавляются только там, где они дают явное преимущество: системные file dialogs, native menus, window-level interactions и аналогичные ОС-зависимые сценарии.
 
 ### 28.27 Визуальная модель зависимостей
 
 ~~~text
-App
-└── AppShell
-    ├── Sidebar
-    └── Workspace
-        └── PageLayout
-            ├── Context Navigation?
-            ├── PageHeader
-            ├── Toolbar?
-            └── Content
-
-Pages
-  ↓
-Domain Components
-  ↓
-Common UI
-  ↓
-UI Primitives
-  ↓
-CSS / design tokens
-~~~
-
-Поток данных остаётся отдельным:
-
-~~~text
-UI
- ↓
-Application State / Service
- ↓
+Qt MainWindow
+      ↓
+QWebEngineView
+      ↓
+HTML/CSS/JS
+      ↓
+QWebChannel
+      ↓
+WebBridge
+      ↓
+Application Services
+      ↓
 Repository / Adapter
- ↓
-SQLite / External API
+      ↓
+SQLite / File System / External API
 ~~~
 
 ### 28.28 Визуальный порядок реализации
 
 ~~~text
 ШАГ 1
+HTML primitives
+CSS tokens
 Button
 Badge
-ProgressBar
+Progress
 Input
 Textarea
 Select
@@ -2245,6 +1465,7 @@ EntityForm
         ↓
 ШАГ 3
 AppShell
+Sidebar
 Workspace
 PageLayout
         ↓
@@ -2254,18 +1475,13 @@ EntityCard
 EntityDetails
         ↓
 ШАГ 5
-ProjectCard
-ProjectDetails
-ProjectsPage
+Project UI + Project C++ layers
         ↓
 ШАГ 6
-ContentCard
-ContentDetails
+Content UI + Content C++ layers
         ↓
 ШАГ 7
-TaskCard
-TaskDetails
-TasksPage
+Task UI + Task C++ layers
         ↓
 ШАГ 8
 Planning
@@ -2283,91 +1499,54 @@ Analytics
 
 ### 28.29 Организация файлов UI
 
-UI-компоненты группируются по устойчивой функциональной ответственности, а не по принципу «одна папка на один файл».
-
-Целевая структура Common/UI:
-
 ~~~text
-src/components/ui/
-├── Primitives/
-│   ├── Button.tsx
-│   ├── Badge.tsx
-│   ├── ProgressBar.tsx
-│   ├── Input.tsx
-│   ├── Textarea.tsx
-│   └── Select.tsx
-│
-├── Layout/
-│   ├── Card.tsx
-│   ├── Section.tsx
-│   ├── PageHeader.tsx
-│   └── Toolbar.tsx
-│
-├── Forms/
-│   ├── FormField.tsx
-│   └── EntityForm.tsx
-│
-├── States/
-│   ├── EmptyState.tsx
-│   ├── LoadingState.tsx
-│   └── ErrorState.tsx
-│
-├── Overlays/
-│   ├── Modal.tsx
-│   └── ConfirmModal.tsx
-│
-└── Lists/
-    └── EntityList.tsx
+src/ui/
+├── shell/
+│   ├── MainWindow.*
+│   └── WebUiHost.*
+├── bridge/
+│   ├── WebBridge.*
+│   └── events/
+└── web/
+    ├── index.html
+    ├── pages/
+    ├── components/
+    ├── styles/
+    │   ├── theme.css
+    │   ├── base.css
+    │   ├── entities.css
+    │   ├── ui/
+    │   ├── layout/
+    │   └── pages/
+    └── js/
+        ├── app.js
+        ├── bridge.js
+        └── views/
 ~~~
 
-Папка создаётся для группы связанных компонентов. Отдельная папка для одного компонента без самостоятельной причины не создаётся.
-
-Названия групп отражают ответственность:
-- Primitives — минимальные базовые элементы;
-- Layout — составные элементы размещения и структуры;
-- Forms — формы и элементы их представления;
-- States — состояния загрузки, ошибки и пустого содержимого;
-- Overlays — модальные и наложенные интерфейсы;
-- Lists — универсальные списковые механизмы.
-
-CSS-файлы не помещаются в эти папки: все CSS остаются в `src/styles/` и его подкаталогах.
+C++ файлы shell/bridge не содержат CSS. Web UI не содержит SQL.
 
 ### 28.30 Глобальный layout
 
-Глобальный layout реализован по схеме:
-
 ~~~text
-App
-└── AppShell
-    ├── Sidebar
-    └── Workspace
-        └── Routes
-            └── Current Page
-                └── PageLayout
-                    ├── Context Navigation?
-                    ├── PageHeader?
-                    ├── Toolbar?
-                    └── Content
+MainWindow
+└── WebUiHost
+    └── QWebEngineView
+        └── AppShell
+            ├── Sidebar
+            └── Workspace
+                └── Current Page
+                    └── PageLayout
 ~~~
 
-Структура файлов:
+MainWindow является единственным владельцем root web host. Страницы не создают отдельные desktop windows для обычной навигации.
 
 ~~~text
-src/components/layout/
-├── AppShell.tsx
-├── Sidebar.tsx
-└── Workspace.tsx
+MainWindow
+   ↓
+WebUiHost
+   ↓
+QWebEngineView
+   ↓
+HTML AppShell
 ~~~
-
-AppShell является единственным владельцем Sidebar и Workspace. Workspace создаётся один раз вокруг `Routes`. Страницы не создают Workspace самостоятельно.
-
-PageLayout является Common UI-компонентом и используется внутри конкретных страниц.
-
-Правила глобального layout:
-- существующая бизнес-логика страниц сохраняется;
-- страницы используют PageLayout как единый внутренний каркас;
-- контекстная навигация страницы передаётся в PageLayout при необходимости;
-- CSS layout хранится только в `src/styles/layout/`;
-- изменения визуала глобального каркаса выполняются в AppShell/Workspace/PageLayout, а не копируются в страницах.
-
-
