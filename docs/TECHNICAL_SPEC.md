@@ -2379,25 +2379,45 @@ App
 
 Settings сохраняет собственный вложенный `SettingsLayout` до отдельного рефакторинга Settings.
 
-### 28.32 Следующий этап — Entity Framework
+### 28.32 Завершение Entity Framework
 
-Следующий этап UI-конструктора — общие сущностные компоненты:
+Этап базового Entity Framework завершён:
 
 ~~~text
 Entity Framework
 ├── EntityHeader
 ├── EntityCard
 └── EntityDetails
+        ↓
+ProjectCard / ContentCard
+ProjectDetails / ContentDetails
 ~~~
 
-Правила реализации:
-- EntityCard и EntityDetails остаются универсальными и не знают конкретных бизнес-сущностей;
-- специализированные ProjectCard, ContentCard, TaskCard и другие карточки используют EntityCard через composition;
-- ProjectDetails, ContentDetails, TaskDetails и другие подробные представления используют EntityDetails через composition;
-- общий JSX и CSS не копируются в специализированные компоненты;
-- уникальные части передаются через props и composition;
-- исходная бизнес-логика существующих страниц сохраняется и переносится постепенно;
-- не создаются дополнительные абстракции без реальной повторяемости.
+Фактически реализовано:
+- EntityHeader, EntityCard и EntityDetails имеют единый универсальный API;
+- ProjectCard и ContentCard используют EntityCard через composition;
+- ProjectDetails и ContentDetails используют EntityDetails через composition;
+- общий JSX и CSS не копируются в специализированных карточках;
+- navigation, header, error и overlays могут передаваться в EntityDetails как отдельные точки композиции;
+- Entity-компоненты не содержат бизнес-логики конкретных сущностей.
 
-Первый фокус этапа: привести EntityCard, EntityHeader и EntityDetails к единому API и затем постепенно перевести ProjectCard и ContentCard на общий EntityCard.
+ProjectSummary не переводится на EntityCard автоматически: это компактное dashboard-представление с самостоятельной визуальной ответственностью. Универсализация допустима только при появлении реального общего шаблона.
+
+### 28.33 Следующий этап — Projects
+
+Следующий этап UI-конструктора сосредоточен на полном использовании уже созданных Common UI и Entity-компонентов на сценарии Projects:
+
+~~~text
+Projects
+└── ProjectsPage
+    ├── PageLayout
+    │   └── PageHeader
+    ├── EntityList<Project>
+    │   └── ProjectCard → EntityCard
+    └── overlays
+        ├── Modal
+        └── ConfirmModal
+~~~
+
+Фактически ProjectCard уже соответствует Entity Framework. Поэтому первый фокус этапа — перевести ProjectsPage с собственного списка на общий EntityList без изменения бизнес-логики загрузки и CRUD.
 
