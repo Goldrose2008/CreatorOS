@@ -21,6 +21,7 @@ import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
+import EntityList from "../components/ui/lists/EntityList";
 import EntityDetails from "../components/entity/EntityDetails";
 import EntityHeader from "../components/entity/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";
@@ -577,17 +578,15 @@ function ProjectDetails() {
                         ) : contentError ? (
                             <EmptyState title="Не удалось загрузить контент" description={contentError}/>
                         ) : additionalContent.length > 0 ? (
-                            <div className={styles.contentList}>
-                                {additionalContent.map((contentItem) => {
+                            <EntityList<Content>
+                                items={additionalContent}
+                                className={styles.contentList}
+                                renderItem={(contentItem) => {
                                     const contentType = getContentType(contentItem);
 
                                     if (!contentType) {
                                         return (
-                                            <EmptyState
-                                                key={contentItem.id}
-                                                title="Неизвестный тип контента"
-                                                description="Тип контента отсутствует в справочнике."
-                                            />
+                                            <EmptyState key={contentItem.id} title="Неизвестный тип контента" description="Тип контента отсутствует в справочнике."/>
                                         );
                                     }
 
@@ -600,8 +599,8 @@ function ProjectDetails() {
                                             onDelete={handleDeleteContent}
                                         />
                                     );
-                                })}
-                            </div>
+                                }}
+                            />
                         ) : (
                             <div className={styles.sectionEmpty}>
                                 <p>
