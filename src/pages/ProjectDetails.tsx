@@ -48,7 +48,7 @@ import {
     getProjectContent,
     updateContent,
 } from "../services/contentService";
-import styles from "./ProjectDetails.module.css";
+import styles from "../styles/pages/ProjectDetails.module.css";
 import { formatDate } from "../utils/date";
 
 function getResponsibleLabel(ownerId?: number | null): string {

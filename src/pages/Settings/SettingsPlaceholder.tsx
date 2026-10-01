@@ -1,6 +1,6 @@
 import Card from "../../components/ui/layout/Card";
 import { APP_NAME } from "../../config/appConfig";
-import styles from "./Settings.module.css";
+import styles from "../../styles/settings/Settings.module.css";
 
 interface Props {
     title: string;

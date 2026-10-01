@@ -9,7 +9,7 @@ import {
 } from "../../services/themeService";
 import Button from "../../components/ui/primitives/Button";
 import Card from "../../components/ui/layout/Card";
-import styles from "./Settings.module.css";
+import styles from "../../styles/settings/Settings.module.css";
 
 function SettingsAppearance() {
     const [accentColor, setAccentColor] = useState(getAccentColor());

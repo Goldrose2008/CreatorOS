@@ -28,7 +28,7 @@ import {
     getProjects,
     updateProject,
 } from "../services/projectService";
-import styles from "./ProjectsPage.module.css";
+import styles from "../styles/pages/ProjectsPage.module.css";
 
 function getCreateProjectValues(contentTypes: ContentType[]): ProjectCreateFormValues {
     return {

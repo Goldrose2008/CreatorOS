@@ -27,7 +27,7 @@ import {
     updateContent,
 } from "../services/contentService";
 import { getContentTypes } from "../services/contentTypeService";
-import styles from "./ContentDetails.module.css";
+import styles from "../styles/pages/ContentDetails.module.css";
 import { formatDate } from "../utils/date";
 
 function getRoleLabel(content: Content): string {

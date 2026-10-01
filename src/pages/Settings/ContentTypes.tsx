@@ -19,7 +19,7 @@ import {
     getContentTypes,
     updateContentType,
 } from "../../services/contentTypeService";
-import styles from "./ContentTypes.module.css";
+import styles from "../../styles/settings/ContentTypes.module.css";
 
 function getCreateValues(): ContentTypeFormValues {
     return {

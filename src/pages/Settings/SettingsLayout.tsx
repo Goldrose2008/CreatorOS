@@ -11,7 +11,7 @@ import {
     Sparkles
 } from "lucide-react";
 import { APP_NAME } from "../../config/appConfig";
-import styles from "./SettingsLayout.module.css";
+import styles from "../../styles/settings/SettingsLayout.module.css";
 
 interface SettingsNavigationItem {
     label: string;

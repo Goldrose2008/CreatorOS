@@ -10,7 +10,7 @@ import PageHeader from "../components/ui/layout/PageHeader";
 import ProjectSummary from "../components/projects/ProjectSummary";
 import type { Project } from "../models/Project";
 import { getProjects } from "../services/projectService";
-import styles from "./DashboardPage.module.css";
+import styles from "../styles/pages/DashboardPage.module.css";
 
 function DashboardPage() {
     const [projects, setProjects] = useState<Project[]>([]);
