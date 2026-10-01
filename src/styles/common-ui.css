@@ -130,7 +130,7 @@
     min-width: 0;
 }
 
-.ui-modal-overlay {
+.ui-modal__overlay {
     position: fixed;
     inset: 0;
     z-index: 1000;
@@ -181,7 +181,7 @@
     color: var(--color-text);
 }
 
-.ui-modal__close {
+.ui-modal__close-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;

@@ -8,6 +8,7 @@ import Card from "../../components/ui/layout/Card";
 import Modal from "../../components/ui/overlays/Modal";
 import EntityForm from "../../components/ui/forms/EntityForm";
 import EmptyState from "../../components/ui/states/EmptyState";
+import ConfirmModal from "../../components/ui/overlays/ConfirmModal";
 import type { ContentType } from "../../models/ContentType";
 import {
     CONTENT_TYPE_FORM_FIELDS,
@@ -128,15 +129,34 @@ function ContentTypes() {
         finally { setSaving(false); }
     }
 
-    async function handleDelete(contentType: ContentType) {
-        const confirmed = window.confirm(`Удалить тип контента "${contentType.name}"?`);
-        if (!confirmed) { return; }
+    function handleDelete(contentType: ContentType) {
+        ConfirmModal.StartEvent({
+            title: "Удаление типа контента",
+            message: (
+                <>
+                    Удалить тип контента{" "}
+                    <strong>«{contentType.name}»</strong>?
+                    <br />
+                    Это действие нельзя отменить.
+                </>
+            ),
+            confirmLabel: "Удалить",
+            savingLabel: "Удаление...",
+            onConfirm: async () => {
+                try {
+                    await deleteContentType(contentType.id);
+                    await loadContentTypes();
+                }
+                catch (error) {
+                    console.error(
+                        "Ошибка удаления типа контента:",
+                        error
+                    );
 
-        try {
-            await deleteContentType(contentType.id);
-            await loadContentTypes();
-        }
-        catch (error) { console.error("Ошибка удаления типа контента:", error); }
+                    throw error;
+                }
+            },
+        });
     }
 
     return (

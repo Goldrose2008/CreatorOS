@@ -79,8 +79,6 @@ function ProjectDetails() {
     const [contentSaving, setContentSaving] = useState(false);
     const [createContentRole, setCreateContentRole] = useState<ContentRole | null>(null);
     const [editingContent, setEditingContent] = useState<Content | null>(null);
-    const [deletingContent, setDeletingContent] = useState<Content | null>(null);
-    const [contentDeleteSaving, setContentDeleteSaving] = useState(false);
     const [contentFormError, setContentFormError] = useState("");
 
     useEffect(() => {
@@ -338,28 +336,40 @@ function ProjectDetails() {
 
     function handleDeleteContent(contentItem: Content) {
         if (contentItem.content_role === "main") { return; }
-        setDeletingContent(contentItem);
-    }
+        
+        ConfirmModal.StartEvent({
+            title: "Удаление контента",
+            message: (
+                <>
+                    Удалить контент{" "}
+                    <strong>«{contentItem.name}»</strong>?
+                    <br />
+                    Это действие нельзя отменить.
+                </>
+            ),
+            confirmLabel: "Удалить",
+            savingLabel: "Удаление...",
+            onConfirm: async () => {
+                const projectId = contentItem.project_id;
 
-    function closeDeleteContentModal() {
-        if (contentDeleteSaving) { return; }
-        setDeletingContent(null);
-    }
+                try {
+                    await deleteContent(contentItem.id);
 
-    async function handleDeleteContentConfirm() {
-        if (!deletingContent) { return; }
+                    const updatedContent =
+                        await getProjectContent(projectId);
 
-        const projectId = deletingContent.project_id;
+                    setContent(updatedContent);
+                }
+                catch (error) {
+                    console.error(
+                        "Ошибка удаления контента:",
+                        error
+                    );
 
-        try {
-            setContentDeleteSaving(true);
-            await deleteContent(deletingContent.id);
-            const updatedContent = await getProjectContent(projectId);
-            setContent(updatedContent);
-            setDeletingContent(null);
-        }
-        catch (deleteError) { console.error("Ошибка удаления контента:", deleteError); }
-        finally { setContentDeleteSaving(false); }
+                    throw error;
+                }
+            },
+        });
     }
 
     return (
@@ -487,22 +497,6 @@ function ProjectDetails() {
                             onCancel={closeEditModal}
                         />
                     </Modal>
-                    
-                    <ConfirmModal
-                        open={deletingContent !== null}
-                        title="Удаление контента"
-                        message={
-                            <>
-                                Удалить контент{" "}
-                                <strong>«{deletingContent?.name}»</strong>?
-                                <br />
-                                Это действие нельзя отменить.
-                            </>
-                        }
-                        saving={contentDeleteSaving}
-                        onConfirm={handleDeleteContentConfirm}
-                        onCancel={closeDeleteContentModal}
-                    />
                 </>
             }
         >

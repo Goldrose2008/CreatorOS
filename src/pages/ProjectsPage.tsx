@@ -7,10 +7,10 @@ import Button from "../components/ui/primitives/Button";
 import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
-import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
 import EntityList from "../components/ui/lists/EntityList";
+import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
 import type { ContentType } from "../models/ContentType";
@@ -58,8 +58,6 @@ function ProjectsPage() {
     const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
     const [loadingContentTypes, setLoadingContentTypes] = useState(false);
     const [syncMainContentName, setSyncMainContentName] = useState(true);
-    const [deletingProject, setDeletingProject] = useState<Project | null>(null);
-    const [deleteSaving, setDeleteSaving] = useState(false);
     const loadProjects = useCallback(async () => {
         const data = await getProjects(); setProjects(data); }, []);
 
@@ -192,25 +190,33 @@ function ProjectsPage() {
 
         if (!project) { return; }
 
-        setDeletingProject(project);
-    }
+        ConfirmModal.StartEvent({
+            title: "Удаление проекта",
+            message: (
+                <>
+                    Удалить проект{" "}
+                    <strong>«{project.name}»</strong>?
+                    <br />
+                    Это действие нельзя отменить.
+                </>
+            ),
+            confirmLabel: "Удалить",
+            savingLabel: "Удаление...",
+            onConfirm: async () => {
+                try {
+                    await deleteProject(project.id);
+                    await loadProjects();
+                }
+                catch (error) {
+                    console.error(
+                        "Ошибка удаления проекта:",
+                        error
+                    );
 
-    function closeDeleteModal() {
-        if (deleteSaving) { return; }
-        setDeletingProject(null);
-    }
-
-    async function handleDeleteConfirm() {
-        if (!deletingProject) { return; }
-
-        try {
-            setDeleteSaving(true);
-            await deleteProject(deletingProject.id);
-            await loadProjects();
-            setDeletingProject(null);
-        }
-        catch (error) { console.error("Ошибка удаления проекта:", error); }
-        finally { setDeleteSaving(false); }
+                    throw error;
+                }
+            },
+        });
     }
 
     return (
@@ -282,22 +288,6 @@ function ProjectsPage() {
                         />
                     )}
                 </Modal>
-        {/* Окно-запрос подтверждения удаления */}
-                <ConfirmModal
-                    open={deletingProject !== null}
-                    title="Удаление проекта"
-                    message={
-                        <>
-                            Удалить проект{" "}
-                            <strong>«{deletingProject?.name}»</strong>?
-                            <br />
-                            Это действие нельзя отменить.
-                        </>
-                    }
-                    saving={deleteSaving}
-                    onConfirm={handleDeleteConfirm}
-                    onCancel={closeDeleteModal}
-                />
             </div>
         </PageLayout>
     );
