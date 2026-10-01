@@ -194,7 +194,7 @@
     cursor: pointer;
 }
 
-.ui-modal__close:hover {
+.ui-modal__close-button:hover {
     background: var(--color-surface-hover);
     color: var(--color-text);
 }
@@ -229,6 +229,19 @@
     font-size: 14px;
     line-height: 1.55;
     color: var(--color-text-secondary);
+}
+
+.ui-confirm-modal__error {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: color-mix(
+        in srgb,
+        var(--color-danger) 8%,
+        transparent
+    );
+    color: var(--color-danger);
+    font-size: 13px;
+    line-height: 1.45;
 }
 
 .ui-confirm-modal__actions {

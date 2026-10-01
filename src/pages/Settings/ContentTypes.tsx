@@ -9,6 +9,7 @@ import Modal from "../../components/ui/overlays/Modal";
 import EntityForm from "../../components/ui/forms/EntityForm";
 import EmptyState from "../../components/ui/states/EmptyState";
 import ConfirmModal from "../../components/ui/overlays/ConfirmModal";
+import EntityList from "../../components/ui/lists/EntityList";
 import type { ContentType } from "../../models/ContentType";
 import {
     CONTENT_TYPE_FORM_FIELDS,
@@ -177,14 +178,15 @@ function ContentTypes() {
                 </Button>
             </header>
 
-            <section className={styles.list}>
-                {loading ? (
-                    <EmptyState description="Загрузка типов контента..."/>
-                ) : contentTypes.length === 0 ? (
+            <EntityList<ContentType>
+                items={contentTypes}
+                loading={loading}
+                loadingState={
+                    <EmptyState description="Загрузка типов контента..." />
+                }
+                emptyState={
                     <Card className={styles.emptyCard}>
-                        <EmptyState
-                            title="Типов контента пока нет"
-                            description="Добавь первый тип контента."
+                        <EmptyState title="Типов контента пока нет" description="Добавь первый тип контента."
                             action={
                                 <Button onClick={openCreateModal}>
                                     Добавить тип
@@ -192,43 +194,33 @@ function ContentTypes() {
                             }
                         />
                     </Card>
-                ) : (
-                    contentTypes.map((contentType) => (
-                        <Card
-                            key={contentType.id}
-                            className={styles.item}
-                        >
-                            <div className={styles.itemMain}>
-                                <h3 className={styles.itemTitle}>
-                                    {contentType.name}
-                                </h3>
+                }
+                renderItem={(contentType) => (
+                    <Card key={contentType.id} className={styles.item}>
+                        <div className={styles.itemMain}>
+                            <h3 className={styles.itemTitle}>
+                                {contentType.name}
+                            </h3>
 
-                                {contentType.description && (
-                                    <p className={styles.itemDescription}>
-                                        {contentType.description}
-                                    </p>
-                                )}
-                            </div>
+                            {contentType.description && (
+                                <p className={styles.itemDescription}>
+                                    {contentType.description}
+                                </p>
+                            )}
+                        </div>
 
-                            <div className={styles.actions}>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => openEditModal(contentType)}
-                                >
-                                    Редактировать
-                                </Button>
+                        <div className={styles.actions}>
+                            <Button variant="secondary" onClick={() => openEditModal(contentType)}>
+                                Редактировать
+                            </Button>
 
-                                <Button
-                                    variant="danger"
-                                    onClick={() => handleDelete(contentType)}
-                                >
-                                    Удалить
-                                </Button>
-                            </div>
-                        </Card>
-                    ))
+                            <Button variant="danger" onClick={() => handleDelete(contentType)}>
+                                Удалить
+                            </Button>
+                        </div>
+                    </Card>
                 )}
-            </section>
+            />
 
             <Modal
                 open={createOpen}
