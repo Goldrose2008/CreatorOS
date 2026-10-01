@@ -180,6 +180,7 @@ function ContentTypes() {
 
             <EntityList<ContentType>
                 items={contentTypes}
+                className={styles.list}
                 loading={loading}
                 loadingState={
                     <EmptyState description="Загрузка типов контента..." />

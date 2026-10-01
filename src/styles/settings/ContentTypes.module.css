@@ -4,6 +4,10 @@
     gap: 24px;
 }
 
+.list {
+    gap: 12px;
+}
+
 .header {
     display: flex;
     align-items: flex-start;
