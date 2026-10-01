@@ -178,8 +178,7 @@ function ContentDetails() {
                     meta={[
                         <span key="type">
                             <FileText size={14} />
-                            Тип:{" "}
-                            {contentType?.name ?? "Неизвестный тип"}
+                            Тип:{" "} {contentType?.name ?? "Неизвестный тип"}
                         </span>,
 
                         <span key="role">
@@ -188,8 +187,7 @@ function ContentDetails() {
 
                         <span key="release">
                             <CalendarDays size={14} />
-                            Планируемый выход:{" "}
-                            {formatDate(content.planned_release_at)}
+                            Планируемый выход:{" "} {formatDate(content.planned_release_at)}
                         </span>,
 
                         <span key="progress">
@@ -205,6 +203,19 @@ function ContentDetails() {
                 />
             }
             error={formError || undefined}
+            overlays={
+                <Modal open={editOpen} title="Редактирование контента" onClose={closeEditModal}>
+                    <EntityForm<ContentFormValues>
+                        fields={getContentFormFields(contentTypes)}
+                        initialValues={getEditValues()}
+                        submitLabel="Сохранить"
+                        saving={saving}
+                        error={formError}
+                        onSubmit={handleSave}
+                        onCancel={closeEditModal}
+                    />
+                </Modal>
+            }
         >   
             <div className={styles.page}>
                 <Card className={styles.section}>
@@ -250,20 +261,6 @@ function ContentDetails() {
                         </div>
                     </div>
                 </Card>
-
-                overlays={
-                    <Modal open={editOpen} title="Редактирование контента" onClose={closeEditModal}>
-                        <EntityForm<ContentFormValues>
-                            fields={getContentFormFields(contentTypes)}
-                            initialValues={getEditValues()}
-                            submitLabel="Сохранить"
-                            saving={saving}
-                            error={formError}
-                            onSubmit={handleSave}
-                            onCancel={closeEditModal}
-                        />
-                    </Modal>
-                }
             </div>
         </EntityDetails>
     );

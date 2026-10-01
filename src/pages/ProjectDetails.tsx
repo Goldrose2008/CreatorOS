@@ -21,7 +21,7 @@ import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
-import PageLayout from "../components/ui/layout/PageLayout";
+import EntityDetails from "../components/entity/EntityDetails";
 import EntityHeader from "../components/entity/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";
 import type { Content, ContentRole } from "../models/Content";
@@ -208,17 +208,17 @@ function ProjectDetails() {
 
     if (loading) {
         return (
-            <PageLayout>
+            <EntityDetails>
                 <div className={styles.page}>
                     <EmptyState description="Загрузка проекта..."/>
                 </div>
-            </PageLayout>
+            </EntityDetails>
         );
     }
 
     if (error || !project) {
         return (
-            <PageLayout
+            <EntityDetails
                 navigation={
                     <Link className={styles.backLink} to="/projects">
                         <ArrowLeft size={16} />
@@ -229,7 +229,7 @@ function ProjectDetails() {
                 <div className={styles.page}>                    
                     <EmptyState title="Проект не найден" description={error || "Проект не найден."}/>
                 </div>
-            </PageLayout>
+            </EntityDetails>
         );
     }
 
@@ -363,50 +363,39 @@ function ProjectDetails() {
     }
 
     return (
-        <PageLayout
+        <EntityDetails
             navigation={
                 <Link className={styles.backLink} to="/projects">
                     <ArrowLeft size={16} />
                     Вернуться к проектам
                 </Link>
             }
-        >          
-            <div className={styles.page}>
-                <EntityHeader
-                    title={project.name}
-                    description={project.description}
-                    status={{
-                        label: status.label,
-                        variant: status.variant,
-                    }}
+            
+            header={
+                <EntityHeader title={project.name} description={project.description} status={{ label: status.label, variant: status.variant }}
                     meta={[
                         <span key="progress">
-                            Прогресс:{" "}
-                            {project.progress}%
+                            Прогресс:{" "} {project.progress}%
                         </span>,
 
                         <span key="release">
                             <CalendarDays size={15} />
-                            Планируемая дата выхода:{" "}
-                            {formatDate(project.planned_release_at)}
+                            Планируемая дата выхода:{" "} {formatDate(project.planned_release_at)}
                         </span>,
 
                         <span key="owner">
                             <UserRound size={15} />
-                            Ответственный:{" "}
-                            {getResponsibleLabel(project.owner_id)}
+                            Ответственный:{" "} {getResponsibleLabel(project.owner_id)}
                         </span>,
 
                         <span key="created">
                             <CalendarDays size={15} />
-                            Создано:{" "}
-                            {formatDate(project.created_at)}
+                            Создано:{" "} {formatDate(project.created_at)}
                         </span>,
 
                         <span key="updated">
                             <CalendarDays size={15} />
-                            Изменено:{" "}
-                            {formatDate(project.updated_at)}
+                            Изменено:{" "} {formatDate(project.updated_at)}
                         </span>,
                     ]}
                     actions={
@@ -442,12 +431,81 @@ function ProjectDetails() {
                         </>
                     }
                 />
-                {formError && (
-                    <div className={styles.error}>
-                        {formError}
-                    </div>
-                )}
-
+                
+            }
+            error={formError || undefined}
+            
+            overlays={
+                <>
+                    <Modal
+                        open={createContentRole !== null}
+                        title={createContentRole === "main" ? "Новый основной контент" : "Новый дополнительный контент"}
+                        onClose={closeCreateContent}
+                    >
+                        <EntityForm<ContentFormValues>
+                            key={`create-content-${createContentRole}`}
+                            fields={contentFormFields}
+                            initialValues={getCreateContentValues()}
+                            submitLabel="Добавить"
+                            saving={contentSaving}
+                            error={contentFormError}
+                            onSubmit={handleCreateContent}
+                            onCancel={closeCreateContent}
+                        />
+                    </Modal>
+                    <Modal
+                        open={editingContent !== null}
+                        title="Редактирование контента"
+                        onClose={closeEditContent}
+                    >
+                        {editingContent && (
+                            <EntityForm<ContentFormValues>
+                                key={`edit-content-${editingContent.id}`}
+                                fields={contentFormFields}
+                                initialValues={getEditContentValues(editingContent)}
+                                submitLabel="Сохранить"
+                                saving={contentSaving}
+                                error={contentFormError}
+                                onSubmit={handleEditContent}
+                                onCancel={closeEditContent}
+                            />
+                        )}
+                    </Modal>
+                    <Modal
+                        open={editOpen}
+                        title="Редактирование проекта"
+                        onClose={closeEditModal}
+                    >
+                        <EntityForm<ProjectFormValues>
+                            key={`edit-project-${project.id}`}
+                            fields={PROJECT_FORM_FIELDS}
+                            initialValues={getEditValues(project)}
+                            submitLabel="Сохранить"
+                            saving={saving}
+                            error={formError}
+                            onSubmit={handleSave}
+                            onCancel={closeEditModal}
+                        />
+                    </Modal>
+                    
+                    <ConfirmModal
+                        open={deletingContent !== null}
+                        title="Удаление контента"
+                        message={
+                            <>
+                                Удалить контент{" "}
+                                <strong>«{deletingContent?.name}»</strong>?
+                                <br />
+                                Это действие нельзя отменить.
+                            </>
+                        }
+                        saving={contentDeleteSaving}
+                        onConfirm={handleDeleteContentConfirm}
+                        onCancel={closeDeleteContentModal}
+                    />
+                </>
+            }
+        >
                 <div className={styles.grid}>
                     <Card className={styles.section}>
                         <div className={styles.sectionHeader}>
@@ -581,80 +639,8 @@ function ProjectDetails() {
                             </Button>
                         </div>
                     </Card>
-                </div>
-                <Modal
-                    open={createContentRole !== null}
-                    title={
-                        createContentRole === "main"
-                            ? "Новый основной контент"
-                            : "Новый дополнительный контент"
-                    }
-                    onClose={closeCreateContent}
-                >
-                    <EntityForm<ContentFormValues>
-                        key={`create-content-${createContentRole}`}
-                        fields={contentFormFields}
-                        initialValues={getCreateContentValues()}
-                        submitLabel="Добавить"
-                        saving={contentSaving}
-                        error={contentFormError}
-                        onSubmit={handleCreateContent}
-                        onCancel={closeCreateContent}
-                    />
-                </Modal>
-                <Modal
-                    open={editingContent !== null}
-                    title="Редактирование контента"
-                    onClose={closeEditContent}
-                >
-                    {editingContent && (
-                        <EntityForm<ContentFormValues>
-                            key={`edit-content-${editingContent.id}`}
-                            fields={contentFormFields}
-                            initialValues={getEditContentValues(editingContent)}
-                            submitLabel="Сохранить"
-                            saving={contentSaving}
-                            error={contentFormError}
-                            onSubmit={handleEditContent}
-                            onCancel={closeEditContent}
-                        />
-                    )}
-                </Modal>
-                <Modal
-                    open={editOpen}
-                    title="Редактирование проекта"
-                    onClose={closeEditModal}
-                >
-                    <EntityForm<ProjectFormValues>
-                        key={`edit-project-${project.id}`}
-                        fields={PROJECT_FORM_FIELDS}
-                        initialValues={getEditValues(project)}
-                        submitLabel="Сохранить"
-                        saving={saving}
-                        error={formError}
-                        onSubmit={handleSave}
-                        onCancel={closeEditModal}
-                    />
-                </Modal>
-                
-                <ConfirmModal
-                    open={deletingContent !== null}
-                    title="Удаление контента"
-                    message={
-                        <>
-                            Удалить контент{" "}
-                            <strong>«{deletingContent?.name}»</strong>?
-                            <br />
-                            Это действие нельзя отменить.
-                        </>
-                    }
-                    saving={contentDeleteSaving}
-                    onConfirm={handleDeleteContentConfirm}
-                    onCancel={closeDeleteContentModal}
-                />
-
-            </div>
-        </PageLayout>
+                </div>                
+        </EntityDetails>
     );
 }
 
