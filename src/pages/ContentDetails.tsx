@@ -9,7 +9,7 @@ import {
     Pencil,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
+import EntityHeader from "../components/entity/EntityHeader";
 import Button from "../components/ui/primitives/Button";
 import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";

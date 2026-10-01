@@ -10,7 +10,7 @@ import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
-import ProjectCard from "../components/projects/ProjectCard/ProjectCard";
+import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
 import type { ContentType } from "../models/ContentType";
 import { getContentTypes } from "../services/contentTypeService";

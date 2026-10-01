@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
-import Badge from "../../ui/primitives/Badge";
-import type { StatusTone } from "../../../types/status";
+import Badge from "../ui/primitives/Badge";
+import type { StatusTone } from "../../types/status";
 
-interface EntityHeaderStatus {
+export interface EntityHeaderStatus {
     label: string;
     variant?: StatusTone;
 }
 
-interface EntityHeaderProps {
+export interface EntityHeaderProps {
     title: ReactNode;
     description?: ReactNode;
     status?: EntityHeaderStatus;

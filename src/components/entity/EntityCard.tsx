@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import Card from "../../ui/layout/Card";
-import Badge from "../../ui/primitives/Badge";
-import type { StatusTone } from "../../../types/status";
-import ProgressBar from "../../ui/primitives/ProgressBar";
+import Card from "../ui/layout/Card";
+import Badge from "../ui/primitives/Badge";
+import type { StatusTone } from "../../types/status";
+import ProgressBar from "../ui/primitives/ProgressBar";
 
 export interface EntityCardStatus {
     label: string;
@@ -12,22 +12,33 @@ export interface EntityCardStatus {
 export interface EntityCardProps {
     title: ReactNode;
     description?: ReactNode;
+    content?: ReactNode;
     status?: EntityCardStatus;
     progress?: number;
     meta?: ReactNode[];
     actions?: ReactNode;
+    className?: string;
 }
 
 export function EntityCard({
     title,
     description,
+    content,
     status,
     progress,
     meta = [],
     actions,
+    className = "",
 }: EntityCardProps) {
     return (
-        <Card className={"entity-card"}>
+    <Card
+        className={[
+            "entity-card",
+            className,
+        ]
+            .filter(Boolean)
+            .join(" ")}
+    >
             <div className={"entity-card__header"}>
                 <div className={"entity-card__title-block"}>
                     <h3 className={"entity-card__title"}>
@@ -38,6 +49,11 @@ export function EntityCard({
                         <p className={"entity-card__description"}>
                             {description}
                         </p>
+                    )}
+                    {content && (
+                        <div className={"entity-card__content"}>
+                            {content}
+                        </div>
                     )}
                 </div>
 

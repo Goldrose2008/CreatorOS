@@ -22,7 +22,7 @@ import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import PageLayout from "../components/ui/layout/PageLayout";
-import EntityHeader from "../components/entity/EntityHeader/EntityHeader";
+import EntityHeader from "../components/entity/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";
 import type { Content, ContentRole } from "../models/Content";
 import type { ContentType } from "../models/ContentType";

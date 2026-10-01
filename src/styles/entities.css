@@ -13,9 +13,8 @@
     gap: 16px;
 }
 
-.entity-card__title-block {
-    min-width: 0;
-    flex: 1;
+.entity-card__content {
+    margin-top: 14px;
 }
 
 .entity-card__title {
@@ -24,6 +23,11 @@
     font-weight: 600;
     line-height: 1.35;
     color: var(--color-text);
+}
+
+.entity-card__title-block {
+    min-width: 0;
+    flex: 1;
 }
 
 .entity-card__title-link {
@@ -321,6 +325,18 @@
 .content-card__actions > * {
     width: 100%;
     box-sizing: border-box;
+}
+
+.entity-details__error {
+    margin-bottom: 20px;
+}
+
+.entity-details__summary {
+    margin-bottom: 24px;
+}
+
+.entity-details__content {
+    min-width: 0;
 }
 
 @media (max-width: 800px) {
