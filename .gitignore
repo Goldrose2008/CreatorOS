@@ -1,31 +1,46 @@
-# Dependencies
-node_modules/
+# CMake
+/build/
+/out/
+/cmake-build-*/
 
-# Build
-dist/
-dist-electron/
-build/
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Vite
-.vite/
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
 
-# Environment files
-.env
-.env.*
-!.env.example
+# Build artifacts
+*.obj
+*.o
+*.a
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.idb
+
+# Qt generated files
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
 
 # IDE
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
 
 # OS
-.DS_Store
 Thumbs.db
-
-# SQLite runtime/database files
-*.db-shm
-*.db-wal
-
-# Logs
-*.log
+.DS_Store

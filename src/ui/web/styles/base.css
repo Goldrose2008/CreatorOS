@@ -1,0 +1,38 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-family);
+}
+
+.welcome {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.welcome h1 {
+    margin: 0;
+}
+
+.welcome p {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.welcome p.ready {
+    color: var(--color-accent);
+}
