@@ -24,7 +24,6 @@ qt_standard_project_setup()
 set(CMAKE_AUTORCC ON)
 
 qt_add_executable(CreatorOS
-    WIN32
 
     src/main.cpp
     src/app/MainWindow.cpp
