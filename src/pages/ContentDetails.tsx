@@ -15,7 +15,7 @@ import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";
 import EntityForm from "../components/ui/forms/EntityForm";
 import Modal from "../components/ui/overlays/Modal";
-import PageLayout from "../components/ui/layout/PageLayout";
+import EntityDetails from "../components/entity/EntityDetails";
 import type { Content } from "../models/Content";
 import type { ContentType } from "../models/ContentType";
 import {
@@ -139,17 +139,17 @@ function ContentDetails() {
 
     if (loading) {
         return (
-            <PageLayout>
+            <EntityDetails>
                 <div className={styles.page}>
                     <EmptyState description="Загрузка контента..." />
                 </div>
-            </PageLayout>
+            </EntityDetails>
         );
     }
 
     if (error || !content) {
         return (
-            <PageLayout>
+            <EntityDetails>
                 <div className={styles.page}>
                     <Link to="/projects" className={styles.backLink}>
                         <ArrowLeft size={16} />
@@ -158,25 +158,23 @@ function ContentDetails() {
 
                     <EmptyState title="Контент не найден" description={error || "Контент не найден."}/>
                 </div>
-            </PageLayout>
+            </EntityDetails>
         );
     }
 
     const contentType = getContentType();
 
     return (
-        <PageLayout
+        <EntityDetails
             navigation={
                 <Link to={`/projects/${content.project_id}`} className={styles.backLink}>
                     <ArrowLeft size={16} />
                     Вернуться к проекту
                 </Link>
             }
-        >
-            <div className={styles.page}>
-                <EntityHeader
-                    title={content.name}
-                    description={content.description}
+            
+            header={
+                <EntityHeader title={content.name} description={content.description} 
                     meta={[
                         <span key="type">
                             <FileText size={14} />
@@ -205,13 +203,10 @@ function ContentDetails() {
                         </Button>
                     }
                 />
-
-                {formError && (
-                    <div className={styles.error}>
-                        {formError}
-                    </div>
-                )}
-
+            }
+            error={formError || undefined}
+        >   
+            <div className={styles.page}>
                 <Card className={styles.section}>
                     <h2 className={styles.sectionTitle}>
                         Контент
@@ -256,23 +251,21 @@ function ContentDetails() {
                     </div>
                 </Card>
 
-                <Modal
-                    open={editOpen}
-                    title="Редактирование контента"
-                    onClose={closeEditModal}
-                >
-                    <EntityForm<ContentFormValues>
-                        fields={getContentFormFields(contentTypes)}
-                        initialValues={getEditValues()}
-                        submitLabel="Сохранить"
-                        saving={saving}
-                        error={formError}
-                        onSubmit={handleSave}
-                        onCancel={closeEditModal}
-                    />
-                </Modal>
+                overlays={
+                    <Modal open={editOpen} title="Редактирование контента" onClose={closeEditModal}>
+                        <EntityForm<ContentFormValues>
+                            fields={getContentFormFields(contentTypes)}
+                            initialValues={getEditValues()}
+                            submitLabel="Сохранить"
+                            saving={saving}
+                            error={formError}
+                            onSubmit={handleSave}
+                            onCancel={closeEditModal}
+                        />
+                    </Modal>
+                }
             </div>
-        </PageLayout>
+        </EntityDetails>
     );
 }
 
