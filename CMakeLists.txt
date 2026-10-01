@@ -24,6 +24,7 @@ qt_standard_project_setup()
 set(CMAKE_AUTORCC ON)
 
 qt_add_executable(CreatorOS
+    WIN32
 
     src/main.cpp
     src/app/MainWindow.cpp
@@ -48,3 +49,21 @@ target_link_libraries(CreatorOS
         Qt6::WebEngineWidgets
         Qt6::WebChannel
 )
+
+if(WIN32)
+    find_program(WINDEPLOYQT_EXECUTABLE
+        NAMES windeployqt.exe
+        HINTS "${Qt6_DIR}/../../../bin"
+        REQUIRED
+    )
+
+    add_custom_command(TARGET CreatorOS POST_BUILD
+        COMMAND "${WINDEPLOYQT_EXECUTABLE}"
+            $<$<CONFIG:Debug>:--debug>
+            $<$<NOT:$<CONFIG:Debug>>:--release>
+            "$<TARGET_FILE:CreatorOS>"
+
+        COMMENT "Deploying Qt runtime for CreatorOS..."
+        VERBATIM
+    )
+endif()
