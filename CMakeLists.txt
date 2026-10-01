@@ -59,8 +59,7 @@ if(WIN32)
 
     add_custom_command(TARGET CreatorOS POST_BUILD
         COMMAND "${WINDEPLOYQT_EXECUTABLE}"
-            $<$<CONFIG:Debug>:--debug>
-            $<$<NOT:$<CONFIG:Debug>>:--release>
+            "$<IF:$<CONFIG:Debug>,--debug,--release>"
             "$<TARGET_FILE:CreatorOS>"
 
         COMMENT "Deploying Qt runtime for CreatorOS..."
