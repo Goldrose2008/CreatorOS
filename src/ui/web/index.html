@@ -2,31 +2,164 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>CreatorOS</title>
 
     <link rel="stylesheet" href="./styles/theme.css">
     <link rel="stylesheet" href="./styles/base.css">
+    <link rel="stylesheet" href="./styles/shell.css">
 </head>
 
 <body>
+    <div id="app">
+        <div class="app-shell">
+            <aside class="sidebar">
+                <div class="sidebar__brand">
+                    <div class="sidebar__brand-mark">
+                        C
+                    </div>
 
-<div id="app">
-    <main class="welcome">
-        <h1>CreatorOS</h1>
+                    <div class="sidebar__brand-name">
+                        CreatorOS
+                    </div>
+                </div>
 
-        <p id="status">
-            Инициализация...
-        </p>
-    </main>
-</div>
+                <nav class="sidebar__nav">
+                    <div class="sidebar__section-title">
+                        Рабочее пространство
+                    </div>
 
-<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-<script type="module" src="./js/app.js"></script>
+                    <button class="nav-item active" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Главная</span>
+                    </button>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Проекты</span>
+                    </button>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Планирование</span>
+                    </button>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Задачи</span>
+                    </button>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Библиотека</span>
+                    </button>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Аналитика</span>
+                    </button>
+
+                    <div class="sidebar__section-title">
+                        Система
+                    </div>
+
+                    <button class="nav-item" type="button">
+                        <span class="nav-item__marker"></span>
+                        <span>Настройки</span>
+                    </button>
+
+                </nav>
+
+                <div class="sidebar__footer">
+                    <div class="connection">
+                        <span id="connection-dot" class="connection__dot"></span>
+                        <span id="connection-status">
+                            Подключение...
+                        </span>
+                    </div>
+
+                    <div id="app-version" class="sidebar__version">
+                        CreatorOS
+                    </div>
+                </div>
+            </aside>
+
+            <section class="main-area">
+                <header class="topbar">
+                    <h1 class="topbar__title">
+                        Обзор
+                    </h1>
+                    <span class="topbar__context">
+                        Рабочее пространство CreatorOS
+                    </span>
+                </header>
+
+                <main class="workspace">
+                    <section class="workspace__intro">
+                        <p class="workspace__eyebrow">
+                            Добро пожаловать
+                        </p>
+                        <h2 class="workspace__heading">
+                            Ваше рабочее пространство
+                        </h2>
+                        <p class="workspace__description">
+                            CreatorOS объединяет проекты, контент,
+                            задачи, материалы, публикации и аналитику
+                            в одном рабочем пространстве.
+                        </p>
+                    </section>
+
+                    <section class="dashboard-grid">
+                        <article class="dashboard-card">
+                            <p class="dashboard-card__label">
+                                Проекты
+                            </p>
+
+                            <div class="dashboard-card__value">
+                                0
+                            </div>
+
+                            <p class="dashboard-card__hint">
+                                Пока нет созданных проектов
+                            </p>
+                        </article>
+
+                        <article class="dashboard-card">
+                            <p class="dashboard-card__label">
+                                Задачи
+                            </p>
+
+                            <div class="dashboard-card__value">
+                                0
+                            </div>
+
+                            <p class="dashboard-card__hint">
+                                Активные задачи появятся здесь
+                            </p>
+                        </article>
+
+                        <article class="dashboard-card">
+                            <p class="dashboard-card__label">
+                                Публикации
+                            </p>
+
+                            <div class="dashboard-card__value">
+                                0
+                            </div>
+
+                            <p class="dashboard-card__hint">
+                                Опубликованный контент появится здесь
+                            </p>
+                        </article>
+                    </section>
+                </main>
+            </section>
+        </div>
+    </div>
+
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script type="module" src="./js/app.js"></script>
 
 </body>
 </html>
