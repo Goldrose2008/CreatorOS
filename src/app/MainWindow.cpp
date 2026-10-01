@@ -1,6 +1,5 @@
 #include "MainWindow.h"
-//#include "../ui/shell/WebUiHost.h"
-#include <QWidget>   // временно
+#include "../ui/shell/WebUiHost.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,6 +7,6 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("CreatorOS");
     resize(1280, 800);
 
-    //auto *webUi = new WebUiHost(this);
-    //setCentralWidget(webUi);
+    auto *webUi = new WebUiHost(this);
+    setCentralWidget(webUi);
 }
