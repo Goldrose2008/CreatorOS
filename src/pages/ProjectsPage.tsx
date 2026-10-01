@@ -10,6 +10,7 @@ import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
+import EntityList from "../components/ui/lists/EntityList";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";
 import type { ContentType } from "../models/ContentType";
@@ -226,25 +227,24 @@ function ProjectsPage() {
             }
         >
             <div className={styles.page}>
-                <section className={styles.list}>
-                    {loading ? (
-                        <EmptyState description="Загрузка проектов..."/>
-                    ) : projects.length === 0 ? (
-                        <EmptyState
-                            title="Проектов пока нет"
-                            description="Создай первый проект, чтобы начать работу."
+                <EntityList<Project>
+                    items={projects}
+                    loading={loading}
+                    loadingState={
+                        <EmptyState description="Загрузка проектов..." />
+                    }
+                    emptyState={
+                        <EmptyState title="Проектов пока нет" description="Создай первый проект, чтобы начать работу."/>
+                    }
+                    renderItem={(project) => (
+                        <ProjectCard
+                            key={project.id}
+                            project={project}
+                            onEdit={openEditModal}
+                            onDelete={handleDelete}
                         />
-                    ) : (
-                        projects.map((project) => (
-                            <ProjectCard
-                                key={project.id}
-                                project={project}
-                                onEdit={openEditModal}
-                                onDelete={handleDelete}
-                            />
-                        ))
                     )}
-                </section>
+                />
         {/* Открытие проекта */}
                 <Modal
                     open={createOpen}

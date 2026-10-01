@@ -19,12 +19,6 @@
     color: var(--color-text);
 }
 
-.list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
 @media (max-width: 700px) {
     .header { flex-direction: column; }
 }
