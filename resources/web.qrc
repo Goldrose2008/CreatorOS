@@ -1,21 +1,9 @@
 <RCC>
     <qresource prefix="/ui">
         <file alias="index.html">../src/ui/web/index.html</file>
-
-        <file alias="styles/theme.css">
-            ../src/ui/web/styles/theme.css
-        </file>
-
-        <file alias="styles/base.css">
-            ../src/ui/web/styles/base.css
-        </file>
-
-        <file alias="js/app.js">
-            ../src/ui/web/js/app.js
-        </file>
-
-        <file alias="js/bridge.js">
-            ../src/ui/web/js/bridge.js
-        </file>
+        <file alias="styles/theme.css">../src/ui/web/styles/theme.css</file>
+        <file alias="styles/base.css">../src/ui/web/styles/base.css</file>
+        <file alias="js/app.js">../src/ui/web/js/app.js</file>
+        <file alias="js/bridge.js">../src/ui/web/js/bridge.js</file>
     </qresource>
 </RCC>

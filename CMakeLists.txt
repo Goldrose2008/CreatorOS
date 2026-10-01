@@ -21,6 +21,8 @@ find_package(Qt6 6.11 REQUIRED COMPONENTS
 
 qt_standard_project_setup()
 
+set(CMAKE_AUTORCC ON)
+
 qt_add_executable(CreatorOS
     WIN32
 
