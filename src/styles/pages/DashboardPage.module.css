@@ -73,6 +73,7 @@
 
 .projectsList {
     flex: 1;
+    gap: 0;
 }
 
 @media (max-width: 800px) {
