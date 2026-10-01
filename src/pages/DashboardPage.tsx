@@ -7,6 +7,7 @@ import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
+import EntityList from "../components/ui/lists/EntityList";
 import ProjectSummary from "../components/projects/ProjectSummary";
 import type { Project } from "../models/Project";
 import { getProjects } from "../services/projectService";
@@ -99,11 +100,16 @@ function DashboardPage() {
                         ) : projects.length === 0 ? (
                             <EmptyState title="Активных проектов пока нет" description="Создай проект, чтобы он появился здесь."/>
                         ) : (
-                            <div className={styles.projectsList}>
-                                {projects.slice(0, 5).map((project) => (
-                                    <ProjectSummary key={project.id} project={project}/>
-                                ))}
-                            </div>
+                            <EntityList<Project>
+                                items={projects.slice(0, 5)}
+                                className={styles.projectsList}
+                                renderItem={(project) => (
+                                    <ProjectSummary
+                                        key={project.id}
+                                        project={project}
+                                    />
+                                )}
+                            />
                         )}
                     </Card>
 
