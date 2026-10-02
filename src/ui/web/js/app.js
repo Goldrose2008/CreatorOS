@@ -1,118 +1,74 @@
 import { connectBridge } from "./bridge.js";
-import { getUiResource } from "./registry/ui-registry.js";
+import { buildMainMenu } from "./menu/main-menu.js";
 import {
-    getLocale,
+    initializeLocalization,
     translate
 } from "./i18n/i18n.js";
+
 import {
-    buildMenuItem,
-    buildMenuSection,
     buildBrandMark,
     buildBrandName
-} from "./components/menu.js";
+} from "./components/brand.js";
 
 const connectionDot = document.getElementById("connection-dot");
+const connectionStatus = document.getElementById("connection-status");
 const appVersion = document.getElementById("app-version");
 
-function renderUiResource(element) {
-    const id = element.dataset.uiId;
-    const resource = getUiResource(id);
-    
-    if (!resource) {
-        console.warn(`UI resource not found: ${id}`);
-        return;
-    } 
+function renderTextResources(applicationName) {
+    const elements = document.querySelectorAll("[data-text-id]");
 
-    const label = translate(resource.textKey);
+    elements.forEach(element => {
+        const textId = element.dataset.textId;
 
-    if (resource.type === "text") {
-        element.textContent = label;
-        return;
-    }
-
-    if (resource.type === "brand-mark") {
-        const brandMark = buildBrandMark(applicationName);
-        element.replaceWith(brandMark);
-        return;
-    }
-
-    if (resource.type === "app-name") {
-        const brandName = buildBrandName(applicationName);
-        element.replaceWith(brandName);
-        return;
-    }
-
-    if (resource.type === "menu-section") {
-        const section = buildMenuSection({
-            id,
-            label
-        });
-
-        element.replaceWith(section);
-        return;
-    }
-
-    if (resource.type === "menu-item") {
-        const item = buildMenuItem({
-            id,
-            label,
-            icon: resource.icon,
-            route: resource.route,
-            active: resource.active
-        });
-
-        element.replaceWith(item);
-        return;
-    }
-
-    console.warn(`Unsupported UI resource type: ${resource.type}`);
-}
-
-function renderUi() {
-    document.documentElement.lang = getLocale();
-
-    const elements = document.querySelectorAll("[data-ui-id]");
-
-    elements.forEach(renderUiResource);
-}
-
-function setBridgeStatus(resourceId) {
-    const resource = getUiResource(resourceId);
-
-    if (!resource) {return;}
-
-    const text = translate(resource.textKey);
-    const connectionStatus = document.querySelector('[data-ui-id="bridge.connecting"]');
-
-    if (connectionStatus) {
-        connectionStatus.textContent = text;
-        connectionStatus.dataset.uiId = resourceId;
-    }
-}
-
-renderUi();
-
-connectBridge()
-    .then((bridge) => {
-        const name = bridge.applicationName;
-        const version = bridge.applicationVersion;
-        const connectionStatus = document.querySelector('[data-ui-id="bridge.connecting"]');
-
-        connectionDot.classList.add("ready");
-        appVersion.textContent = `${name} ${version}`;
-
-        if (connectionStatus) {
-            connectionStatus.textContent = translate("bridge.connected");
-            connectionStatus.dataset.uiId = "bridge.connected";
-        }
-    })
-    .catch((error) => {
-        console.error(error);
-
-        const connectionStatus = document.querySelector('[data-ui-id="bridge.connecting"]');
-
-        if (connectionStatus) {
-            connectionStatus.textContent = translate("bridge.error");
-            connectionStatus.dataset.uiId = "bridge.error";
-        }
+        element.textContent = translate(textId, {appName: applicationName});
     });
+}
+
+function renderApplication(bridge) {
+    document.title = bridge.applicationName;
+
+    const brandMark = buildBrandMark({
+            id: "app-brand-mark",
+            name: bridge.applicationName
+        });
+
+    document
+        .getElementById("app-brand-mark")
+        .replaceWith(brandMark);
+
+    const brandName = buildBrandName({
+            id: "app-brand-name",
+            name: bridge.applicationName
+        });
+
+    document
+        .getElementById("app-brand-name")
+        .replaceWith(brandName);
+
+    appVersion.textContent = `${bridge.applicationName} ${bridge.applicationVersion}`;
+
+    const navigation = document.getElementById("main-navigation");
+
+    navigation.setAttribute("aria-label", translate("main_navigation"));
+    buildMainMenu();
+    renderTextResources(bridge.applicationName);
+    connectionDot.classList.add("ready");
+    connectionStatus.textContent = translate("bridge.connected");
+}
+
+async function initializeApplication() {
+    try {
+        await initializeLocalization();
+        connectionStatus.textContent = translate("bridge.connecting");
+
+        const bridge = await connectBridge();
+        renderApplication(bridge);
+
+    } 
+    catch (error) {
+        console.error(error);
+        if (connectionStatus) {connectionStatus.textContent =translate("bridge.error");}
+    }
+}
+
+initializeApplication();

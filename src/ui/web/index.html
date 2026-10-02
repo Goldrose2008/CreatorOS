@@ -16,68 +16,60 @@
         <div class="app-shell">
             <aside class="sidebar">
                 <div class="sidebar__brand">
-                    <div data-ui-id="app.brand.mark"></div>
-                    <div data-ui-id="app.brand.name"></div>
+                    <div id="app-brand-mark"></div>
+                    <div id="app-brand-name"></div>
                 </div>
 
-                <nav id="main-navigation" class="sidebar__nav" data-ui-id="menu.navigation.label">
-                    <div data-ui-id="menu.section.01"></div>
-                    <div data-ui-id="menu.item.01"></div>
-                    <div data-ui-id="menu.item.02"></div>
-                    <div data-ui-id="menu.item.03"></div>
-                    <div data-ui-id="menu.item.04"></div>
-                    <div data-ui-id="menu.item.05"></div>
-                    <div data-ui-id="menu.item.06"></div>
+                <nav id="main-navigation" class="sidebar__nav">
+                    <div id="menu.section.01"></div>
+                    <div id="menu.item.01"></div>
+                    <div id="menu.item.02"></div>
+                    <div id="menu.item.03"></div>
+                    <div id="menu.item.04"></div>
+                    <div id="menu.item.05"></div>
+                    <div id="menu.item.06"></div>
 
-                    <div data-ui-id="menu.section.02"></div>
-                    <div data-ui-id="menu.item.07"></div>
+                    <div id="menu.section.02"></div>
+                    <div id="menu.item.07"></div>
                 </nav>
 
                 <div class="sidebar__footer">
                     <div class="connection">
                         <span id="connection-dot" class="connection__dot"></span>
-                        <span data-ui-id="bridge.connecting"></span>
+                        <span id="connection-status"></span>
                     </div>
-                    <div data-ui-id="app.version" class="sidebar__version"></div>
+                    <div id="app-version" class="sidebar__version"></div>
                 </div>
             </aside>
 
             <section class="main-area">
                 <header class="topbar">
-                    <h1 class="topbar__title" data-ui-id="page.home.title"></h1>
-                    <span class="topbar__context" data-ui-id="page.home.context"></span>
+                    <h1 id="page-home-title" class="topbar__title" data-text-id="home"></h1>
+                    <span id="page-home-context" class="topbar__context" data-text-id="workspace.lowercase"></span>
                 </header>
 
                 <main class="workspace">
                     <section class="workspace__intro">
-                        <p class="workspace__eyebrow" data-ui-id="page.home.eyebrow"></p>
-                        <h2 class="workspace__heading" data-ui-id="page.home.heading"></h2>
-                        <p class="workspace__description" data-ui-id="page.home.description"></p>
+                        <p class="workspace__eyebrow" data-text-id="welcome"></p>
+                        <h2 class="workspace__heading" data-text-id="your_workspace"></h2>
+                        <p class="workspace__description" data-text-id="home.description"></p>
                     </section>
 
                     <section class="dashboard-grid">
                         <article class="dashboard-card">
-                            <p class="dashboard-card__label" data-ui-id="dashboard.projects.label"></p>
+                            <p class="dashboard-card__label" data-text-id="projects"></p>
                             <div class="dashboard-card__value">
                                 0
                             </div>
-                            <p class="dashboard-card__hint" data-ui-id="dashboard.projects.hint"></p>
+                            <p class="dashboard-card__hint" data-text-id="projects.empty"></p>
                         </article>
 
                         <article class="dashboard-card">
-                            <p class="dashboard-card__label" data-ui-id="dashboard.tasks.label"></p>
+                            <p class="dashboard-card__label" data-text-id="tasks"></p>
                             <div class="dashboard-card__value">
                                 0
                             </div>
-                            <p class="dashboard-card__hint" data-ui-id="dashboard.tasks.hint"></p>
-                        </article>
-
-                        <article class="dashboard-card">
-                            <p class="dashboard-card__label" data-ui-id="dashboard.publications.label"></p>
-                            <div class="dashboard-card__value">
-                                0
-                            </div>
-                            <p class="dashboard-card__hint" data-ui-id="dashboard.publications.hint"></p>
+                            <p class="dashboard-card__hint" data-text-id="tasks.active"></p>
                         </article>
                     </section>
                 </main>

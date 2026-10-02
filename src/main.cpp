@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
         | QWebEngineUrlScheme::LocalAccessAllowed
         | QWebEngineUrlScheme::CorsEnabled
         | QWebEngineUrlScheme::ViewSourceAllowed
+        | QWebEngineUrlScheme::FetchApiAllowed
     );
 
     QWebEngineUrlScheme::registerScheme(qrcScheme);
