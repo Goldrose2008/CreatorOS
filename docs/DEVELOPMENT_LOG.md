@@ -158,6 +158,10 @@ CurrentPage contract
 SurfaceWidget
 ├── Panel
 └── Card
+
+StateWidget
+├── EmptyState
+└── ErrorState
 ~~~
 
 **Часть B — общие компоненты**
@@ -171,6 +175,8 @@ LoadingState
 ErrorState
 FormField
 ~~~
+
+`LoadingState` остаётся самостоятельным компонентом, поскольку его публичный контракт и визуальная модель отличаются от текстовых state-компонентов.
 
 `Modal`, `ConfirmModal` и `EntityForm` не создаются заранее; они проектируются при появлении реальных сценариев форм и подтверждений.
 
