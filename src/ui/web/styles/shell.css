@@ -88,16 +88,22 @@
     color: var(--color-text);
 }
 
-.nav-item__marker {
-    width: 6px;
-    height: 6px;
-    flex: 0 0 6px;
-    border-radius: 50%;
-    background: var(--color-text-subtle);
+.nav-item__icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    display: grid;
+    place-items: center;
 }
 
-.nav-item.active .nav-item__marker {
-    background: var(--color-accent);
+.nav-item__icon svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .sidebar__footer {
