@@ -1413,6 +1413,8 @@ Application Service
 
 ### 28.28 Визуальный порядок реализации
 
+До реализации конкретных прикладных страниц UI развивается через базовые переиспользуемые слои:
+
 ~~~text
 ШАГ 1
 CreatorStyle
@@ -1421,30 +1423,23 @@ Metrics
 Icons
         ↓
 ШАГ 2
-Card
-Section
-PageHeader
-Toolbar
-EntityList
-Modal
-ConfirmModal
-EmptyState
-LoadingState
-ErrorState
-FormField
-EntityForm
+foundation
+   SurfaceWidget
         ↓
 ШАГ 3
-AppShell
-Sidebar
-MenuSection
-MenuItem
-Workspace
+layout
+   Panel / Card / Section / PageHeader / Toolbar
+navigation
+   MenuItem / MenuSection
+lists
+   EntityList
+states
+   EmptyState / LoadingState / ErrorState
+forms
+   FormField
         ↓
 ШАГ 4
-EntityHeader
-EntityCard
-EntityDetails
+EntityHeader / EntityCard / EntityDetails
         ↓
 ШАГ 5
 Project UI + Project C++ layers
@@ -1456,19 +1451,13 @@ Content UI + Content C++ layers
 Task UI + Task C++ layers
         ↓
 ШАГ 8
-Planning
-Library
-Dashboard
+Planning / Library / Dashboard
         ↓
 ШАГ 9
-Publication
-Platform
-Account
-Analytics
+Publication / Platform / Account / Analytics
 ~~~
 
-Каждый шаг считается завершённым только после проверки сборки/работоспособности, commit, push и записи фактического результата в DEVELOPMENT_LOG.
-
+Общие базовые компоненты иерархии проверяются на дублирование до создания специализированных компонентов.
 ### 28.29 Организация файлов UI
 
 UI-компоненты группируются по смысловой ответственности. Не следует хранить большое количество разнородных компонентов непосредственно в одном каталоге `components`.
