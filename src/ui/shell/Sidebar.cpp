@@ -42,6 +42,7 @@ void Sidebar::addSection(MenuSection *section)
 void Sidebar::addItem(MenuItem *item)
 {
     buttonGroup_->addButton(item);
+    items_.append(item);
     layout_->addWidget(item);
 
     connect(
@@ -50,10 +51,15 @@ void Sidebar::addItem(MenuItem *item)
         this,
         [this, item](const QString &route)
         {
-            emit routeTriggered(
-                route,
-                item->text()
-            );
+            emit routeTriggered(route);
         }
     );
+}
+
+void Sidebar::setActiveRoute(const QString &route)
+{
+    for (MenuItem *item : items_)
+    {
+        item->setActive(item->route() == route);
+    }
 }

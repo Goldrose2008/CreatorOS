@@ -13,8 +13,7 @@ namespace
         const LocalizationService *localization,
         const QString &textId,
         IconId icon,
-        const QString &route,
-        bool active = false
+        const QString &route
     )
     {
         auto *item = new MenuItem(sidebar);
@@ -22,7 +21,6 @@ namespace
         item->setIcon(Icons::get(icon));
         item->setText(localization->text(textId));
         item->setRoute(route);
-        item->setActive(active);
         sidebar->addItem(item);
     }
 }
@@ -43,8 +41,7 @@ void MenuComposer::build(
         localization,
         QStringLiteral("home"),
         IconId::Home,
-        QStringLiteral("home"),
-        true
+        QStringLiteral("home")
     );
 
     addItem(

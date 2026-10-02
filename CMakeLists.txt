@@ -42,6 +42,10 @@ qt_add_executable(CreatorOS
     src/ui/style/Icons.cpp
     src/ui/style/Icons.h
 
+    src/ui/navigation/CurrentPage.h
+    src/ui/navigation/NavigationController.cpp
+    src/ui/navigation/NavigationController.h
+
     src/ui/shell/AppShell.cpp
     src/ui/shell/AppShell.h
     src/ui/shell/Sidebar.cpp

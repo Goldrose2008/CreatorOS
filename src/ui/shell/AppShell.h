@@ -5,6 +5,7 @@
 class LocalizationService;
 class Sidebar;
 class Workspace;
+class NavigationController;
 
 class AppShell final : public QWidget
 {
@@ -17,4 +18,5 @@ private:
     LocalizationService *localization_;
     Sidebar *sidebar_;
     Workspace *workspace_;
+    NavigationController *navigation_;
 };
