@@ -36,6 +36,26 @@ qt_add_executable(CreatorOS
     src/ui/components/MenuItem.h
     src/ui/components/MenuSection.cpp
     src/ui/components/MenuSection.h
+    src/ui/components/Panel.cpp
+    src/ui/components/Panel.h
+    src/ui/components/Card.cpp
+    src/ui/components/Card.h
+    src/ui/components/Section.cpp
+    src/ui/components/Section.h
+    src/ui/components/PageHeader.cpp
+    src/ui/components/PageHeader.h
+    src/ui/components/Toolbar.cpp
+    src/ui/components/Toolbar.h
+    src/ui/components/EntityList.cpp
+    src/ui/components/EntityList.h
+    src/ui/components/EmptyState.cpp
+    src/ui/components/EmptyState.h
+    src/ui/components/LoadingState.cpp
+    src/ui/components/LoadingState.h
+    src/ui/components/ErrorState.cpp
+    src/ui/components/ErrorState.h
+    src/ui/components/FormField.cpp
+    src/ui/components/FormField.h
 
     src/ui/style/CreatorStyle.cpp
     src/ui/style/CreatorStyle.h
