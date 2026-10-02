@@ -1,11 +1,7 @@
 function getInitial(name) {
-
     const normalized = name.trim();
-
     if (normalized.length === 0) {return "?";}
-
-    return normalized.charAt(0)
-        .toUpperCase();
+    return normalized.charAt(0).toUpperCase();
 }
 
 export function buildBrandMark({

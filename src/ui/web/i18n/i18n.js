@@ -4,35 +4,40 @@ let catalogs = {};
 let currentLocale = DEFAULT_LOCALE;
 
 function parseLocalizationTable(source) {
-    const cleanSource = source.replace(/^\uFEFF/, "");
 
-    const lines = cleanSource.split(/\r?\n/).filter(line => {
-        const trimmed = line.trim();
-        return trimmed.length > 0 && !trimmed.startsWith("#");
-    });
+    const cleanSource = source.replace(/^\uFEFF/, "");
+    const lines = cleanSource
+            .split(/\r?\n/)
+            .filter(line => {
+                const trimmed = line.trim();
+                return trimmed.length > 0 && !trimmed.startsWith("#");
+            });
 
     if (lines.length === 0) {throw new Error("Localization table is empty.");}
 
     const headers = lines[0].split("\t");
-    const idColumn = headers.indexOf("id");
+    const idIndex = headers.indexOf("id");
 
-    if (idColumn === -1) {throw new Error("Localization table has no id column.");}
+    if (idIndex === -1) {throw new Error("Localization table has no id column.");}
 
     const locales = headers.filter(header => header !== "id");
     const result = {};
 
-    locales.forEach(locale => {result[locale] = {};});
+    locales.forEach(locale => {
+        result[locale] = {};
+    });
 
-    for (let index = 1; index < lines.length; index++) {
-        const values = lines[index].split("\t");
-        const id = values[idColumn]?.trim();
+    for (let lineIndex = 1; lineIndex < lines.length; lineIndex++) {
+        const values = lines[lineIndex].split("\t");
+        const id = values[idIndex]?.trim();
 
         if (!id) {continue;}
 
-        locales.forEach((locale, localeIndex) => {
-            const value = values[localeIndex + 1] ?? "";
-            result[locale][id] = value;
-        });
+        locales.forEach(
+            (locale, localeIndex) => {
+                result[locale][id] = values[localeIndex + 1] ?? "";
+            }
+        );
     }
 
     return result;
@@ -41,7 +46,9 @@ function parseLocalizationTable(source) {
 export async function initializeLocalization(locale = DEFAULT_LOCALE) {
     const response = await fetch("qrc:///ui/i18n/localization.tsv");
 
-    if (!response.ok) { throw new Error(`Cannot load localization table: ${response.status}`);}
+    if (!response.ok) {
+        throw new Error(`Cannot load localization table: ${response.status}`);
+    }
 
     const source = await response.text();
 
@@ -58,7 +65,6 @@ export function getLocale() {return currentLocale;}
 
 export function setLocale(locale) {
     if (!catalogs[locale]) {return false;}
-
     currentLocale = locale;
     document.documentElement.lang = currentLocale;
     return true;
@@ -68,7 +74,6 @@ export function translate(
     id,
     params = {}
 ) {
-
     const currentCatalog = catalogs[currentLocale] ?? {};
     const defaultCatalog = catalogs[DEFAULT_LOCALE] ?? {};
 
@@ -78,9 +83,9 @@ export function translate(
         ([name, replacement]) => {
 
             value = value.replaceAll(
-                `{${name}}`,
-                String(replacement)
-            );
+                    `{${name}}`,
+                    String(replacement)
+                );
         }
     );
 

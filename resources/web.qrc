@@ -18,7 +18,7 @@
 
         <file alias="js/menu/main-menu.js">../src/ui/web/js/menu/main-menu.js</file>
 
-        <file alias="js/i18n/i18n.js">../src/ui/web/js/i18n/i18n.js</file>
+        <file alias="js/i18n/i18n.js">../src/ui/web/i18n/i18n.js</file>
         <file alias="i18n/localization.tsv">../src/ui/web/i18n/localization.tsv</file>
     </qresource>
 </RCC>

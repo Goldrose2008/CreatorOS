@@ -67,7 +67,7 @@ async function initializeApplication() {
     } 
     catch (error) {
         console.error(error);
-        if (connectionStatus) {connectionStatus.textContent =translate("bridge.error");}
+        connectionStatus.textContent = translate("bridge.error");
     }
 }
 

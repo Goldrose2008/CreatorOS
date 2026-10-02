@@ -1,0 +1,20 @@
+id	ru	en
+home    Главная Home
+workspace	Рабочее пространство	Workspace
+workspace.lowercase	рабочее пространство	workspace
+welcome	Добро пожаловать	Welcome
+your_workspace	Ваше рабочее пространство	Your workspace
+home.description	{appName} объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.	{appName} brings projects, content, tasks, materials, publications and analytics together in one workspace.
+projects	Проекты	Projects
+projects.empty	Пока нет созданных проектов	No projects have been created yet
+tasks	Задачи	Tasks
+tasks.active	Активные задачи появятся здесь	Active tasks will appear here
+planning	Планирование	Planning
+library	Библиотека	Library
+analytics	Аналитика	Analytics
+settings	Настройки	Settings
+system	Система	System
+main_navigation	Основная навигация	Main navigation
+bridge.connecting	Подключение...	Connecting...
+bridge.connected	C++ bridge подключён	C++ bridge connected
+bridge.error	Ошибка подключения	Connection error
