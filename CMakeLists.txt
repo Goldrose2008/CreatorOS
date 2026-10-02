@@ -32,6 +32,11 @@ qt_add_executable(CreatorOS
     src/ui/localization/LocalizationService.cpp
     src/ui/localization/LocalizationService.h
 
+    src/ui/components/MenuItem.cpp
+    src/ui/components/MenuItem.h
+    src/ui/components/MenuSection.cpp
+    src/ui/components/MenuSection.h
+
     src/ui/shell/WebUiHost.cpp
     src/ui/shell/WebUiHost.h
 
