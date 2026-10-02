@@ -29,6 +29,9 @@ qt_add_executable(CreatorOS
     src/app/MainWindow.cpp
     src/app/MainWindow.h
 
+    src/ui/localization/LocalizationService.cpp
+    src/ui/localization/LocalizationService.h
+
     src/ui/shell/WebUiHost.cpp
     src/ui/shell/WebUiHost.h
 
@@ -36,6 +39,7 @@ qt_add_executable(CreatorOS
     src/ui/bridge/WebBridge.h
 
     resources/web.qrc
+    resources/localization.qrc
 )
 
 target_link_libraries(CreatorOS

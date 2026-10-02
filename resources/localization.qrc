@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/localization">
+        <file alias="localization.tsv">localization/localization.tsv</file>
+    </qresource>
+</RCC>
