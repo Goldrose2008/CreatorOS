@@ -1,23 +1,23 @@
 export default {
 
-    "app.title": "CreatorOS",
+    "menu.navigation.label": "Main navigation",
 
-    "menu.section.workspace": "Workspace",
-    "menu.item.home": "Home",
-    "menu.item.projects": "Projects",
-    "menu.item.planning": "Planning",
-    "menu.item.tasks": "Tasks",
-    "menu.item.library": "Library",
-    "menu.item.analytics": "Analytics",
+    "menu.section.01": "Workspace",
+    "menu.section.02": "System",
 
-    "menu.section.system": "System",
-    "menu.item.settings": "Settings",
+    "menu.item.01": "Home",
+    "menu.item.02": "Projects",
+    "menu.item.03": "Planning",
+    "menu.item.04": "Tasks",
+    "menu.item.05": "Library",
+    "menu.item.06": "Analytics",
+    "menu.item.07": "Settings",
 
     "page.home.title": "Home",
-    "page.home.context": "CreatorOS workspace",
+    "page.home.context": "workspace",
     "page.home.eyebrow": "Welcome",
     "page.home.heading": "Your workspace",
-    "page.home.description": "CreatorOS brings projects, content, tasks, materials, publications and analytics together in one workspace.",
+    "page.home.description": "{appName} brings projects, content, tasks, materials, publications and analytics together in one workspace.",
 
     "dashboard.projects.label": "Projects",
     "dashboard.projects.hint": "No projects have been created yet",

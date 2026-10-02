@@ -1,66 +1,64 @@
 export const uiRegistry = {
 
-    "app.title": {
-        type: "text",
-        textKey: "app.title"
+    "app.brand.mark": {type: "brand-mark"},
+    "app.brand.name": {type: "app-name"},
+    "app.version": {type: "app-version"},
+
+    "menu.navigation.label": {
+        type: "attribute",
+        attribute: "aria-label",
+        textKey: "menu.navigation.label"
     },
 
-    "menu.section.workspace": {
+    "menu.section.01": {
         type: "menu-section",
-        textKey: "menu.section.workspace"
+        textKey: "menu.section.01"
+    },
+    "menu.section.02": {
+        type: "menu-section",
+        textKey: "menu.section.02"
     },
 
-    "menu.item.home": {
+    "menu.item.01": {
         type: "menu-item",
-        textKey: "menu.item.home",
+        textKey: "menu.item.01",
         icon: "home",
         route: "home",
         active: true
     },
-
-    "menu.item.projects": {
+    "menu.item.02": {
         type: "menu-item",
-        textKey: "menu.item.projects",
+        textKey: "menu.item.02",
         icon: "projects",
         route: "projects"
     },
-
-    "menu.item.planning": {
+    "menu.item.03": {
         type: "menu-item",
-        textKey: "menu.item.planning",
+        textKey: "menu.item.03",
         icon: "planning",
         route: "planning"
     },
-
-    "menu.item.tasks": {
+    "menu.item.04": {
         type: "menu-item",
-        textKey: "menu.item.tasks",
+        textKey: "menu.item.04",
         icon: "tasks",
         route: "tasks"
     },
-
-    "menu.item.library": {
+    "menu.item.05": {
         type: "menu-item",
-        textKey: "menu.item.library",
+        textKey: "menu.item.05",
         icon: "library",
         route: "library"
     },
-
-    "menu.item.analytics": {
+    "menu.item.06": {
         type: "menu-item",
-        textKey: "menu.item.analytics",
+        textKey: "menu.item.06",
         icon: "analytics",
         route: "analytics"
     },
-
-    "menu.section.system": {
-        type: "menu-section",
-        textKey: "menu.section.system"
-    },
-
-    "menu.item.settings": {
+    "menu.item.07": {
         type: "menu-item",
-        textKey: "menu.item.settings",
+        textKey: "menu.item.07",
         icon: "settings",
         route: "settings"
     },
@@ -69,22 +67,18 @@ export const uiRegistry = {
         type: "text",
         textKey: "page.home.title"
     },
-
     "page.home.context": {
         type: "text",
         textKey: "page.home.context"
     },
-
     "page.home.eyebrow": {
         type: "text",
         textKey: "page.home.eyebrow"
     },
-
     "page.home.heading": {
         type: "text",
         textKey: "page.home.heading"
     },
-
     "page.home.description": {
         type: "text",
         textKey: "page.home.description"
@@ -94,7 +88,6 @@ export const uiRegistry = {
         type: "text",
         textKey: "dashboard.projects.label"
     },
-
     "dashboard.projects.hint": {
         type: "text",
         textKey: "dashboard.projects.hint"
@@ -104,7 +97,6 @@ export const uiRegistry = {
         type: "text",
         textKey: "dashboard.tasks.label"
     },
-
     "dashboard.tasks.hint": {
         type: "text",
         textKey: "dashboard.tasks.hint"
@@ -114,7 +106,6 @@ export const uiRegistry = {
         type: "text",
         textKey: "dashboard.publications.label"
     },
-
     "dashboard.publications.hint": {
         type: "text",
         textKey: "dashboard.publications.hint"
@@ -124,17 +115,14 @@ export const uiRegistry = {
         type: "text",
         textKey: "bridge.connecting"
     },
-
     "bridge.connected": {
         type: "text",
         textKey: "bridge.connected"
     },
-
     "bridge.error": {
         type: "text",
         textKey: "bridge.error"
     }
-
 };
 
 export function getUiResource(id) {

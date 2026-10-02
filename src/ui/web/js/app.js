@@ -6,7 +6,9 @@ import {
 } from "./i18n/i18n.js";
 import {
     buildMenuItem,
-    buildMenuSection
+    buildMenuSection,
+    buildBrandMark,
+    buildBrandName
 } from "./components/menu.js";
 
 const connectionDot = document.getElementById("connection-dot");
@@ -15,15 +17,28 @@ const appVersion = document.getElementById("app-version");
 function renderUiResource(element) {
     const id = element.dataset.uiId;
     const resource = getUiResource(id);
-    const label = translate(resource.textKey);
     
     if (!resource) {
         console.warn(`UI resource not found: ${id}`);
         return;
     } 
 
+    const label = translate(resource.textKey);
+
     if (resource.type === "text") {
         element.textContent = label;
+        return;
+    }
+
+    if (resource.type === "brand-mark") {
+        const brandMark = buildBrandMark(applicationName);
+        element.replaceWith(brandMark);
+        return;
+    }
+
+    if (resource.type === "app-name") {
+        const brandName = buildBrandName(applicationName);
+        element.replaceWith(brandName);
         return;
     }
 

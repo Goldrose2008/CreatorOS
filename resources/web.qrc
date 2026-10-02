@@ -1,10 +1,22 @@
 <RCC>
     <qresource prefix="/ui">
         <file alias="index.html">../src/ui/web/index.html</file>
+
         <file alias="styles/theme.css">../src/ui/web/styles/theme.css</file>
         <file alias="styles/base.css">../src/ui/web/styles/base.css</file>
         <file alias="styles/shell.css">../src/ui/web/styles/shell.css</file>
+
         <file alias="js/app.js">../src/ui/web/js/app.js</file>
+        <file alias="js/app-config.js">../src/ui/web/js/app-config.js</file>
+
         <file alias="js/bridge.js">../src/ui/web/js/bridge.js</file>
+
+        <file alias="js/components/menu.js">../src/ui/web/js/components/menu.js</file>
+
+        <file alias="js/i18n/i18n.js">../src/ui/web/js/i18n/i18n.js</file>
+        <file alias="js/i18n/locales/ru.js">../src/ui/web/js/i18n/locales/ru.js</file>
+        <file alias="js/i18n/locales/en.js">../src/ui/web/js/i18n/locales/en.js</file>
+
+        <file alias="js/registry/ui-registry.js">../src/ui/web/js/registry/ui-registry.js</file>
     </qresource>
 </RCC>

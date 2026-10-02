@@ -1,23 +1,23 @@
 export default {
 
-    "app.title": "CreatorOS",
+    "menu.navigation.label": "Основная навигация",
 
-    "menu.section.workspace": "Рабочее пространство",
-    "menu.item.home": "Главная",
-    "menu.item.projects": "Проекты",
-    "menu.item.planning": "Планирование",
-    "menu.item.tasks": "Задачи",
-    "menu.item.library": "Библиотека",
-    "menu.item.analytics": "Аналитика",
+    "menu.section.01": "Рабочее пространство",
+    "menu.section.02": "Система",
 
-    "menu.section.system": "Система",
-    "menu.item.settings": "Настройки",
+    "menu.item.01": "Главная",
+    "menu.item.02": "Проекты",
+    "menu.item.03": "Планирование",
+    "menu.item.04": "Задачи",
+    "menu.item.05": "Библиотека",
+    "menu.item.06": "Аналитика",
+    "menu.item.07": "Настройки",
 
     "page.home.title": "Главная",
-    "page.home.context": "Рабочее пространство CreatorOS",
+    "page.home.context": "рабочее пространство",
     "page.home.eyebrow": "Добро пожаловать",
     "page.home.heading": "Ваше рабочее пространство",
-    "page.home.description": "CreatorOS объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.",
+    "page.home.description": "{appName} объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.",
 
     "dashboard.projects.label": "Проекты",
     "dashboard.projects.hint": "Пока нет созданных проектов",

@@ -58,6 +58,11 @@ const icons = {
     `
 };
 
+function getInitial(name) {
+    const normalized = name.trim();
+    return normalized.length > 0 ? normalized.charAt(0).toUpperCase() : "?";
+}
+
 export function buildMenuSection({
     id,
     label
@@ -101,6 +106,26 @@ export function buildMenuItem({
     labelElement.textContent = label;
 
     element.append(iconElement, labelElement);
+
+    return element;
+}
+
+export function buildBrandMark(name) {
+
+    const element = document.createElement("div");
+
+    element.className = "sidebar__brand-mark";
+    element.textContent = getInitial(name);
+
+    return element;
+}
+
+export function buildBrandName(name) {
+
+    const element = document.createElement("div");
+
+    element.className = "sidebar__brand-name";
+    element.textContent = name;
 
     return element;
 }

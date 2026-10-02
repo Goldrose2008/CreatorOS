@@ -16,22 +16,21 @@
         <div class="app-shell">
             <aside class="sidebar">
                 <div class="sidebar__brand">
-                    <div class="sidebar__brand-mark">C</div>
-                    <div class="sidebar__brand-name">
-                        CreatorOS
-                    </div>
+                    <div data-ui-id="app.brand.mark"></div>
+                    <div data-ui-id="app.brand.name"></div>
                 </div>
 
-                <nav id="main-navigation" class="sidebar__nav" aria-label="Main navigation">
-                    <div data-ui-id="menu.section.workspace"></div>
-                    <div data-ui-id="menu.item.home"></div>
-                    <div data-ui-id="menu.item.projects"></div>
-                    <div data-ui-id="menu.item.planning"></div>
-                    <div data-ui-id="menu.item.tasks"></div>
-                    <div data-ui-id="menu.item.library"></div>
-                    <div data-ui-id="menu.item.analytics"></div>
-                    <div data-ui-id="menu.section.system"></div>
-                    <div data-ui-id="menu.item.settings"></div>
+                <nav id="main-navigation" class="sidebar__nav" data-ui-id="menu.navigation.label">
+                    <div data-ui-id="menu.section.01"></div>
+                    <div data-ui-id="menu.item.01"></div>
+                    <div data-ui-id="menu.item.02"></div>
+                    <div data-ui-id="menu.item.03"></div>
+                    <div data-ui-id="menu.item.04"></div>
+                    <div data-ui-id="menu.item.05"></div>
+                    <div data-ui-id="menu.item.06"></div>
+
+                    <div data-ui-id="menu.section.02"></div>
+                    <div data-ui-id="menu.item.07"></div>
                 </nav>
 
                 <div class="sidebar__footer">
@@ -39,10 +38,7 @@
                         <span id="connection-dot" class="connection__dot"></span>
                         <span data-ui-id="bridge.connecting"></span>
                     </div>
-
-                    <div id="app-version"class="sidebar__version">
-                        CreatorOS
-                    </div>
+                    <div data-ui-id="app.version" class="sidebar__version"></div>
                 </div>
             </aside>
 
