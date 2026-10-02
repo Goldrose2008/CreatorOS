@@ -37,6 +37,15 @@ qt_add_executable(CreatorOS
     src/ui/components/MenuSection.cpp
     src/ui/components/MenuSection.h
 
+    src/ui/shell/AppShell.cpp
+    src/ui/shell/AppShell.h
+    src/ui/shell/Sidebar.cpp
+    src/ui/shell/Sidebar.h
+    src/ui/shell/Workspace.cpp
+    src/ui/shell/Workspace.h
+    src/ui/shell/MenuComposer.cpp
+    src/ui/shell/MenuComposer.h
+
     src/ui/shell/WebUiHost.cpp
     src/ui/shell/WebUiHost.h
 

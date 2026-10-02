@@ -1,12 +1,12 @@
 #include "MainWindow.h"
-#include "../ui/shell/WebUiHost.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+#include "AppInfo.h"
+#include "../ui/shell/AppShell.h"
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    setWindowTitle("CreatorOS");
+    setWindowTitle(QString::fromLatin1(AppInfo::Name));
     resize(1280, 800);
-
-    auto *webUi = new WebUiHost(this);
-    setCentralWidget(webUi);
+    auto *shell = new AppShell(this);
+    setCentralWidget(shell);
 }
