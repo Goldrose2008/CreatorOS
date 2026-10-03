@@ -32,13 +32,18 @@ qt_add_executable(CreatorOS
     src/ui/localization/LocalizationService.cpp
     src/ui/localization/LocalizationService.h
 
+    src/ui/components/entity/EntityHeader.cpp
+    src/ui/components/entity/EntityHeader.h
+    src/ui/components/entity/EntityCard.cpp
+    src/ui/components/entity/EntityCard.h
+    src/ui/components/entity/EntityDetails.cpp
+    src/ui/components/entity/EntityDetails.h
+
+    src/ui/components/forms/FormField.cpp
+    src/ui/components/forms/FormField.h
+
     src/ui/components/foundation/SurfaceWidget.cpp
     src/ui/components/foundation/SurfaceWidget.h
-
-    src/ui/components/navigation/MenuItem.cpp
-    src/ui/components/navigation/MenuItem.h
-    src/ui/components/navigation/MenuSection.cpp
-    src/ui/components/navigation/MenuSection.h
 
     src/ui/components/layout/Panel.cpp
     src/ui/components/layout/Panel.h
@@ -54,6 +59,11 @@ qt_add_executable(CreatorOS
     src/ui/components/lists/EntityList.cpp
     src/ui/components/lists/EntityList.h
 
+    src/ui/components/navigation/MenuItem.cpp
+    src/ui/components/navigation/MenuItem.h
+    src/ui/components/navigation/MenuSection.cpp
+    src/ui/components/navigation/MenuSection.h
+
     src/ui/components/states/StateWidget.cpp
     src/ui/components/states/StateWidget.h
     src/ui/components/states/EmptyState.h
@@ -61,9 +71,6 @@ qt_add_executable(CreatorOS
     src/ui/components/states/LoadingState.h
     src/ui/components/states/ErrorState.cpp
     src/ui/components/states/ErrorState.h
-
-    src/ui/components/forms/FormField.cpp
-    src/ui/components/forms/FormField.h
 
     src/ui/style/CreatorStyle.cpp
     src/ui/style/CreatorStyle.h

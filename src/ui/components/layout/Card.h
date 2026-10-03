@@ -2,7 +2,7 @@
 
 #include "../foundation/SurfaceWidget.h"
 
-class Card final : public SurfaceWidget
+class Card : public SurfaceWidget
 {
     Q_OBJECT
 
