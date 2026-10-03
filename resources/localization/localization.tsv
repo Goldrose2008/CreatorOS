@@ -18,3 +18,29 @@ main_navigation	Основная навигация	Main navigation
 bridge.connecting	Подключение...	Connecting...
 bridge.connected	C++ bridge подключён	C++ bridge connected
 bridge.error	Ошибка подключения	Connection error
+projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
+projects.loading	Загрузка проектов...	Loading projects...
+projects.empty.title	Проектов пока нет	No projects yet
+projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
+projects.error.title	Не удалось загрузить проекты	Could not load projects
+projects.error.description	Произошла ошибка при загрузке проектов.	An error occurred while loading projects.
+projects.retry	Повторить	Retry
+project.open	Открыть	Open
+project.back	Назад к проектам	Back to projects
+project.summary	Сводка	Summary
+project.description	Описание	Description
+project.status	Статус	Status
+project.release	Планируемая дата выхода	Planned release
+project.progress	Готовность	Progress
+project.owner	Владелец	Owner
+project.owner.none	Не назначен	Not assigned
+project.created	Создан	Created
+project.updated	Изменён	Updated
+project.status.draft	Черновик	Draft
+project.status.active	В работе	Active
+project.status.archived	Архив	Archived
+project.not_selected	Проект	Project
+project.not_found.title	Проект не найден	Project not found
+project.not_found.description	Проект больше не существует или недоступен.	The project no longer exists or is unavailable.
+project.error.title	Ошибка проекта	Project error
+project.error.description	Не удалось получить данные проекта.	Could not load project data.

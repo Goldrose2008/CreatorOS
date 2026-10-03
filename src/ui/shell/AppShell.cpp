@@ -13,6 +13,9 @@
 #include "../style/Metrics.h"
 #include "../navigation/NavigationController.h"
 #include "../navigation/CurrentPage.h"
+#include "../pages/projects/ProjectsPage.h"
+#include "../pages/projects/ProjectDetailsPage.h"
+#include "../../application/projects/ProjectService.h"
 
 namespace
 {
@@ -53,8 +56,9 @@ namespace
     }
 }
 
-AppShell::AppShell(QWidget *parent)
+AppShell::AppShell(ProjectService &projectService, QWidget *parent)
     : QWidget(parent),
+      projectService_(&projectService),
       localization_(new LocalizationService(this)),
       sidebar_(new Sidebar(this)),
       workspace_(new Workspace(this)),
@@ -78,12 +82,10 @@ AppShell::AppShell(QWidget *parent)
         localization_->text(QStringLiteral("home"))
     );
 
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("projects"),
-        localization_->text(QStringLiteral("projects"))
-    );
+    auto *projectsPage = new ProjectsPage(*projectService_, *localization_, workspace_);
+    auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
+    navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
 
     addPlaceholderPage(
         navigation_,
@@ -132,6 +134,27 @@ AppShell::AppShell(QWidget *parent)
         &NavigationController::currentPageChanged,
         sidebar_,
         &Sidebar::setActiveRoute
+    );
+
+    connect(
+        projectsPage,
+        &ProjectsPage::projectOpenRequested,
+        this,
+        [this, projectDetailsPage](std::int64_t projectId)
+        {
+            projectDetailsPage->showProject(projectId);
+            navigation_->navigateTo(QStringLiteral("project-details"));
+        }
+    );
+
+    connect(
+        projectDetailsPage,
+        &ProjectDetailsPage::backRequested,
+        this,
+        [this]()
+        {
+            navigation_->navigateTo(QStringLiteral("projects"));
+        }
     );
 
     navigation_->navigateTo(QStringLiteral("home"));
