@@ -29,8 +29,20 @@ qt_add_executable(CreatorOS
     src/app/MainWindow.cpp
     src/app/MainWindow.h
 
-    src/ui/localization/LocalizationService.cpp
-    src/ui/localization/LocalizationService.h
+    src/application/projects/IProjectRepository.h
+    src/application/projects/ProjectService.cpp
+    src/application/projects/ProjectService.h
+
+    src/domain/models/Project.cpp
+    src/domain/models/Project.h
+
+    src/infrastructure/database/DatabaseManager.cpp
+    src/infrastructure/database/DatabaseManager.h
+    src/infrastructure/database/ProjectRepository.cpp
+    src/infrastructure/database/ProjectRepository.h
+
+    src/ui/bridge/WebBridge.cpp
+    src/ui/bridge/WebBridge.h
 
     src/ui/components/entity/EntityHeader.cpp
     src/ui/components/entity/EntityHeader.h
@@ -72,10 +84,8 @@ qt_add_executable(CreatorOS
     src/ui/components/states/ErrorState.cpp
     src/ui/components/states/ErrorState.h
 
-    src/ui/style/CreatorStyle.cpp
-    src/ui/style/CreatorStyle.h
-    src/ui/style/Icons.cpp
-    src/ui/style/Icons.h
+    src/ui/localization/LocalizationService.cpp
+    src/ui/localization/LocalizationService.h
 
     src/ui/navigation/CurrentPage.h
     src/ui/navigation/NavigationController.cpp
@@ -93,11 +103,15 @@ qt_add_executable(CreatorOS
     src/ui/shell/WebUiHost.cpp
     src/ui/shell/WebUiHost.h
 
-    src/ui/bridge/WebBridge.cpp
-    src/ui/bridge/WebBridge.h
+    src/ui/style/CreatorStyle.cpp
+    src/ui/style/CreatorStyle.h
+    src/ui/style/Icons.cpp
+    src/ui/style/Icons.h
 
     resources/web.qrc
     resources/localization.qrc
+    resources/database.qrc
+
 )
 
 target_link_libraries(CreatorOS
