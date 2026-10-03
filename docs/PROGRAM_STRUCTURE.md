@@ -4,17 +4,7 @@
 
 Этот документ является картой текущего репозитория CreatorOS.
 
-Для каждого файла указано его назначение. Основная часть документа описывает **актуальную C++/Qt 6 версию приложения**. Каталог `backup/legacy-electron-2026-10-01` описан отдельно: это архив предыдущей React/Electron реализации, который сохраняется только для справки и не является текущей основой программы.
-
-Текущий стек основной версии:
-
-```text
-C++20
-Qt 6 Widgets
-CMake
-SQLite
-Qt SQL / QSQLITE
-```
+Для каждого файла указано его назначение. Основная часть документа описывает **актуальную C++/Qt 6 версию приложения**. 
 
 HTML/CSS/JavaScript, QWebEngineView и QWebChannel остаются только как переходный или специализированный web-слой до его окончательной очистки.
 
@@ -24,7 +14,6 @@ HTML/CSS/JavaScript, QWebEngineView и QWebChannel остаются только
 
 | Путь | Назначение |
 |---|---|
-| `.gitignore` | Список файлов и каталогов, которые Git не должен отслеживать. |
 | `.vscode/c_cpp_properties.json` | Настройки IntelliSense и путей заголовков C++/Qt для VS Code. |
 | `.vscode/settings.json` | Настройки CMake, генератора Visual Studio, архитектуры x64 и пути к Qt для VS Code. |
 | `CMakeLists.txt` | Основное описание сборки CreatorOS: C++ standard, Qt-модули, исходные файлы, ресурсы, библиотеки и post-build deployment. |
@@ -33,16 +22,13 @@ HTML/CSS/JavaScript, QWebEngineView и QWebChannel остаются только
 | `docs/USER_GUIDE.md` | Пользовательская документация приложения. |
 | `docs/PROGRAM_STRUCTURE.md` | Карта структуры проекта с описанием назначения каждого файла. |
 | `database/` | SQL-структура базы данных и миграции. |
-| `resources/` | Qt-ресурсы приложения: локализация, database migrations и переходные web-ресурсы. |
+| `resources/` | Qt-ресурсы приложения: локализация, database migrations. |
 | `src/` | Исходный код актуальной C++/Qt версии. |
-| `backup/` | Архив предыдущей React/Electron реализации. |
 
 ---
 
 # 3. Актуальная программа — `src/`
-
 ## 3.1. Запуск приложения — `src/app`
-
 ```text
 src/app/
 ├── AppInfo.h
@@ -60,12 +46,11 @@ src/app/
 
 | Файл | Назначение |
 |---|---|
-| `src/main.cpp` | Точка входа приложения: создаёт `QApplication`, подключает `CreatorStyle`, устанавливает имя/версию приложения, создаёт и показывает `MainWindow`. |
+| `src/main.cpp` | Точка входа приложения: создаёт `QApplication`, подключает `CreatorStyle`, устанавливает имя/версию приложения, создаёт и показывает главного окна CreatorOS - `MainWindow`. |
 
 ---
 
 # 4. Domain — `src/domain`
-
 Доменный слой содержит предметную модель и правила бизнеса. Он не должен зависеть от Qt Widgets, SQLite и конкретного UI.
 
 ```text
@@ -83,7 +68,6 @@ src/domain/
 ---
 
 # 5. Application — `src/application`
-
 Application-слой содержит пользовательские сценарии и связывает UI с доменной моделью и репозиториями.
 
 ```text
@@ -103,7 +87,6 @@ src/application/
 ---
 
 # 6. Infrastructure — `src/infrastructure`
-
 Infrastructure содержит конкретные технические реализации хранения и работы с внешней средой.
 
 ```text
@@ -136,12 +119,9 @@ database/
 |---|---|
 | `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
 
-SQL является частью infrastructure/database-механизма, но сами SQL-файлы хранятся отдельно от C++ кода.
-
 ---
 
 # 8. UI — `src/ui`
-
 UI полностью реализуется средствами Qt Widgets. Страницы собираются из переиспользуемых компонентов.
 
 ```text
@@ -159,7 +139,6 @@ src/ui/
 ---
 
 ## 8.1. UI Components — `src/ui/components`
-
 ### Entity
 
 ```text
