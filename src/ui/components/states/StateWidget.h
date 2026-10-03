@@ -3,18 +3,23 @@
 #include <QWidget>
 
 class QLabel;
+class QVBoxLayout;
 
-class EmptyState final : public QWidget
+class StateWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit EmptyState(QWidget *parent = nullptr);
+    explicit StateWidget(QWidget *parent = nullptr);
 
     void setTitle(const QString &title);
     void setDescription(const QString &description);
 
+protected:
+    QVBoxLayout *contentLayout() const;
+
 private:
     QLabel *titleLabel_;
     QLabel *descriptionLabel_;
+    QVBoxLayout *layout_;
 };

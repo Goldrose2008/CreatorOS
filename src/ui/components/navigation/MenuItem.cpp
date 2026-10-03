@@ -2,8 +2,8 @@
 
 #include <QPainter>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
 MenuItem::MenuItem(QWidget *parent) : QAbstractButton(parent)
 {

@@ -4,8 +4,8 @@
 #include <QPalette>
 #include <QVBoxLayout>
 
-#include "../components/MenuItem.h"
-#include "../components/MenuSection.h"
+#include "../components/navigation/MenuItem.h"
+#include "../components/navigation/MenuSection.h"
 #include "../style/Colors.h"
 #include "../style/Metrics.h"
 

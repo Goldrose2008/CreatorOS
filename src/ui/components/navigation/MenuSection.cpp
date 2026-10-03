@@ -5,8 +5,8 @@
 #include <QPalette>
 #include <QVBoxLayout>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
 MenuSection::MenuSection(QWidget *parent) : QWidget(parent), label_(new QLabel(this))
 {

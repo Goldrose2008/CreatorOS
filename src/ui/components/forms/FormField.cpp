@@ -5,8 +5,8 @@
 #include <QPalette>
 #include <QVBoxLayout>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
 FormField::FormField(QWidget *parent)
     : QWidget(parent),

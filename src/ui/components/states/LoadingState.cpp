@@ -4,8 +4,8 @@
 #include <QPalette>
 #include <QVBoxLayout>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
 LoadingState::LoadingState(QWidget *parent) : QWidget(parent), label_(new QLabel(this))
 {

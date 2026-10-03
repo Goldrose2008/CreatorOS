@@ -32,30 +32,38 @@ qt_add_executable(CreatorOS
     src/ui/localization/LocalizationService.cpp
     src/ui/localization/LocalizationService.h
 
-    src/ui/components/MenuItem.cpp
-    src/ui/components/MenuItem.h
-    src/ui/components/MenuSection.cpp
-    src/ui/components/MenuSection.h
-    src/ui/components/Panel.cpp
-    src/ui/components/Panel.h
-    src/ui/components/Card.cpp
-    src/ui/components/Card.h
-    src/ui/components/Section.cpp
-    src/ui/components/Section.h
-    src/ui/components/PageHeader.cpp
-    src/ui/components/PageHeader.h
-    src/ui/components/Toolbar.cpp
-    src/ui/components/Toolbar.h
-    src/ui/components/EntityList.cpp
-    src/ui/components/EntityList.h
-    src/ui/components/EmptyState.cpp
-    src/ui/components/EmptyState.h
-    src/ui/components/LoadingState.cpp
-    src/ui/components/LoadingState.h
-    src/ui/components/ErrorState.cpp
-    src/ui/components/ErrorState.h
-    src/ui/components/FormField.cpp
-    src/ui/components/FormField.h
+    src/ui/components/foundation/SurfaceWidget.cpp
+    src/ui/components/foundation/SurfaceWidget.h
+
+    src/ui/components/navigation/MenuItem.cpp
+    src/ui/components/navigation/MenuItem.h
+    src/ui/components/navigation/MenuSection.cpp
+    src/ui/components/navigation/MenuSection.h
+
+    src/ui/components/layout/Panel.cpp
+    src/ui/components/layout/Panel.h
+    src/ui/components/layout/Card.cpp
+    src/ui/components/layout/Card.h
+    src/ui/components/layout/Section.cpp
+    src/ui/components/layout/Section.h
+    src/ui/components/layout/PageHeader.cpp
+    src/ui/components/layout/PageHeader.h
+    src/ui/components/layout/Toolbar.cpp
+    src/ui/components/layout/Toolbar.h
+
+    src/ui/components/lists/EntityList.cpp
+    src/ui/components/lists/EntityList.h
+
+    src/ui/components/states/StateWidget.cpp
+    src/ui/components/states/StateWidget.h
+    src/ui/components/states/EmptyState.h
+    src/ui/components/states/LoadingState.cpp
+    src/ui/components/states/LoadingState.h
+    src/ui/components/states/ErrorState.cpp
+    src/ui/components/states/ErrorState.h
+
+    src/ui/components/forms/FormField.cpp
+    src/ui/components/forms/FormField.h
 
     src/ui/style/CreatorStyle.cpp
     src/ui/style/CreatorStyle.h

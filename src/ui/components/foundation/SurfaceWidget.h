@@ -1,20 +1,23 @@
 #pragma once
 
+#include <QColor>
 #include <QWidget>
 
 class QVBoxLayout;
 
-class Card final : public QWidget
+class SurfaceWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Card(QWidget *parent = nullptr);
+    explicit SurfaceWidget(QWidget *parent = nullptr);
 
     QVBoxLayout *contentLayout() const;
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+    virtual QColor fillColor() const = 0;
 
 private:
     QVBoxLayout *layout_;

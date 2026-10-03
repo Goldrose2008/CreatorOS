@@ -1,7 +1,7 @@
 #include "MenuComposer.h"
 
-#include "../components/MenuItem.h"
-#include "../components/MenuSection.h"
+#include "../components/navigation/MenuItem.h"
+#include "../components/navigation/MenuSection.h"
 #include "../localization/LocalizationService.h"
 #include "../style/Icons.h"
 #include "Sidebar.h"

@@ -4,8 +4,8 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
 Section::Section(QWidget *parent)
     : QWidget(parent),

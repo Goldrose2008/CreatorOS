@@ -2,7 +2,7 @@
 
 #include <QHBoxLayout>
 
-#include "../style/Metrics.h"
+#include "../../style/Metrics.h"
 
 Toolbar::Toolbar(QWidget *parent) : QWidget(parent), layout_(new QHBoxLayout(this))
 {

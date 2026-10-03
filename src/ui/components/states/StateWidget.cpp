@@ -1,31 +1,28 @@
-#include "ErrorState.h"
+#include "StateWidget.h"
 
 #include <QFont>
 #include <QLabel>
 #include <QPalette>
-#include <QPushButton>
 #include <QVBoxLayout>
 
-#include "../style/Colors.h"
-#include "../style/Metrics.h"
+#include "../../style/Colors.h"
+#include "../../style/Metrics.h"
 
-ErrorState::ErrorState(QWidget *parent)
+StateWidget::StateWidget(QWidget *parent)
     : QWidget(parent),
       titleLabel_(new QLabel(this)),
       descriptionLabel_(new QLabel(this)),
-      retryButton_(new QPushButton(this))
+      layout_(new QVBoxLayout(this))
 {
-    auto *layout = new QVBoxLayout(this);
-
-    layout->setContentsMargins(
+    layout_->setContentsMargins(
         CreatorMetrics::SpacingXLarge,
         CreatorMetrics::SpacingXLarge,
         CreatorMetrics::SpacingXLarge,
         CreatorMetrics::SpacingXLarge
     );
 
-    layout->setSpacing(CreatorMetrics::SpacingMedium);
-    layout->setAlignment(Qt::AlignCenter);
+    layout_->setSpacing(CreatorMetrics::SpacingSmall);
+    layout_->setAlignment(Qt::AlignCenter);
 
     QFont titleFont = titleLabel_->font();
 
@@ -44,27 +41,25 @@ ErrorState::ErrorState(QWidget *parent)
     descriptionLabel_->setPalette(descriptionPalette);
     descriptionLabel_->setAlignment(Qt::AlignCenter);
     descriptionLabel_->setWordWrap(true);
-    retryButton_->setVisible(false);
-    layout->addWidget(titleLabel_);
-    layout->addWidget(descriptionLabel_);
-    layout->addWidget(retryButton_, 0, Qt::AlignCenter);
+    descriptionLabel_->setVisible(false);
 
-    connect(retryButton_, &QPushButton::clicked, this, &ErrorState::retryRequested);
+    layout_->addWidget(titleLabel_);
+    layout_->addWidget(descriptionLabel_);
 }
 
-void ErrorState::setTitle(const QString &title)
+void StateWidget::setTitle(const QString &title)
 {
     titleLabel_->setText(title);
 }
 
-void ErrorState::setDescription(const QString &description)
+void StateWidget::setDescription(const QString &description)
 {
     descriptionLabel_->setText(description);
+
     descriptionLabel_->setVisible(!description.isEmpty());
 }
 
-void ErrorState::setRetryText(const QString &text)
+QVBoxLayout *StateWidget::contentLayout() const
 {
-    retryButton_->setText(text);
-    retryButton_->setVisible(!text.isEmpty());
+    return layout_;
 }

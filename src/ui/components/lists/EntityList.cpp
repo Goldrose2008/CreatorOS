@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "../style/Metrics.h"
+#include "../../style/Metrics.h"
 
 EntityList::EntityList(QWidget *parent)
     : QScrollArea(parent),
