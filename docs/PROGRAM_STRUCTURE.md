@@ -28,7 +28,6 @@ HTML/CSS/JavaScript, QWebEngineView и QWebChannel остаются только
 | `.vscode/c_cpp_properties.json` | Настройки IntelliSense и путей заголовков C++/Qt для VS Code. |
 | `.vscode/settings.json` | Настройки CMake, генератора Visual Studio, архитектуры x64 и пути к Qt для VS Code. |
 | `CMakeLists.txt` | Основное описание сборки CreatorOS: C++ standard, Qt-модули, исходные файлы, ресурсы, библиотеки и post-build deployment. |
-| `README.md` | Основная документация репозитория, если файл присутствует в текущей версии. |
 | `docs/DEVELOPMENT_LOG.md` | Журнал этапов разработки, контрольных точек, архитектурных изменений и результатов сборки. |
 | `docs/TECHNICAL_SPEC.md` | Основная техническая и архитектурная спецификация CreatorOS. |
 | `docs/USER_GUIDE.md` | Пользовательская документация приложения. |
@@ -539,6 +538,7 @@ WebEngine/WebChannel остаются в CMake до финальной пров�
 | `electron/preload.cts` | Preload-слой Electron для безопасной передачи разрешённых API в renderer. |
 | `electron/tsconfig.json` | TypeScript-конфигурация Electron-части. |
 | `electron/database/database.ts` | Старый database client для SQLite. |
+| `backup/legacy-electron-2026-10-01/src/infrastructure/database/databaseClient.ts` | Старый frontend-side database client/обёртка для доступа к SQLite в прежней архитектуре. |
 | `electron/database/schema.sql` | Старая SQL-схема базы данных, использовавшаяся до перехода на C++. |
 | `electron/ipc/databaseHandlers.ts` | Старые IPC handlers для database operations. |
 
