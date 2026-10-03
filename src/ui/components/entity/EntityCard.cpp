@@ -2,6 +2,7 @@
 
 #include <QFont>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QPalette>
 #include <QProgressBar>
@@ -16,6 +17,7 @@ EntityCard::EntityCard(QWidget *parent)
       titleLayout_(new QHBoxLayout()),
       metaLayout_(new QHBoxLayout()),
       actionsLayout_(new QHBoxLayout()),
+      contentWidgetsLayout_(new QVBoxLayout()),
       progressBar_(new QProgressBar(this)),
       statusWidget_(nullptr)
 {
@@ -27,6 +29,9 @@ EntityCard::EntityCard(QWidget *parent)
 
     actionsLayout_->setContentsMargins(0, 0, 0, 0);
     actionsLayout_->setSpacing(CreatorMetrics::SpacingSmall);
+
+    contentWidgetsLayout_->setContentsMargins(0, 0, 0, 0);
+    contentWidgetsLayout_->setSpacing(CreatorMetrics::SpacingMedium);
 
     QFont titleFont = titleLabel_->font();
     titleFont.setPointSize(16);
@@ -54,6 +59,7 @@ EntityCard::EntityCard(QWidget *parent)
 
     contentLayout()->addLayout(titleLayout_);
     contentLayout()->addWidget(descriptionLabel_);
+    contentLayout()->addLayout(contentWidgetsLayout_);
     contentLayout()->addWidget(progressBar_);
     contentLayout()->addLayout(metaLayout_);
     contentLayout()->addLayout(actionsLayout_);
@@ -94,7 +100,7 @@ void EntityCard::addContentWidget(QWidget *widget)
     if (widget == nullptr){return;}
 
     widget->setParent(this);
-    contentLayout()->insertWidget(contentLayout()->count() - 3, widget);
+    contentWidgetsLayout_->addWidget(widget);
 }
 
 void EntityCard::addMetaWidget(QWidget *widget)

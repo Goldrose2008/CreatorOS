@@ -4,6 +4,7 @@
 
 class QLabel;
 class QHBoxLayout;
+class QVBoxLayout;
 class QProgressBar;
 
 class EntityCard final : public Card
@@ -32,6 +33,7 @@ private:
     QHBoxLayout *titleLayout_;
     QHBoxLayout *metaLayout_;
     QHBoxLayout *actionsLayout_;
+    QVBoxLayout *contentWidgetsLayout_;
 
     QProgressBar *progressBar_;
 
