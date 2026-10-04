@@ -124,7 +124,7 @@ database/
 ---
 
 # 8. UI — `src/ui`
-UI полностью реализуется средствами Qt Widgets. Страницы собираются из переиспользуемых компонентов.
+UI полностью реализуется средствами Qt Widgets. Страница является целостным UI-классом и может использовать отдельные переиспользуемые классы только там, где они действительно имеют самостоятельную ответственность, контракт или сложное повторное поведение.
 
 ```text
 src/ui/
@@ -155,12 +155,12 @@ src/ui/components/entity/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/components/entity/EntityCard.h` | Объявление общего компонента карточки сущности, наследующегося от `Card`. |
-| `src/ui/components/entity/EntityCard.cpp` | Реализация карточки сущности: заголовок, описание, статус, дополнительный контент, прогресс, метаданные и действия. |
-| `src/ui/components/entity/EntityHeader.h` | Объявление универсального заголовка сущности. |
+| `src/ui/components/entity/EntityCard.h` | Объявление базового целостного UI-класса карточки сущности, наследующегося от `Card`; предоставляет общие UI-механизмы специализированным карточкам. |
+| `src/ui/components/entity/EntityCard.cpp` | Реализация общего каркаса и UI-поведения `EntityCard`: заголовок, описание, статус, прогресс, метаданные, дополнительные области и действия. База не знает конкретный тип сущности. |
+| `src/ui/components/entity/EntityHeader.h` | Объявление самостоятельного повторяемого UI-класса заголовка сущности. |
 | `src/ui/components/entity/EntityHeader.cpp` | Реализация заголовка сущности с названием, описанием, status widget, metadata и action widgets. |
-| `src/ui/components/entity/EntityDetails.h` | Объявление общего scroll-контейнера для подробных представлений сущностей. |
-| `src/ui/components/entity/EntityDetails.cpp` | Реализация структуры подробного представления: navigation, header, error, summary и content. |
+| `src/ui/components/entity/EntityDetails.h` | Объявление базового целостного UI-класса подробного представления сущности; предоставляет общие UI-механизмы и опциональные регионы наследникам. |
+| `src/ui/components/entity/EntityDetails.cpp` | Реализация общей структуры `EntityDetails`: navigation, header, состояния, summary/info, actions и content-регионы. Конкретные сущности внутри базы не проверяются. |
 
 ### Foundation
 
@@ -322,10 +322,10 @@ src/ui/pages/projects/
 |---|---|
 | `src/ui/pages/projects/ProjectsPage.h` | Объявление основной страницы списка проектов. |
 | `src/ui/pages/projects/ProjectsPage.cpp` | Загружает Project через `ProjectService`, отображает loading/empty/error состояния и создаёт `ProjectCard`. |
-| `src/ui/pages/projects/ProjectCard.h` | Объявление специализированного UI-класса карточки Project; целевой базовый класс уточняется на архитектурной ревизии. |
-| `src/ui/pages/projects/ProjectCard.cpp` | Реализация целостного UI-класса ProjectCard: визуальная структура, UI-поведение, обработка открытия деталей и данные Project. Текущая версия использует EntityCard; после ревизии возможен переход на наследование без изменения ответственности класса. |
-| `src/ui/pages/projects/ProjectDetailsPage.h` | Объявление целостного UI-класса подробного представления одного Project; целевой общий details-контракт уточняется на архитектурной ревизии. |
-| `src/ui/pages/projects/ProjectDetailsPage.cpp` | Реализация визуальной структуры и UI-поведения Project details: получение данных через ProjectService, навигация и отображение информации. Текущая версия использует EntityDetails; целевая форма наследования уточняется до следующей кодовой подстадии. |
+| `src/ui/pages/projects/ProjectCard.h` | Объявление специализированного UI-класса `ProjectCard`, который после архитектурного рефакторинга наследует `EntityCard` и знает конкретную модель Project. |
+| `src/ui/pages/projects/ProjectCard.cpp` | Реализация `ProjectCard`: настройка общих UI-механизмов `EntityCard`, отображение данных Project и обработка специфических пользовательских действий. Общий каркас карточки не дублируется. |
+| `src/ui/pages/projects/ProjectDetailsPage.h` | Объявление специализированного details-класса Project; целевая форма — наследник `EntityDetails`, если текущий navigation/page-контракт сохраняется при рефакторинге. |
+| `src/ui/pages/projects/ProjectDetailsPage.cpp` | Реализация `ProjectDetailsPage`: загрузка Project через `ProjectService`, настройка общих механизмов `EntityDetails`, отображение подходящих Project-регионов и локальное UI-поведение. |
 
 На текущем этапе Projects UI поддерживает просмотр списка и подробностей. Создание/редактирование/удаление подключаются после появления необходимого Main Content / ContentType сценария.
 
@@ -387,492 +387,62 @@ src/ui/style/
 
 # 9. Архитектурная карта UI-классов
 
-Физическая структура каталогов описывает, где искать классы. Она не требует дробить один UI-сценарий на множество файлов.
+Физические каталоги помогают находить код, но не задают правило дробления UI. Один целостный UI-сценарий может находиться в одном классе `.h + .cpp`.
 
-Целевая модель повторного использования:
+Целевая модель:
+
+~~~text
+целостная UI-сущность
+        ↓
+наследование
+        ↓
+специализированная UI-сущность
+        +
+composition внутри неё для сложных независимых объектов
+~~~
+
+Для entity UI:
 
 ~~~text
 SurfaceWidget
-├── Panel
 └── Card
-      ↓
-   EntityCard
-      ├── ProjectCard
-      ├── ContentCard
-      └── TaskCard
+    └── EntityCard
+        ├── ProjectCard
+        ├── ContentCard
+        └── TaskCard
+
+EntityDetails
+├── ProjectDetailsPage
+├── ContentDetails
+└── TaskDetails
 ~~~
 
-Дочерний UI-класс наследует общую визуальную реализацию и UI-поведение, когда он является специализированной разновидностью базового класса.
+Базовый класс знает общие UI-механизмы. Наследник знает конкретную сущность и решает, какие из доступных механизмов использовать, заполнить или скрыть.
 
-Обычная внутренняя разметка QWidget, QLabel, QPushButton, QProgressBar и layout остаётся внутри класса и не получает отдельного файла только ради уменьшения размера.
+База не выполняет проверки вида `if (Project) ... else if (Task) ...`.
+
+### Правило самостоятельного компонента
+
+Компонент появляется только тогда, когда часть интерфейса действительно стала отдельным объектом: имеет собственную ответственность, контракт, сложное состояние/жизненный цикл или реальное повторное использование.
+
+`QLabel`, `QPushButton`, layout и простой участок разметки отдельным архитектурным классом не становятся только потому, что их «можно вынести».
+
+### Правило наследования
+
+Наследование — основной механизм переиспользования общей целостной сущности при реальном `is-a` отношении и общем поведении.
+
+Composition используется внутри сущности для сложных независимых частей и не заменяет наследование как универсальное правило.
+
+### Правило бизнес-логики
+
+Application/domain содержат бизнес-правила, инварианты, вычисления, прикладные операции и жизненный цикл сущностей.
+
+UI содержит отображение, локальное состояние, пользовательское взаимодействие и вызовы application services/use cases.
 
 ### Правило пары .h/.cpp
 
-Файлы Class.h и Class.cpp рассматриваются как одна программная единица. Разделение на header/source является особенностью C++, а не разделением UI и logic.
+Файлы `Class.h` и `Class.cpp` рассматриваются как одна программная единица. Отдельные `ClassView.*`, `ClassLogic.*`, `ClassLayout.*` без самостоятельной ответственности не создаются.
 
 ### Правило актуальности карты
 
-После добавления каждого нового файла в рабочую реализацию его путь и назначение добавляются в PROGRAM_STRUCTURE согласно фактическому расположению. После удаления файла соответствующая запись удаляется. Документ не должен содержать записи о несуществующих рабочих файлах.
-
----
-
-# 10. Transition Web Layer — `src/ui/web`
-
-Этот каталог содержит переходную web-реализацию. Он **не является основой текущего UI** и предназначен для удаления после завершения native migration, если специализированный web-сценарий не потребует его сохранить.
-
-```text
-src/ui/web/
-├── index.html
-├── i18n/
-│   ├── i18n.js
-│   └── localization.tsv
-├── js/
-│   ├── app.js
-│   ├── bridge.js
-│   ├── components/
-│   │   ├── brand.js
-│   │   ├── menu-item.js
-│   │   └── menu-section.js
-│   ├── icons.js
-│   └── menu/
-│       └── main-menu.js
-└── styles/
-    ├── base.css
-    ├── shell.css
-    └── theme.css
-```
-
-| Файл | Назначение |
-|---|---|
-| `src/ui/web/index.html` | Корневой HTML старого web UI. |
-| `src/ui/web/i18n/i18n.js` | JavaScript-механизм локализации старого web UI. |
-| `src/ui/web/i18n/localization.tsv` | Старая таблица локализации web UI. Не является источником локализации актуальной версии. |
-| `src/ui/web/js/app.js` | Основной JavaScript bootstrap старого web интерфейса. |
-| `src/ui/web/js/bridge.js` | JavaScript-часть старого bridge между web UI и C++. |
-| `src/ui/web/js/components/brand.js` | Старый web-компонент брендинга приложения. |
-| `src/ui/web/js/components/menu-item.js` | Старый web-компонент пункта меню. |
-| `src/ui/web/js/components/menu-section.js` | Старый web-компонент секции меню. |
-| `src/ui/web/js/icons.js` | Старый web-механизм работы с иконками. |
-| `src/ui/web/js/menu/main-menu.js` | Сборка основного меню старого web UI. |
-| `src/ui/web/styles/base.css` | Базовые CSS-правила старого web UI. |
-| `src/ui/web/styles/shell.css` | CSS оформления shell/side navigation старого web UI. |
-| `src/ui/web/styles/theme.css` | Цветовая тема и CSS design tokens старого web UI. |
-
----
-
-# 11. C++ Web Bridge — `src/ui/bridge`
-
-```text
-src/ui/bridge/
-├── WebBridge.cpp
-└── WebBridge.h
-```
-
-| Файл | Назначение |
-|---|---|
-| `src/ui/bridge/WebBridge.h` | Объявление переходного QObject bridge для связи web UI с C++. |
-| `src/ui/bridge/WebBridge.cpp` | Реализация переходного web bridge. Предназначен для удаления вместе с web UI на финальном migration этапе, если отдельная web-функция не требует его сохранить. |
-
----
-
-# 12. Qt Resources — `resources/`
-
-```text
-resources/
-├── database.qrc
-├── localization.qrc
-├── localization/
-│   └── localization.tsv
-└── web.qrc
-```
-
-| Файл | Назначение |
-|---|---|
-| `resources/database.qrc` | Подключает SQL-миграции к Qt Resource System. |
-| `resources/localization.qrc` | Подключает основную таблицу локализации к Qt Resource System. |
-| `resources/localization/localization.tsv` | Единый исходный файл переводов актуальной C++/Qt версии. |
-| `resources/web.qrc` | Подключает ресурсы переходного web UI. Предназначен для удаления на Этапе 13. |
-
----
-
-# 13. CMake и зависимости
-
-| Файл | Назначение |
-|---|---|
-| `CMakeLists.txt` | Управляет компиляцией, Qt modules, ресурсами, линковкой и `windeployqt` для Windows. |
-
-Текущие Qt-модули, используемые проектом:
-
-```text
-Qt6::Core
-Qt6::Gui
-Qt6::Widgets
-Qt6::Sql
-Qt6::Network
-Qt6::WebEngineWidgets
-Qt6::WebChannel
-```
-
-WebEngine/WebChannel остаются в CMake до финальной проверки миграции.
-
----
-
-# 14. Архив старой реализации
-
-## `backup/legacy-electron-2026-10-01`
-
-Этот каталог **не используется как рабочая основа текущей программы**.
-
-Он хранит предыдущую React/Vite/Electron реализацию для справки при переносе UX, предметных моделей, CSS и сценариев.
-
-## 13.1. Файлы верхнего уровня архива
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/.gitignore` | Git-исключения старого Electron проекта. |
-| `backup/legacy-electron-2026-10-01/README.md` | Документация старой реализации. |
-| `backup/legacy-electron-2026-10-01/index.html` | HTML entry point старого Vite UI. |
-| `backup/legacy-electron-2026-10-01/package.json` | NPM зависимости и scripts старого проекта. |
-| `backup/legacy-electron-2026-10-01/package-lock.json` | Зафиксированные версии NPM зависимостей старого проекта. |
-| `backup/legacy-electron-2026-10-01/tsconfig.json` | Общая TypeScript конфигурация старого проекта. |
-| `backup/legacy-electron-2026-10-01/tsconfig.app.json` | TypeScript-конфигурация приложения старого UI. |
-| `backup/legacy-electron-2026-10-01/tsconfig.node.json` | TypeScript-конфигурация Node/Vite части. |
-| `backup/legacy-electron-2026-10-01/vite.config.ts` | Конфигурация Vite старого UI. |
-| `backup/legacy-electron-2026-10-01/eslint.config.js` | Правила ESLint старого проекта. |
-
-## 13.2. Electron
-
-### `backup/legacy-electron-2026-10-01/electron`
-
-| Файл | Назначение |
-|---|---|
-| `electron/main.ts` | Точка входа Electron-процесса старой версии. |
-| `electron/preload.cts` | Preload-слой Electron для безопасной передачи разрешённых API в renderer. |
-| `electron/tsconfig.json` | TypeScript-конфигурация Electron-части. |
-| `electron/database/database.ts` | Старый database client для SQLite. |
-| `backup/legacy-electron-2026-10-01/src/infrastructure/database/databaseClient.ts` | Старый frontend-side database client/обёртка для доступа к SQLite в прежней архитектуре. |
-| `electron/database/schema.sql` | Старая SQL-схема базы данных, использовавшаяся до перехода на C++. |
-| `electron/ipc/databaseHandlers.ts` | Старые IPC handlers для database operations. |
-
-### Scripts
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/scripts/dev-electron.mjs` | Скрипт запуска/разработки старого Electron-приложения. |
-
-## 13.3. Старый frontend source
-
-### Общие файлы
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/App.tsx` | Корневой React-компонент старого приложения. |
-| `backup/legacy-electron-2026-10-01/src/main.tsx` | Точка входа React renderer. |
-| `backup/legacy-electron-2026-10-01/src/assets/hero.png` | Растровый визуальный ресурс старого интерфейса. |
-| `backup/legacy-electron-2026-10-01/src/assets/react.svg` | Стандартный React asset старого проекта. |
-| `backup/legacy-electron-2026-10-01/src/assets/vite.svg` | Стандартный Vite asset старого проекта. |
-
-### Models
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/models/Entity.ts` | Базовая TypeScript-модель сущностей старой версии. |
-| `backup/legacy-electron-2026-10-01/src/models/Project.ts` | Старая модель Project. |
-| `backup/legacy-electron-2026-10-01/src/models/Content.ts` | Старая модель Content. |
-| `backup/legacy-electron-2026-10-01/src/models/ContentType.ts` | Старая модель ContentType. |
-| `backup/legacy-electron-2026-10-01/src/models/Task.ts` | Старая модель Task. |
-
-### Types
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/types/electron.d.ts` | TypeScript declarations для Electron bridge API. |
-| `backup/legacy-electron-2026-10-01/src/types/form.ts` | Типы конфигурации форм старой версии. |
-| `backup/legacy-electron-2026-10-01/src/types/status.ts` | Типы визуальных status tones старого UI. |
-
-### Config
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/config/appConfig.ts` | Конфигурация старого приложения. |
-| `backup/legacy-electron-2026-10-01/src/config/databaseSchema.ts` | Описание/версия database schema старого приложения. |
-| `backup/legacy-electron-2026-10-01/src/config/entities/contentConfig.ts` | Конфигурация UI и полей Content. |
-| `backup/legacy-electron-2026-10-01/src/config/entities/projectConfig.ts` | Конфигурация полей, статусов и действий Project. |
-
-### Services
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/services/projectService.ts` | Старый frontend service для операций Project. |
-| `backup/legacy-electron-2026-10-01/src/services/contentService.ts` | Старый frontend service для операций Content. |
-| `backup/legacy-electron-2026-10-01/src/services/contentTypeService.ts` | Старый frontend service для ContentType. |
-| `backup/legacy-electron-2026-10-01/src/services/themeService.ts` | Управление темой старого UI. |
-
-### Utils
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/utils/date.ts` | Старые функции форматирования и работы с датами. |
-
----
-
-# 15. Архивные UI components
-
-## `backup/legacy-electron-2026-10-01/src/components/entity`
-
-| Файл | Назначение |
-|---|---|
-| `EntityCard.tsx` | Старый React-шаблон карточки сущности. |
-| `EntityHeader.tsx` | Старый React-шаблон заголовка сущности. |
-| `EntityDetails.tsx` | Старый React-шаблон подробного представления сущности. |
-
-## `backup/legacy-electron-2026-10-01/src/components/projects`
-
-| Файл | Назначение |
-|---|---|
-| `ProjectCard.tsx` | Старое специализированное представление Project в виде карточки. |
-| `ProjectSummary.tsx` | Старый компактный summary-блок Project. |
-
-## `backup/legacy-electron-2026-10-01/src/components/content`
-
-| Файл | Назначение |
-|---|---|
-| `ContentCard.tsx` | Старое специализированное представление Content. |
-
-## `backup/legacy-electron-2026-10-01/src/components/layout`
-
-| Файл | Назначение |
-|---|---|
-| `AppShell.tsx` | Старый React shell приложения. |
-| `Sidebar.tsx` | Старый React sidebar. |
-| `Workspace.tsx` | Старый React workspace. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/forms`
-
-| Файл | Назначение |
-|---|---|
-| `EntityForm.tsx` | Универсальная форма сущности старой версии. |
-| `FormField.tsx` | Старый универсальный form field. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/layout`
-
-| Файл | Назначение |
-|---|---|
-| `Card.tsx` | Старый базовый Card. |
-| `PageHeader.tsx` | Старый заголовок страницы. |
-| `PageLayout.tsx` | Старый общий layout страницы. |
-| `Section.tsx` | Старый layout section. |
-| `Toolbar.tsx` | Старый toolbar. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/lists`
-
-| Файл | Назначение |
-|---|---|
-| `EntityList.tsx` | Старый универсальный список сущностей. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/overlays`
-
-| Файл | Назначение |
-|---|---|
-| `Modal.tsx` | Старый универсальный modal. |
-| `ConfirmModal.tsx` | Старый modal подтверждения действия. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/primitives`
-
-| Файл | Назначение |
-|---|---|
-| `Badge.tsx` | Старый badge/status indicator. |
-| `Button.tsx` | Старый общий компонент кнопки. |
-| `Input.tsx` | Старое текстовое поле. |
-| `ProgressBar.tsx` | Старый progress bar. |
-| `Select.tsx` | Старый select. |
-| `Textarea.tsx` | Старое многострочное текстовое поле. |
-
-## `backup/legacy-electron-2026-10-01/src/components/ui/states`
-
-| Файл | Назначение |
-|---|---|
-| `EmptyState.tsx` | Старое состояние пустого содержимого. |
-| `ErrorState.tsx` | Старое состояние ошибки. |
-| `LoadingState.tsx` | Старое состояние загрузки. |
-
----
-
-# 16. Архивные pages
-
-```text
-backup/legacy-electron-2026-10-01/src/pages/
-```
-
-| Файл | Назначение |
-|---|---|
-| `DashboardPage.tsx` | Старый dashboard. |
-| `ProjectsPage.tsx` | Старый список проектов и CRUD UI Project. |
-| `ProjectDetails.tsx` | Старое подробное представление Project. |
-| `ContentDetails.tsx` | Старое подробное представление Content. |
-| `TasksPage.tsx` | Старый экран задач. |
-| `PlanningPage.tsx` | Старый экран планирования. |
-| `LibraryPage.tsx` | Старый экран библиотеки. |
-| `AnalyticsPage.tsx` | Старый экран аналитики. |
-
-### Settings
-
-| Файл | Назначение |
-|---|---|
-| `pages/Settings/SettingsLayout.tsx` | Старый общий layout настроек. |
-| `pages/Settings/ContentTypes.tsx` | Старый экран управления ContentType. |
-| `pages/Settings/SettingsAppearance.tsx` | Старые настройки внешнего вида. |
-| `pages/Settings/SettingsPlaceholder.tsx` | Placeholder для ещё не реализованных настроек. |
-
----
-
-# 17. Архивные styles
-
-## Общие styles
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/src/styles/common-ui.css` | Общие CSS-компоненты старого интерфейса. |
-| `backup/legacy-electron-2026-10-01/src/styles/entities.css` | CSS сущностных компонентов старого UI. |
-| `backup/legacy-electron-2026-10-01/src/styles/index.css` | Главный CSS entry point старого UI. |
-| `backup/legacy-electron-2026-10-01/src/styles/theme.css` | Общая тема старого интерфейса. |
-| `backup/legacy-electron-2026-10-01/src/styles/ui-primitives.css` | CSS примитивов старого интерфейса. |
-
-## Layout styles
-
-| Файл | Назначение |
-|---|---|
-| `styles/layout/AppShell.module.css` | Стили старого AppShell. |
-| `styles/layout/Sidebar.module.css` | Стили старого Sidebar. |
-| `styles/layout/Workspace.module.css` | Стили старого Workspace. |
-| `styles/layout/page-layout.css` | Общий layout страниц старого UI. |
-
-## Page styles
-
-| Файл | Назначение |
-|---|---|
-| `styles/pages/ContentDetails.module.css` | Стили старого Content details. |
-| `styles/pages/DashboardPage.module.css` | Стили старого dashboard. |
-| `styles/pages/ProjectDetails.module.css` | Стили старого Project details. |
-| `styles/pages/ProjectsPage.module.css` | Стили старого Projects page. |
-
-## Settings styles
-
-| Файл | Назначение |
-|---|---|
-| `styles/settings/ContentTypes.module.css` | Стили старого ContentType settings. |
-| `styles/settings/Settings.module.css` | Стили старого Settings UI. |
-| `styles/settings/SettingsLayout.module.css` | Стили layout старого Settings. |
-
----
-
-# 18. Архивные public/assets
-
-| Файл | Назначение |
-|---|---|
-| `backup/legacy-electron-2026-10-01/public/favicon.svg` | Favicon старого web-приложения. |
-| `backup/legacy-electron-2026-10-01/public/icons.svg` | Набор SVG-иконок старого UI. |
-
----
-
-# 19. Архитектурный поток актуальной версии
-
-Основной поток данных:
-
-```text
-User
-  ↓
-Qt Widgets
-  ↓
-UI Page / UI Component
-  ↓
-Application Service
-  ↓
-Repository Interface
-  ↓
-Infrastructure Repository
-  ↓
-Qt SQL / SQLite
-```
-
-Для Project:
-
-```text
-ProjectsPage
-    ↓
-ProjectService
-    ↓
-IProjectRepository
-    ↓
-ProjectRepository
-    ↓
-DatabaseManager
-    ↓
-SQLite
-```
-
-Навигация:
-
-```text
-MenuItem
-    ↓ signal(route)
-Sidebar
-    ↓
-NavigationController
-    ↓
-Workspace / QStackedWidget
-    ↓
-Current Page
-```
-
----
-
-# 20. Правила чтения этой структуры
-
-### Актуальный код
-
-Рабочая C++/Qt реализация находится в:
-
-```text
-src/app
-src/domain
-src/application
-src/infrastructure
-src/ui
-database
-resources
-```
-
-### Архив
-
-```text
-backup/legacy-electron-2026-10-01
-```
-
-не является источником текущей архитектуры. Архивные файлы можно использовать для переноса идей, пользовательских сценариев и ранее проработанной модели данных, но новые зависимости на них не добавляются.
-
-### Документация
-
-Архитектурные решения находятся в:
-
-```text
-docs/TECHNICAL_SPEC.md
-```
-
-Ход разработки и контрольные точки:
-
-```text
-docs/DEVELOPMENT_LOG.md
-```
-
-Карта файлов:
-
-```text
-docs/PROGRAM_STRUCTURE.md
-```
-
-Пользовательская документация:
-
-```text
-docs/USER_GUIDE.md
-```
+После добавления каждого нового рабочего файла его путь и назначение добавляются в PROGRAM_STRUCTURE. После удаления файла соответствующая запись удаляется. Документ не должен содержать записи о несуществующих рабочих файлах.
