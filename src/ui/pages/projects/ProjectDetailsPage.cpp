@@ -1,14 +1,11 @@
 #include "ProjectDetailsPage.h"
 
 #include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QPushButton>
-#include <QVBoxLayout>
+#include <QLabel>
 
 #include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/Project.h"
-#include "../../components/entity/EntityDetails.h"
 #include "../../components/entity/EntityHeader.h"
 #include "../../components/layout/Section.h"
 #include "../../localization/LocalizationService.h"
@@ -50,10 +47,9 @@ ProjectDetailsPage::ProjectDetailsPage(
     LocalizationService &localization,
     QWidget *parent
 )
-    : QWidget(parent),
+    : EntityDetails(parent),
       projectService_(projectService),
       localization_(localization),
-      details_(new EntityDetails(this)),
       header_(new EntityHeader(this)),
       statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
@@ -65,11 +61,6 @@ ProjectDetailsPage::ProjectDetailsPage(
       summarySection_(new Section(this)),
       descriptionSection_(new Section(this))
 {
-    auto *layout = new QVBoxLayout(this);
-
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(details_);
-
     auto *backButton = new QPushButton(localization_.text(QStringLiteral("project.back")), this);
 
     connect(
@@ -79,8 +70,8 @@ ProjectDetailsPage::ProjectDetailsPage(
         &ProjectDetailsPage::backRequested
     );
 
-    details_->setNavigationWidget(backButton);
-    details_->setHeaderWidget(header_);
+    setNavigationWidget(backButton);
+    setHeaderWidget(header_);
     summarySection_->setTitle(localization_.text(QStringLiteral("project.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
@@ -107,8 +98,8 @@ ProjectDetailsPage::ProjectDetailsPage(
     descriptionSection_->setTitle(localization_.text(QStringLiteral("project.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
 
-    details_->setSummaryWidget(summarySection_);
-    details_->addContentWidget(descriptionSection_);
+    setSummaryWidget(summarySection_);
+    addContentWidget(descriptionSection_);
 
     header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
 

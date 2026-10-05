@@ -1,17 +1,16 @@
 #pragma once
 
-#include <QWidget>
-
 #include <cstdint>
 
-class EntityDetails;
+#include "../../components/entity/EntityDetails.h"
+
 class EntityHeader;
 class QLabel;
 class LocalizationService;
 class ProjectService;
 class Section;
 
-class ProjectDetailsPage final : public QWidget
+class ProjectDetailsPage final : public EntityDetails
 {
     Q_OBJECT
 
@@ -28,7 +27,6 @@ private:
     ProjectService &projectService_;
     LocalizationService &localization_;
 
-    EntityDetails *details_;
     EntityHeader *header_;
 
     QLabel *statusLabel_;

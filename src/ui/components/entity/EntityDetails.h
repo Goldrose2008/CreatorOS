@@ -5,7 +5,7 @@
 class QVBoxLayout;
 class QWidget;
 
-class EntityDetails final : public QScrollArea
+class EntityDetails : public QScrollArea
 {
     Q_OBJECT
 
