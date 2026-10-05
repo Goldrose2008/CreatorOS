@@ -14,8 +14,13 @@ public:
 
     void setNavigationWidget(QWidget *widget);
     void setHeaderWidget(QWidget *widget);
-    void setErrorWidget(QWidget *widget);
+    void setStateWidget(QWidget *widget);
     void setSummaryWidget(QWidget *widget);
+
+    void setNavigationVisible(bool visible);
+    void setHeaderVisible(bool visible);
+    void setStateVisible(bool visible);
+    void setSummaryVisible(bool visible);
 
     void addContentWidget(QWidget *widget);
 
@@ -28,12 +33,12 @@ private:
 
     QVBoxLayout *navigationLayout_;
     QVBoxLayout *headerLayout_;
-    QVBoxLayout *errorLayout_;
+    QVBoxLayout *stateLayout_;
     QVBoxLayout *summaryLayout_;
     QVBoxLayout *contentLayout_;
 
     QWidget *navigationWidget_;
     QWidget *headerWidget_;
-    QWidget *errorWidget_;
+    QWidget *stateWidget_;
     QWidget *summaryWidget_;
 };

@@ -35,12 +35,12 @@ EntityDetails::EntityDetails(QWidget *parent)
       layout_(new QVBoxLayout(contentWidget_)),
       navigationLayout_(new QVBoxLayout()),
       headerLayout_(new QVBoxLayout()),
-      errorLayout_(new QVBoxLayout()),
+      stateLayout_(new QVBoxLayout()),
       summaryLayout_(new QVBoxLayout()),
       contentLayout_(new QVBoxLayout()),
       navigationWidget_(nullptr),
       headerWidget_(nullptr),
-      errorWidget_(nullptr),
+      stateWidget_(nullptr),
       summaryWidget_(nullptr)
 {
     setWidget(contentWidget_);
@@ -58,14 +58,14 @@ EntityDetails::EntityDetails(QWidget *parent)
 
     navigationLayout_->setContentsMargins(0, 0, 0, 0);
     headerLayout_->setContentsMargins(0, 0, 0, 0);
-    errorLayout_->setContentsMargins(0, 0, 0, 0);
+    stateLayout_->setContentsMargins(0, 0, 0, 0);
     summaryLayout_->setContentsMargins(0, 0, 0, 0);
     contentLayout_->setContentsMargins(0, 0, 0, 0);
     contentLayout_->setSpacing(CreatorMetrics::SpacingLarge);
 
     layout_->addLayout(navigationLayout_);
     layout_->addLayout(headerLayout_);
-    layout_->addLayout(errorLayout_);
+    layout_->addLayout(stateLayout_);
     layout_->addLayout(summaryLayout_);
     layout_->addLayout(contentLayout_);
     layout_->addStretch();
@@ -81,14 +81,46 @@ void EntityDetails::setHeaderWidget(QWidget *widget)
     replaceWidget(headerLayout_, headerWidget_, widget, contentWidget_);
 }
 
-void EntityDetails::setErrorWidget(QWidget *widget)
+void EntityDetails::setStateWidget(QWidget *widget)
 {
-    replaceWidget(errorLayout_, errorWidget_, widget, contentWidget_);
+    replaceWidget(stateLayout_, stateWidget_, widget, contentWidget_);
 }
 
 void EntityDetails::setSummaryWidget(QWidget *widget)
 {
     replaceWidget(summaryLayout_, summaryWidget_, widget, contentWidget_);
+}
+
+void EntityDetails::setNavigationVisible(bool visible)
+{
+    if (navigationWidget_ != nullptr)
+    {
+        navigationWidget_->setVisible(visible);
+    }
+}
+
+void EntityDetails::setHeaderVisible(bool visible)
+{
+    if (headerWidget_ != nullptr)
+    {
+        headerWidget_->setVisible(visible);
+    }
+}
+
+void EntityDetails::setStateVisible(bool visible)
+{
+    if (stateWidget_ != nullptr)
+    {
+        stateWidget_->setVisible(visible);
+    }
+}
+
+void EntityDetails::setSummaryVisible(bool visible)
+{
+    if (summaryWidget_ != nullptr)
+    {
+        summaryWidget_->setVisible(visible);
+    }
 }
 
 void EntityDetails::addContentWidget(QWidget *widget)
