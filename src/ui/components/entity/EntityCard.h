@@ -7,7 +7,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QProgressBar;
 
-class EntityCard final : public Card
+class EntityCard : public Card
 {
     Q_OBJECT
 

@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QWidget>
-
 #include "../../../domain/models/Project.h"
+#include "../../../ui/components/entity/EntityCard.h"
 
-class EntityCard;
+class LocalizationService;
 
-class ProjectCard final : public QWidget
+class ProjectCard final : public EntityCard
 {
     Q_OBJECT
 
@@ -18,5 +17,4 @@ signals:
 
 private:
     Project project_;
-    EntityCard *card_;
 };

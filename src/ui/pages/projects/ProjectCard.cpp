@@ -4,9 +4,7 @@
 #include <QLabel>
 #include <QPalette>
 #include <QPushButton>
-#include <QVBoxLayout>
 
-#include "../../../ui/components/entity/EntityCard.h"
 #include "../../../ui/localization/LocalizationService.h"
 #include "../../../ui/style/Colors.h"
 
@@ -51,29 +49,24 @@ namespace
 }
 
 ProjectCard::ProjectCard(const Project &project, LocalizationService &localization, QWidget *parent)
-    : QWidget(parent), project_(project), card_(new EntityCard(this))
+    : EntityCard(parent), project_(project)
 {
-    auto *layout = new QVBoxLayout(this);
+    setTitle(QString::fromUtf8(project_.name.c_str()));
+    setDescription(QString::fromUtf8(project_.description.c_str()));
 
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(card_);
+    auto *status = createStatusLabel(statusText(project_.status, localization), this);
 
-    card_->setTitle(QString::fromUtf8(project_.name.c_str()));
-    card_->setDescription(QString::fromUtf8(project_.description.c_str()));
+    setStatusWidget(status);
 
-    auto *status = createStatusLabel(statusText(project_.status, localization), card_);
-
-    card_->setStatusWidget(status);
-
-    auto *releaseDate = new QLabel(card_);
+    auto *releaseDate = new QLabel(this);
     releaseDate->setText(localization.text(QStringLiteral("project.release")) + QStringLiteral(": ") + QString::fromUtf8(project_.plannedReleaseAt.c_str()));
 
-    card_->addMetaWidget(releaseDate);
-    card_->setProgress(project_.progress);
+    addMetaWidget(releaseDate);
+    setProgress(project_.progress);
 
-    auto *openButton = new QPushButton(localization.text(QStringLiteral("project.open")), card_);
+    auto *openButton = new QPushButton(localization.text(QStringLiteral("project.open")), this);
 
-    card_->addAction(openButton);
+    addAction(openButton);
 
     connect(
         openButton,
