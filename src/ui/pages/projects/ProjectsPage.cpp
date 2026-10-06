@@ -1,19 +1,22 @@
 #include "ProjectsPage.h"
 
+#include <QDialog>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QStackedWidget>
 #include <exception>
 
-#include "../../../application/projects/ProjectService.h"
-#include "../../../domain/models/Project.h"
+#include "ProjectCard.h"
+#include "ProjectEditorDialog.h"
 #include "../../components/lists/EntityList.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../components/states/EmptyState.h"
 #include "../../components/states/ErrorState.h"
 #include "../../components/states/LoadingState.h"
-#include "../../style/Metrics.h"
 #include "../../localization/LocalizationService.h"
-#include "ProjectCard.h"
+#include "../../style/Metrics.h"
+#include "../../../application/projects/ProjectService.h"
+#include "../../../domain/models/Project.h"
 
 ProjectsPage::ProjectsPage(
     ProjectService &projectService,
@@ -37,6 +40,29 @@ ProjectsPage::ProjectsPage(
     header_->setTitle(localization_.text(QStringLiteral("projects")));
     header_->setDescription(localization_.text(QStringLiteral("projects.description")));
     
+    auto *createButton = new QPushButton(
+        localization_.text(QStringLiteral("projects.create")),
+        this
+    );
+
+    header_->addAction(createButton);
+
+    connect(
+        createButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            ProjectEditorDialog dialog(
+                projectService_,
+                localization_,
+                this
+            );
+
+            if (dialog.exec() == QDialog::Accepted){reload();}
+        }
+    );
+
     loadingState_->setTitle(localization_.text(QStringLiteral("projects.loading")));
     
     emptyState_->setTitle(localization_.text(QStringLiteral("projects.empty.title")));

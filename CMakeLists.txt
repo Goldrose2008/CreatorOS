@@ -104,6 +104,9 @@ qt_add_executable(CreatorOS
     src/ui/pages/projects/ProjectDetailsPage.cpp
     src/ui/pages/projects/ProjectDetailsPage.h
 
+    src/ui/pages/projects/ProjectEditorDialog.cpp
+    src/ui/pages/projects/ProjectEditorDialog.h
+
     src/ui/shell/AppShell.cpp
     src/ui/shell/AppShell.h
     src/ui/shell/Sidebar.cpp

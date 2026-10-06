@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "IProjectRepository.h"
+#include "../../domain/models/ContentType.h"
 
 class IContentTypeRepository;
 
@@ -18,6 +19,7 @@ public:
 );
 
     std::vector<Project> getProjects() const;
+    std::vector<ContentType> getContentTypes() const;
     std::optional<Project> getProject(std::int64_t id) const;
 
     Project createProject(
