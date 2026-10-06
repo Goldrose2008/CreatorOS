@@ -29,10 +29,12 @@ qt_add_executable(CreatorOS
     src/app/MainWindow.cpp
     src/app/MainWindow.h
 
+    src/application/content/IContentTypeRepository.h
+
     src/application/projects/IProjectRepository.h
     src/application/projects/ProjectService.cpp
     src/application/projects/ProjectService.h
-
+    
     src/domain/models/Project.cpp
     src/domain/models/Project.h
     src/domain/models/Content.cpp
@@ -41,6 +43,8 @@ qt_add_executable(CreatorOS
 
     src/infrastructure/database/DatabaseManager.cpp
     src/infrastructure/database/DatabaseManager.h
+    src/infrastructure/database/ContentTypeRepository.cpp
+    src/infrastructure/database/ContentTypeRepository.h
     src/infrastructure/database/ProjectRepository.cpp
     src/infrastructure/database/ProjectRepository.h
 

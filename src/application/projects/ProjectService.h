@@ -7,10 +7,15 @@
 
 #include "IProjectRepository.h"
 
+class IContentTypeRepository;
+
 class ProjectService
 {
 public:
-    explicit ProjectService(IProjectRepository &repository);
+    explicit ProjectService(
+    IProjectRepository &repository,
+    IContentTypeRepository &contentTypeRepository
+);
 
     std::vector<Project> getProjects() const;
     std::optional<Project> getProject(std::int64_t id) const;
@@ -34,4 +39,5 @@ public:
 
 private:
     IProjectRepository &repository_;
+    IContentTypeRepository &contentTypeRepository_;
 };

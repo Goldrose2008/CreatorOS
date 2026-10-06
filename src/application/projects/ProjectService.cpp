@@ -3,6 +3,8 @@
 #include <cctype>
 #include <stdexcept>
 
+#include "../content/IContentTypeRepository.h"
+
 namespace
 {
     std::string trim(const std::string &value)
@@ -51,8 +53,12 @@ namespace
     }
 }
 
-ProjectService::ProjectService(IProjectRepository &repository)
-    : repository_(repository)
+ProjectService::ProjectService(
+    IProjectRepository &repository,
+    IContentTypeRepository &contentTypeRepository
+)
+    : repository_(repository),
+      contentTypeRepository_(contentTypeRepository)
 {
 }
 
@@ -88,6 +94,12 @@ Project ProjectService::createProject(
     if (mainContentTypeId <= 0)
     {
         throw std::invalid_argument("Main content type is required.");
+    }
+
+    const auto mainContentType = contentTypeRepository_.findById(mainContentTypeId);
+    if (!mainContentType.has_value())
+    {
+        throw std::invalid_argument("Main content type was not found.");
     }
 
     project.status = ProjectStatus::Draft;

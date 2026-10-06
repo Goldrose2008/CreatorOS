@@ -7,6 +7,7 @@
 
 class ProjectRepository;
 class ProjectService;
+class ContentTypeRepository;
 
 class MainWindow final : public QMainWindow
 {
@@ -20,5 +21,6 @@ public:
 private:
     DatabaseManager databaseManager_;
     std::unique_ptr<ProjectRepository> projectRepository_;
+    std::unique_ptr<ContentTypeRepository> contentTypeRepository_;
     std::unique_ptr<ProjectService> projectService_;
 };

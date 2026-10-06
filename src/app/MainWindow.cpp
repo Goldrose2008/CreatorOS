@@ -6,6 +6,7 @@
 #include "../ui/shell/AppShell.h"
 #include "../application/projects/ProjectService.h"
 #include "../infrastructure/database/ProjectRepository.h"
+#include "../infrastructure/database/ContentTypeRepository.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -20,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     }
 
     projectRepository_ = std::make_unique<ProjectRepository>(databaseManager_);
-
-    projectService_ = std::make_unique<ProjectService>(*projectRepository_);
+    contentTypeRepository_ = std::make_unique<ContentTypeRepository>(databaseManager_);
+    projectService_ = std::make_unique<ProjectService>(*projectRepository_, *contentTypeRepository_);
 
     auto *shell = new AppShell(*projectService_, this);
     setCentralWidget(shell);
