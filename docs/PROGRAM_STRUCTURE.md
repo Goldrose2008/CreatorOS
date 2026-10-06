@@ -254,7 +254,6 @@ src/ui/components/states/
 ├── EmptyState.h
 ├── ErrorState.cpp
 ├── ErrorState.h
-├── LoadingState.cpp
 ├── LoadingState.h
 ├── StateWidget.cpp
 └── StateWidget.h
@@ -267,8 +266,7 @@ src/ui/components/states/
 | `src/ui/components/states/EmptyState.h` | Пустое состояние, наследующее общую структуру `StateWidget`. |
 | `src/ui/components/states/ErrorState.h` | Состояние ошибки с возможностью повторного действия. |
 | `src/ui/components/states/ErrorState.cpp` | Реализация retry-кнопки и сигнала `retryRequested`. |
-| `src/ui/components/states/LoadingState.h` | Объявление отдельного состояния загрузки. |
-| `src/ui/components/states/LoadingState.cpp` | Реализация состояния загрузки с текстом. |
+| `src/ui/components/states/LoadingState.h` | Специализированное состояние загрузки, наследующее общую UI-механику `StateWidget`; отдельной реализации `.cpp` не требует. |
 
 ---
 
