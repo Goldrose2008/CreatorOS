@@ -217,7 +217,16 @@ loading/empty/error states
 - commit пользователя 12970a29ac63bdf2fe394147ae7c4c06b24ca59c (Этап 10 — Project create/edit/delete и actions) запушен.
 
 ##### Подэтап 10.2 — ContentType как application/infrastructure справочник
-Следующий шаг: предоставить типобезопасный application-контракт для чтения ContentType, его SQLite-реализацию и использовать этот механизм при создании Project вместо передачи непроверенного идентификатора из UI.
+Статус: **завершён**
+
+Добавлен application-контракт чтения ContentType и SQLite-реализация. ProjectService теперь проверяет существование выбранного ContentType до создания Project и Main Content.
+
+Проверка:
+- build успешен;
+- commit пользователя d56d1185caf18f0fc3f708f23b97ab502c86ba2d (Этап 10 — Project create/edit/delete и actions_2) запушен.
+
+##### Подэтап 10.3 — UI создания Project
+Следующий шаг: добавить отдельный диалог создания Project как самостоятельный UI-сценарий, загрузить доступные ContentType через ProjectService и после успешного создания обновить ProjectsPage.
 
 #### Этап 11 — полноценный Content
 Реализовать Content, ContentType и связанные UI-сценарии.
