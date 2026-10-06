@@ -80,6 +80,8 @@ Application-слой содержит пользовательские сцен�
 
 ```text
 src/application/
+├── content/
+│   └── IContentTypeRepository.h
 └── projects/
     ├── IProjectRepository.h
     ├── ProjectService.cpp
@@ -88,9 +90,10 @@ src/application/
 
 | Файл | Назначение |
 |---|---|
+| `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
 | `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 | `src/application/projects/ProjectService.h` | Публичный контракт application service для сценариев работы с Project. |
-| `src/application/projects/ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, а также обращение к репозиторию. |
+| `src/application/projects/ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
 
 ---
 
@@ -100,6 +103,8 @@ Infrastructure содержит конкретные технические ре
 ```text
 src/infrastructure/
 └── database/
+    ├── ContentTypeRepository.cpp
+    ├── ContentTypeRepository.h
     ├── DatabaseManager.cpp
     ├── DatabaseManager.h
     ├── ProjectRepository.cpp
@@ -108,6 +113,8 @@ src/infrastructure/
 
 | Файл | Назначение |
 |---|---|
+| `src/infrastructure/database/ContentTypeRepository.h` | Объявление SQLite-реализации `IContentTypeRepository`. |
+| `src/infrastructure/database/ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
 | `src/infrastructure/database/DatabaseManager.h` | Контракт объекта, который открывает SQLite-подключение, предоставляет БД и применяет схему/миграции. |
 | `src/infrastructure/database/DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
 | `src/infrastructure/database/ProjectRepository.h` | Объявление SQLite-реализации `IProjectRepository`. |
