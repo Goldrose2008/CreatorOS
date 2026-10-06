@@ -67,7 +67,7 @@ qt_add_executable(CreatorOS
     src/ui/components/layout/PageHeader.h
     src/ui/components/layout/Toolbar.cpp
     src/ui/components/layout/Toolbar.h
-
+    
     src/ui/components/lists/EntityList.cpp
     src/ui/components/lists/EntityList.h
 
@@ -79,8 +79,7 @@ qt_add_executable(CreatorOS
     src/ui/components/states/StateWidget.cpp
     src/ui/components/states/StateWidget.h
     src/ui/components/states/EmptyState.h
-    src/ui/components/states/LoadingState.cpp
-    src/ui/components/states/LoadingState.h
+      src/ui/components/states/LoadingState.h
     src/ui/components/states/ErrorState.cpp
     src/ui/components/states/ErrorState.h
 

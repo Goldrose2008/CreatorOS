@@ -1,18 +1,11 @@
 #pragma once
 
-#include <QWidget>
+#include "StateWidget.h"
 
-class QLabel;
-
-class LoadingState final : public QWidget
+class LoadingState final : public StateWidget
 {
     Q_OBJECT
 
 public:
-    explicit LoadingState(QWidget *parent = nullptr);
-
-    void setText(const QString &text);
-
-private:
-    QLabel *label_;
+    using StateWidget::StateWidget;
 };

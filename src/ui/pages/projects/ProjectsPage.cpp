@@ -37,7 +37,7 @@ ProjectsPage::ProjectsPage(
     header_->setTitle(localization_.text(QStringLiteral("projects")));
     header_->setDescription(localization_.text(QStringLiteral("projects.description")));
     
-    loadingState_->setText(localization_.text(QStringLiteral("projects.loading")));
+    loadingState_->setTitle(localization_.text(QStringLiteral("projects.loading")));
     
     emptyState_->setTitle(localization_.text(QStringLiteral("projects.empty.title")));
     emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description")));
