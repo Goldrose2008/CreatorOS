@@ -226,7 +226,18 @@ loading/empty/error states
 - commit пользователя d56d1185caf18f0fc3f708f23b97ab502c86ba2d (Этап 10 — Project create/edit/delete и actions_2) запушен.
 
 ##### Подэтап 10.3 — UI создания Project
-Следующий шаг: добавить отдельный диалог создания Project как самостоятельный UI-сценарий, загрузить доступные ContentType через ProjectService и после успешного создания обновить ProjectsPage.
+Статус: **завершён**
+
+Добавлен ProjectEditorDialog, подключённый к ProjectsPage. Диалог получает ContentType через ProjectService, выполняет валидацию и создаёт Project вместе с Main Content.
+
+Проверка:
+- build успешен;
+- commit пользователя 631b6513d9316dd3ff652ebeef9fdea9b8123a96 (Этап 10 — Project create/edit/delete и actions_4) запушен.
+
+##### Подэтап 10.4 — общий EditorDialog и редактирование Project
+Статус: **в работе**
+
+Общий модальный lifecycle вынесен в EditorDialog. ProjectEditorDialog наследует его; следующий шаг — добавить режим редактирования существующего Project и действие Edit на странице деталей. Main Content пока не редактируется через этот сценарий и остаётся отдельной сущностью до полноценного Content UI.
 
 #### Этап 11 — полноценный Content
 Реализовать Content, ContentType и связанные UI-сценарии.
@@ -364,4 +375,5 @@ license/package contents
 - Реализована атомарная application-операция создания Project вместе с Main Content; ProjectService нормализует и проверяет входные данные, ProjectRepository сохраняет обе записи в одной транзакции.
 - Самостоятельный create(Project) больше не является частью IProjectRepository; это закрывает прямой обход доменного инварианта через текущий repository-контракт.
 - Пользователь подтвердил успешную сборку и запушил commit 12970a29ac63bdf2fe394147ae7c4c06b24ca59c.
+- Подэтап 10.3 выполнен в commit 631b6513d9316dd3ff652ebeef9fdea9b8123a96; ProjectEditorDialog использует EditorDialog как базовый UI-класс и поддерживает создание Project.
 ### Дальнейшие продуктовые этапы
