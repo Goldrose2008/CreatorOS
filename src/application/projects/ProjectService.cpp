@@ -66,16 +66,40 @@ std::optional<Project> ProjectService::getProject(std::int64_t id) const
     return repository_.findById(id);
 }
 
-Project ProjectService::createProject(const std::string &name, const std::string &description, const std::string &plannedReleaseAt)
+Project ProjectService::createProject(
+    const std::string &name,
+    const std::string &description,
+    const std::string &plannedReleaseAt,
+    std::int64_t mainContentTypeId,
+    const std::string &mainContentName
+)
 {
     Project project;
 
     setEditableFields(project, name, description, plannedReleaseAt);
 
+    const std::string normalizedContentName = trim(mainContentName);
+
+    if (normalizedContentName.empty())
+    {
+        throw std::invalid_argument("Main content name cannot be empty.");
+    }
+
+    if (mainContentTypeId <= 0)
+    {
+        throw std::invalid_argument("Main content type is required.");
+    }
+
     project.status = ProjectStatus::Draft;
     project.progress = 0;
 
-    const std::int64_t id = repository_.create(project);
+    Content mainContent;
+
+    mainContent.contentTypeId = mainContentTypeId;
+    mainContent.role = ContentRole::Main;
+    mainContent.name = normalizedContentName;
+
+    const std::int64_t id = repository_.createWithMainContent(project, mainContent);
 
     const auto createdProject = repository_.findById(id);
 

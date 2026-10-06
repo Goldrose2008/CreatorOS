@@ -18,7 +18,9 @@ public:
     Project createProject(
         const std::string &name,
         const std::string &description,
-        const std::string &plannedReleaseAt
+        const std::string &plannedReleaseAt,
+        std::int64_t mainContentTypeId,
+        const std::string &mainContentName
     );
 
     bool updateProject(

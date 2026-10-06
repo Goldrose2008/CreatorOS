@@ -112,11 +112,18 @@ std::optional<Project> ProjectRepository::findById(std::int64_t id) const
     return readProject(query);
 }
 
-std::int64_t ProjectRepository::create(const Project &project)
+std::int64_t ProjectRepository::createWithMainContent(const Project &project, const Content &mainContent)
 {
-    QSqlQuery query(database_);
+    QSqlDatabase database = database_;
 
-    query.prepare(
+    if (!database.transaction())
+    {
+        throw std::runtime_error(database.lastError().text().toStdString());
+    }
+
+    QSqlQuery projectQuery(database);
+
+    projectQuery.prepare(
         QStringLiteral(
             "INSERT INTO projects "
             "(name, description, owner_id, "
@@ -127,50 +134,95 @@ std::int64_t ProjectRepository::create(const Project &project)
         )
     );
 
-    query.bindValue(
+    projectQuery.bindValue(
         QStringLiteral(":name"), 
         QString::fromUtf8(project.name.c_str())
     );
 
-    query.bindValue(
+    projectQuery.bindValue(
         QStringLiteral(":description"), 
         QString::fromUtf8(project.description.c_str())
     );
 
     if (project.ownerId.has_value())
     {
-        query.bindValue(
+        projectQuery.bindValue(
             QStringLiteral(":owner_id"), 
             QVariant::fromValue(project.ownerId.value()));
     }
     else
     {
-        query.bindValue(
+        projectQuery.bindValue(
             QStringLiteral(":owner_id"), 
             QVariant());
     }
 
-    query.bindValue(
+    projectQuery.bindValue(
         QStringLiteral(":planned_release_at"),
         QString::fromUtf8(project.plannedReleaseAt.c_str())
     );
 
-    query.bindValue(
+    projectQuery.bindValue(
         QStringLiteral(":status"),
         QString::fromStdString(projectStatusToString(project.status))
     );
 
-    query.bindValue(
+    projectQuery.bindValue(
         QStringLiteral(":progress"),
         project.progress
     );
 
-    if (!query.exec())
+    if (!projectQuery.exec())
     {
-        throw std::runtime_error(query.lastError().text().toStdString());
+        database.rollback();
+        throw std::runtime_error(projectQuery.lastError().text().toStdString());
     }
 
-    return query.lastInsertId().toLongLong();
+    const std::int64_t projectId = projectQuery.lastInsertId().toLongLong();
+
+    QSqlQuery contentQuery(database);
+
+    contentQuery.prepare(
+        QStringLiteral(
+            "INSERT INTO contents "
+            "(project_id, content_type_id, content_role, name) "
+            "VALUES "
+            "(:project_id, :content_type_id, :content_role, :name)"
+        )
+    );
+
+    contentQuery.bindValue(
+        QStringLiteral(":project_id"),
+        QVariant::fromValue(projectId)
+    );
+
+    contentQuery.bindValue(
+        QStringLiteral(":content_type_id"),
+        QVariant::fromValue(mainContent.contentTypeId)
+    );
+
+    contentQuery.bindValue(
+        QStringLiteral(":content_role"),
+        QString::fromStdString(contentRoleToString(ContentRole::Main))
+    );
+
+    contentQuery.bindValue(
+        QStringLiteral(":name"),
+        QString::fromUtf8(mainContent.name.c_str())
+    );
+
+    if (!contentQuery.exec())
+    {
+        database.rollback();
+        throw std::runtime_error(contentQuery.lastError().text().toStdString());
+    }
+
+    if (!database.commit())
+    {
+        throw std::runtime_error(database.lastError().text().toStdString());
+    }
+
+    return projectId;
 }
 
 bool ProjectRepository::update(const Project &project)
