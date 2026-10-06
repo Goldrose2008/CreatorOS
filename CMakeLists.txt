@@ -60,6 +60,8 @@ qt_add_executable(CreatorOS
 
     src/ui/components/forms/FormField.cpp
     src/ui/components/forms/FormField.h
+    src/ui/components/forms/EditorDialog.cpp
+    src/ui/components/forms/EditorDialog.h
 
     src/ui/components/foundation/SurfaceWidget.cpp
     src/ui/components/foundation/SurfaceWidget.h
@@ -86,7 +88,7 @@ qt_add_executable(CreatorOS
     src/ui/components/states/StateWidget.cpp
     src/ui/components/states/StateWidget.h
     src/ui/components/states/EmptyState.h
-      src/ui/components/states/LoadingState.h
+    src/ui/components/states/LoadingState.h
     src/ui/components/states/ErrorState.cpp
     src/ui/components/states/ErrorState.h
 

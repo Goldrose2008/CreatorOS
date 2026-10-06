@@ -3,12 +3,10 @@
 #include <QComboBox>
 #include <QDate>
 #include <QDateEdit>
-#include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
-#include <QPushButton>
 
 #include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/ContentType.h"
@@ -16,20 +14,21 @@
 #include "../../localization/LocalizationService.h"
 
 ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent)
-    : QDialog(parent),
+    : EditorDialog(
+        localization.text(QStringLiteral("project.create.title")),
+        localization.text(QStringLiteral("project.create.save")),
+        localization.text(QStringLiteral("project.create.cancel")),
+        parent
+    ),
       projectService_(projectService),
       localization_(localization),
       nameEdit_(new QLineEdit(this)),
       descriptionEdit_(new QPlainTextEdit(this)),
       plannedReleaseEdit_(new QDateEdit(this)),
       contentTypeCombo_(new QComboBox(this)),
-      contentNameEdit_(new QLineEdit(this)),
-      buttonBox_(new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Save, this))
+      contentNameEdit_(new QLineEdit(this))
 {
-    setWindowTitle(localization_.text(QStringLiteral("project.create.title")));
     resize(560, 520);
-
-    auto *layout = new QVBoxLayout(this);
 
     auto *nameField = new FormField(this);
     nameField->setLabel(localization_.text(QStringLiteral("project.create.name")));
@@ -56,13 +55,11 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     contentNameField->setLabel(localization_.text(QStringLiteral("project.create.content_name")));
     contentNameField->setField(contentNameEdit_);
 
-    layout->addWidget(nameField);
-    layout->addWidget(descriptionField);
-    layout->addWidget(releaseField);
-    layout->addWidget(contentTypeField);
-    layout->addWidget(contentNameField);
-    layout->addStretch();
-    layout->addWidget(buttonBox_);
+    contentLayout()->addWidget(nameField);
+    contentLayout()->addWidget(descriptionField);
+    contentLayout()->addWidget(releaseField);
+    contentLayout()->addWidget(contentTypeField);
+    contentLayout()->addWidget(contentNameField);
 
     const auto contentTypes = projectService_.getContentTypes();
 
@@ -74,26 +71,9 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
         );
     }
 
-    buttonBox_->button(QDialogButtonBox::Cancel)->setText(localization_.text(QStringLiteral("project.create.cancel")));
-    buttonBox_->button(QDialogButtonBox::Save)->setText(localization_.text(QStringLiteral("project.create.save")));
-
-    connect(
-        buttonBox_,
-        &QDialogButtonBox::accepted,
-        this,
-        &ProjectEditorDialog::saveProject
-    );
-
-    connect(
-        buttonBox_,
-        &QDialogButtonBox::rejected,
-        this,
-        &ProjectEditorDialog::reject
-    );
-
     if (contentTypeCombo_->count() == 0)
     {
-        buttonBox_->button(QDialogButtonBox::Save)->setEnabled(false);
+        setSaveEnabled(false);
 
         QMessageBox::warning(
             this,
@@ -103,7 +83,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     }
 }
 
-void ProjectEditorDialog::saveProject()
+bool ProjectEditorDialog::save()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {
@@ -114,7 +94,7 @@ void ProjectEditorDialog::saveProject()
         );
 
         nameEdit_->setFocus();
-        return;
+        return false;
     }
 
     if (contentNameEdit_->text().trimmed().isEmpty())
@@ -126,12 +106,12 @@ void ProjectEditorDialog::saveProject()
         );
 
         contentNameEdit_->setFocus();
-        return;
+        return false;
     }
 
     if (contentTypeCombo_->currentIndex() < 0)
     {
-        return;
+        return false;
     }
 
     const std::int64_t contentTypeId =
@@ -147,7 +127,7 @@ void ProjectEditorDialog::saveProject()
             contentNameEdit_->text().toStdString()
         );
 
-        accept();
+        return true;
     }
     catch (const std::exception &)
     {
@@ -156,5 +136,7 @@ void ProjectEditorDialog::saveProject()
             localization_.text(QStringLiteral("project.create.error.title")),
             localization_.text(QStringLiteral("project.create.error.description"))
         );
+
+        return false;
     }
 }

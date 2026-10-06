@@ -2,23 +2,24 @@
 
 #include <QDialog>
 
+#include "../../components/forms/EditorDialog.h"
+
 class QComboBox;
 class QDateEdit;
-class QDialogButtonBox;
 class QLineEdit;
 class QPlainTextEdit;
 class LocalizationService;
 class ProjectService;
 
-class ProjectEditorDialog final : public QDialog
+class ProjectEditorDialog final : public EditorDialog
 {
     Q_OBJECT
 
 public:
     explicit ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent = nullptr);
 
-private slots:
-    void saveProject();
+protected:
+    bool save() override;
 
 private:
     ProjectService &projectService_;
@@ -29,5 +30,4 @@ private:
     QDateEdit *plannedReleaseEdit_;
     QComboBox *contentTypeCombo_;
     QLineEdit *contentNameEdit_;
-    QDialogButtonBox *buttonBox_;
 };
