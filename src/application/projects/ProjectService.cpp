@@ -23,6 +23,32 @@ namespace
 
         return value.substr(first, last - first);
     }
+
+    void setEditableFields(
+        Project &project,
+        const std::string &name,
+        const std::string &description,
+        const std::string &plannedReleaseAt
+    )
+    {
+        const std::string normalizedName = trim(name);
+        const std::string normalizedDescription = trim(description);
+        const std::string normalizedReleaseAt = trim(plannedReleaseAt);
+
+        if (normalizedName.empty())
+        {
+            throw std::invalid_argument("Project name cannot be empty.");
+        }
+
+        if (normalizedReleaseAt.empty())
+        {
+            throw std::invalid_argument("Project planned release date cannot be empty.");
+        }
+
+        project.name = normalizedName;
+        project.description = normalizedDescription;
+        project.plannedReleaseAt = normalizedReleaseAt;
+    }
 }
 
 ProjectService::ProjectService(IProjectRepository &repository)
@@ -40,31 +66,12 @@ std::optional<Project> ProjectService::getProject(std::int64_t id) const
     return repository_.findById(id);
 }
 
-Project ProjectService::createProject(
-    const std::string &name,
-    const std::string &description,
-    const std::string &plannedReleaseAt
-)
+Project ProjectService::createProject(const std::string &name, const std::string &description, const std::string &plannedReleaseAt)
 {
-    const std::string normalizedName = trim(name);
-    const std::string normalizedDescription = trim(description);
-    const std::string normalizedReleaseAt = trim(plannedReleaseAt);
-
-    if (normalizedName.empty())
-    {
-        throw std::invalid_argument("Project name cannot be empty.");
-    }
-
-    if (normalizedReleaseAt.empty())
-    {
-        throw std::invalid_argument("Project planned release date cannot be empty.");
-    }
-
     Project project;
 
-    project.name = normalizedName;
-    project.description = normalizedDescription;
-    project.plannedReleaseAt = normalizedReleaseAt;
+    setEditableFields(project, name, description, plannedReleaseAt);
+
     project.status = ProjectStatus::Draft;
     project.progress = 0;
 
@@ -80,36 +87,15 @@ Project ProjectService::createProject(
     return createdProject.value();
 }
 
-bool ProjectService::updateProject(
-    std::int64_t id,
-    const std::string &name,
-    const std::string &description,
-    const std::string &plannedReleaseAt
-)
+bool ProjectService::updateProject(std::int64_t id, const std::string &name, const std::string &description, const std::string &plannedReleaseAt)
 {
     const auto existingProject = repository_.findById(id);
 
     if (!existingProject.has_value()){return false;}
 
-    const std::string normalizedName = trim(name);
-    const std::string normalizedDescription = trim(description);
-    const std::string normalizedReleaseAt = trim(plannedReleaseAt);
-
-    if (normalizedName.empty())
-    {
-        throw std::invalid_argument("Project name cannot be empty.");
-    }
-
-    if (normalizedReleaseAt.empty())
-    {
-        throw std::invalid_argument("Project planned release date cannot be empty.");
-    }
-
     Project project = existingProject.value();
 
-    project.name = normalizedName;
-    project.description = normalizedDescription;
-    project.plannedReleaseAt = normalizedReleaseAt;
+    setEditableFields(project, name, description, plannedReleaseAt);
 
     return repository_.update(project);
 }
