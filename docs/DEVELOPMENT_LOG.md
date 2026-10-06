@@ -200,9 +200,24 @@ loading/empty/error states
 Перед созданием UI проверить, можно ли использовать `EntityCard` / `EntityDetails` через наследование.
 
 #### Этап 10 — Project create/edit/delete и actions
-Реализовать создание, редактирование, удаление и подтверждение действий Project.
+Статус: **в работе**
 
-Создание Project и его Main Content должно проходить через корректную application-операцию и сохранять доменные инварианты.
+Цель этапа:
+- реализовать создание, редактирование и удаление Project;
+- обеспечить обязательный Main Content;
+- подключить действия Project после появления минимального Content/ContentType-сценария.
+
+##### Подэтап 10.1 — атомарное создание Project + Main Content
+Статус: **завершён**
+
+Создание Project и его Main Content выполняется одной application-операцией через ProjectService и одной SQLite-транзакцией в ProjectRepository. Самостоятельный create(Project) удалён из repository-контракта, чтобы не обходить обязательный Main Content.
+
+Проверка:
+- build успешен;
+- commit пользователя 12970a29ac63bdf2fe394147ae7c4c06b24ca59c (Этап 10 — Project create/edit/delete и actions) запушен.
+
+##### Подэтап 10.2 — ContentType как application/infrastructure справочник
+Следующий шаг: предоставить типобезопасный application-контракт для чтения ContentType, его SQLite-реализацию и использовать этот механизм при создании Project вместо передачи непроверенного идентификатора из UI.
 
 #### Этап 11 — полноценный Content
 Реализовать Content, ContentType и связанные UI-сценарии.
@@ -335,4 +350,9 @@ license/package contents
 - CMake и Qt Resource System подключены к новым доменным файлам и миграции. Build после изменений успешен, commit пользователя `52cb783c882f7b7e088738fffb0b10b5d8f04938` (`Этап 9 — минимальные Content и ContentType_2`) запушен.
 - `PROGRAM_STRUCTURE.md` синхронизирован с фактическим деревом после добавления Content/ContentType и миграции 002.
 - Этап 9 (минимальная доменная/БД-основа) завершён. Следующая работа — application-операция создания Project вместе с обязательным Main Content.
+
+### Этап 10.1 завершён
+- Реализована атомарная application-операция создания Project вместе с Main Content; ProjectService нормализует и проверяет входные данные, ProjectRepository сохраняет обе записи в одной транзакции.
+- Самостоятельный create(Project) больше не является частью IProjectRepository; это закрывает прямой обход доменного инварианта через текущий repository-контракт.
+- Пользователь подтвердил успешную сборку и запушил commit 12970a29ac63bdf2fe394147ae7c4c06b24ca59c.
 ### Дальнейшие продуктовые этапы
