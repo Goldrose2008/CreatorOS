@@ -330,4 +330,9 @@ license/package contents
 - Выполнены clean configure, Debug build и функциональная проверка Projects list, Project details, возврата назад и состояний loading/empty/error.
 - `PROGRAM_STRUCTURE.md` синхронизирован с фактическим деревом проекта; удалённая реализация `LoadingState.cpp` больше не указана.
 - Контрольная точка Этапа 8 пройдена успешно. Следующий этап — минимальные `Content` и `ContentType`.
+- Этап 9 — минимальные Content и ContentType: добавлены доменные модели `Content`/`ContentType`, роль `ContentRole`, миграция SQLite 002 с таблицами `content_types` и `contents`, внешними ключами и уникальным индексом для единственного `main` Content на Project.
+- Система миграций расширена до последовательного применения нескольких SQL statements внутри одной транзакции; ошибка Qt «Unable to execute multiple statements at a time» устранена.
+- CMake и Qt Resource System подключены к новым доменным файлам и миграции. Build после изменений успешен, commit пользователя `52cb783c882f7b7e088738fffb0b10b5d8f04938` (`Этап 9 — минимальные Content и ContentType_2`) запушен.
+- `PROGRAM_STRUCTURE.md` синхронизирован с фактическим деревом после добавления Content/ContentType и миграции 002.
+- Этап 9 (минимальная доменная/БД-основа) завершён. Следующая работа — application-операция создания Project вместе с обязательным Main Content.
 ### Дальнейшие продуктовые этапы
