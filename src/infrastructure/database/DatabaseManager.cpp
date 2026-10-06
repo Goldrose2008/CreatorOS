@@ -2,13 +2,84 @@
 
 #include <QDir>
 #include <QFile>
+#include <stdexcept>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
-#include <stdexcept>
+#include <QStringList>
 
 namespace
 {
+    QStringList splitSqlStatements(const QString &sql)
+    {
+        QStringList statements;
+        QString currentStatement;
+
+        bool insideSingleQuotes = false;
+        bool insideDoubleQuotes = false;
+
+        for (int i = 0; i < sql.size(); ++i)
+        {
+            const QChar character = sql.at(i);
+
+            if (character == '\'' && !insideDoubleQuotes)
+            {
+                currentStatement += character;
+
+                if (insideSingleQuotes && i + 1 < sql.size() && sql.at(i + 1) == '\'')
+                {
+                    currentStatement += sql.at(++i);
+                }
+                else
+                {
+                    insideSingleQuotes = !insideSingleQuotes;
+                }
+
+                continue;
+            }
+
+            if (character == '"' && !insideSingleQuotes)
+            {
+                currentStatement += character;
+
+                if (insideDoubleQuotes && i + 1 < sql.size() && sql.at(i + 1) == '"')
+                {
+                    currentStatement += sql.at(++i);
+                }
+                else
+                {
+                    insideDoubleQuotes = !insideDoubleQuotes;
+                }
+
+                continue;
+            }
+
+            if (character == ';' && !insideSingleQuotes && !insideDoubleQuotes)
+            {
+                const QString statement = currentStatement.trimmed();
+
+                if (!statement.isEmpty())
+                {
+                    statements.append(statement);
+                }
+
+                currentStatement.clear();
+                continue;
+            }
+
+            currentStatement += character;
+        }
+
+        const QString lastStatement = currentStatement.trimmed();
+
+        if (!lastStatement.isEmpty())
+        {
+            statements.append(lastStatement);
+        }
+
+        return statements;
+    }
+
     bool applyMigration(QSqlDatabase &database, int version, const QString &resourcePath, QString *errorMessage)
     {
         QFile migrationFile(resourcePath);
@@ -35,18 +106,23 @@ namespace
             return false;
         }
 
-        QSqlQuery schemaQuery(database);
+        const QStringList statements = splitSqlStatements(sql);
 
-        if (!schemaQuery.exec(sql))
+        for (const QString &statement : statements)
         {
-            database.rollback();
+            QSqlQuery schemaQuery(database);
 
-            if (errorMessage != nullptr)
+            if (!schemaQuery.exec(statement))
             {
-                *errorMessage = schemaQuery.lastError().text();
-            }
+                database.rollback();
 
-            return false;
+                if (errorMessage != nullptr)
+                {
+                    *errorMessage = schemaQuery.lastError().text();
+                }
+
+                return false;
+            }
         }
 
         QSqlQuery versionUpdate(database);
