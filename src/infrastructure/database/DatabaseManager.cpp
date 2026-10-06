@@ -5,6 +5,77 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
+#include <stdexcept>
+
+namespace
+{
+    bool applyMigration(QSqlDatabase &database, int version, const QString &resourcePath, QString *errorMessage)
+    {
+        QFile migrationFile(resourcePath);
+
+        if (!migrationFile.open(QIODevice::ReadOnly))
+        {
+            if (errorMessage != nullptr)
+            {
+                *errorMessage = QStringLiteral("Database migration was not found: ") + resourcePath;
+            }
+
+            return false;
+        }
+
+        const QString sql = QString::fromUtf8(migrationFile.readAll());
+
+        if (!database.transaction())
+        {
+            if (errorMessage != nullptr)
+            {
+                *errorMessage = database.lastError().text();
+            }
+
+            return false;
+        }
+
+        QSqlQuery schemaQuery(database);
+
+        if (!schemaQuery.exec(sql))
+        {
+            database.rollback();
+
+            if (errorMessage != nullptr)
+            {
+                *errorMessage = schemaQuery.lastError().text();
+            }
+
+            return false;
+        }
+
+        QSqlQuery versionUpdate(database);
+
+        if (!versionUpdate.exec(QStringLiteral("PRAGMA user_version = %1").arg(version)))
+        {
+            database.rollback();
+
+            if (errorMessage != nullptr)
+            {
+                *errorMessage = versionUpdate.lastError().text();
+            }
+
+            return false;
+        }
+
+        if (!database.commit())
+        {
+            if (errorMessage != nullptr)
+            {
+                *errorMessage = database.lastError().text();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+}
 
 DatabaseManager::DatabaseManager() : connectionName_(QStringLiteral("CreatorOS.Main"))
 {
@@ -92,6 +163,7 @@ bool DatabaseManager::applySchema(QString *errorMessage)
         {
             *errorMessage = versionQuery.lastError().text();
         }
+
         return false;
     }
 
@@ -101,66 +173,43 @@ bool DatabaseManager::applySchema(QString *errorMessage)
         {
             *errorMessage = QStringLiteral("Failed to read database schema version.");
         }
+
         return false;
     }
 
-    const int currentVersion = versionQuery.value(0).toInt();
+    int currentVersion = versionQuery.value(0).toInt();
 
-    if (currentVersion >= 1){return true;}
-
-    QFile migrationFile(QStringLiteral(":/database/migrations/001_initial.sql"));
-
-    if (!migrationFile.open(QIODevice::ReadOnly))
+    struct Migration
     {
-        if (errorMessage != nullptr)
-        {
-            *errorMessage = QStringLiteral("Initial database migration was not found.");
-        }
-        return false;
-    }
+        int version;
+        QString resourcePath;
+    };
 
-    const QString sql = QString::fromUtf8(migrationFile.readAll());
-
-    if (!database_.transaction())
+    const Migration migrations[] =
     {
-        if (errorMessage != nullptr)
         {
-            *errorMessage = database_.lastError().text();
+            1,
+            QStringLiteral(":/database/migrations/001_initial.sql")
+        },
+        {
+            2,
+            QStringLiteral(":/database/migrations/002_content_and_content_types.sql")
         }
-        return false;
-    }
+    };
 
-    QSqlQuery schemaQuery(database_);
-
-    if (!schemaQuery.exec(sql))
+    for (const Migration &migration : migrations)
     {
-        database_.rollback();
-        if (errorMessage != nullptr)
+        if (currentVersion >= migration.version)
         {
-            *errorMessage = schemaQuery.lastError().text();
+            continue;
         }
-        return false;
-    }
 
-    QSqlQuery versionUpdate(database_);
-
-    if (!versionUpdate.exec(QStringLiteral("PRAGMA user_version = 1")))
-    {
-        database_.rollback();
-        if (errorMessage != nullptr)
+        if (!applyMigration(database_, migration.version, migration.resourcePath, errorMessage))
         {
-            *errorMessage = versionUpdate.lastError().text();
+            return false;
         }
-        return false;
-    }
 
-    if (!database_.commit())
-    {
-        if (errorMessage != nullptr)
-        {
-            *errorMessage = database_.lastError().text();
-        }
-        return false;
+        currentVersion = migration.version;
     }
 
     return true;

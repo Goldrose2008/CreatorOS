@@ -35,6 +35,9 @@ qt_add_executable(CreatorOS
 
     src/domain/models/Project.cpp
     src/domain/models/Project.h
+    src/domain/models/Content.cpp
+    src/domain/models/Content.h
+    src/domain/models/ContentType.h
 
     src/infrastructure/database/DatabaseManager.cpp
     src/infrastructure/database/DatabaseManager.h
