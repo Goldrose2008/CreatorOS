@@ -194,6 +194,8 @@ src/ui/components/foundation/
 
 ```text
 src/ui/components/forms/
+├── EditorDialog.cpp
+├── EditorDialog.h
 ├── FormField.cpp
 └── FormField.h
 ```
@@ -202,6 +204,8 @@ src/ui/components/forms/
 |---|---|
 | `src/ui/components/forms/FormField.h` | Универсальная оболочка поля формы: label, description, error и вложенный control. |
 | `src/ui/components/forms/FormField.cpp` | Реализация визуальной структуры и состояний FormField. |
+| `src/ui/components/forms/EditorDialog.h` | Базовый модальный editor-dialog для общих Save/Cancel-механизмов и lifecycle специализированных editor'ов. |
+| `src/ui/components/forms/EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel и вызова виртуального `save()` перед закрытием диалога. |
 
 ### Layout
 
@@ -339,6 +343,8 @@ src/ui/pages/projects/
 | `src/ui/pages/projects/ProjectCard.cpp` | Реализация `ProjectCard`: настройка общих UI-механизмов `EntityCard`, отображение данных Project и обработка специфических пользовательских действий. Общий каркас карточки не дублируется. |
 | `src/ui/pages/projects/ProjectDetailsPage.h` | Объявление специализированного details-класса Project; целевая форма — наследник `EntityDetails`, если текущий navigation/page-контракт сохраняется при рефакторинге. |
 | `src/ui/pages/projects/ProjectDetailsPage.cpp` | Реализация `ProjectDetailsPage`: загрузка Project через `ProjectService`, настройка общих механизмов `EntityDetails`, отображение подходящих Project-регионов и локальное UI-поведение. |
+| `src/ui/pages/projects/ProjectEditorDialog.h` | Специализированный editor Project, наследующий `EditorDialog`; содержит поля Project и Main Content для сценария создания и поля Project для редактирования. |
+| `src/ui/pages/projects/ProjectEditorDialog.cpp` | Реализация UI и сохранения Project через `ProjectService`; использует общий lifecycle `EditorDialog`. |
 
 На текущем этапе Projects UI поддерживает просмотр списка и подробностей. Создание/редактирование/удаление подключаются после появления необходимого Main Content / ContentType сценария.
 
