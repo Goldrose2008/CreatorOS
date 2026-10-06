@@ -59,13 +59,19 @@ src/app/
 src/domain/
 └── models/
     ├── Project.h
-    └── Project.cpp
+    ├── Project.cpp
+    ├── Content.h
+    ├── Content.cpp
+    └── ContentType.h
 ```
 
 | Файл | Назначение |
 |---|---|
 | `src/domain/models/Project.h` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
 | `src/domain/models/Project.cpp` | Преобразование статуса Project между типом `ProjectStatus` и строковым представлением, используемым хранилищем. |
+| `src/domain/models/Content.h` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
+| `src/domain/models/Content.cpp` | Преобразование роли Content между типом `ContentRole` и строковым представлением, используемым хранилищем. |
+| `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
 
 ---
 
@@ -114,12 +120,14 @@ src/infrastructure/
 ```text
 database/
 └── migrations/
-    └── 001_initial.sql
+    ├── 001_initial.sql
+    └── 002_content_and_content_types.sql
 ```
 
 | Файл | Назначение |
 |---|---|
 | `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
+| `database/migrations/002_content_and_content_types.sql` | Вторая версия структуры SQLite: создаёт `content_types` и `contents`, связывает Content с Project/ContentType, ограничивает один `main` Content на Project и добавляет базовые типы контента. |
 
 ---
 
