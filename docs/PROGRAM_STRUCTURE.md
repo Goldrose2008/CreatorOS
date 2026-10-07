@@ -194,6 +194,8 @@ src/ui/components/foundation/
 
 ```text
 src/ui/components/forms/
+├── ConfirmModal.cpp
+├── ConfirmModal.h
 ├── EditorDialog.cpp
 ├── EditorDialog.h
 ├── FormField.cpp
@@ -206,6 +208,8 @@ src/ui/components/forms/
 | `src/ui/components/forms/FormField.cpp` | Реализация визуальной структуры и состояний FormField. |
 | `src/ui/components/forms/EditorDialog.h` | Базовый модальный editor-dialog для общего Save/Cancel-lifecycle и режима `Create/Edit`; предоставляет `isEditMode()` специализированным editor'ам. |
 | `src/ui/components/forms/EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `save()` перед закрытием диалога. |
+| `src/ui/components/forms/ConfirmModal.h` | Самодостаточный модальный компонент подтверждения опасного действия; предоставляет единый публичный механизм `confirm()` с callback после подтверждения. |
+| `src/ui/components/forms/ConfirmModal.cpp` | Реализация общего layout, текста подтверждения, кнопок подтверждения/отмены и выполнения переданного callback только после подтверждения. |
 
 ### Layout
 
@@ -331,6 +335,8 @@ src/ui/pages/projects/
 ├── ProjectCard.h
 ├── ProjectDetailsPage.cpp
 ├── ProjectDetailsPage.h
+├── ProjectEditorDialog.cpp
+├── ProjectEditorDialog.h
 ├── ProjectsPage.cpp
 └── ProjectsPage.h
 ```
@@ -341,7 +347,7 @@ src/ui/pages/projects/
 | `src/ui/pages/projects/ProjectsPage.cpp` | Загружает Project через `ProjectService`, отображает loading/empty/error состояния и создаёт `ProjectCard`. |
 | `src/ui/pages/projects/ProjectCard.h` | Объявление специализированного UI-класса `ProjectCard`, который после архитектурного рефакторинга наследует `EntityCard` и знает конкретную модель Project. |
 | `src/ui/pages/projects/ProjectCard.cpp` | Реализация `ProjectCard`: настройка общих UI-механизмов `EntityCard`, отображение данных Project и обработка специфических пользовательских действий. Общий каркас карточки не дублируется. |
-| `src/ui/pages/projects/ProjectDetailsPage.h` | Объявление специализированного details-класса Project; целевая форма — наследник `EntityDetails`, если текущий navigation/page-контракт сохраняется при рефакторинге. |
+| `src/ui/pages/projects/ProjectDetailsPage.h` | Объявление специализированного details-класса Project, наследующего `EntityDetails`; содержит локальное состояние Project и действия просмотра/редактирования/удаления. |
 | `src/ui/pages/projects/ProjectDetailsPage.cpp` | Реализация `ProjectDetailsPage`: загрузка Project через `ProjectService`, настройка общих механизмов `EntityDetails`, отображение подходящих Project-регионов и локальное UI-поведение. |
 | `src/ui/pages/projects/ProjectEditorDialog.h` | Специализированный editor Project, наследующий `EditorDialog`; содержит поля Project и Main Content для сценария создания и поля Project для редактирования. |
 | `src/ui/pages/projects/ProjectEditorDialog.cpp` | Реализация UI и сохранения Project через `ProjectService`; использует общий lifecycle `EditorDialog`. |
