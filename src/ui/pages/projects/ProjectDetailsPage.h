@@ -5,19 +5,22 @@
 #include "../../components/entity/EntityDetails.h"
 #include "../../../domain/models/Project.h"
 
-class EntityHeader;
 class QLabel;
+class QPushButton;
+class QVBoxLayout;
+class Section;
+
+class EntityHeader;
 class LocalizationService;
 class ProjectService;
-class Section;
-class QPushButton;
+class ContentService;
 
 class ProjectDetailsPage final : public EntityDetails
 {
     Q_OBJECT
 
 public:
-    explicit ProjectDetailsPage(ProjectService &projectService, LocalizationService &localization, QWidget *parent = nullptr);
+    explicit ProjectDetailsPage(ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent = nullptr);
 
 public slots:
     void showProject(std::int64_t projectId);
@@ -27,6 +30,7 @@ signals:
 
 private:
     ProjectService &projectService_;
+    ContentService &contentService_;
     LocalizationService &localization_;
 
     EntityHeader *header_;
@@ -45,4 +49,9 @@ private:
 
     Section *summarySection_;
     Section *descriptionSection_;
+    Section *contentSection_;
+    
+    QVBoxLayout *contentCardsLayout_;
+
+    void clearContentCards();
 };

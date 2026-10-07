@@ -70,3 +70,14 @@ project.delete.confirm	Удалить	Delete
 project.delete.cancel	Отмена	Cancel
 project.delete.error.title	Не удалось удалить проект	Project deletion failed
 project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
+project.content	Контент	Content
+content.role	Роль	Role
+content.role.main	Основной	Main
+content.role.additional	Дополнительный	Additional
+content.type	Тип	Type
+content.priority	Приоритет	Priority
+content.deadline	Производственный дедлайн	Production deadline
+content.status.draft	Черновик	Draft
+content.status.in_progress	В работе	In progress
+content.status.ready	Готов	Ready
+content.status.archived	Архив	Archived

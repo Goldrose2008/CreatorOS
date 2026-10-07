@@ -4,9 +4,11 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QGridLayout>
+#include <QVBoxLayout>
 #include <QPushButton>
 
 #include "ProjectEditorDialog.h"
+#include "../content/ContentCard.h"
 #include "../../components/entity/EntityHeader.h"
 #include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/Section.h"
@@ -14,7 +16,9 @@
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
 #include "../../../application/projects/ProjectService.h"
+#include "../../../application/content/ContentService.h"
 #include "../../../domain/models/Project.h"
+#include "../../../domain/models/ContentType.h"
 
 namespace
 {
@@ -48,11 +52,13 @@ namespace
 
 ProjectDetailsPage::ProjectDetailsPage(
     ProjectService &projectService,
+    ContentService &contentService,
     LocalizationService &localization,
     QWidget *parent
 )
     : EntityDetails(parent),
       projectService_(projectService),
+      contentService_(contentService),
       localization_(localization),
       header_(new EntityHeader(this)),
       editButton_(new QPushButton(localization.text(QStringLiteral("project.edit")), this)),
@@ -65,7 +71,9 @@ ProjectDetailsPage::ProjectDetailsPage(
       updatedLabel_(createLabel(this)),
       descriptionLabel_(createLabel(this)),
       summarySection_(new Section(this)),
-      descriptionSection_(new Section(this))
+      descriptionSection_(new Section(this)),
+      contentSection_(new Section(this)),
+      contentCardsLayout_(new QVBoxLayout())
 {
     auto *backButton = new QPushButton(localization_.text(QStringLiteral("project.back")), this);
 
@@ -180,8 +188,15 @@ ProjectDetailsPage::ProjectDetailsPage(
 
     descriptionSection_->setTitle(localization_.text(QStringLiteral("project.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
+    
+    contentSection_->setTitle(localization_.text(QStringLiteral("project.content")));
+    contentCardsLayout_->setContentsMargins(0, 0, 0, 0);
+    contentCardsLayout_->setSpacing(CreatorMetrics::SpacingMedium);
+    contentCardsLayout_->addStretch();
+    contentSection_->contentLayout()->addLayout(contentCardsLayout_);
 
     setSummaryWidget(summarySection_);
+    addContentWidget(contentSection_);
     addContentWidget(descriptionSection_);
 
     header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
@@ -189,12 +204,29 @@ ProjectDetailsPage::ProjectDetailsPage(
     showProject(0);
 }
 
+void ProjectDetailsPage::clearContentCards()
+{
+    while (contentCardsLayout_->count() > 1)
+    {
+        QLayoutItem *layoutItem = contentCardsLayout_->takeAt(0);
+
+        if (layoutItem == nullptr){continue;}
+
+        QWidget *widget = layoutItem->widget();
+        delete layoutItem;
+
+        if (widget != nullptr){widget->deleteLater();}
+    }
+}
+
 void ProjectDetailsPage::showProject(std::int64_t projectId)
 {
     if (projectId <= 0)
     {
         summarySection_->setVisible(false);
+        contentSection_->setVisible(false);
         descriptionSection_->setVisible(false);
+        clearContentCards();
         header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
         header_->setDescription(QString());
         project_ = {};
@@ -211,7 +243,9 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         if (!project.has_value())
         {
             summarySection_->setVisible(false);
+            contentSection_->setVisible(false);
             descriptionSection_->setVisible(false);
+            clearContentCards();
             header_->setTitle(localization_.text(QStringLiteral("project.not_found.title")));
             header_->setDescription(localization_.text(QStringLiteral("project.not_found.description")));
             project_ = {};
@@ -226,6 +260,38 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         editButton_->setVisible(true);
         deleteButton_->setVisible(true);
 
+        clearContentCards();
+
+        const auto contents = contentService_.getProjectContents(value.id);
+        const auto contentTypes = projectService_.getContentTypes();
+
+        for (const Content &content : contents)
+        {
+            QString contentTypeName;
+
+            for (const ContentType &contentType : contentTypes)
+            {
+                if (contentType.id == content.contentTypeId)
+                {
+                    contentTypeName = QString::fromUtf8(contentType.name.c_str());
+                    break;
+                }
+            }
+
+            auto *card = new ContentCard(
+                content,
+                contentTypeName,
+                localization_,
+                this
+            );
+
+            contentCardsLayout_->insertWidget(
+                contentCardsLayout_->count() - 1,
+                card
+            );
+        }
+
+        contentSection_->setVisible(!contents.empty());
         summarySection_->setVisible(true);
         descriptionSection_->setVisible(!value.description.empty());
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
@@ -254,7 +320,9 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
     catch (const std::exception &)
     {
         summarySection_->setVisible(false);
+        contentSection_->setVisible(false);
         descriptionSection_->setVisible(false);
+        clearContentCards();
         header_->setTitle(localization_.text(QStringLiteral("project.error.title")));
         header_->setDescription(localization_.text(QStringLiteral("project.error.description")));
         project_ = {};

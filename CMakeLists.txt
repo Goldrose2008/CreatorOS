@@ -106,13 +106,15 @@ qt_add_executable(CreatorOS
     src/ui/navigation/NavigationController.cpp
     src/ui/navigation/NavigationController.h
 
+    src/ui/pages/content/ContentCard.cpp
+    src/ui/pages/content/ContentCard.h
+
     src/ui/pages/projects/ProjectCard.cpp
     src/ui/pages/projects/ProjectCard.h
     src/ui/pages/projects/ProjectsPage.cpp
     src/ui/pages/projects/ProjectsPage.h
     src/ui/pages/projects/ProjectDetailsPage.cpp
     src/ui/pages/projects/ProjectDetailsPage.h
-
     src/ui/pages/projects/ProjectEditorDialog.cpp
     src/ui/pages/projects/ProjectEditorDialog.h
 

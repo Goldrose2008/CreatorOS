@@ -7,13 +7,14 @@ class Sidebar;
 class Workspace;
 class NavigationController;
 class ProjectService;
+class ContentService;
 
 class AppShell final : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit AppShell(ProjectService &projectService, QWidget *parent = nullptr);
+    explicit AppShell(ProjectService &projectService, ContentService &contentService, QWidget *parent = nullptr);
 
 private:
     LocalizationService *localization_;
@@ -21,4 +22,5 @@ private:
     Workspace *workspace_;
     NavigationController *navigation_;
     ProjectService *projectService_;
+    ContentService *contentService_;
 };

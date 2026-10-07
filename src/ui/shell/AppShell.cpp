@@ -16,6 +16,7 @@
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
 #include "../../application/projects/ProjectService.h"
+#include "../../application/content/ContentService.h"
 
 namespace
 {
@@ -56,9 +57,10 @@ namespace
     }
 }
 
-AppShell::AppShell(ProjectService &projectService, QWidget *parent)
+AppShell::AppShell(ProjectService &projectService, ContentService &contentService, QWidget *parent)
     : QWidget(parent),
       projectService_(&projectService),
+      contentService_(&contentService),
       localization_(new LocalizationService(this)),
       sidebar_(new Sidebar(this)),
       workspace_(new Workspace(this)),
@@ -83,7 +85,7 @@ AppShell::AppShell(ProjectService &projectService, QWidget *parent)
     );
 
     auto *projectsPage = new ProjectsPage(*projectService_, *localization_, workspace_);
-    auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *localization_, workspace_);
+    auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *contentService_, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
     navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
 
