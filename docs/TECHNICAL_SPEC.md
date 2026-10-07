@@ -368,7 +368,7 @@ created_at
 updated_at
 ```
 
-`parent_type` принимает значения `project`, `content` или `task`. Поле `parent_id` указывает на корневой Project/Content-контекст, а `parent_task_id` — на непосредственную родительскую Task, если задача вложенная.
+`parent_type` принимает значения `project` или `content`. Поле `parent_id` указывает на корневую сущность, а `parent_task_id` — на непосредственную родительскую Task, если задача вложенная. Таким образом, Task также может быть родителем другой Task без полиморфной связи по SQLite.
 
 Полиморфная связь `parent_id + parent_type` не получает прямой SQLite foreign key. Корректность такой связи проверяет application-слой.
 
