@@ -457,13 +457,13 @@ ConfirmModal является единым механизмом подтверж
 ~~~text
 Qt UI
 ↓
-Application Service / Use Case
-↓
 ConfirmModal
 ↓
 решение пользователя
 ↓
-callback / signal
+callback
+↓
+Application Service / Use Case
 ↓
 C++ действие
 ~~~
