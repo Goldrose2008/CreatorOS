@@ -135,7 +135,6 @@ ProjectCard
 ~~~
 
 `EntityCard` получает общие UI-механизмы. `ProjectCard` наследует их и знает Project. Дублирование общей разметки и поведения удаляется.
-
 ##### Подэтап 8.2 — ревизия EntityDetails / ProjectDetailsPage
 Статус: **завершён**
 Проверить текущий контракт `EntityDetails`, навигацию страницы и существующие поля Project.
@@ -198,59 +197,6 @@ loading/empty/error states
 Реализовать минимальную модель Content/ContentType, необходимую для выполнения доменного инварианта: Project имеет один основной Content.
 
 Перед созданием UI проверить, можно ли использовать `EntityCard` / `EntityDetails` через наследование.
-
-#### Этап 10 — Project create/edit/delete и actions
-Статус: **в работе**
-
-Цель этапа:
-- реализовать создание, редактирование и удаление Project;
-- обеспечить обязательный Main Content;
-- подключить действия Project после появления минимального Content/ContentType-сценария.
-
-##### Подэтап 10.1 — атомарное создание Project + Main Content
-Статус: **завершён**
-
-Создание Project и его Main Content выполняется одной application-операцией через ProjectService и одной SQLite-транзакцией в ProjectRepository. Самостоятельный create(Project) удалён из repository-контракта, чтобы не обходить обязательный Main Content.
-
-Проверка:
-- build успешен;
-- commit пользователя 12970a29ac63bdf2fe394147ae7c4c06b24ca59c (Этап 10 — Project create/edit/delete и actions) запушен.
-
-##### Подэтап 10.2 — ContentType как application/infrastructure справочник
-Статус: **завершён**
-
-Добавлен application-контракт чтения ContentType и SQLite-реализация. ProjectService теперь проверяет существование выбранного ContentType до создания Project и Main Content.
-
-Проверка:
-- build успешен;
-- commit пользователя d56d1185caf18f0fc3f708f23b97ab502c86ba2d (Этап 10 — Project create/edit/delete и actions_2) запушен.
-
-##### Подэтап 10.3 — UI создания Project
-Статус: **завершён**
-
-Добавлен ProjectEditorDialog, подключённый к ProjectsPage. Диалог получает ContentType через ProjectService, выполняет валидацию и создаёт Project вместе с Main Content.
-
-Проверка:
-- build успешен;
-- commit пользователя 631b6513d9316dd3ff652ebeef9fdea9b8123a96 (Этап 10 — Project create/edit/delete и actions_4) запушен.
-
-##### Подэтап 10.4 — общий EditorDialog и редактирование Project
-Статус: **завершён**
-
-Общий модальный lifecycle вынесен в EditorDialog. В EditorDialog добавлен общий режим `Create/Edit` и метод `isEditMode()`. ProjectEditorDialog использует этот механизм, сохраняя Project-specific состояние и операции создания/редактирования в специализированном классе. На странице деталей Project подключено действие Edit с повторной загрузкой данных после успешного сохранения.
-
-Проверка:
-- build успешен;
-- commit пользователя 2d7f670ded35a0b78f0a6590acae76adface6ab1 (`Этап 10 — Project create/edit/delete и actions_6`) запушен.
-
-##### Подэтап 10.5 — удаление Project и подтверждение
-Статус: **завершён**
-
-Добавлен переиспользуемый ConfirmModal для опасных действий. ProjectDetailsPage получила действие Delete с подтверждением, вызовом ProjectService и возвратом к обновлённому списку Projects. Существующий сигнал backRequested используется и для обычного возврата, и после успешного удаления. Каскадное удаление связанного Content остаётся обеспечено внешним ключом SQLite.
-
-Проверка:
-- build успешен;
-- commit пользователя bff9e1bc5028f83882b6d4ac334413190ec6b0fe (`Этап 10 — Project create/edit/delete и actions_7`) запушен.
 
 #### Этап 10 — Project create/edit/delete и actions
 Статус: **завершён**
