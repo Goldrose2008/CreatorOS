@@ -244,14 +244,24 @@ loading/empty/error states
 - commit пользователя 2d7f670ded35a0b78f0a6590acae76adface6ab1 (`Этап 10 — Project create/edit/delete и actions_6`) запушен.
 
 ##### Подэтап 10.5 — удаление Project и подтверждение
-Статус: **в работе**
+Статус: **завершён**
 
-Цель:
-- добавить повторно используемый ConfirmModal;
-- добавить действие Delete на Project details;
-- подтвердить удаление перед вызовом ProjectService;
-- после успешного удаления вернуться к списку и обновить ProjectsPage;
-- сохранить каскадное удаление связанных Content на уровне SQLite.
+Добавлен переиспользуемый ConfirmModal для опасных действий. ProjectDetailsPage получила действие Delete с подтверждением, вызовом ProjectService и возвратом к обновлённому списку Projects. Существующий сигнал backRequested используется и для обычного возврата, и после успешного удаления. Каскадное удаление связанного Content остаётся обеспечено внешним ключом SQLite.
+
+Проверка:
+- build успешен;
+- commit пользователя bff9e1bc5028f83882b6d4ac334413190ec6b0fe (`Этап 10 — Project create/edit/delete и actions_7`) запушен.
+
+#### Этап 10 — Project create/edit/delete и actions
+Статус: **завершён**
+
+Выполнены атомарное создание Project + Main Content, справочник ContentType, UI создания Project, редактирование Project через общий EditorDialog с режимом `Create/Edit`, а также удаление Project через общий ConfirmModal с подтверждением.
+
+Проверка:
+- все подэтапы 10.1–10.5 завершены;
+- последний пользовательский commit: bff9e1bc5028f83882b6d4ac334413190ec6b0fe;
+- build успешен;
+- список Projects и детали Project связаны с create/edit/delete сценариями.
 
 #### Этап 11 — полноценный Content
 Реализовать Content, ContentType и связанные UI-сценарии.
