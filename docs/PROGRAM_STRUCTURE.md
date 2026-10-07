@@ -364,9 +364,23 @@ src/ui/pages/projects/
 | `src/ui/pages/projects/ProjectEditorDialog.h` | Специализированный editor Project, наследующий `EditorDialog`; содержит поля Project и Main Content для сценария создания и поля Project для редактирования. |
 | `src/ui/pages/projects/ProjectEditorDialog.cpp` | Реализация UI и сохранения Project через `ProjectService`; использует общий lifecycle `EditorDialog`. |
 
-На текущем этапе Projects UI поддерживает просмотр списка и подробностей. Создание/редактирование/удаление подключаются после появления необходимого Main Content / ContentType сценария.
+Projects UI поддерживает просмотр списка и подробностей, создание Project вместе с обязательным Main Content, редактирование Project и удаление Project.
 
 ---
+
+
+## 8.4.1. Content
+
+```text
+src/ui/pages/content/
+├── ContentCard.cpp
+└── ContentCard.h
+```
+
+| Файл | Назначение |
+|---|---|
+| `src/ui/pages/content/ContentCard.h` | Объявление специализированного UI-класса `ContentCard`, наследующего `EntityCard` и работающего с моделью Content. |
+| `src/ui/pages/content/ContentCard.cpp` | Реализация карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`. |
 
 ## 8.5. Shell — `src/ui/shell`
 
