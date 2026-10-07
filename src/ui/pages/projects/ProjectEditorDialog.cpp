@@ -13,20 +13,25 @@
 #include "../../components/forms/FormField.h"
 #include "../../localization/LocalizationService.h"
 
-ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent)
+ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
     : EditorDialog(
-        localization.text(QStringLiteral("project.create.title")),
-        localization.text(QStringLiteral("project.create.save")),
+        project.has_value()
+            ? localization.text(QStringLiteral("project.edit.title"))
+            : localization.text(QStringLiteral("project.create.title")),
+        project.has_value()
+            ? localization.text(QStringLiteral("project.edit.save"))
+            : localization.text(QStringLiteral("project.create.save")),
         localization.text(QStringLiteral("project.create.cancel")),
         parent
     ),
       projectService_(projectService),
       localization_(localization),
+      projectId_(project.has_value() ? project->id : 0),
       nameEdit_(new QLineEdit(this)),
       descriptionEdit_(new QPlainTextEdit(this)),
       plannedReleaseEdit_(new QDateEdit(this)),
-      contentTypeCombo_(new QComboBox(this)),
-      contentNameEdit_(new QLineEdit(this))
+      contentTypeCombo_(nullptr),
+      contentNameEdit_(nullptr)
 {
     resize(560, 520);
 
@@ -47,39 +52,58 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
 
     releaseField->setField(plannedReleaseEdit_);
 
-    auto *contentTypeField = new FormField(this);
-    contentTypeField->setLabel(localization_.text(QStringLiteral("project.create.content_type")));
-    contentTypeField->setField(contentTypeCombo_);
-
-    auto *contentNameField = new FormField(this);
-    contentNameField->setLabel(localization_.text(QStringLiteral("project.create.content_name")));
-    contentNameField->setField(contentNameEdit_);
-
     contentLayout()->addWidget(nameField);
     contentLayout()->addWidget(descriptionField);
     contentLayout()->addWidget(releaseField);
-    contentLayout()->addWidget(contentTypeField);
-    contentLayout()->addWidget(contentNameField);
 
-    const auto contentTypes = projectService_.getContentTypes();
-
-    for (const ContentType &contentType : contentTypes)
+    if (project.has_value())
     {
-        contentTypeCombo_->addItem(
-            QString::fromUtf8(contentType.name.c_str()),
-            QVariant::fromValue(contentType.id)
-        );
+        nameEdit_->setText(QString::fromUtf8(project->name.c_str()));
+        descriptionEdit_->setPlainText(QString::fromUtf8(project->description.c_str()));
+
+        const QDate plannedReleaseDate = QDate::fromString(QString::fromUtf8(project->plannedReleaseAt.c_str()), Qt::ISODate);
+
+        if (plannedReleaseDate.isValid())
+        {
+            plannedReleaseEdit_->setDate(plannedReleaseDate);
+        }
     }
-
-    if (contentTypeCombo_->count() == 0)
+    else
     {
-        setSaveEnabled(false);
+        auto *contentTypeField = new FormField(this);
 
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("project.create.error.title")),
-            localization_.text(QStringLiteral("project.create.no_content_types"))
-        );
+        contentTypeField->setLabel(localization_.text(QStringLiteral("project.create.content_type")));
+        contentTypeCombo_ = new QComboBox(this);
+        contentTypeField->setField(contentTypeCombo_);
+
+        auto *contentNameField = new FormField(this);
+
+        contentNameField->setLabel(localization_.text(QStringLiteral("project.create.content_name")));
+        contentNameEdit_ = new QLineEdit(this);
+        contentNameField->setField(contentNameEdit_);
+
+        contentLayout()->addWidget(contentTypeField);
+        contentLayout()->addWidget(contentNameField);
+
+        const auto contentTypes = projectService_.getContentTypes();
+
+        for (const ContentType &contentType : contentTypes)
+        {
+            contentTypeCombo_->addItem(
+                QString::fromUtf8(contentType.name.c_str()),
+                QVariant::fromValue(contentType.id));
+        }
+
+        if (contentTypeCombo_->count() == 0)
+        {
+            setSaveEnabled(false);
+
+            QMessageBox::warning(
+                this,
+                localization_.text(QStringLiteral("project.create.error.title")),
+                localization_.text(QStringLiteral("project.create.no_content_types"))
+            );
+        }
     }
 }
 
@@ -95,6 +119,29 @@ bool ProjectEditorDialog::save()
 
         nameEdit_->setFocus();
         return false;
+    }
+
+    if (projectId_ > 0)
+    {
+        try
+        {
+            return projectService_.updateProject(
+                projectId_,
+                nameEdit_->text().toStdString(),
+                descriptionEdit_->toPlainText().toStdString(),
+                plannedReleaseEdit_->date().toString(Qt::ISODate).toStdString()
+            );
+        }
+        catch (const std::exception &)
+        {
+            QMessageBox::critical(
+                this,
+                localization_.text(QStringLiteral("project.edit.error.title")),
+                localization_.text(QStringLiteral("project.edit.error.description"))
+            );
+
+            return false;
+        }
     }
 
     if (contentNameEdit_->text().trimmed().isEmpty())
@@ -114,8 +161,7 @@ bool ProjectEditorDialog::save()
         return false;
     }
 
-    const std::int64_t contentTypeId =
-        contentTypeCombo_->currentData().toLongLong();
+    const std::int64_t contentTypeId = contentTypeCombo_->currentData().toLongLong();
 
     try
     {

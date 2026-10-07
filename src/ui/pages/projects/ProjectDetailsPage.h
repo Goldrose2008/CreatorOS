@@ -3,12 +3,14 @@
 #include <cstdint>
 
 #include "../../components/entity/EntityDetails.h"
+#include "../../../domain/models/Project.h"
 
 class EntityHeader;
 class QLabel;
 class LocalizationService;
 class ProjectService;
 class Section;
+class QPushButton;
 
 class ProjectDetailsPage final : public EntityDetails
 {
@@ -28,6 +30,7 @@ private:
     LocalizationService &localization_;
 
     EntityHeader *header_;
+    QPushButton *editButton_;
 
     QLabel *statusLabel_;
     QLabel *releaseLabel_;
@@ -36,6 +39,8 @@ private:
     QLabel *createdLabel_;
     QLabel *updatedLabel_;
     QLabel *descriptionLabel_;
+    
+    Project project_;
 
     Section *summarySection_;
     Section *descriptionSection_;

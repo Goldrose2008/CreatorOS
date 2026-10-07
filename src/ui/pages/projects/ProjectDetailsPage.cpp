@@ -3,7 +3,9 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QDialog>
 
+#include "ProjectEditorDialog.h"
 #include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/Project.h"
 #include "../../components/entity/EntityHeader.h"
@@ -51,6 +53,7 @@ ProjectDetailsPage::ProjectDetailsPage(
       projectService_(projectService),
       localization_(localization),
       header_(new EntityHeader(this)),
+      editButton_(new QPushButton(localization.text(QStringLiteral("project.edit")), this)),
       statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
       progressLabel_(createLabel(this)),
@@ -72,6 +75,34 @@ ProjectDetailsPage::ProjectDetailsPage(
 
     setNavigationWidget(backButton);
     setHeaderWidget(header_);
+
+    header_->addAction(editButton_);
+    editButton_->setVisible(false);
+
+    connect(
+        editButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (project_.id <= 0){return;}
+
+            const std::int64_t projectId = project_.id;
+
+            ProjectEditorDialog dialog(
+                projectService_,
+                localization_,
+                this,
+                project_
+            );
+
+            if (dialog.exec() == QDialog::Accepted)
+            {
+                showProject(projectId);
+            }
+        }
+    );
+
     summarySection_->setTitle(localization_.text(QStringLiteral("project.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
@@ -114,6 +145,8 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         descriptionSection_->setVisible(false);
         header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
         header_->setDescription(QString());
+        project_ = {};
+        editButton_->setVisible(false);
 
         return;
     }
@@ -128,11 +161,15 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
             descriptionSection_->setVisible(false);
             header_->setTitle(localization_.text(QStringLiteral("project.not_found.title")));
             header_->setDescription(localization_.text(QStringLiteral("project.not_found.description")));
+            project_ = {};
+            editButton_->setVisible(false);    
 
             return;
         }
 
         const Project &value = project.value();
+        project_ = value;
+        editButton_->setVisible(true);
 
         summarySection_->setVisible(true);
         descriptionSection_->setVisible(!value.description.empty());
@@ -165,5 +202,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         descriptionSection_->setVisible(false);
         header_->setTitle(localization_.text(QStringLiteral("project.error.title")));
         header_->setDescription(localization_.text(QStringLiteral("project.error.description")));
+        project_ = {};
+        editButton_->setVisible(false);
     }
 }

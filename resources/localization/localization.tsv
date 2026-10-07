@@ -58,3 +58,8 @@ project.create.error.description	Не удалось сохранить прое
 project.create.name_required	Введите название проекта.	Enter a project name.
 project.create.content_name_required	Введите название основного контента.	Enter a name for the main content.
 project.create.no_content_types	Нет доступных типов контента.	No content types are available.
+project.edit	Изменить	Edit
+project.edit.title	Редактирование проекта	Edit project
+project.edit.save	Сохранить	Save
+project.edit.error.title	Не удалось изменить проект	Project update failed
+project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
