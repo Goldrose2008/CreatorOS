@@ -235,9 +235,23 @@ loading/empty/error states
 - commit пользователя 631b6513d9316dd3ff652ebeef9fdea9b8123a96 (Этап 10 — Project create/edit/delete и actions_4) запушен.
 
 ##### Подэтап 10.4 — общий EditorDialog и редактирование Project
+Статус: **завершён**
+
+Общий модальный lifecycle вынесен в EditorDialog. В EditorDialog добавлен общий режим `Create/Edit` и метод `isEditMode()`. ProjectEditorDialog использует этот механизм, сохраняя Project-specific состояние и операции создания/редактирования в специализированном классе. На странице деталей Project подключено действие Edit с повторной загрузкой данных после успешного сохранения.
+
+Проверка:
+- build успешен;
+- commit пользователя 2d7f670ded35a0b78f0a6590acae76adface6ab1 (`Этап 10 — Project create/edit/delete и actions_6`) запушен.
+
+##### Подэтап 10.5 — удаление Project и подтверждение
 Статус: **в работе**
 
-Общий модальный lifecycle вынесен в EditorDialog. ProjectEditorDialog наследует его; следующий шаг — добавить режим редактирования существующего Project и действие Edit на странице деталей. Main Content пока не редактируется через этот сценарий и остаётся отдельной сущностью до полноценного Content UI.
+Цель:
+- добавить повторно используемый ConfirmModal;
+- добавить действие Delete на Project details;
+- подтвердить удаление перед вызовом ProjectService;
+- после успешного удаления вернуться к списку и обновить ProjectsPage;
+- сохранить каскадное удаление связанных Content на уровне SQLite.
 
 #### Этап 11 — полноценный Content
 Реализовать Content, ContentType и связанные UI-сценарии.
