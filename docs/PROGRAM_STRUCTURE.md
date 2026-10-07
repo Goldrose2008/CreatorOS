@@ -204,8 +204,8 @@ src/ui/components/forms/
 |---|---|
 | `src/ui/components/forms/FormField.h` | Универсальная оболочка поля формы: label, description, error и вложенный control. |
 | `src/ui/components/forms/FormField.cpp` | Реализация визуальной структуры и состояний FormField. |
-| `src/ui/components/forms/EditorDialog.h` | Базовый модальный editor-dialog для общих Save/Cancel-механизмов и lifecycle специализированных editor'ов. |
-| `src/ui/components/forms/EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel и вызова виртуального `save()` перед закрытием диалога. |
+| `src/ui/components/forms/EditorDialog.h` | Базовый модальный editor-dialog для общего Save/Cancel-lifecycle и режима `Create/Edit`; предоставляет `isEditMode()` специализированным editor'ам. |
+| `src/ui/components/forms/EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `save()` перед закрытием диалога. |
 
 ### Layout
 
