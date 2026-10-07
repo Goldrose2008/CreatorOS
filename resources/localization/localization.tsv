@@ -94,3 +94,26 @@ content.not_found.title	Контент не найден	Content not found
 content.not_found.description	Контент больше не существует или недоступен.	The content no longer exists or is unavailable.
 content.error.title	Ошибка контента	Content error
 content.error.description	Не удалось получить данные контента.	Could not load content data.
+content.edit	Изменить	Edit
+content.delete	Удалить	Delete
+content.edit.title	Редактирование контента	Edit content
+content.edit.save	Сохранить	Save
+
+content.create.title	Новый контент	New content
+content.create.type	Тип контента	Content type
+content.create.name	Название контента	Content name
+content.create.description	Описание	Description
+content.create.priority	Приоритет	Priority
+content.create.cancel	Отмена	Cancel
+content.create.save	Создать	Create
+content.create.name_required	Введите название контента.	Enter a content name.
+content.create.no_types	Нет доступных типов контента.	No content types are available.
+
+content.save.error	Не удалось сохранить изменения контента. Проверьте введённые данные.	Could not save the content changes. Check the entered data.
+
+content.delete.title	Удаление контента	Delete content
+content.delete.description	Дополнительный контент будет удалён. Это действие нельзя отменить.	The additional content will be deleted. This action cannot be undone.
+content.delete.confirm	Удалить	Delete
+content.delete.cancel	Отмена	Cancel
+content.delete.error.title	Не удалось удалить контент	Content deletion failed
+content.delete.error.description	Не удалось удалить контент. Попробуйте ещё раз.	Could not delete the content. Try again.

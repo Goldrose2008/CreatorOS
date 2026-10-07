@@ -9,6 +9,7 @@
 
 #include "ProjectEditorDialog.h"
 #include "../content/ContentCard.h"
+#include "../content/ContentEditorDialog.h"
 #include "../../components/entity/EntityHeader.h"
 #include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/Section.h"
@@ -63,6 +64,7 @@ ProjectDetailsPage::ProjectDetailsPage(
       header_(new EntityHeader(this)),
       editButton_(new QPushButton(localization.text(QStringLiteral("project.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("project.delete")), this)),
+      addContentButton_(new QPushButton(localization.text(QStringLiteral("content.create.title")), this)),
       statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
       progressLabel_(createLabel(this)),
@@ -89,8 +91,10 @@ ProjectDetailsPage::ProjectDetailsPage(
 
     header_->addAction(editButton_);
     header_->addAction(deleteButton_);
+    header_->addAction(addContentButton_);
     editButton_->setVisible(false);
     deleteButton_->setVisible(false);
+    addContentButton_->setVisible(false);
 
     connect(
         editButton_,
@@ -163,6 +167,32 @@ ProjectDetailsPage::ProjectDetailsPage(
         }
     );
 
+    connect(
+    addContentButton_,
+    &QPushButton::clicked,
+    this,
+    [this]()
+    {
+        if (project_.id <= 0)
+        {
+            return;
+        }
+
+        ContentEditorDialog dialog(
+            contentService_,
+            projectService_,
+            localization_,
+            this,
+            project_.id
+        );
+
+        if (dialog.exec() == QDialog::Accepted)
+        {
+            showProject(project_.id);
+        }
+    }
+);
+
     summarySection_->setTitle(localization_.text(QStringLiteral("project.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
@@ -232,6 +262,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         project_ = {};
         editButton_->setVisible(false);
         deleteButton_->setVisible(false);
+        addContentButton_->setVisible(false);
 
         return;
     }
@@ -251,6 +282,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
             project_ = {};
             editButton_->setVisible(false);
             deleteButton_->setVisible(false);
+            addContentButton_->setVisible(false);
 
             return;
         }
@@ -259,6 +291,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         project_ = value;
         editButton_->setVisible(true);
         deleteButton_->setVisible(true);
+        addContentButton_->setVisible(true);
 
         clearContentCards();
 
@@ -332,5 +365,6 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         project_ = {};
         editButton_->setVisible(false);
         deleteButton_->setVisible(false);
+        addContentButton_->setVisible(false);
     }
 }

@@ -4,10 +4,14 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QDialog>
+#include <QMessageBox>
 #include <exception>
 
-#include "../../components/layout/Section.h"
+#include "ContentEditorDialog.h"
 #include "../../components/entity/EntityHeader.h"
+#include "../../components/forms/ConfirmModal.h"
+#include "../../components/layout/Section.h"
 #include "../../localization/LocalizationService.h"
 #include "../../../application/content/ContentService.h"
 #include "../../../application/projects/ProjectService.h"
@@ -52,6 +56,8 @@ ContentDetails::ContentDetails(
       projectService_(projectService),
       localization_(localization),
       header_(new EntityHeader(this)),
+      editButton_(new QPushButton(localization.text(QStringLiteral("content.edit")), this)),
+      deleteButton_(new QPushButton(localization.text(QStringLiteral("content.delete")), this)),
       projectLabel_(createLabel(this)),
       typeLabel_(createLabel(this)),
       roleLabel_(createLabel(this)),
@@ -84,6 +90,86 @@ ContentDetails::ContentDetails(
 
     setNavigationWidget(backButton);
     setHeaderWidget(header_);
+
+    header_->addAction(editButton_);
+    header_->addAction(deleteButton_);
+
+    editButton_->setVisible(false);
+    deleteButton_->setVisible(false);
+
+    connect(
+        editButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (content_.id <= 0){return;}
+
+            const std::int64_t contentId = content_.id;
+
+            ContentEditorDialog dialog(
+                contentService_,
+                projectService_,
+                localization_,
+                this,
+                content_.projectId,
+                content_
+            );
+
+            if (dialog.exec() == QDialog::Accepted)
+            {
+                showContent(contentId);
+            }
+        }
+    );
+
+    connect(
+        deleteButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (content_.id <= 0){return;}
+
+            const std::int64_t contentId = content_.id;
+            const std::int64_t projectId = content_.projectId;
+
+            ConfirmModal::confirm(
+                this,
+                localization_.text(QStringLiteral("content.delete.title")),
+                localization_.text(QStringLiteral("content.delete.description")),
+                localization_.text(QStringLiteral("content.delete.confirm")),
+                localization_.text(QStringLiteral("content.delete.cancel")),
+                [this, contentId, projectId]()
+                {
+                    try
+                    {
+                        if (!contentService_.deleteContent(contentId))
+                        {
+                            QMessageBox::critical(
+                                this,
+                                localization_.text(QStringLiteral("content.delete.error.title")),
+                                localization_.text(QStringLiteral("content.delete.error.description"))
+                            );
+
+                            return;
+                        }
+
+                        content_ = {};
+                        emit backRequested(projectId);
+                    }
+                    catch (const std::exception &)
+                    {
+                        QMessageBox::critical(
+                            this,
+                            localization_.text(QStringLiteral("content.delete.error.title")),
+                            localization_.text(QStringLiteral("content.delete.error.description"))
+                        );
+                    }
+                }
+            );
+        }
+    );
 
     summarySection_->setTitle(localization_.text(QStringLiteral("content.summary")));
 
@@ -131,6 +217,8 @@ void ContentDetails::showContent(std::int64_t contentId)
         content_ = {};
         header_->setTitle(localization_.text(QStringLiteral("content.not_selected")));
         header_->setDescription(QString());
+        editButton_->setVisible(false);
+        deleteButton_->setVisible(false);
 
         return;
     }
@@ -146,6 +234,8 @@ void ContentDetails::showContent(std::int64_t contentId)
             content_ = {};
             header_->setTitle(localization_.text(QStringLiteral("content.not_found.title")));
             header_->setDescription(localization_.text(QStringLiteral("content.not_found.description")));
+            editButton_->setVisible(false);
+            deleteButton_->setVisible(false);
 
             return;
         }
@@ -185,6 +275,8 @@ void ContentDetails::showContent(std::int64_t contentId)
         roleLabel_->setText(localizedContentRole(value.role, localization_));
         statusLabel_->setText(localizedContentStatus(value.status, localization_));
         priorityLabel_->setText(QString::number(value.priority));
+        editButton_->setVisible(true);
+        deleteButton_->setVisible(value.role == ContentRole::Additional);
 
         if (value.productionDeadlineAt.empty())
         {
@@ -210,5 +302,8 @@ void ContentDetails::showContent(std::int64_t contentId)
 
         header_->setTitle(localization_.text(QStringLiteral("content.error.title")));
         header_->setDescription(localization_.text(QStringLiteral("content.error.description")));
+        
+        editButton_->setVisible(false);
+        deleteButton_->setVisible(false);    
     }
 }

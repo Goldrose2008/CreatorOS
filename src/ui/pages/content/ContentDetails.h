@@ -6,6 +6,7 @@
 #include "../../../domain/models/Content.h"
 
 class QLabel;
+class QPushButton;
 class Section;
 class EntityHeader;
 class LocalizationService;
@@ -36,6 +37,8 @@ private:
     LocalizationService &localization_;
 
     EntityHeader *header_;
+    QPushButton *editButton_;
+    QPushButton *deleteButton_;
 
     QLabel *projectLabel_;
     QLabel *typeLabel_;
