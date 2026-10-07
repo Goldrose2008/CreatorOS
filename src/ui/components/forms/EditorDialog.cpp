@@ -7,12 +7,14 @@
 #include "../../style/Metrics.h"
 
 EditorDialog::EditorDialog(
+    Mode mode,
     const QString &title,
     const QString &saveText,
     const QString &cancelText,
     QWidget *parent
 )
     : QDialog(parent),
+      mode_(mode),
       layout_(new QVBoxLayout(this)),
       contentLayout_(new QVBoxLayout()),
       buttonBox_(
@@ -61,6 +63,11 @@ EditorDialog::EditorDialog(
 QVBoxLayout *EditorDialog::contentLayout() const
 {
     return contentLayout_;
+}
+
+bool EditorDialog::isEditMode() const
+{
+    return mode_ == Mode::Edit;
 }
 
 void EditorDialog::setSaveEnabled(bool enabled)

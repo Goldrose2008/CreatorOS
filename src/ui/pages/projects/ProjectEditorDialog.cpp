@@ -15,12 +15,9 @@
 
 ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
     : EditorDialog(
-        project.has_value()
-            ? localization.text(QStringLiteral("project.edit.title"))
-            : localization.text(QStringLiteral("project.create.title")),
-        project.has_value()
-            ? localization.text(QStringLiteral("project.edit.save"))
-            : localization.text(QStringLiteral("project.create.save")),
+        project.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
+        project.has_value() ? localization.text(QStringLiteral("project.edit.title")) : localization.text(QStringLiteral("project.create.title")),
+        project.has_value() ? localization.text(QStringLiteral("project.edit.save")) : localization.text(QStringLiteral("project.create.save")),
         localization.text(QStringLiteral("project.create.cancel")),
         parent
     ),
@@ -121,7 +118,7 @@ bool ProjectEditorDialog::save()
         return false;
     }
 
-    if (projectId_ > 0)
+    if (isEditMode())
     {
         try
         {
