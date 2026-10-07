@@ -236,6 +236,29 @@ loading/empty/error states
 - Debug build успешен;
 - пользовательский commit `8e9aa4ae9f9a1bcfc627784d7a93c18f0b8a2208` (`Этап 11 — полноценный Content_3`) запушен.
 
+##### Подэтап 11.3 — CRUD Content UI
+Статус: **завершён**
+
+Добавлен специализированный `ContentEditorDialog` на базе общего `EditorDialog`. В `ProjectDetailsPage` добавлено создание Additional Content; `ContentDetails` получил редактирование Content и удаление только Additional Content через единый `ConfirmModal`. Main Content редактируется, но не может быть удалён; защита удаления дополнительно выполняется в `ContentService`.
+
+Проверка:
+- Debug build успешен;
+- пользовательский commit `d938558766257068e359579679f089ddeb005d45` (`Этап 11 — полноценный Content_5`) запушен.
+
+#### Этап 11 — завершён
+
+Результат этапа:
+- полноценная модель Content;
+- SQLite migration 003;
+- repository/service слой Content;
+- отображение Main/Additional Content в Project;
+- просмотр Content Details;
+- создание Additional Content;
+- редактирование Main и Additional Content;
+- удаление Additional Content с запретом удаления Main Content.
+
+Следующий этап: **Этап 12 — Tasks**.
+
 #### Этап 12 — Tasks
 Реализовать TasksPage, TaskCard, TaskDetails и workflow задач.
 
