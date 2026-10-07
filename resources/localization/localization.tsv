@@ -81,3 +81,16 @@ content.status.draft	Черновик	Draft
 content.status.in_progress	В работе	In progress
 content.status.ready	Готов	Ready
 content.status.archived	Архив	Archived
+content.open	Открыть	Open
+content.back	Назад к проекту	Back to project
+content.summary	Сводка	Summary
+content.project	Проект	Project
+content.description	Описание	Description
+content.progress	Готовность	Progress
+content.created	Создан	Created
+content.updated	Изменён	Updated
+content.not_selected	Контент	Content
+content.not_found.title	Контент не найден	Content not found
+content.not_found.description	Контент больше не существует или недоступен.	The content no longer exists or is unavailable.
+content.error.title	Ошибка контента	Content error
+content.error.description	Не удалось получить данные контента.	Could not load content data.

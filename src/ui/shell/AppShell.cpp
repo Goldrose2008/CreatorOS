@@ -13,6 +13,7 @@
 #include "../style/Metrics.h"
 #include "../navigation/NavigationController.h"
 #include "../navigation/CurrentPage.h"
+#include "../pages/content/ContentDetails.h"
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
 #include "../../application/projects/ProjectService.h"
@@ -89,6 +90,9 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
     navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
 
+    auto *contentDetails = new ContentDetails(*contentService_, *projectService_, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("content-details"), contentDetails});
+
     addPlaceholderPage(
         navigation_,
         workspace_,
@@ -151,12 +155,34 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
 
     connect(
         projectDetailsPage,
+        &ProjectDetailsPage::contentOpenRequested,
+        this,
+        [this, contentDetails](std::int64_t contentId)
+        {
+            contentDetails->showContent(contentId);
+            navigation_->navigateTo(QStringLiteral("content-details"));
+        }
+    );
+
+    connect(
+        projectDetailsPage,
         &ProjectDetailsPage::backRequested,
         this,
         [this, projectsPage]()
         {
             projectsPage->reload();
             navigation_->navigateTo(QStringLiteral("projects"));
+        }
+    );
+
+    connect(
+        contentDetails,
+        &ContentDetails::backRequested,
+        this,
+        [this, projectDetailsPage](std::int64_t projectId)
+        {
+            projectDetailsPage->showProject(projectId);
+            navigation_->navigateTo(QStringLiteral("project-details"));
         }
     );
 

@@ -284,11 +284,15 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
                 localization_,
                 this
             );
-
-            contentCardsLayout_->insertWidget(
-                contentCardsLayout_->count() - 1,
-                card
+            
+            connect(
+                card,
+                &ContentCard::openRequested,
+                this,
+                &ProjectDetailsPage::contentOpenRequested
             );
+
+            contentCardsLayout_->insertWidget(contentCardsLayout_->count() - 1, card);
         }
 
         contentSection_->setVisible(!contents.empty());

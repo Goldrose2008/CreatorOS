@@ -108,6 +108,8 @@ qt_add_executable(CreatorOS
 
     src/ui/pages/content/ContentCard.cpp
     src/ui/pages/content/ContentCard.h
+    src/ui/pages/content/ContentDetails.cpp
+    src/ui/pages/content/ContentDetails.h
 
     src/ui/pages/projects/ProjectCard.cpp
     src/ui/pages/projects/ProjectCard.h

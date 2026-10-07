@@ -1,0 +1,214 @@
+#include "ContentDetails.h"
+
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <exception>
+
+#include "../../components/layout/Section.h"
+#include "../../components/entity/EntityHeader.h"
+#include "../../localization/LocalizationService.h"
+#include "../../../application/content/ContentService.h"
+#include "../../../application/projects/ProjectService.h"
+#include "../../../domain/models/ContentType.h"
+
+namespace
+{
+    QLabel *createLabel(QWidget *parent)
+    {
+        auto *label = new QLabel(parent);
+
+        label->setWordWrap(true);
+
+        return label;
+    }
+
+    QString localizedContentRole(ContentRole role, const LocalizationService &localization)
+    {
+        return localization.text(
+            QStringLiteral("content.role.") +
+            QString::fromStdString(contentRoleToString(role))
+        );
+    }
+
+    QString localizedContentStatus(ContentStatus status, const LocalizationService &localization)
+    {
+        return localization.text(
+            QStringLiteral("content.status.") +
+            QString::fromStdString(contentStatusToString(status))
+        );
+    }
+}
+
+ContentDetails::ContentDetails(
+    ContentService &contentService,
+    ProjectService &projectService,
+    LocalizationService &localization,
+    QWidget *parent
+)
+    : EntityDetails(parent),
+      contentService_(contentService),
+      projectService_(projectService),
+      localization_(localization),
+      header_(new EntityHeader(this)),
+      projectLabel_(createLabel(this)),
+      typeLabel_(createLabel(this)),
+      roleLabel_(createLabel(this)),
+      statusLabel_(createLabel(this)),
+      priorityLabel_(createLabel(this)),
+      deadlineLabel_(createLabel(this)),
+      progressLabel_(createLabel(this)),
+      createdLabel_(createLabel(this)),
+      updatedLabel_(createLabel(this)),
+      descriptionLabel_(createLabel(this)),
+      summarySection_(new Section(this)),
+      descriptionSection_(new Section(this))
+{
+    auto *backButton = new QPushButton(localization_.text(QStringLiteral("content.back")), this);
+
+    connect(
+        backButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (content_.id <= 0)
+            {
+                return;
+            }
+
+            emit backRequested(content_.projectId);
+        }
+    );
+
+    setNavigationWidget(backButton);
+    setHeaderWidget(header_);
+
+    summarySection_->setTitle(localization_.text(QStringLiteral("content.summary")));
+
+    auto *summaryLayout = summarySection_->contentLayout();
+    auto *grid = new QGridLayout();
+
+    grid->setContentsMargins(0, 0, 0, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.project")), summarySection_), 0, 0);
+    grid->addWidget(projectLabel_, 0, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.type")), summarySection_), 1, 0);
+    grid->addWidget(typeLabel_, 1, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.role")), summarySection_), 2, 0);
+    grid->addWidget(roleLabel_, 2, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.status")), summarySection_), 3, 0);
+    grid->addWidget(statusLabel_, 3, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.priority")), summarySection_), 4, 0);
+    grid->addWidget(priorityLabel_, 4, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.deadline")), summarySection_), 5, 0);
+    grid->addWidget(deadlineLabel_, 5, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.progress")), summarySection_), 6, 0);
+    grid->addWidget(progressLabel_, 6, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.created")), summarySection_), 7, 0);
+    grid->addWidget(createdLabel_, 7, 1);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.updated")), summarySection_), 8, 0);
+    grid->addWidget(updatedLabel_, 8, 1);
+    summaryLayout->addLayout(grid);
+
+    descriptionSection_->setTitle(localization_.text(QStringLiteral("content.description")));
+    descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
+
+    setSummaryWidget(summarySection_);
+    addContentWidget(descriptionSection_);
+
+    header_->setTitle(localization_.text(QStringLiteral("content.not_selected")));
+
+    showContent(0);
+}
+
+void ContentDetails::showContent(std::int64_t contentId)
+{
+    if (contentId <= 0)
+    {
+        summarySection_->setVisible(false);
+        descriptionSection_->setVisible(false);
+        content_ = {};
+        header_->setTitle(localization_.text(QStringLiteral("content.not_selected")));
+        header_->setDescription(QString());
+
+        return;
+    }
+
+    try
+    {
+        const auto content = contentService_.getContent(contentId);
+
+        if (!content.has_value())
+        {
+            summarySection_->setVisible(false);
+            descriptionSection_->setVisible(false);
+            content_ = {};
+            header_->setTitle(localization_.text(QStringLiteral("content.not_found.title")));
+            header_->setDescription(localization_.text(QStringLiteral("content.not_found.description")));
+
+            return;
+        }
+
+        const Content &value = content.value();
+
+        const auto project = projectService_.getProject(value.projectId);
+
+        if (!project.has_value())
+        {
+            throw std::runtime_error("Content project was not found.");
+        }
+
+        const auto contentTypes = projectService_.getContentTypes();
+
+        QString contentTypeName;
+
+        for (const ContentType &contentType : contentTypes)
+        {
+            if (contentType.id == value.contentTypeId)
+            {
+                contentTypeName = QString::fromUtf8(contentType.name.c_str());
+                break;
+            }
+        }
+
+        if (contentTypeName.isEmpty())
+        {
+            throw std::runtime_error("Content type was not found.");
+        }
+
+        content_ = value;
+        header_->setTitle(QString::fromUtf8(value.name.c_str()));
+        header_->setDescription(QString::fromUtf8(value.description.c_str()));
+        projectLabel_->setText(QString::fromUtf8(project->name.c_str()));
+        typeLabel_->setText(contentTypeName);
+        roleLabel_->setText(localizedContentRole(value.role, localization_));
+        statusLabel_->setText(localizedContentStatus(value.status, localization_));
+        priorityLabel_->setText(QString::number(value.priority));
+
+        if (value.productionDeadlineAt.empty())
+        {
+            deadlineLabel_->setText(QStringLiteral("—"));
+        }
+        else
+        {
+            deadlineLabel_->setText(QString::fromUtf8(value.productionDeadlineAt.c_str()));
+        }
+
+        progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
+        createdLabel_->setText(QString::fromUtf8(value.createdAt.c_str()));
+        updatedLabel_->setText(QString::fromUtf8(value.updatedAt.c_str()));
+        descriptionLabel_->setText(QString::fromUtf8(value.description.c_str()));
+        summarySection_->setVisible(true);
+        descriptionSection_->setVisible(!value.description.empty());
+    }
+    catch (const std::exception &)
+    {
+        summarySection_->setVisible(false);
+        descriptionSection_->setVisible(false);
+        content_ = {};
+
+        header_->setTitle(localization_.text(QStringLiteral("content.error.title")));
+        header_->setDescription(localization_.text(QStringLiteral("content.error.description")));
+    }
+}

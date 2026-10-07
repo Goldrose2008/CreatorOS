@@ -27,6 +27,7 @@ public slots:
 
 signals:
     void backRequested();
+    void contentOpenRequested(std::int64_t contentId);
 
 private:
     ProjectService &projectService_;
