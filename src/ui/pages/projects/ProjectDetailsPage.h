@@ -31,6 +31,7 @@ private:
 
     EntityHeader *header_;
     QPushButton *editButton_;
+    QPushButton *deleteButton_;
 
     QLabel *statusLabel_;
     QLabel *releaseLabel_;

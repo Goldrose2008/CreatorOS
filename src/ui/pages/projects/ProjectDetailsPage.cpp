@@ -1,18 +1,20 @@
 #include "ProjectDetailsPage.h"
 
-#include <QGridLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QDialog>
+#include <QMessageBox>
+#include <QGridLayout>
+#include <QPushButton>
 
 #include "ProjectEditorDialog.h"
-#include "../../../application/projects/ProjectService.h"
-#include "../../../domain/models/Project.h"
 #include "../../components/entity/EntityHeader.h"
+#include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/Section.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
+#include "../../../application/projects/ProjectService.h"
+#include "../../../domain/models/Project.h"
 
 namespace
 {
@@ -54,6 +56,7 @@ ProjectDetailsPage::ProjectDetailsPage(
       localization_(localization),
       header_(new EntityHeader(this)),
       editButton_(new QPushButton(localization.text(QStringLiteral("project.edit")), this)),
+      deleteButton_(new QPushButton(localization.text(QStringLiteral("project.delete")), this)),
       statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
       progressLabel_(createLabel(this)),
@@ -77,7 +80,9 @@ ProjectDetailsPage::ProjectDetailsPage(
     setHeaderWidget(header_);
 
     header_->addAction(editButton_);
+    header_->addAction(deleteButton_);
     editButton_->setVisible(false);
+    deleteButton_->setVisible(false);
 
     connect(
         editButton_,
@@ -100,6 +105,53 @@ ProjectDetailsPage::ProjectDetailsPage(
             {
                 showProject(projectId);
             }
+        }
+    );
+
+    connect(
+        deleteButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            if (project_.id <= 0) {return;}
+
+            const std::int64_t projectId = project_.id;
+
+            ConfirmModal::confirm(
+                this,
+                localization_.text(QStringLiteral("project.delete.title")),
+                localization_.text(QStringLiteral("project.delete.description")),
+                localization_.text(QStringLiteral("project.delete.confirm")),
+                localization_.text(QStringLiteral("project.delete.cancel")),
+                [this, projectId]()
+                {
+                    try
+                    {
+                        if (!projectService_.deleteProject(projectId))
+                        {
+                            QMessageBox::critical(
+                                this,
+                                localization_.text(QStringLiteral("project.delete.error.title")),
+                                localization_.text(QStringLiteral("project.delete.error.description"))
+                            );
+
+                            return;
+                        }
+
+                        project_ = {};
+                        backRequested();
+                    }
+                    catch (const std::exception &)
+                    {
+                        QMessageBox::critical(
+                            this,
+                            localization_.text(QStringLiteral("project.delete.error.title")),
+                            localization_.text(QStringLiteral("project.delete.error.description"))
+                        );
+                    }
+                }
+            );
         }
     );
 
@@ -147,6 +199,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         header_->setDescription(QString());
         project_ = {};
         editButton_->setVisible(false);
+        deleteButton_->setVisible(false);
 
         return;
     }
@@ -162,7 +215,8 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
             header_->setTitle(localization_.text(QStringLiteral("project.not_found.title")));
             header_->setDescription(localization_.text(QStringLiteral("project.not_found.description")));
             project_ = {};
-            editButton_->setVisible(false);    
+            editButton_->setVisible(false);
+            deleteButton_->setVisible(false);
 
             return;
         }
@@ -170,6 +224,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         const Project &value = project.value();
         project_ = value;
         editButton_->setVisible(true);
+        deleteButton_->setVisible(true);
 
         summarySection_->setVisible(true);
         descriptionSection_->setVisible(!value.description.empty());
@@ -204,5 +259,6 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         header_->setDescription(localization_.text(QStringLiteral("project.error.description")));
         project_ = {};
         editButton_->setVisible(false);
+        deleteButton_->setVisible(false);
     }
 }

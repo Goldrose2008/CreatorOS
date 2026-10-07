@@ -147,11 +147,16 @@ AppShell::AppShell(ProjectService &projectService, QWidget *parent)
         }
     );
 
-    [this, projectsPage]()
-    {
-        projectsPage->reload();
-        navigation_->navigateTo(QStringLiteral("projects"));
-    };
+    connect(
+        projectDetailsPage,
+        &ProjectDetailsPage::backRequested,
+        this,
+        [this, projectsPage]()
+        {
+            projectsPage->reload();
+            navigation_->navigateTo(QStringLiteral("projects"));
+        }
+    );
 
     navigation_->navigateTo(QStringLiteral("home"));
 }

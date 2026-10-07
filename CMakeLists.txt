@@ -58,10 +58,12 @@ qt_add_executable(CreatorOS
     src/ui/components/entity/EntityDetails.cpp
     src/ui/components/entity/EntityDetails.h
 
-    src/ui/components/forms/FormField.cpp
-    src/ui/components/forms/FormField.h
+    src/ui/components/forms/ConfirmModal.cpp
+    src/ui/components/forms/ConfirmModal.h
     src/ui/components/forms/EditorDialog.cpp
     src/ui/components/forms/EditorDialog.h
+    src/ui/components/forms/FormField.cpp
+    src/ui/components/forms/FormField.h
 
     src/ui/components/foundation/SurfaceWidget.cpp
     src/ui/components/foundation/SurfaceWidget.h
