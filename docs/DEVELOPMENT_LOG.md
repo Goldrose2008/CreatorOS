@@ -218,7 +218,23 @@ loading/empty/error states
 - подключить Content UI к Project;
 - использовать существующие `EntityCard`, `EntityDetails`, `EditorDialog` и `ConfirmModal` без дублирования общих механизмов.
 
-Первый подэтап — application/infrastructure основа полноценного Content.
+##### Подэтап 11.1 — полноценная модель и слой данных Content
+Статус: **завершён**
+
+Модель Content расширена до полной структуры с описанием, приоритетом, производственным дедлайном, статусом, прогрессом и временными метками. Добавлена миграция 003. Созданы `IContentRepository`, `ContentRepository` и `ContentService`; application-слой проверяет существование Project/ContentType и не разрешает удалять Main Content.
+
+Проверка:
+- build успешен;
+- commit пользователя f809e9f0e58a11e61cf3a893af6d93d33efa2e63 (`Этап 11 — полноценный Content`) запушен.
+
+##### Подэтап 11.2 — отображение Content внутри Project
+Статус: **в работе**
+
+Цель:
+- передать `ContentService` в UI;
+- добавить специализированный `ContentCard` на базе `EntityCard`;
+- отображать Main Content и Additional Content внутри `ProjectDetailsPage`;
+- пока не добавлять редактирование/удаление Content через отдельные действия.
 
 Общие UI-механизмы наследовать от entity-баз, а сложные независимые объекты подключать через composition.
 
