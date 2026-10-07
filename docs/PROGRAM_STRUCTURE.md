@@ -81,6 +81,9 @@ Application-слой содержит пользовательские сцен�
 ```text
 src/application/
 ├── content/
+│   ├── ContentService.cpp
+│   ├── ContentService.h
+│   ├── IContentRepository.h
 │   └── IContentTypeRepository.h
 └── projects/
     ├── IProjectRepository.h
@@ -91,6 +94,9 @@ src/application/
 | Файл | Назначение |
 |---|---|
 | `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
+| `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение Content по Project/ID, создание, изменение и удаление. |
+| `src/application/content/ContentService.h` | Публичный контракт application service для сценариев полноценного Content. |
+| `src/application/content/ContentService.cpp` | Реализация сценариев Content, включая проверки Project/ContentType и запрет удаления Main Content. |
 | `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 | `src/application/projects/ProjectService.h` | Публичный контракт application service для сценариев работы с Project. |
 | `src/application/projects/ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
@@ -103,6 +109,8 @@ Infrastructure содержит конкретные технические ре
 ```text
 src/infrastructure/
 └── database/
+    ├── ContentRepository.cpp
+    ├── ContentRepository.h
     ├── ContentTypeRepository.cpp
     ├── ContentTypeRepository.h
     ├── DatabaseManager.cpp
@@ -115,6 +123,8 @@ src/infrastructure/
 |---|---|
 | `src/infrastructure/database/ContentTypeRepository.h` | Объявление SQLite-реализации `IContentTypeRepository`. |
 | `src/infrastructure/database/ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
+| `src/infrastructure/database/ContentRepository.h` | Объявление SQLite-реализации `IContentRepository`. |
+| `src/infrastructure/database/ContentRepository.cpp` | SQL-операции с таблицей `contents`: чтение по Project/ID, создание, изменение и удаление Content. |
 | `src/infrastructure/database/DatabaseManager.h` | Контракт объекта, который открывает SQLite-подключение, предоставляет БД и применяет схему/миграции. |
 | `src/infrastructure/database/DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
 | `src/infrastructure/database/ProjectRepository.h` | Объявление SQLite-реализации `IProjectRepository`. |
@@ -128,13 +138,15 @@ src/infrastructure/
 database/
 └── migrations/
     ├── 001_initial.sql
-    └── 002_content_and_content_types.sql
+    ├── 002_content_and_content_types.sql
+    └── 003_full_content.sql
 ```
 
 | Файл | Назначение |
 |---|---|
 | `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
 | `database/migrations/002_content_and_content_types.sql` | Вторая версия структуры SQLite: создаёт `content_types` и `contents`, связывает Content с Project/ContentType, ограничивает один `main` Content на Project и добавляет базовые типы контента. |
+| `database/migrations/003_full_content.sql` | Третья версия структуры SQLite: расширяет `contents` полями description, priority, production deadline, status, progress и временными метками. |
 
 ---
 
