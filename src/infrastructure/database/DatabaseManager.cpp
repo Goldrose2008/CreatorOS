@@ -270,6 +270,10 @@ bool DatabaseManager::applySchema(QString *errorMessage)
         {
             2,
             QStringLiteral(":/database/migrations/002_content_and_content_types.sql")
+        },
+        {
+            3,
+            QStringLiteral(":/database/migrations/003_full_content.sql")
         }
     };
 
