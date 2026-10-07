@@ -1,31 +1,12 @@
 #include "ProjectService.h"
 
-#include <cctype>
 #include <stdexcept>
 
 #include "../content/IContentTypeRepository.h"
+#include "../common/StringUtils.h"
 
 namespace
 {
-    std::string trim(const std::string &value)
-    {
-        std::size_t first = 0;
-
-        while (first < value.size() && std::isspace(static_cast<unsigned char>(value[first])))
-        {
-            ++first;
-        }
-
-        std::size_t last = value.size();
-
-        while (last > first && std::isspace(static_cast<unsigned char>(value[last - 1])))
-        {
-            --last;
-        }
-
-        return value.substr(first, last - first);
-    }
-
     void setEditableFields(
         Project &project,
         const std::string &name,
@@ -33,9 +14,9 @@ namespace
         const std::string &plannedReleaseAt
     )
     {
-        const std::string normalizedName = trim(name);
-        const std::string normalizedDescription = trim(description);
-        const std::string normalizedReleaseAt = trim(plannedReleaseAt);
+        const std::string normalizedName = CreatorStringUtils::trim(name);
+        const std::string normalizedDescription = CreatorStringUtils::trim(description);
+        const std::string normalizedReleaseAt = CreatorStringUtils::trim(plannedReleaseAt);
 
         if (normalizedName.empty())
         {
@@ -89,7 +70,7 @@ Project ProjectService::createProject(
 
     setEditableFields(project, name, description, plannedReleaseAt);
 
-    const std::string normalizedContentName = trim(mainContentName);
+    const std::string normalizedContentName = CreatorStringUtils::trim(mainContentName);
 
     if (normalizedContentName.empty())
     {

@@ -245,20 +245,6 @@ loading/empty/error states
 - Debug build успешен;
 - пользовательский commit `d938558766257068e359579679f089ddeb005d45` (`Этап 11 — полноценный Content_5`) запушен.
 
-#### Этап 11 — завершён
-
-Результат этапа:
-- полноценная модель Content;
-- SQLite migration 003;
-- repository/service слой Content;
-- отображение Main/Additional Content в Project;
-- просмотр Content Details;
-- создание Additional Content;
-- редактирование Main и Additional Content;
-- удаление Additional Content с запретом удаления Main Content.
-
-Следующий этап: **Этап 12 — Tasks**.
-
 #### Этап 12 — Tasks
 Реализовать TasksPage, TaskCard, TaskDetails и workflow задач.
 
@@ -400,3 +386,17 @@ license/package contents
 - `ContentCard` зафиксирован в фактической структуре проекта.
 - Последний пользовательский commit: `8e9aa4ae9f9a1bcfc627784d7a93c18f0b8a2208` (`Этап 11 — полноценный Content_3`), build успешен.
 - Следующий шаг: полноценное подробное представление Content с маршрутом из `ProjectDetailsPage`.
+
+#### Этап 11 — завершён
+
+Результат этапа:
+- полноценная модель Content;
+- SQLite migration 003;
+- repository/service слой Content;
+- отображение Main/Additional Content в Project;
+- просмотр Content Details;
+- создание Additional Content;
+- редактирование Main и Additional Content;
+- удаление Additional Content с запретом удаления Main Content.
+
+Следующий этап: **Этап 12 — Tasks**.

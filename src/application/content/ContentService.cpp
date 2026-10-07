@@ -1,33 +1,11 @@
 #include "ContentService.h"
 
-#include <cctype>
 #include <stdexcept>
 
 #include "IContentRepository.h"
-#include "../projects/IProjectRepository.h"
 #include "IContentTypeRepository.h"
-
-namespace
-{
-    std::string trim(const std::string &value)
-    {
-        std::size_t first = 0;
-
-        while (first < value.size() && std::isspace(static_cast<unsigned char>(value[first])))
-        {
-            ++first;
-        }
-
-        std::size_t last = value.size();
-
-        while (last > first && std::isspace(static_cast<unsigned char>(value[last - 1])))
-        {
-            --last;
-        }
-
-        return value.substr(first, last - first);
-    }
-}
+#include "../projects/IProjectRepository.h"
+#include "../common/StringUtils.h"
 
 ContentService::ContentService(
     IContentRepository &repository,
@@ -84,7 +62,7 @@ Content ContentService::createAdditionalContent(
         throw std::invalid_argument("Content type was not found.");
     }
 
-    const std::string normalizedName = trim(name);
+    const std::string normalizedName = CreatorStringUtils::trim(name);
 
     if (normalizedName.empty())
     {
@@ -97,7 +75,7 @@ Content ContentService::createAdditionalContent(
     content.contentTypeId = contentTypeId;
     content.role = ContentRole::Additional;
     content.name = normalizedName;
-    content.description = trim(description);
+    content.description = CreatorStringUtils::trim(description);
     content.priority = priority;
     content.status = ContentStatus::Draft;
     content.progress = 0;
@@ -139,7 +117,7 @@ bool ContentService::updateContent(
         throw std::invalid_argument("Content type was not found.");
     }
 
-    const std::string normalizedName = trim(name);
+    const std::string normalizedName = CreatorStringUtils::trim(name);
 
     if (normalizedName.empty())
     {
@@ -150,7 +128,7 @@ bool ContentService::updateContent(
 
     content.contentTypeId = contentTypeId;
     content.name = normalizedName;
-    content.description = trim(description);
+    content.description = CreatorStringUtils::trim(description);
     content.priority = priority;
 
     return repository_.update(content);

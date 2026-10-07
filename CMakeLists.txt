@@ -43,6 +43,8 @@ qt_add_executable(CreatorOS
     src/domain/models/Content.cpp
     src/domain/models/Content.h
     src/domain/models/ContentType.h
+    src/domain/models/Task.cpp
+    src/domain/models/Task.h
 
     src/infrastructure/database/DatabaseManager.cpp
     src/infrastructure/database/DatabaseManager.h
@@ -52,6 +54,8 @@ qt_add_executable(CreatorOS
     src/infrastructure/database/ContentTypeRepository.h
     src/infrastructure/database/ProjectRepository.cpp
     src/infrastructure/database/ProjectRepository.h
+    src/infrastructure/database/TaskRepository.cpp
+    src/infrastructure/database/TaskRepository.h
 
     src/ui/bridge/WebBridge.cpp
     src/ui/bridge/WebBridge.h
@@ -121,6 +125,12 @@ qt_add_executable(CreatorOS
     src/ui/pages/projects/ProjectDetailsPage.h
     src/ui/pages/projects/ProjectEditorDialog.cpp
     src/ui/pages/projects/ProjectEditorDialog.h
+
+    src/application/common/StringUtils.h
+
+    src/application/tasks/ITaskRepository.h
+    src/application/tasks/TaskService.cpp
+    src/application/tasks/TaskService.h
 
     src/ui/shell/AppShell.cpp
     src/ui/shell/AppShell.h
