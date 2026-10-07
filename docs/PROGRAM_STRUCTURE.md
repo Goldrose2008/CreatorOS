@@ -374,14 +374,24 @@ Projects UI поддерживает просмотр списка и подро
 ```text
 src/ui/pages/content/
 ├── ContentCard.cpp
-└── ContentCard.h
+├── ContentCard.h
+├── ContentDetails.cpp
+├── ContentDetails.h
+├── ContentEditorDialog.cpp
+└── ContentEditorDialog.h
 ```
 
 | Файл | Назначение |
 |---|---|
 | `src/ui/pages/content/ContentCard.h` | Объявление специализированного UI-класса `ContentCard`, наследующего `EntityCard` и работающего с моделью Content. |
-| `src/ui/pages/content/ContentCard.cpp` | Реализация карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`. |
+| `src/ui/pages/content/ContentCard.cpp` | Реализация карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`; передаёт событие открытия Content. |
+| `src/ui/pages/content/ContentDetails.h` | Объявление специализированного details-класса Content, наследующего `EntityDetails`; содержит локальное состояние Content и действия просмотра, редактирования и удаления. |
+| `src/ui/pages/content/ContentDetails.cpp` | Реализация просмотра Content через `ContentService`, отображение полной модели, редактирование через `ContentEditorDialog` и удаление только Additional Content через `ConfirmModal`. |
+| `src/ui/pages/content/ContentEditorDialog.h` | Объявление специализированного editor Content, наследующего `EditorDialog`; используется для создания Additional Content и редактирования существующего Content. |
+| `src/ui/pages/content/ContentEditorDialog.cpp` | Реализация формы Content и сохранения через `ContentService`; содержит только редактируемые пользователем поля. |
 
+Content UI поддерживает просмотр Main/Additional Content внутри Project, создание Additional Content, редактирование Content и удаление только Additional Content.
+ 
 ## 8.5. Shell — `src/ui/shell`
 
 ```text
