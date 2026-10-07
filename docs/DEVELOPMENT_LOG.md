@@ -264,7 +264,15 @@ loading/empty/error states
 - список Projects и детали Project связаны с create/edit/delete сценариями.
 
 #### Этап 11 — полноценный Content
-Реализовать Content, ContentType и связанные UI-сценарии.
+Статус: **в работе**
+
+Цель этапа:
+- довести модель Content до полной прикладной модели;
+- реализовать application/infrastructure операции Content;
+- подключить Content UI к Project;
+- использовать существующие `EntityCard`, `EntityDetails`, `EditorDialog` и `ConfirmModal` без дублирования общих механизмов.
+
+Первый подэтап — application/infrastructure основа полноценного Content.
 
 Общие UI-механизмы наследовать от entity-баз, а сложные независимые объекты подключать через composition.
 
