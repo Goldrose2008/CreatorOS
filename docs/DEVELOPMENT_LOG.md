@@ -192,7 +192,7 @@
 - Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
 - Подтверждено, что одинаковые переводы сейчас могут храниться под разными ID: `LocalizationService` не выполняет семантическую проверку дублей.
 - Определена модель канонических общих ключей `common.*` для общих действий, статусов, подписей и метаданных.
-- Зафиксированы случаи, которые не следует объединять автоматически: destination-specific Back, entity-specific not-found/error/edit titles and descriptions, form field names, page-specific loading/empty/error states, а также `content.progress` и `project.progress`, поскольку их русские формулировки различаются.
+- Определён более универсальный принцип: общие Back, Error, Edit, Not Found, Delete, Name, Loading/Empty/Error states и Progress используют канонические `common.*` ключи; entity-specific ключ создаётся только при реальном отличии смысла или контекста.
 - Создан `docs/LOCALIZATION.md` с правилами именования text ID и таблицей предстоящей дедупликации.
 - `TECHNICAL_SPEC.md` дополнен постоянными правилами предотвращения дублирования локализаций, а `PROGRAM_STRUCTURE.md` отражает новый документ.
 - Изменение `localization.tsv` и source-code вызовов остаётся пользовательской правкой по проектному правилу; после выполнения потребуется Debug build и функциональная проверка всех затронутых экранов.
@@ -261,5 +261,10 @@ Localization Dashboard считается базово готовым, когд�
 
 
 ### Этап LD-1 — фундамент Localization Dashboard: старт
-- После проверки пользовательского commit `295e4dcf1e60fdbffd15c12d8bf39bc6fba3d1a` актуальное состояние локализации признано пригодным для начала отдельного developer-tool слоя.
+- После проверки пользовательского commit `295e4dcf1e60fdbffd15c12d8bf39bc6fba3a1d2` актуальное состояние локализации признано пригодным для начала отдельного developer-tool слоя.
 - Этап LD-1 начинается с программной модели каталога и отдельного target `CreatorOSLocalization`; UI и source scanner будут добавляться следующими подэтапами.
+
+### Актуализация принципа локализации
+- По результатам обсуждения унификация должна быть шире первоначального правила: различие сущности само по себе не является основанием для отдельного text ID.
+- Универсальные тексты формата Back, Error, Edit, Not Found, Delete, Name, Loading/Empty/Error и Progress выносятся в `common.*`; конкретное имя объекта при необходимости формируется UI.
+- `docs/LOCALIZATION.md` актуализирован под эту модель.
