@@ -11,13 +11,13 @@
 LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex)
 {
-    setWindowTitle(QStringLiteral("CreatorOS — Localization Dashboard"));
+    setWindowTitle(QStringLiteral("CreatorOS — Панель локализации"));
     resize(1100, 700);
 
     auto *centralWidget = new QWidget(this);
     auto *layout = new QVBoxLayout(centralWidget);
 
-    auto *titleLabel = new QLabel(QStringLiteral("Localization Dashboard"), centralWidget);
+    auto *titleLabel = new QLabel(QStringLiteral("Панель локализации"), centralWidget);
 
     QFont titleFont = titleLabel->font();
     titleFont.setPointSize(titleFont.pointSize() + 4);
@@ -27,7 +27,7 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
     layout->addWidget(titleLabel);
 
     searchEdit_ = new QLineEdit(centralWidget);
-    searchEdit_->setPlaceholderText(QStringLiteral("Search by ID or translation..."));
+    searchEdit_->setPlaceholderText(QStringLiteral("Поиск по ID или переводу..."));
 
     layout->addWidget(searchEdit_);
 
@@ -38,10 +38,10 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
     table_->setColumnCount(4);
     table_->setHorizontalHeaderLabels(
         {
-            QStringLiteral("ID"),
-            QStringLiteral("RU"),
-            QStringLiteral("EN"),
-            QStringLiteral("Usage")
+            QStringLiteral("Идентификатор"),
+            QStringLiteral("Русский"),
+            QStringLiteral("Английский"),
+            QStringLiteral("Использований")
         });
 
     table_->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -100,7 +100,7 @@ void LocalizationDashboardWindow::populateTable()
     table_->setSortingEnabled(true);
 
     summaryLabel_->setText(
-        QStringLiteral("Entries: %1   |   Static references: %2   |   Dynamic references: %3")
+        QStringLiteral("Записей: %1   |   Статических обращений: %2   |   Динамических обращений: %3")
             .arg(catalog_.size()).arg(usageIndex_.staticUsageCount()).arg(usageIndex_.dynamicReferences().size()));
 
     Q_UNUSED(locales);
