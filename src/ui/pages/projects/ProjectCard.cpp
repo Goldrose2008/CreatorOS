@@ -15,13 +15,13 @@ namespace
         switch (status)
         {
         case ProjectStatus::Draft:
-            return localization.text(QStringLiteral("project.status.draft"));
+            return localization.text(QStringLiteral("common.status.draft"));
 
         case ProjectStatus::Active:
-            return localization.text(QStringLiteral("project.status.active"));
+            return localization.text(QStringLiteral("common.status.in_progress"));
 
         case ProjectStatus::Archived:
-            return localization.text(QStringLiteral("project.status.archived"));
+            return localization.text(QStringLiteral("common.status.archived"));
         }
 
         return QString();
@@ -44,7 +44,7 @@ ProjectCard::ProjectCard(const Project &project, LocalizationService &localizati
     addMetaWidget(releaseDate);
     setProgress(project_.progress);
 
-    auto *openButton = new QPushButton(localization.text(QStringLiteral("project.open")), this);
+    auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
 
     addAction(openButton);
 

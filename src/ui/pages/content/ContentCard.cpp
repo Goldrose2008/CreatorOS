@@ -28,13 +28,13 @@ namespace
         switch (status)
         {
         case ContentStatus::Draft:
-            return localization.text(QStringLiteral("content.status.draft"));
+            return localization.text(QStringLiteral("common.status.draft"));
         case ContentStatus::InProgress:
-            return localization.text(QStringLiteral("content.status.in_progress"));
+            return localization.text(QStringLiteral("common.status.in_progress"));
         case ContentStatus::Ready:
-            return localization.text(QStringLiteral("content.status.ready"));
+            return localization.text(QStringLiteral("common.status.ready"));
         case ContentStatus::Archived:
-            return localization.text(QStringLiteral("content.status.archived"));
+            return localization.text(QStringLiteral("common.status.archived"));
         }
 
         return QString();
@@ -81,7 +81,7 @@ ContentCard::ContentCard(
     auto *priorityLabel = new QLabel(this);
 
     priorityLabel->setText(
-        localization.text(QStringLiteral("content.priority")) +
+        localization.text(QStringLiteral("common.label.priority")) +
         QStringLiteral(": ") + QString::number(content_.priority)
     );
 
@@ -101,7 +101,7 @@ ContentCard::ContentCard(
 
     setProgress(content_.progress);
 
-    auto *openButton = new QPushButton(localization.text(QStringLiteral("content.open")), this);
+    auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
 
     addAction(openButton);
 

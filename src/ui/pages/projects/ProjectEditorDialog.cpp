@@ -17,8 +17,8 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     : EditorDialog(
         project.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
         project.has_value() ? localization.text(QStringLiteral("project.edit.title")) : localization.text(QStringLiteral("project.create.title")),
-        project.has_value() ? localization.text(QStringLiteral("project.edit.save")) : localization.text(QStringLiteral("project.create.save")),
-        localization.text(QStringLiteral("project.create.cancel")),
+        project.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("common.action.create")),
+        localization.text(QStringLiteral("common.action.cancel")),
         parent
     ),
       projectService_(projectService),
@@ -37,11 +37,11 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     nameField->setField(nameEdit_);
 
     auto *descriptionField = new FormField(this);
-    descriptionField->setLabel(localization_.text(QStringLiteral("project.create.description")));
+    descriptionField->setLabel(localization_.text(QStringLiteral("common.label.description")));
     descriptionField->setField(descriptionEdit_);
 
     auto *releaseField = new FormField(this);
-    releaseField->setLabel(localization_.text(QStringLiteral("project.create.release")));
+    releaseField->setLabel(localization_.text(QStringLiteral("project.release")));
 
     plannedReleaseEdit_->setCalendarPopup(true);
     plannedReleaseEdit_->setDate(QDate::currentDate());
@@ -98,7 +98,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
             QMessageBox::warning(
                 this,
                 localization_.text(QStringLiteral("project.create.error.title")),
-                localization_.text(QStringLiteral("project.create.no_content_types"))
+                localization_.text(QStringLiteral("content.type.none_available"))
             );
         }
     }

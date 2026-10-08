@@ -16,7 +16,7 @@ namespace
         case TaskStatus::Todo:
             return localization.text(QStringLiteral("task.status.todo"));
         case TaskStatus::InProgress:
-            return localization.text(QStringLiteral("task.status.in_progress"));
+            return localization.text(QStringLiteral("common.status.in_progress"));
         case TaskStatus::Done:
             return localization.text(QStringLiteral("task.status.done"));
         case TaskStatus::Cancelled:

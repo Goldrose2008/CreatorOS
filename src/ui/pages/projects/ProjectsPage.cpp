@@ -70,7 +70,7 @@ ProjectsPage::ProjectsPage(
 
     errorState_->setTitle(localization_.text(QStringLiteral("projects.error.title")));
     errorState_->setDescription(localization_.text(QStringLiteral("projects.error.description")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("projects.retry")));
+    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
 
     stateStack_->addWidget(projectList_);
     stateStack_->addWidget(loadingState_);

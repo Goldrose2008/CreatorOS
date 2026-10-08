@@ -39,7 +39,7 @@ namespace
     QString localizedContentStatus(ContentStatus status, const LocalizationService &localization)
     {
         return localization.text(
-            QStringLiteral("content.status.") +
+            QStringLiteral("common.status.") +
             QString::fromStdString(contentStatusToString(status))
         );
     }
@@ -56,8 +56,8 @@ ContentDetails::ContentDetails(
       projectService_(projectService),
       localization_(localization),
       header_(new EntityHeader(this)),
-      editButton_(new QPushButton(localization.text(QStringLiteral("content.edit")), this)),
-      deleteButton_(new QPushButton(localization.text(QStringLiteral("content.delete")), this)),
+      editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
+      deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
       projectLabel_(createLabel(this)),
       typeLabel_(createLabel(this)),
       roleLabel_(createLabel(this)),
@@ -138,8 +138,8 @@ ContentDetails::ContentDetails(
                 this,
                 localization_.text(QStringLiteral("content.delete.title")),
                 localization_.text(QStringLiteral("content.delete.description")),
-                localization_.text(QStringLiteral("content.delete.confirm")),
-                localization_.text(QStringLiteral("content.delete.cancel")),
+                localization_.text(QStringLiteral("common.action.delete")),
+                localization_.text(QStringLiteral("common.action.cancel")),
                 [this, contentId, projectId]()
                 {
                     try
@@ -171,13 +171,13 @@ ContentDetails::ContentDetails(
         }
     );
 
-    summarySection_->setTitle(localization_.text(QStringLiteral("content.summary")));
+    summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
     auto *grid = new QGridLayout();
 
     grid->setContentsMargins(0, 0, 0, 0);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.project")), summarySection_), 0, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.entity.project")), summarySection_), 0, 0);
     grid->addWidget(projectLabel_, 0, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.type")), summarySection_), 1, 0);
     grid->addWidget(typeLabel_, 1, 1);
@@ -185,25 +185,25 @@ ContentDetails::ContentDetails(
     grid->addWidget(roleLabel_, 2, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.status")), summarySection_), 3, 0);
     grid->addWidget(statusLabel_, 3, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.priority")), summarySection_), 4, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.priority")), summarySection_), 4, 0);
     grid->addWidget(priorityLabel_, 4, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.deadline")), summarySection_), 5, 0);
     grid->addWidget(deadlineLabel_, 5, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.progress")), summarySection_), 6, 0);
     grid->addWidget(progressLabel_, 6, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.created")), summarySection_), 7, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 7, 0);
     grid->addWidget(createdLabel_, 7, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.updated")), summarySection_), 8, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.updated")), summarySection_), 8, 0);
     grid->addWidget(updatedLabel_, 8, 1);
     summaryLayout->addLayout(grid);
 
-    descriptionSection_->setTitle(localization_.text(QStringLiteral("content.description")));
+    descriptionSection_->setTitle(localization_.text(QStringLiteral("common.label.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
 
     setSummaryWidget(summarySection_);
     addContentWidget(descriptionSection_);
 
-    header_->setTitle(localization_.text(QStringLiteral("content.not_selected")));
+    header_->setTitle(localization_.text(QStringLiteral("common.entity.content")));
 
     showContent(0);
 }
@@ -215,7 +215,7 @@ void ContentDetails::showContent(std::int64_t contentId)
         summarySection_->setVisible(false);
         descriptionSection_->setVisible(false);
         content_ = {};
-        header_->setTitle(localization_.text(QStringLiteral("content.not_selected")));
+        header_->setTitle(localization_.text(QStringLiteral("common.entity.content")));
         header_->setDescription(QString());
         editButton_->setVisible(false);
         deleteButton_->setVisible(false);

@@ -24,8 +24,8 @@ ContentEditorDialog::ContentEditorDialog(
     : EditorDialog(
         content.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
         content.has_value() ? localization.text(QStringLiteral("content.edit.title")) : localization.text(QStringLiteral("content.create.title")),
-        content.has_value() ? localization.text(QStringLiteral("content.edit.save")) : localization.text(QStringLiteral("content.create.save")),
-        localization.text(QStringLiteral("content.create.cancel")),
+        content.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("contcommon.action.create")),
+        localization.text(QStringLiteral("common.action.cancel")),
         parent
     ),
       contentService_(contentService),
@@ -49,11 +49,11 @@ ContentEditorDialog::ContentEditorDialog(
     nameField->setField(nameEdit_);
 
     auto *descriptionField = new FormField(this);
-    descriptionField->setLabel(localization_.text(QStringLiteral("content.create.description")));
+    descriptionField->setLabel(localization_.text(QStringLiteral("common.label.description")));
     descriptionField->setField(descriptionEdit_);
 
     auto *priorityField = new FormField(this);
-    priorityField->setLabel(localization_.text(QStringLiteral("content.create.priority")));
+    priorityField->setLabel(localization_.text(QStringLiteral("common.label.priority")));
     priorityField->setField(prioritySpin_);
 
     prioritySpin_->setRange(0, 100);
@@ -91,7 +91,7 @@ ContentEditorDialog::ContentEditorDialog(
         QMessageBox::warning(
             this,
             localization_.text(QStringLiteral("content.error.title")),
-            localization_.text(QStringLiteral("content.create.no_types"))
+            localization_.text(QStringLiteral("content.type.none_available"))
         );
     }
 }

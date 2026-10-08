@@ -28,13 +28,13 @@ namespace
         switch (status)
         {
         case ProjectStatus::Draft:
-            return localization.text(QStringLiteral("project.status.draft"));
+            return localization.text(QStringLiteral("common.status.draft"));
 
         case ProjectStatus::Active:
-            return localization.text(QStringLiteral("project.status.active"));
+            return localization.text(QStringLiteral("common.status.in_progress"));
 
         case ProjectStatus::Archived:
-            return localization.text(QStringLiteral("project.status.archived"));
+            return localization.text(QStringLiteral("common.status.archived"));
         }
 
         return QString();
@@ -62,8 +62,8 @@ ProjectDetailsPage::ProjectDetailsPage(
       contentService_(contentService),
       localization_(localization),
       header_(new EntityHeader(this)),
-      editButton_(new QPushButton(localization.text(QStringLiteral("project.edit")), this)),
-      deleteButton_(new QPushButton(localization.text(QStringLiteral("project.delete")), this)),
+      editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
+      deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
       addContentButton_(new QPushButton(localization.text(QStringLiteral("content.create.title")), this)),
       statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
@@ -134,8 +134,8 @@ ProjectDetailsPage::ProjectDetailsPage(
                 this,
                 localization_.text(QStringLiteral("project.delete.title")),
                 localization_.text(QStringLiteral("project.delete.description")),
-                localization_.text(QStringLiteral("project.delete.confirm")),
-                localization_.text(QStringLiteral("project.delete.cancel")),
+                localization_.text(QStringLiteral("common.action.delete")),
+                localization_.text(QStringLiteral("common.action.cancel")),
                 [this, projectId]()
                 {
                     try
@@ -193,7 +193,7 @@ ProjectDetailsPage::ProjectDetailsPage(
     }
 );
 
-    summarySection_->setTitle(localization_.text(QStringLiteral("project.summary")));
+    summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
     auto *grid = new QGridLayout();
@@ -209,17 +209,17 @@ ProjectDetailsPage::ProjectDetailsPage(
     grid->addWidget(progressLabel_, 2, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.owner")), summarySection_), 3, 0);
     grid->addWidget(ownerLabel_, 3, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.created")), summarySection_), 4, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 4, 0);
     grid->addWidget(createdLabel_, 4, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.updated")), summarySection_), 5, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.updated")), summarySection_), 5, 0);
     grid->addWidget(updatedLabel_, 5, 1);
 
     summaryLayout->addLayout(grid);
 
-    descriptionSection_->setTitle(localization_.text(QStringLiteral("project.description")));
+    descriptionSection_->setTitle(localization_.text(QStringLiteral("common.label.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
     
-    contentSection_->setTitle(localization_.text(QStringLiteral("project.content")));
+    contentSection_->setTitle(localization_.text(QStringLiteral("common.entity.content")));
     contentCardsLayout_->setContentsMargins(0, 0, 0, 0);
     contentCardsLayout_->setSpacing(CreatorMetrics::SpacingMedium);
     contentCardsLayout_->addStretch();
@@ -229,7 +229,7 @@ ProjectDetailsPage::ProjectDetailsPage(
     addContentWidget(contentSection_);
     addContentWidget(descriptionSection_);
 
-    header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
+    header_->setTitle(localization_.text(QStringLiteral("common.entity.project")));
 
     showProject(0);
 }
@@ -257,7 +257,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         contentSection_->setVisible(false);
         descriptionSection_->setVisible(false);
         clearContentCards();
-        header_->setTitle(localization_.text(QStringLiteral("project.not_selected")));
+        header_->setTitle(localization_.text(QStringLiteral("common.entity.project")));
         header_->setDescription(QString());
         project_ = {};
         editButton_->setVisible(false);

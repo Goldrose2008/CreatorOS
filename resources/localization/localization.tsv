@@ -1,48 +1,51 @@
 id	ru	en
 analytics	Аналитика	Analytics
+common.action.edit	Изменить	Edit
+common.action.cancel	Отмена	Cancel
+common.action.create	Создать	Create
+common.action.delete	Удалить	Delete
+common.action.open	Открыть	Open
+common.action.retry	Повторить	Retry
+common.action.save	Сохранить	Save
+common.entity.content	Контент	Content
+common.entity.project	Проект	Project
+common.label.description	Описание	Description
+common.label.priority	Приоритет	Priority
+common.label.summary	Сводка	Summary
+common.meta.created	Создан	Created
+common.meta.updated	Изменён	Updated
+common.status.draft	Черновик	Draft
+common.status.in_progress	В работе	In progress
+common.status.ready	Готов	Ready
+common.status.archived	Архив	Archived
+content.back	Назад к проекту	Back to project
+content.create.name	Название контента	Content name
+content.create.name_required	Введите название контента.	Enter a content name.
+content.create.title	Новый контент	New content
+content.create.type	Тип контента	Content type
+content.deadline	Производственный дедлайн	Production deadline
+content.delete.description	Дополнительный контент будет удалён. Это действие нельзя отменить.	The additional content will be deleted. This action cannot be undone.
+content.delete.error.title	Не удалось удалить контент	Content deletion failed
+content.delete.error.description	Не удалось удалить контент. Попробуйте ещё раз.	Could not delete the content. Try again.
+content.delete.title	Удаление контента	Delete content
+content.error.title	Ошибка контента	Content error
+content.error.description	Не удалось получить данные контента.	Could not load content data.
+content.edit.title	Редактирование контента	Edit content
+content.not_found.title	Контент не найден	Content not found
+content.not_found.description	Контент больше не существует или недоступен.	The content no longer exists or is unavailable.
+content.progress	Прогресс	Progress
 content.role	Роль	Role
 content.role.main	Основной	Main
 content.role.additional	Дополнительный	Additional
-content.type	Тип	Type
-content.priority	Приоритет	Priority
-content.deadline	Производственный дедлайн	Production deadline
-content.status.draft	Черновик	Draft
-content.status.in_progress	В работе	In progress
-content.status.ready	Готов	Ready
-content.status.archived	Архив	Archived
-content.open	Открыть	Open
-content.back	Назад к проекту	Back to project
-content.summary	Сводка	Summary
-content.project	Проект	Project
-content.description	Описание	Description
-content.progress	Готовность	Progress
-content.created	Создан	Created
-content.updated	Изменён	Updated
-content.not_selected	Контент	Content
-content.not_found.title	Контент не найден	Content not found
-content.not_found.description	Контент больше не существует или недоступен.	The content no longer exists or is unavailable.
-content.error.title	Ошибка контента	Content error
-content.error.description	Не удалось получить данные контента.	Could not load content data.
-content.edit	Изменить	Edit
-content.delete	Удалить	Delete
-content.edit.title	Редактирование контента	Edit content
-content.edit.save	Сохранить	Save
-content.create.title	Новый контент	New content
-content.create.type	Тип контента	Content type
-content.create.name	Название контента	Content name
-content.create.description	Описание	Description
-content.create.priority	Приоритет	Priority
-content.create.cancel	Отмена	Cancel
-content.create.save	Создать	Create
-content.create.name_required	Введите название контента.	Enter a content name.
-content.create.no_types	Нет доступных типов контента.	No content types are available.
 content.save.error	Не удалось сохранить изменения контента. Проверьте введённые данные.	Could not save the content changes. Check the entered data.
-content.delete.title	Удаление контента	Delete content
-content.delete.description	Дополнительный контент будет удалён. Это действие нельзя отменить.	The additional content will be deleted. This action cannot be undone.
-content.delete.confirm	Удалить	Delete
-content.delete.cancel	Отмена	Cancel
-content.delete.error.title	Не удалось удалить контент	Content deletion failed
-content.delete.error.description	Не удалось удалить контент. Попробуйте ещё раз.	Could not delete the content. Try again.
+content.type	Тип	Type
+content.type.none_available	Нет доступных типов контента.	No content types are available.
+
+
+
+
+
+
 home	Главная	Home
 home.description	{appName} объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.	{appName} brings projects, content, tasks, materials, publications and analytics together in one workspace.
 library	Библиотека	Library
@@ -56,22 +59,12 @@ projects.empty.title	Проектов пока нет	No projects yet
 projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
 projects.error.title	Не удалось загрузить проекты	Could not load projects
 projects.error.description	Произошла ошибка при загрузке проектов.	An error occurred while loading projects.
-projects.retry	Повторить	Retry
-project.open	Открыть	Open
 project.back	Назад к проектам	Back to projects
-project.summary	Сводка	Summary
-project.description	Описание	Description
 project.status	Статус	Status
-project.release	Планируемая дата выхода	Planned release
+project.release	Планируемая дата выхода	Planned release date
 project.progress	Прогресс	Progress
 project.owner	Владелец	Owner
 project.owner.none	Не назначен	Not assigned
-project.created	Создан	Created
-project.updated	Изменён	Updated
-project.status.draft	Черновик	Draft
-project.status.active	В работе	Active
-project.status.archived	Архив	Archived
-project.not_selected	Проект	Project
 project.not_found.title	Проект не найден	Project not found
 project.not_found.description	Проект больше не существует или недоступен.	The project no longer exists or is unavailable.
 project.error.title	Ошибка проекта	Project error
@@ -79,30 +72,19 @@ project.error.description	Не удалось получить данные пр
 projects.create	Создать проект	Create project
 project.create.title	Новый проект	New project
 project.create.name	Название проекта	Project name
-project.create.description	Описание	Description
-project.create.release	Планируемая дата выхода	Planned release date
 project.create.content_type	Тип основного контента	Main content type
 project.create.content_name	Название основного контента	Main content name
-project.create.cancel	Отмена	Cancel
-project.create.save	Создать	Create
 project.create.error.title	Не удалось создать проект	Project creation failed
 project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
 project.create.name_required	Введите название проекта.	Enter a project name.
 project.create.content_name_required	Введите название основного контента.	Enter a name for the main content.
-project.create.no_content_types	Нет доступных типов контента.	No content types are available.
-project.edit	Изменить	Edit
 project.edit.title	Редактирование проекта	Edit project
-project.edit.save	Сохранить	Save
 project.edit.error.title	Не удалось изменить проект	Project update failed
 project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
-project.delete	Удалить	Delete
 project.delete.title	Удаление проекта	Delete project
 project.delete.description	Проект и весь связанный с ним контент будут удалены. Это действие нельзя отменить.	The project and all related content will be deleted. This action cannot be undone.
-project.delete.confirm	Удалить	Delete
-project.delete.cancel	Отмена	Cancel
 project.delete.error.title	Не удалось удалить проект	Project deletion failed
 project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
-project.content	Контент	Content
 settings	Настройки	Settings
 system	Система	System
 tasks	Задачи	Tasks
@@ -113,9 +95,7 @@ tasks.empty.title	Задач пока нет	No tasks yet
 tasks.empty.description	Созданные задачи появятся здесь.	Created tasks will appear here.
 tasks.error.title	Не удалось загрузить задачи	Could not load tasks
 tasks.error.description	Произошла ошибка при загрузке задач.	An error occurred while loading tasks.
-tasks.retry	Повторить	Retry
 task.status.todo	К выполнению	To do
-task.status.in_progress	В работе	In progress
 task.status.done	Выполнена	Done
 task.status.cancelled	Отменена	Cancelled
 task.deadline	Дедлайн	Deadline

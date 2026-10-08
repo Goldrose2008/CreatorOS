@@ -41,7 +41,7 @@ TasksPage::TasksPage(TaskService &taskService, LocalizationService &localization
     
     errorState_->setTitle(localization_.text(QStringLiteral("tasks.error.title")));
     errorState_->setDescription(localization_.text(QStringLiteral("tasks.error.description")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("tasks.retry")));
+    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
 
     stateStack_->addWidget(taskList_);
     stateStack_->addWidget(loadingState_);

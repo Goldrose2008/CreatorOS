@@ -38,122 +38,7 @@
 
 Используются для текстов конкретной страницы/раздела, а не для общих действий и подписей.
 
-## 3. Канонические общие ключи
-
-В результате текущего рефакторинга следующие дубли должны перейти на единые ID:
-
-| Новый ID | Текущие дублирующиеся ID |
-|---|---|
-| `common.label.priority` | `content.priority`, `content.create.priority` |
-| `common.status.draft` | `content.status.draft`, `project.status.draft` |
-| `common.status.in_progress` | `content.status.in_progress`, `project.status.active`, `task.status.in_progress` |
-| `common.status.ready` | `content.status.ready` |
-| `common.status.archived` | `content.status.archived`, `project.status.archived` |
-| `common.action.open` | `content.open`, `project.open` |
-| `common.label.summary` | `content.summary`, `project.summary` |
-| `common.entity.project` | `content.project`, `project.not_selected` |
-| `common.label.description` | `content.description`, `content.create.description`, `project.description`, `project.create.description` |
-| `common.entity.content` | `content.not_selected`, `project.content` |
-| `common.action.edit` | `content.edit`, `project.edit` |
-| `common.action.delete` | `content.delete`, `content.delete.confirm`, `project.delete`, `project.delete.confirm` |
-| `common.action.save` | `content.edit.save`, `project.edit.save` |
-| `common.action.cancel` | `content.create.cancel`, `content.delete.cancel`, `project.create.cancel`, `project.delete.cancel` |
-| `common.action.create` | `content.create.save`, `project.create.save` |
-| `common.action.retry` | `projects.retry`, `tasks.retry` |
-| `common.meta.created` | `content.created`, `project.created` |
-| `common.meta.updated` | `content.updated`, `project.updated` |
-
-For `common.status.in_progress` use the canonical translation:
-
-- RU: `В работе`
-- EN: `In progress`
-
-The Project domain may still contain the enum value `Active`; this does not require the localization ID to be named `active`. The UI translation expresses the common user-facing status.
-
-## 4. Project release label
-
-The two current IDs:
-
-- `project.release`
-- `project.create.release`
-
-represent the same user-facing label and should use one ID:
-
-`project.release`
-
-Canonical translation:
-
-- RU: `Планируемая дата выхода`
-- EN: `Planned release date`
-
-The same key is valid both for Project display and for the Project editor.
-
-## 5. Message about unavailable content types
-
-The following IDs contain the same phrase:
-
-- `content.create.no_types`
-- `project.create.no_content_types`
-
-Use one canonical ID:
-
-`content.type.none_available`
-
-Canonical translation:
-
-- RU: `Нет доступных типов контента.`
-- EN: `No content types are available.`
-
-The key belongs to the ContentType concept, even when it is displayed from Project creation.
-
-## 6. Что не объединяем
-
-Похожие тексты не должны объединяться автоматически.
-
-### Not found
-
-`content.not_found.*` и `project.not_found.*` отличаются сущностью. Их можно заменить на полностью общий `Not found` только если UI действительно устраивает потеря названия сущности в заголовке.
-
-Для текущего UI предпочтительно сохранить entity-specific title/description.
-
-### Back
-
-`content.back` и `project.back` содержат разную информацию о destination:
-
-- Back to project
-- Back to projects
-
-Они не являются дублями. Сохраняем оба.
-
-### Error
-
-`content.error.*` и `project.error.*` описывают разные сущности. Общий заголовок `Error` сейчас не даёт преимущества.
-
-### Edit title
-
-`content.edit.title` и `project.edit.title` различаются сущностью.
-
-### Form names и required messages
-
-`content.create.name`, `project.create.name`, `project.create.content_name` и соответствующие `*_required` имеют разный смысл.
-
-### Delete dialog titles/descriptions
-
-`content.delete.title`, `project.delete.title` и их description различаются не только сущностью, но и описанием удаляемых данных.
-
-### Loading / empty / error состояния страниц
-
-`projects.*` и `tasks.*` остаются page-specific.
-
-### Workspace
-
-`workspace`, `workspace.lowercase` и `your_workspace` имеют разные регистр/контекст и не объединяются.
-
-### Progress
-
-На текущий момент `content.progress` и `project.progress` нельзя считать полным дублем: в TSV русские формулировки различаются (`Готовность` и `Прогресс`), хотя английский текст одинаков. Пока сохраняем два ID.
-
-## 7. Правила для исходного кода
+## Правила для исходного кода
 
 При использовании общего текста source code обращается к его каноническому ID.
 
@@ -167,7 +52,7 @@ localization.text(QStringLiteral("common.action.delete"))
 
 Для динамических status ID нельзя механически строить строку из entity namespace, если часть статусов вынесена в `common.status.*`. При таком сценарии используется явное отображение enum → localization ID.
 
-## 8. Проверка перед добавлением нового ключа
+## 7. Проверка перед добавлением нового ключа
 
 Перед добавлением строки в `localization.tsv` разработчик проверяет:
 
@@ -179,7 +64,7 @@ localization.text(QStringLiteral("common.action.delete"))
 
 Цель — иметь один text ID для одного общего пользовательского текста, а не отдельный ID для каждой сущности.
 
-## 9. Техническое ограничение текущего LocalizationService
+## 8. Техническое ограничение текущего LocalizationService
 
 Текущий `LocalizationService` не проверяет:
 
