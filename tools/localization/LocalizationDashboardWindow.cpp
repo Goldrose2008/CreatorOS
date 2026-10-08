@@ -1,14 +1,16 @@
 #include "LocalizationDashboardWindow.h"
 
+#include <QAbstractItemView>
+#include <QComboBox>
 #include <QHeaderView>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QSplitter>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QSplitter>
-#include <QAbstractItemView>
 
 LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex)
@@ -31,9 +33,21 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
     searchEdit_ = new QLineEdit(centralWidget);
     searchEdit_->setPlaceholderText(QStringLiteral("Поиск по ID или переводу..."));
 
-    layout->addWidget(searchEdit_);
+    auto *filterLayout = new QHBoxLayout;
+
+    filterLayout->addWidget(searchEdit_);
+
+    statusFilter_ = new QComboBox(centralWidget);
+    statusFilter_->addItem(QStringLiteral("Все"), QStringLiteral("all"));
+    statusFilter_->addItem(QStringLiteral("Используется"), QStringLiteral("used"));
+    statusFilter_->addItem(QStringLiteral("Не используется"), QStringLiteral("unused"));
+
+    filterLayout->addWidget(statusFilter_);
+
+    layout->addLayout(filterLayout);
 
     summaryLabel_ = new QLabel(centralWidget);
+
     layout->addWidget(summaryLabel_);
 
     auto *catalogPanel = new QWidget(centralWidget);
@@ -124,6 +138,15 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
         });
 
     connect(
+        statusFilter_,
+        &QComboBox::currentIndexChanged,
+        this,
+        [this](int)
+        {
+            applyCatalogFilters();
+        });
+
+    connect(
         table_,
         &QTableWidget::itemSelectionChanged,
         this,
@@ -204,6 +227,7 @@ void LocalizationDashboardWindow::populateTable()
     }
 
     table_->setSortingEnabled(true);
+    applyCatalogFilters();
 
     summaryLabel_->setText(
         QStringLiteral(
@@ -214,27 +238,46 @@ void LocalizationDashboardWindow::populateTable()
 
 void LocalizationDashboardWindow::filterRows(const QString &text)
 {
-    const QString searchText = text.trimmed();
+    Q_UNUSED(text);
+    applyCatalogFilters();
+}
+
+void LocalizationDashboardWindow::applyCatalogFilters()
+{
+    const QString searchText = searchEdit_->text().trimmed();
+    const QString status = statusFilter_->currentData().toString();
+    const int statusColumn = table_->columnCount() - 1;
 
     for (int row = 0; row < table_->rowCount(); ++row)
     {
-        bool visible = searchText.isEmpty();
-
-        if (!visible)
-        {
-            for (int column = 0; column < table_->columnCount(); ++column)
+        const bool matchesSearch = searchText.isEmpty() || [&]()
             {
-                const QTableWidgetItem *item = table_->item(row, column);
-
-                if (item && item->text().contains(searchText, Qt::CaseInsensitive))
+                for (int column = 0; column < table_->columnCount(); ++column)
                 {
-                    visible = true;
-                    break;
+                    const QTableWidgetItem *item = table_->item(row, column);
+
+                    if (item && item->text().contains(searchText, Qt::CaseInsensitive))
+                    {
+                        return true;
+                    }
                 }
-            }
+
+                return false;
+            }();
+
+        const QString rowStatus = table_->item(row, statusColumn) ? table_->item(row, statusColumn)->text() : QString();
+        bool matchesStatus = true;
+
+        if (status == QStringLiteral("used"))
+        {
+            matchesStatus = rowStatus == QStringLiteral("Используется");
+        }
+        else if (status == QStringLiteral("unused"))
+        {
+            matchesStatus = rowStatus == QStringLiteral("Не используется");
         }
 
-        table_->setRowHidden(row, !visible);
+        table_->setRowHidden(row, !(matchesSearch && matchesStatus));
     }
 }
 
@@ -259,7 +302,7 @@ void LocalizationDashboardWindow::showSelectedUsage()
         auto *lineItem = new QTableWidgetItem(QString::number(usage.line));
         lineItem->setTextAlignment(Qt::AlignCenter);
         usageTable_->setItem(row, 1, lineItem);
-        
+
         auto *columnItem = new QTableWidgetItem(QString::number(usage.column));
         columnItem->setTextAlignment(Qt::AlignCenter);
         usageTable_->setItem(row, 2, columnItem);

@@ -6,6 +6,7 @@
 #include <QMainWindow>
 
 class QLabel;
+class QComboBox;
 class QLineEdit;
 class QTableWidget;
 
@@ -17,6 +18,7 @@ public:
 private:
     void populateTable();
     void filterRows(const QString &text);
+    void applyCatalogFilters();
     void showSelectedUsage();
     void populateProblems();
     void selectProblemTarget();
@@ -25,6 +27,7 @@ private:
     const LocalizationUsageIndex &usageIndex_;
 
     QLineEdit *searchEdit_ = nullptr;
+    QComboBox *statusFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
     QTableWidget *usageTable_ = nullptr;
