@@ -1,8 +1,5 @@
 id	ru	en
 analytics	Аналитика	Analytics
-bridge.connecting	Подключение...	Connecting...
-bridge.connected	C++ bridge подключён	C++ bridge connected
-bridge.error	Ошибка подключения	Connection error
 content.role	Роль	Role
 content.role.main	Основной	Main
 content.role.additional	Дополнительный	Additional
@@ -66,7 +63,7 @@ project.summary	Сводка	Summary
 project.description	Описание	Description
 project.status	Статус	Status
 project.release	Планируемая дата выхода	Planned release
-project.progress	Готовность	Progress
+project.progress	Прогресс	Progress
 project.owner	Владелец	Owner
 project.owner.none	Не назначен	Not assigned
 project.created	Создан	Created
