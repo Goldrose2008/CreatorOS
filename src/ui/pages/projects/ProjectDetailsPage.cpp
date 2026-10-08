@@ -201,7 +201,7 @@ ProjectDetailsPage::ProjectDetailsPage(
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setHorizontalSpacing(CreatorMetrics::SpacingLarge);
     grid->setVerticalSpacing(CreatorMetrics::SpacingSmall);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.status")), summarySection_), 0, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.status")), summarySection_), 0, 0);
     grid->addWidget(statusLabel_, 0, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.release")), summarySection_), 1, 0);
     grid->addWidget(releaseLabel_, 1, 1);

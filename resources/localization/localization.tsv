@@ -28,6 +28,7 @@ common.state.error.load	Произошла ошибка при загрузке 
 common.state.loading	Загрузка...	Loading...
 common.state.not_found.title	Не найдено	Not found
 common.state.not_found.description	Объект больше не существует или недоступен.	The object no longer exists or is unavailable.
+common.status	Статус	Status
 common.status.draft	Черновик	Draft
 common.status.in_progress	В работе	In progress
 common.status.ready	Готов	Ready
@@ -54,7 +55,6 @@ project.create.title	Новый проект	New project
 project.owner	Владелец	Owner
 project.owner.none	Не назначен	Not assigned
 project.release	Планируемая дата выхода	Planned release date
-project.status	Статус	Status
 project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
 project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
 projects	Проекты	Projects
