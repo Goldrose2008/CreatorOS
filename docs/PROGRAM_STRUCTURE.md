@@ -42,7 +42,7 @@ src/app/
 |---|---|
 | `src/app/AppInfo.h` | Единственный источник имени и версии приложения. |
 | `src/app/MainWindow.h` | Объявление главного окна CreatorOS на базе `QMainWindow`. |
-| `src/app/MainWindow.cpp` | Создаёт главное окно, инициализирует БД и Project-слой, создаёт `AppShell` и устанавливает его как центральный виджет. |
+| `src/app/MainWindow.cpp` | Создаёт главное окно, инициализирует БД, собирает Project/Content/Task application-слои, создаёт `AppShell` и устанавливает его как центральный виджет. |
 
 ## 3.2. Точка входа
 
@@ -72,6 +72,8 @@ src/domain/
 | `src/domain/models/Content.h` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
 | `src/domain/models/Content.cpp` | Преобразование роли Content между типом `ContentRole` и строковым представлением, используемым хранилищем. |
 | `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
+| `src/domain/models/Task.h` | Доменная модель Task: контекст родителя, иерархия задач, название, описание, дедлайн, статус, приоритет и временные метки. |
+| `src/domain/models/Task.cpp` | Преобразование типа родителя и статуса Task между enum и строковым представлением хранилища. |
 
 ---
 
@@ -80,15 +82,21 @@ Application-слой содержит пользовательские сцен�
 
 ```text
 src/application/
+├── common/
+│   └── StringUtils.h
 ├── content/
 │   ├── ContentService.cpp
 │   ├── ContentService.h
 │   ├── IContentRepository.h
 │   └── IContentTypeRepository.h
-└── projects/
-    ├── IProjectRepository.h
-    ├── ProjectService.cpp
-    └── ProjectService.h
+├── projects/
+│   ├── IProjectRepository.h
+│   ├── ProjectService.cpp
+│   └── ProjectService.h
+└── tasks/
+    ├── ITaskRepository.h
+    ├── TaskService.cpp
+    └── TaskService.h
 ```
 
 | Файл | Назначение |
@@ -100,6 +108,10 @@ src/application/
 | `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 | `src/application/projects/ProjectService.h` | Публичный контракт application service для сценариев работы с Project. |
 | `src/application/projects/ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
+| `src/application/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
+| `src/application/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
+| `src/application/tasks/TaskService.h` | Публичный контракт application service для получения и базовых операций Task. |
+| `src/application/tasks/TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
 
 ---
 
@@ -116,7 +128,9 @@ src/infrastructure/
     ├── DatabaseManager.cpp
     ├── DatabaseManager.h
     ├── ProjectRepository.cpp
-    └── ProjectRepository.h
+    ├── ProjectRepository.h
+    ├── TaskRepository.cpp
+    └── TaskRepository.h
 ```
 
 | Файл | Назначение |
@@ -129,6 +143,8 @@ src/infrastructure/
 | `src/infrastructure/database/DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
 | `src/infrastructure/database/ProjectRepository.h` | Объявление SQLite-реализации `IProjectRepository`. |
 | `src/infrastructure/database/ProjectRepository.cpp` | SQL-операции с таблицей `projects`: чтение, создание, изменение и удаление проектов. |
+| `src/infrastructure/database/TaskRepository.h` | Объявление SQLite-реализации `ITaskRepository`. |
+| `src/infrastructure/database/TaskRepository.cpp` | SQL-операции с таблицей `tasks`: чтение списка, выборка по контексту родителя/иерархии, создание, изменение и удаление Task. |
 
 ---
 
@@ -139,7 +155,8 @@ database/
 └── migrations/
     ├── 001_initial.sql
     ├── 002_content_and_content_types.sql
-    └── 003_full_content.sql
+    ├── 003_full_content.sql
+    └── 004_tasks.sql
 ```
 
 | Файл | Назначение |
@@ -147,6 +164,7 @@ database/
 | `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
 | `database/migrations/002_content_and_content_types.sql` | Вторая версия структуры SQLite: создаёт `content_types` и `contents`, связывает Content с Project/ContentType, ограничивает один `main` Content на Project и добавляет базовые типы контента. |
 | `database/migrations/003_full_content.sql` | Третья версия структуры SQLite: расширяет `contents` полями description, priority, production deadline, status, progress и временными метками. |
+| `database/migrations/004_tasks.sql` | Четвёртая версия структуры SQLite: создаёт `tasks` с контекстом Project/Content, иерархией через `parent_task_id`, статусами, приоритетом и дедлайном. |
 
 ---
 
@@ -392,6 +410,25 @@ src/ui/pages/content/
 
 Content UI поддерживает просмотр Main/Additional Content внутри Project, создание Additional Content, редактирование Content и удаление только Additional Content.
  
+## 8.4.2. Tasks
+
+```text
+src/ui/pages/tasks/
+├── TaskCard.cpp
+├── TaskCard.h
+├── TasksPage.cpp
+└── TasksPage.h
+```
+
+| Файл | Назначение |
+|---|---|
+| `src/ui/pages/tasks/TaskCard.h` | Объявление специализированного UI-класса `TaskCard`, наследующего `EntityCard` и работающего с моделью Task. |
+| `src/ui/pages/tasks/TaskCard.cpp` | Реализация карточки Task: название, описание, статус, дедлайн и информация о родительской Task через общие механизмы `EntityCard`. |
+| `src/ui/pages/tasks/TasksPage.h` | Объявление целостной страницы списка задач, использующей `TaskService`, `EntityList` и общие loading/empty/error states. |
+| `src/ui/pages/tasks/TasksPage.cpp` | Реализация загрузки списка Task через `TaskService` и отображение `TaskCard` в единой странице Tasks. |
+
+Tasks UI на текущей контрольной точке поддерживает просмотр общего списка задач. Создание, подробности и workflow Task относятся к последующим подэтапам.
+
 ## 8.5. Shell — `src/ui/shell`
 
 ```text
