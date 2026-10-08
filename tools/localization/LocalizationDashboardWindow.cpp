@@ -250,7 +250,7 @@ void LocalizationDashboardWindow::populateTable()
 
         auto *usageItem = new QTableWidgetItem(QString::number(usageCount));
         usageItem->setTextAlignment(Qt::AlignCenter);
-
+        usageItem->setFlags(usageItem->flags() & ~Qt::ItemIsEditable);
         table_->setItem(row, usageColumn, usageItem);
 
         auto *statusItem = new QTableWidgetItem(usageCount > 0 ? QStringLiteral("Используется") : QStringLiteral("Не используется"));
