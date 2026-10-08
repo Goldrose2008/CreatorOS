@@ -258,7 +258,31 @@ Localization Dashboard считается базово готовым, когд�
 - Определён более универсальный принцип: общие Back, Error, Edit, Not Found, Delete, Name, Loading/Empty/Error states и Progress используют канонические `common.*` ключи; entity-specific ключ создаётся только при реальном отличии смысла или контекста.
 - Создан `docs/LOCALIZATION.md` с правилами именования text ID и таблицей предстоящей дедупликации.
 - `TECHNICAL_SPEC.md` дополнен постоянными правилами предотвращения дублирования локализаций, а `PROGRAM_STRUCTURE.md` отражает новый документ.
+## 08.10.2026
+### Аудит и дедупликация локализации
+- Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
+- Подтверждено, что одинаковые переводы сейчас могут храниться под разными ID: `LocalizationService` не выполняет семантическую проверку дублей.
+- Определена модель канонических общих ключей `common.*` для общих действий, статусов, подписей и метаданных.
+- Определён более универсальный принцип: общие Back, Error, Edit, Not Found, Delete, Name, Loading/Empty/Error states и Progress используют канонические `common.*` ключи; entity-specific ключ создаётся только при реальном отличии смысла или контекста.
+- Создан `docs/LOCALIZATION.md` с правилами именования text ID и таблицей предстоящей дедупликации.
+- `TECHNICAL_SPEC.md` дополнен постоянными правилами предотвращения дублирования локализаций, а `PROGRAM_STRUCTURE.md` отражает новый документ.
 - Изменение `localization.tsv` и source-code вызовов остаётся пользовательской правкой по проектному правилу; после выполнения потребуется Debug build и функциональная проверка всех затронутых экранов.
+
+### Этап LD-1 — фундамент Localization Dashboard
+- Создан отдельный target `CreatorOSLocalization`, не входящий в runtime приложения.
+- Реализованы `LocalizationEntry`, `LocalizationCatalog` и `LocalizationTsvStore`; TSV хранится отдельно от UI.
+- Сборка developer tool подтверждена пользователем.
+
+### Этап LD-2 — Source Scanner и Usage Index
+- Созданы `LocalizationUsage`, `LocalizationUsageIndex` и `LocalizationSourceScanner`; их пути отражены в `PROGRAM_STRUCTURE.md`.
+- Source Scanner рекурсивно анализирует актуальный `src/` и распознаёт статические обращения формата `localization...text(QStringLiteral("id"))`.
+- Нераспознанные вызовы `localization...text(...)` фиксируются отдельно как динамические ссылки и не считаются missing ID.
+- Контрольный запуск на текущем исходном дереве дал: **69 entries**, **140 статических использований**, **69 уникальных статически используемых ID**, **0 unused**, **0 missing**, **3 dynamic references**.
+- Все 69 записей каталога имеют хотя бы одно статическое использование.
+- Три динамические ссылки находятся в `src/ui/pages/content/ContentDetails.cpp` для `content.role.` и `common.status.`, а также в `src/ui/shell/MenuComposer.cpp`; они намеренно не участвуют в автоматическом сопоставлении ID.
+- Формат статической ссылки зафиксирован как основа для будущего безопасного Rename ID; динамические ссылки должны оставаться отдельным предупреждением для LD-5/LD-6.
+- Commit пользователя: `4a1ca5e5085acdfdbf96a515bd1436cf413c0cfe` (`Этап LD-2 — Source Scanner и Usage Index`), сборка и контрольный запуск успешны.
+- LD-2 завершён. Следующая контрольная точка — LD-3: первый Qt Widgets-интерфейс Localization Dashboard.
 
 
 
