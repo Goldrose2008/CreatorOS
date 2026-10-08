@@ -1,4 +1,5 @@
 #include "LocalizationDashboardWindow.h"
+#include "LocalizationRefactorService.h"
 #include "LocalizationTsvStore.h"
 
 #include <QAbstractItemView>
@@ -19,8 +20,8 @@
 #include <QFormLayout>
 #include <QCloseEvent>
 
-LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent)
-    : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath)
+LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent)
+    : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath), sourceRoot_(sourceRoot)
 {
     setWindowTitle(QStringLiteral("CreatorOS — Панель локализации"));
     resize(1100, 700);
@@ -54,10 +55,13 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     addButton_ = new QPushButton(QStringLiteral("Добавить"), centralWidget);
     filterLayout->addWidget(addButton_);
 
+    renameButton_ = new QPushButton(QStringLiteral("Переименовать"), centralWidget);
+    renameButton_->setEnabled(false);
+    filterLayout->addWidget(renameButton_);
+
     deleteButton_ = new QPushButton(QStringLiteral("Удалить"), centralWidget);
     deleteButton_->setEnabled(false);
-
-filterLayout->addWidget(deleteButton_);
+    filterLayout->addWidget(deleteButton_);
 
     saveButton_ = new QPushButton(QStringLiteral("Сохранить"), centralWidget);
     saveButton_->setEnabled(false);
@@ -173,6 +177,7 @@ filterLayout->addWidget(deleteButton_);
         {
             showSelectedUsage();
             updateDeleteButtonState();
+            updateRenameButtonState();
         });
 
     connect(
@@ -212,6 +217,15 @@ filterLayout->addWidget(deleteButton_);
         [this]()
         {
             deleteEntry();
+        });
+
+    connect(
+        renameButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            renameEntry();
         });
 
     connect(
@@ -603,6 +617,11 @@ void LocalizationDashboardWindow::updateDeleteButtonState()
     deleteButton_->setEnabled(!table_->selectedItems().isEmpty());
 }
 
+void LocalizationDashboardWindow::updateRenameButtonState()
+{
+    renameButton_->setEnabled(!table_->selectedItems().isEmpty());
+}
+
 void LocalizationDashboardWindow::deleteEntry()
 {
     const QList<QTableWidgetItem *> selectedItems = table_->selectedItems();
@@ -687,5 +706,163 @@ void LocalizationDashboardWindow::closeEvent(QCloseEvent *event)
     }
 
     event->ignore();
+}
+
+void LocalizationDashboardWindow::renameEntry()
+{
+    const QList<QTableWidgetItem *> selectedItems = table_->selectedItems();
+    if (selectedItems.isEmpty()){return;}
+
+    const int row = selectedItems.first()->row();
+    QTableWidgetItem *idItem = table_->item(row, 0);
+    if (!idItem){return;}
+
+    const QString oldId = idItem->text().trimmed();
+    if (oldId.isEmpty()){return;}
+
+    QDialog dialog(this);
+    dialog.setWindowTitle(QStringLiteral("Переименование локализации"));
+
+    auto *layout = new QFormLayout(&dialog);
+    auto *newIdEdit = new QLineEdit(&dialog);
+
+    layout->addRow(QStringLiteral("Текущий ID:"), new QLabel(oldId, &dialog));
+    layout->addRow(QStringLiteral("Новый ID:"), newIdEdit);
+
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+
+    connect(
+        buttons,
+        &QDialogButtonBox::accepted,
+        &dialog,
+        [&]()
+        {
+            const QString newId = newIdEdit->text().trimmed();
+
+            if (newId.isEmpty())
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("Переименование"), QStringLiteral("Новый идентификатор не может быть пустым."));
+                newIdEdit->setFocus();
+                return;
+            }
+
+            if (newId == oldId)
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("Переименование"), QStringLiteral("Новый идентификатор должен отличаться от текущего."));
+                newIdEdit->setFocus();
+                newIdEdit->selectAll();
+                return;
+            }
+
+            if (catalog_.contains(newId))
+            {
+                QMessageBox::warning(&dialog, QStringLiteral("Переименование"), QStringLiteral("Идентификатор уже существует: %1").arg(newId));
+                newIdEdit->setFocus();
+                newIdEdit->selectAll();
+                return;
+            }
+
+            dialog.accept();
+        });
+
+    connect(
+        buttons,
+        &QDialogButtonBox::rejected,
+        &dialog,
+        &QDialog::reject);
+
+    if (dialog.exec() != QDialog::Accepted)
+    {
+        return;
+    }
+
+    const QString newId = newIdEdit->text().trimmed();
+
+    LocalizationRefactorService refactorService;
+    LocalizationRenamePreview preview;
+    QString error;
+
+    if (!refactorService.previewRename(sourceRoot_, usageIndex_, oldId, newId, preview, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка preview"), error);
+        return;
+    }
+
+    QDialog previewDialog(this);
+    previewDialog.setWindowTitle(QStringLiteral("Preview переименования"));
+    previewDialog.resize(1000, 600);
+
+    auto *previewLayout = new QVBoxLayout(&previewDialog);
+    previewLayout->addWidget(new QLabel(QStringLiteral("ID каталога: %1 → %2").arg(oldId, newId), &previewDialog));
+
+    auto *changesLabel = new QLabel(QStringLiteral("Статических изменений в исходниках: %1").arg(preview.changes.size()), &previewDialog);
+    previewLayout->addWidget(changesLabel);
+
+    auto *changesTable = new QTableWidget(&previewDialog);
+    changesTable->setColumnCount(5);
+    changesTable->setHorizontalHeaderLabels(
+        {
+            QStringLiteral("Файл"),
+            QStringLiteral("Строка"),
+            QStringLiteral("Столбец"),
+            QStringLiteral("До"),
+            QStringLiteral("После")
+        });
+
+    changesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    changesTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    changesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    changesTable->setAlternatingRowColors(true);
+    changesTable->setWordWrap(false);
+
+    changesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    changesTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    changesTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    changesTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    changesTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+
+    for (const LocalizationRenameChange &change : preview.changes)
+    {
+        const int previewRow = changesTable->rowCount();
+        changesTable->insertRow(previewRow);
+
+        changesTable->setItem(previewRow, 0, new QTableWidgetItem(change.filePath));
+        auto *lineItem = new QTableWidgetItem(QString::number(change.line));
+
+        lineItem->setTextAlignment(Qt::AlignCenter);
+        changesTable->setItem(previewRow, 1, lineItem);
+
+        auto *columnItem = new QTableWidgetItem(QString::number(change.column));
+        columnItem->setTextAlignment(Qt::AlignCenter);
+        changesTable->setItem(previewRow, 2, columnItem);
+
+        changesTable->setItem(previewRow, 3, new QTableWidgetItem(change.beforeLine));
+        changesTable->setItem(previewRow, 4, new QTableWidgetItem(change.afterLine));
+    }
+
+    previewLayout->addWidget(changesTable);
+
+    if (!preview.dynamicReferences.isEmpty())
+    {
+        previewLayout->addWidget(
+            new QLabel(
+                QStringLiteral(
+                    "Предупреждение: обнаружено динамических localization-ссылок: %1. "
+                    "Они не будут изменены автоматически.").arg(preview.dynamicReferences.size()), &previewDialog));
+    }
+
+    if (preview.changes.isEmpty())
+    {
+        previewLayout->addWidget(new QLabel(QStringLiteral(
+                    "В исходном коде статических обращений к этому ID не найдено. "
+                    "Будет изменён только ID в каталоге."), &previewDialog));
+    }
+
+    auto *previewButtons = new QDialogButtonBox(QDialogButtonBox::Close, &previewDialog);
+    previewLayout->addWidget(previewButtons);
+
+    connect(previewButtons, &QDialogButtonBox::rejected, &previewDialog, &QDialog::reject);
+    previewDialog.exec();
 }
 

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    LocalizationDashboardWindow window(catalog, usageIndex, localizationPath);
+    LocalizationDashboardWindow window(catalog, usageIndex, localizationPath, sourceRoot);
     window.show();
 
     return application.exec();

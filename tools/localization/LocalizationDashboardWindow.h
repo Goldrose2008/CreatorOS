@@ -16,7 +16,7 @@ class QPushButton;
 class LocalizationDashboardWindow final : public QMainWindow
 {
 public:
-    LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent = nullptr);
+    LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -33,6 +33,8 @@ private:
     void addEntry();
     void deleteEntry();
     void updateDeleteButtonState();
+    void updateRenameButtonState();
+    void renameEntry();
     void updateDirtyState(bool dirty);
 
     LocalizationCatalog &catalog_;
@@ -42,10 +44,12 @@ private:
     QPushButton *saveButton_ = nullptr;
     QPushButton *addButton_ = nullptr;
     QPushButton *deleteButton_ = nullptr;
+    QPushButton *renameButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
     QString localizationPath_;
+    QString sourceRoot_;
     bool dirty_ = false;
     QTableWidget *usageTable_ = nullptr;
     QTableWidget *problemsTable_ = nullptr;
