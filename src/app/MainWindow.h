@@ -10,6 +10,8 @@ class ProjectService;
 class ContentTypeRepository;
 class ContentRepository;
 class ContentService;
+class TaskRepository;
+class TaskService;
 
 class MainWindow final : public QMainWindow
 {
@@ -28,4 +30,6 @@ private:
     
     std::unique_ptr<ProjectService> projectService_;
     std::unique_ptr<ContentService> contentService_;
+    std::unique_ptr<TaskRepository> taskRepository_;
+    std::unique_ptr<TaskService> taskService_;
 };
