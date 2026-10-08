@@ -558,5 +558,7 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationUsageIndex.cpp` | Хранит статические использования по ID, места использования и динамические ссылки. |
 | `tools/localization/LocalizationSourceScanner.h` | Контракт рекурсивного сканирования исходного дерева. |
 | `tools/localization/LocalizationSourceScanner.cpp` | Сканирует `src/`, распознаёт безопасный статический формат localization references и отдельно фиксирует динамические вызовы. |
-| `tools/localization/main.cpp` | CLI-точка входа developer tool: загружает TSV, запускает source scanner и выводит usage, unused, missing и dynamic references. |
+| `tools/localization/LocalizationDashboardWindow.h` | Контракт главного Qt Widgets-окна Localization Dashboard и его таблицы/поиска. |
+| `tools/localization/LocalizationDashboardWindow.cpp` | Реализация первого Dashboard UI: таблица каталога, usage-счётчики, сводка и поиск. |
+| `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
 
