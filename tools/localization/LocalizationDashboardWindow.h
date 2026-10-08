@@ -19,6 +19,7 @@ private:
     void filterRows(const QString &text);
     void showSelectedUsage();
     void populateProblems();
+    void selectProblemTarget();
 
     const LocalizationCatalog &catalog_;
     const LocalizationUsageIndex &usageIndex_;
