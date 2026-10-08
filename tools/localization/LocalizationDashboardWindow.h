@@ -27,6 +27,8 @@ private:
     void onTranslationChanged(QTableWidgetItem *item);
     void saveCatalog();
     void addEntry();
+    void deleteEntry();
+    void updateDeleteButtonState();
     void updateDirtyState(bool dirty);
 
     LocalizationCatalog &catalog_;
@@ -35,6 +37,7 @@ private:
     QLineEdit *searchEdit_ = nullptr;
     QPushButton *saveButton_ = nullptr;
     QPushButton *addButton_ = nullptr;
+    QPushButton *deleteButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;

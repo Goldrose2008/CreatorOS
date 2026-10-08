@@ -53,6 +53,11 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     addButton_ = new QPushButton(QStringLiteral("Добавить"), centralWidget);
     filterLayout->addWidget(addButton_);
 
+    deleteButton_ = new QPushButton(QStringLiteral("Удалить"), centralWidget);
+    deleteButton_->setEnabled(false);
+
+filterLayout->addWidget(deleteButton_);
+
     saveButton_ = new QPushButton(QStringLiteral("Сохранить"), centralWidget);
     saveButton_->setEnabled(false);
     filterLayout->addWidget(saveButton_);
@@ -166,6 +171,7 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this]()
         {
             showSelectedUsage();
+            updateDeleteButtonState();
         });
 
     connect(
@@ -196,6 +202,15 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this]()
         {
             addEntry();
+        });
+
+    connect(
+        deleteButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            deleteEntry();
         });
 
     connect(
@@ -577,5 +592,54 @@ void LocalizationDashboardWindow::addEntry()
         table_->scrollToItem(item);
         table_->selectRow(item->row());
     }
+
+    updateDeleteButtonState();
+}
+
+void LocalizationDashboardWindow::updateDeleteButtonState()
+{
+    deleteButton_->setEnabled(!table_->selectedItems().isEmpty());
+}
+
+void LocalizationDashboardWindow::deleteEntry()
+{
+    const QList<QTableWidgetItem *> selectedItems = table_->selectedItems();
+
+    if (selectedItems.isEmpty()){return;}
+
+    const int row = selectedItems.first()->row();
+    QTableWidgetItem *idItem = table_->item(row, 0);
+    if (!idItem){return;}
+
+    const QString id = idItem->text().trimmed();
+    if (id.isEmpty()){return;}
+
+    const int usageCount = usageIndex_.usageCount(id);
+    QString message = QStringLiteral("Удалить запись «%1»?").arg(id);
+
+    if (usageCount > 0)
+    {
+        message += QStringLiteral(
+                "\n\nВ исходном коде найдено использований: %1."
+                "\nУдаление создаст отсутствующий localization ID.").arg(usageCount);
+    }
+
+    const QMessageBox::StandardButton result = QMessageBox::warning(this, QStringLiteral("Удаление локализации"), message, QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (result != QMessageBox::Yes){return;}
+
+    QString error;
+
+    if (!catalog_.removeEntry(id, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка удаления"), error);
+        return;
+    }
+
+    updateDirtyState(true);
+    populateTable();
+    populateProblems();
+    usageTable_->setRowCount(0);
+    usageTitleLabel_->setText(QStringLiteral("Места использования"));
+    updateDeleteButtonState();
 }
 
