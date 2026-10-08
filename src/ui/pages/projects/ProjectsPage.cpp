@@ -66,7 +66,7 @@ ProjectsPage::ProjectsPage(
     loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
     
     emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description_once")));
+    emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description")));
 
     errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
     errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));

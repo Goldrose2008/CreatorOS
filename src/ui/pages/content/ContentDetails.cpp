@@ -183,7 +183,7 @@ ContentDetails::ContentDetails(
     grid->addWidget(typeLabel_, 1, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.role")), summarySection_), 2, 0);
     grid->addWidget(roleLabel_, 2, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.status")), summarySection_), 3, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.status")), summarySection_), 3, 0);
     grid->addWidget(statusLabel_, 3, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.priority")), summarySection_), 4, 0);
     grid->addWidget(priorityLabel_, 4, 1);

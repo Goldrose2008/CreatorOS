@@ -8,9 +8,9 @@ common.action.edit	Изменить	Edit
 common.action.open	Открыть	Open
 common.action.retry	Повторить	Retry
 common.action.save	Сохранить	Save
-common.dialog.delete.title	Удаление	Delete
+common.dialog.delete.title	Удаление	Deletion
 common.dialog.delete.description	Выбранный объект будет удалён. Это действие нельзя отменить.	The selected item will be deleted. This action cannot be undone.
-common.dialog.edit.title	Редактирование	Edit
+common.dialog.edit.title	Редактирование	Editing
 common.entity.content	Контент	Content
 common.entity.project	Проект	Project
 common.entity.workspace	Рабочее пространство	Workspace
@@ -18,6 +18,7 @@ common.label.description	Описание	Description
 common.label.name	Название	Name
 common.label.priority	Приоритет	Priority
 common.label.progress	Прогресс	Progress
+common.label.status	Статус	Status
 common.label.summary	Сводка	Summary
 common.meta.created	Создан	Created
 common.meta.updated	Изменён	Updated
@@ -28,7 +29,6 @@ common.state.error.load	Произошла ошибка при загрузке 
 common.state.loading	Загрузка...	Loading...
 common.state.not_found.title	Не найдено	Not found
 common.state.not_found.description	Объект больше не существует или недоступен.	The object no longer exists or is unavailable.
-common.status	Статус	Status
 common.status.draft	Черновик	Draft
 common.status.in_progress	В работе	In progress
 common.status.ready	Готов	Ready
@@ -45,9 +45,7 @@ content.save.error	Не удалось сохранить изменения к�
 content.type	Тип	Type
 content.type.none_available	Нет доступных типов контента.	No content types are available.
 home	Главная	Home
-home.description	{appName} объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.	{appName} brings projects, content, tasks, materials, publications and analytics together in one workspace.
 library	Библиотека	Library
-main_navigation	Основная навигация	Main navigation
 planning	Планирование	Planning
 project.create.content_type	Тип основного контента	Main content type
 project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
@@ -60,7 +58,7 @@ project.edit.error.description	Не удалось сохранить измен
 projects	Проекты	Projects
 projects.create	Создать проект	Create project
 projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
-projects.empty.description_once	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
+projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
 settings	Настройки	Settings
 system	Система	System
 task.deadline	Дедлайн	Deadline
@@ -69,6 +67,4 @@ task.status.todo	К выполнению	To do
 task.status.done	Выполнена	Done
 task.status.cancelled	Отменена	Cancelled
 tasks	Задачи	Tasks
-tasks.active	Активные задачи появятся здесь	Active tasks will appear here
 tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.
-welcome	Добро пожаловать	Welcome
