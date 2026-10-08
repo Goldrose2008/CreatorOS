@@ -14,8 +14,6 @@ find_package(Qt6 6.11 REQUIRED COMPONENTS
     Widgets
     Sql
     Network
-    WebEngineWidgets
-    WebChannel
 )
 
 qt_standard_project_setup()
@@ -26,6 +24,7 @@ qt_add_executable(CreatorOS
     WIN32
 
     src/main.cpp
+    
     src/app/MainWindow.cpp
     src/app/MainWindow.h
 
@@ -56,9 +55,6 @@ qt_add_executable(CreatorOS
     src/infrastructure/database/ProjectRepository.h
     src/infrastructure/database/TaskRepository.cpp
     src/infrastructure/database/TaskRepository.h
-
-    src/ui/bridge/WebBridge.cpp
-    src/ui/bridge/WebBridge.h
 
     src/ui/components/entity/EntityHeader.cpp
     src/ui/components/entity/EntityHeader.h
@@ -146,15 +142,11 @@ qt_add_executable(CreatorOS
     src/ui/shell/MenuComposer.cpp
     src/ui/shell/MenuComposer.h
 
-    src/ui/shell/WebUiHost.cpp
-    src/ui/shell/WebUiHost.h
-
     src/ui/style/CreatorStyle.cpp
     src/ui/style/CreatorStyle.h
     src/ui/style/Icons.cpp
     src/ui/style/Icons.h
 
-    resources/web.qrc
     resources/localization.qrc
     resources/database.qrc
 
@@ -167,8 +159,6 @@ target_link_libraries(CreatorOS
         Qt6::Widgets
         Qt6::Sql
         Qt6::Network
-        Qt6::WebEngineWidgets
-        Qt6::WebChannel
 )
 
 if(WIN32)
