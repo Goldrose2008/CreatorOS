@@ -152,6 +152,20 @@ qt_add_executable(CreatorOS
 
 )
 
+qt_add_executable(CreatorOSLocalization
+    tools/localization/main.cpp
+    tools/localization/LocalizationEntry.h
+    tools/localization/LocalizationCatalog.cpp
+    tools/localization/LocalizationCatalog.h
+    tools/localization/LocalizationTsvStore.cpp
+    tools/localization/LocalizationTsvStore.h
+)
+
+target_link_libraries(CreatorOSLocalization
+    PRIVATE
+        Qt6::Core
+)
+
 target_link_libraries(CreatorOS
     PRIVATE
         Qt6::Core
