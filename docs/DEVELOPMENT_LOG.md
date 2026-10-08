@@ -251,13 +251,6 @@ Localization Dashboard считается базово готовым, когд�
 - Создан отдельный документ docs/THIRD_PARTY_LICENSES.md с реестром, release checklist и правилами для будущих зависимостей.
 - PROGRAM_STRUCTURE.md дополнен новым документом, а TECHNICAL_SPEC.md теперь прямо ссылается на него как на рабочий реестр лицензий.
 
-### Аудит и дедупликация локализации
-- Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
-- Подтверждено, что одинаковые переводы сейчас могут храниться под разными ID: `LocalizationService` не выполняет семантическую проверку дублей.
-- Определена модель канонических общих ключей `common.*` для общих действий, статусов, подписей и метаданных.
-- Определён более универсальный принцип: общие Back, Error, Edit, Not Found, Delete, Name, Loading/Empty/Error states и Progress используют канонические `common.*` ключи; entity-specific ключ создаётся только при реальном отличии смысла или контекста.
-- Создан `docs/LOCALIZATION.md` с правилами именования text ID и таблицей предстоящей дедупликации.
-- `TECHNICAL_SPEC.md` дополнен постоянными правилами предотвращения дублирования локализаций, а `PROGRAM_STRUCTURE.md` отражает новый документ.
 ## 08.10.2026
 ### Аудит и дедупликация локализации
 - Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
@@ -283,6 +276,4 @@ Localization Dashboard считается базово готовым, когд�
 - Формат статической ссылки зафиксирован как основа для будущего безопасного Rename ID; динамические ссылки должны оставаться отдельным предупреждением для LD-5/LD-6.
 - Commit пользователя: `4a1ca5e5085acdfdbf96a515bd1436cf413c0cfe` (`Этап LD-2 — Source Scanner и Usage Index`), сборка и контрольный запуск успешны.
 - LD-2 завершён. Следующая контрольная точка — LD-3: первый Qt Widgets-интерфейс Localization Dashboard.
-
-
 
