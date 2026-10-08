@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     if (!databaseManager_.initialize(&databaseError))
     {
-        QMessageBox::critical(this, QStringLiteral("CreatorOS"), databaseError);
+        QMessageBox::critical(this, QString::fromLatin1(AppInfo::Name), databaseError);
         return;
     }
 
