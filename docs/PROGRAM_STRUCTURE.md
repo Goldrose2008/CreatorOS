@@ -559,6 +559,6 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationSourceScanner.h` | Контракт рекурсивного сканирования исходного дерева. |
 | `tools/localization/LocalizationSourceScanner.cpp` | Сканирует `src/`, распознаёт безопасный статический формат localization references и отдельно фиксирует динамические вызовы. |
 | `tools/localization/LocalizationDashboardWindow.h` | Контракт главного Qt Widgets-окна Localization Dashboard и его таблицы/поиска. |
-| `tools/localization/LocalizationDashboardWindow.cpp` | Реализация первого Dashboard UI: таблица каталога, usage-счётчики, сводка и поиск. |
+| `tools/localization/LocalizationDashboardWindow.cpp` | Реализация Dashboard UI: таблица каталога, поиск и фильтры, usage/problems, редактирование, добавление/удаление записей, сохранение и защита от потери несохранённых изменений. |
 | `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
 
