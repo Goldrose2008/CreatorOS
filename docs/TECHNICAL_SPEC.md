@@ -80,6 +80,11 @@
 	72. Для общих UI-текстов используется пространство `common.*`; entity-specific тексты сохраняются в `project.*`, `content.*`, `task.*`, а page-specific — в соответствующем пространстве страницы.
 	73. Перед добавлением нового text ID проверяется существующий `localization.tsv`; совпадающий общий текст переиспользуется, а новый ID создаётся только при отличии смысла, контекста или требуемой формулировки.
 	74. Правила именования и канонические общие text ID локализации ведутся в `docs/LOCALIZATION.md`.
+	75. Localization Dashboard является отдельным developer tool и не входит в runtime target CreatorOS.
+	76. Developer tool локализации использует общий стек C++20 + Qt 6, но его UI и служебный код не должны становиться зависимостями основного приложения.
+	77. Фундамент Localization Dashboard разделяется по самостоятельным ответственностям: модель каталога локализации, TSV persistence, source scanner/usage index, validator, refactor service и Qt Widgets dashboard UI.
+	78. Dashboard не выполняет глобальную текстовую замену при переименовании ID. Rename работает только с распознанными localization references и сначала показывает preview изменений.
+
 
 
 ## Технологический стек
