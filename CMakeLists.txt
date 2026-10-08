@@ -159,6 +159,11 @@ qt_add_executable(CreatorOSLocalization
     tools/localization/LocalizationCatalog.h
     tools/localization/LocalizationTsvStore.cpp
     tools/localization/LocalizationTsvStore.h
+    tools/localization/LocalizationUsage.h
+    tools/localization/LocalizationUsageIndex.cpp
+    tools/localization/LocalizationUsageIndex.h
+    tools/localization/LocalizationSourceScanner.cpp
+    tools/localization/LocalizationSourceScanner.h
 )
 
 target_link_libraries(CreatorOSLocalization

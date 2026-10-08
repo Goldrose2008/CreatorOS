@@ -251,9 +251,6 @@ Localization Dashboard считается базово готовым, когд�
 - Создан отдельный документ docs/THIRD_PARTY_LICENSES.md с реестром, release checklist и правилами для будущих зависимостей.
 - PROGRAM_STRUCTURE.md дополнен новым документом, а TECHNICAL_SPEC.md теперь прямо ссылается на него как на рабочий реестр лицензий.
 
-
-## 08.10.2026
-
 ### Аудит и дедупликация локализации
 - Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
 - Подтверждено, что одинаковые переводы сейчас могут храниться под разными ID: `LocalizationService` не выполняет семантическую проверку дублей.
