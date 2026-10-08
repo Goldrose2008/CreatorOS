@@ -540,3 +540,18 @@ UI содержит отображение, локальное состояни�
 ### Правило актуальности карты
 
 После добавления каждого нового рабочего файла его путь и назначение добавляются в PROGRAM_STRUCTURE. После удаления файла соответствующая запись удаляется. Документ не должен содержать записи о несуществующих рабочих файлах.
+
+
+## 8.7. Localization Dashboard developer tool — `tools/localization`
+
+Текущий developer-tool слой локализации отделён от runtime-приложения `CreatorOS`.
+
+| Файл | Назначение |
+|---|---|
+| `tools/localization/LocalizationEntry.h` | Модель одной записи локализации: ID и набор переводов по locale. |
+| `tools/localization/LocalizationCatalog.h` | Публичный контракт каталога локализации в памяти. |
+| `tools/localization/LocalizationCatalog.cpp` | Добавление, изменение, удаление и переименование записей каталога. |
+| `tools/localization/LocalizationTsvStore.h` | Контракт чтения и сохранения каталога в TSV. |
+| `tools/localization/LocalizationTsvStore.cpp` | Загрузка TSV с проверкой структуры и безопасное сохранение через `QSaveFile`. |
+| `tools/localization/main.cpp` | Временная CLI-точка входа developer tool для проверки слоя каталога. На следующем этапе расширяется source scanner. |
+
