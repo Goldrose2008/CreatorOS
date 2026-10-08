@@ -17,15 +17,16 @@ public:
     void setTitle(const QString &title);
     void setDescription(const QString &description);
     void setStatusWidget(QWidget *widget);
-
-    void addContentWidget(QWidget *widget);
-    void addMetaWidget(QWidget *widget);
-
     void setProgress(int value);
     void clearProgress();
 
+    void addContentWidget(QWidget *widget);
+    void addMetaWidget(QWidget *widget);
     void addAction(QWidget *widget);
 
+protected:
+    QLabel *createStatusLabel(const QString &text);
+        
 private:
     QLabel *titleLabel_;
     QLabel *descriptionLabel_;

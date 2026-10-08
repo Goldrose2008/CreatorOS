@@ -25,27 +25,6 @@ namespace
 
         return QString();
     }
-
-    QLabel *createStatusLabel(const QString &text, QWidget *parent)
-    {
-        auto *label = new QLabel(parent);
-
-        label->setText(text);
-        label->setAutoFillBackground(true);
-
-        QPalette palette = label->palette();
-
-        palette.setColor(QPalette::Window, CreatorColors::AccentSoft);
-        palette.setColor(QPalette::WindowText, CreatorColors::Accent);
-
-        label->setPalette(palette);
-
-        QFont font = label->font();
-        font.setBold(true);
-        label->setFont(font);
-
-        return label;
-    }
 }
 
 TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget *parent)
@@ -54,7 +33,7 @@ TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget 
     setTitle(QString::fromUtf8(task_.name.c_str()));
     setDescription(QString::fromUtf8(task_.description.c_str()));
 
-    auto *status = createStatusLabel(statusText(task_.status, localization), this);
+    auto *status = createStatusLabel(statusText(task_.status, localization));
     setStatusWidget(status);
 
     if (!task_.deadlineAt.empty())

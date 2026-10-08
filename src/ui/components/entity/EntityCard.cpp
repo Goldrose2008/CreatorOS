@@ -95,23 +95,6 @@ void EntityCard::setStatusWidget(QWidget *widget)
     statusWidget_ = widget;
 }
 
-void EntityCard::addContentWidget(QWidget *widget)
-{
-    if (widget == nullptr){return;}
-
-    widget->setParent(this);
-    contentWidgetsLayout_->addWidget(widget);
-}
-
-void EntityCard::addMetaWidget(QWidget *widget)
-{
-    if (widget == nullptr){return;}
-
-    widget->setParent(this);
-    const int insertIndex = metaLayout_->count() - 1;
-    metaLayout_->insertWidget(insertIndex, widget);
-}
-
 void EntityCard::setProgress(int value)
 {
     if (value < 0)
@@ -132,10 +115,47 @@ void EntityCard::clearProgress()
     progressBar_->setVisible(false);
 }
 
+void EntityCard::addContentWidget(QWidget *widget)
+{
+    if (widget == nullptr){return;}
+
+    widget->setParent(this);
+    contentWidgetsLayout_->addWidget(widget);
+}
+
+void EntityCard::addMetaWidget(QWidget *widget)
+{
+    if (widget == nullptr){return;}
+
+    widget->setParent(this);
+    const int insertIndex = metaLayout_->count() - 1;
+    metaLayout_->insertWidget(insertIndex, widget);
+}
+
 void EntityCard::addAction(QWidget *widget)
 {
     if (widget == nullptr){return;}
 
     widget->setParent(this);
     actionsLayout_->addWidget(widget);
+}
+
+QLabel *EntityCard::createStatusLabel(const QString &text)
+{
+    auto *label = new QLabel(this);
+
+    label->setText(text);
+    label->setAutoFillBackground(true);
+
+    QPalette palette = label->palette();
+    palette.setColor(QPalette::Window, CreatorColors::AccentSoft);
+    palette.setColor(QPalette::WindowText, CreatorColors::Accent);
+
+    label->setPalette(palette);
+
+    QFont font = label->font();
+    font.setBold(true);
+    label->setFont(font);
+
+    return label;
 }

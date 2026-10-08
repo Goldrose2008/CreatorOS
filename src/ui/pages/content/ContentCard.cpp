@@ -10,10 +10,7 @@
 
 namespace
 {
-    QString roleText(
-        ContentRole role,
-        const LocalizationService &localization
-    )
+    QString roleText(ContentRole role, const LocalizationService &localization)
     {
         switch (role)
         {
@@ -26,10 +23,7 @@ namespace
         return QString();
     }
 
-    QString statusText(
-        ContentStatus status,
-        const LocalizationService &localization
-    )
+    QString statusText(ContentStatus status, const LocalizationService &localization)
     {
         switch (status)
         {
@@ -45,29 +39,6 @@ namespace
 
         return QString();
     }
-
-    QLabel *createStatusLabel(
-        const QString &text,
-        QWidget *parent
-    )
-    {
-        auto *label = new QLabel(parent);
-
-        label->setText(text);
-        label->setAutoFillBackground(true);
-
-        QPalette palette = label->palette();
-        palette.setColor(QPalette::Window, CreatorColors::AccentSoft);
-        palette.setColor(QPalette::WindowText, CreatorColors::Accent);
-
-        label->setPalette(palette);
-
-        QFont font = label->font();
-        font.setBold(true);
-        label->setFont(font);
-
-        return label;
-    }
 }
 
 ContentCard::ContentCard(
@@ -82,10 +53,7 @@ ContentCard::ContentCard(
     setTitle(QString::fromUtf8(content_.name.c_str()));
     setDescription(QString::fromUtf8(content_.description.c_str()));
 
-    auto *status = createStatusLabel(
-        statusText(content_.status, localization),
-        this
-    );
+    auto *status = createStatusLabel(statusText(content_.status, localization));
 
     setStatusWidget(status);
 
@@ -93,8 +61,7 @@ ContentCard::ContentCard(
 
     roleLabel->setText(
         localization.text(QStringLiteral("content.role")) +
-        QStringLiteral(": ") +
-        roleText(content_.role, localization)
+        QStringLiteral(": ") + roleText(content_.role, localization)
     );
 
     addMetaWidget(roleLabel);
@@ -105,8 +72,7 @@ ContentCard::ContentCard(
 
         typeLabel->setText(
             localization.text(QStringLiteral("content.type")) +
-            QStringLiteral(": ") +
-            contentTypeName
+            QStringLiteral(": ") + contentTypeName
         );
 
         addMetaWidget(typeLabel);
@@ -116,8 +82,7 @@ ContentCard::ContentCard(
 
     priorityLabel->setText(
         localization.text(QStringLiteral("content.priority")) +
-        QStringLiteral(": ") +
-        QString::number(content_.priority)
+        QStringLiteral(": ") + QString::number(content_.priority)
     );
 
     addMetaWidget(priorityLabel);
@@ -127,8 +92,7 @@ ContentCard::ContentCard(
         auto *deadlineLabel = new QLabel(this);
 
         deadlineLabel->setText(
-            localization.text(QStringLiteral("content.deadline")) +
-            QStringLiteral(": ") +
+            localization.text(QStringLiteral("content.deadline")) + QStringLiteral(": ") +
             QString::fromUtf8(content_.productionDeadlineAt.c_str())
         );
 
