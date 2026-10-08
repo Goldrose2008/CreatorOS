@@ -7,6 +7,7 @@
 
 class QLabel;
 class QComboBox;
+class QCloseEvent;
 class QLineEdit;
 class QTableWidget;
 class QTableWidgetItem;
@@ -17,6 +18,9 @@ class LocalizationDashboardWindow final : public QMainWindow
 public:
     LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent = nullptr);
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+    
 private:
     void populateTable();
     void filterRows(const QString &text);
@@ -25,7 +29,7 @@ private:
     void populateProblems();
     void selectProblemTarget();
     void onTranslationChanged(QTableWidgetItem *item);
-    void saveCatalog();
+    bool saveCatalog();
     void addEntry();
     void deleteEntry();
     void updateDeleteButtonState();

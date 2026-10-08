@@ -17,6 +17,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QFormLayout>
+#include <QCloseEvent>
 
 LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath)
@@ -483,20 +484,21 @@ void LocalizationDashboardWindow::updateDirtyState(bool dirty)
     setWindowTitle(dirty_ ? QStringLiteral("CreatorOS — Панель локализации *") : QStringLiteral("CreatorOS — Панель локализации"));
 }
 
-void LocalizationDashboardWindow::saveCatalog()
+bool LocalizationDashboardWindow::saveCatalog()
 {
-    if (!dirty_){return;}
+    if (!dirty_){return true;}
 
     QString error;
 
     if (!LocalizationTsvStore::save(localizationPath_, catalog_, &error))
     {
         QMessageBox::critical(this, QStringLiteral("Ошибка сохранения"), error);
-        return;
+        return false;
     }
 
     updateDirtyState(false);
     QMessageBox::information(this, QStringLiteral("Сохранение"), QStringLiteral("Изменения успешно сохранены."));
+    return true;
 }
 
 void LocalizationDashboardWindow::addEntry()
@@ -641,5 +643,49 @@ void LocalizationDashboardWindow::deleteEntry()
     usageTable_->setRowCount(0);
     usageTitleLabel_->setText(QStringLiteral("Места использования"));
     updateDeleteButtonState();
+}
+
+void LocalizationDashboardWindow::closeEvent(QCloseEvent *event)
+{
+    if (!dirty_)
+    {
+        event->accept();
+        return;
+    }
+
+    QMessageBox messageBox(this);
+
+    messageBox.setIcon(QMessageBox::Warning);
+    messageBox.setWindowTitle(QStringLiteral("Несохранённые изменения"));
+    messageBox.setText(QStringLiteral("В каталоге есть несохранённые изменения."));
+    messageBox.setInformativeText(QStringLiteral("Что сделать перед закрытием панели локализации?"));
+
+    QPushButton *saveButton = messageBox.addButton(QStringLiteral("Сохранить"), QMessageBox::AcceptRole);
+    QPushButton *discardButton = messageBox.addButton(QStringLiteral("Не сохранять"), QMessageBox::DestructiveRole);
+
+    messageBox.addButton(QStringLiteral("Отмена"), QMessageBox::RejectRole);
+    messageBox.exec();
+
+    if (messageBox.clickedButton() == saveButton)
+    {
+        if (saveCatalog())
+        {
+            event->accept();
+        }
+        else
+        {
+            event->ignore();
+        }
+
+        return;
+    }
+
+    if (messageBox.clickedButton() == discardButton)
+    {
+        event->accept();
+        return;
+    }
+
+    event->ignore();
 }
 
