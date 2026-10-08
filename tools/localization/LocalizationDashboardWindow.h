@@ -17,6 +17,8 @@ public:
 private:
     void populateTable();
     void filterRows(const QString &text);
+    void showSelectedUsage();
+    void populateProblems();
 
     const LocalizationCatalog &catalog_;
     const LocalizationUsageIndex &usageIndex_;
@@ -24,4 +26,8 @@ private:
     QLineEdit *searchEdit_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
+    QTableWidget *usageTable_ = nullptr;
+    QTableWidget *problemsTable_ = nullptr;
+    QLabel *usageTitleLabel_ = nullptr;
+    QLabel *problemsTitleLabel_ = nullptr;
 };

@@ -7,6 +7,7 @@
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QSplitter>
 
 LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex)
@@ -35,13 +36,14 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
     layout->addWidget(summaryLabel_);
 
     table_ = new QTableWidget(centralWidget);
-    table_->setColumnCount(4);
+    table_->setColumnCount(5);
     table_->setHorizontalHeaderLabels(
         {
             QStringLiteral("Идентификатор"),
             QStringLiteral("Русский"),
             QStringLiteral("Английский"),
-            QStringLiteral("Использований")
+            QStringLiteral("Использований"),
+            QStringLiteral("Статус")
         });
 
     table_->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -55,8 +57,51 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
     table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     table_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     table_->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table_->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
     layout->addWidget(table_);
+    usageTitleLabel_ = new QLabel(QStringLiteral("Места использования"), centralWidget);
+    layout->addWidget(usageTitleLabel_);
+    usageTable_ = new QTableWidget(centralWidget);
+    usageTable_->setColumnCount(3);
+    usageTable_->setHorizontalHeaderLabels(
+        {
+            QStringLiteral("Файл"),
+            QStringLiteral("Строка"),
+            QStringLiteral("Столбец")
+        });
+    usageTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    usageTable_->setSelectionMode(QAbstractItemView::SingleSelection);
+    usageTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    usageTable_->setAlternatingRowColors(true);
+    usageTable_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    usageTable_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    usageTable_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+
+    layout->addWidget(usageTable_);
+
+    problemsTitleLabel_ = new QLabel(QStringLiteral("Problems"), centralWidget);
+    
+    layout->addWidget(problemsTitleLabel_);
+
+    problemsTable_ = new QTableWidget(centralWidget);
+    problemsTable_->setColumnCount(3);
+    problemsTable_->setHorizontalHeaderLabels(
+        {
+            QStringLiteral("Тип"),
+            QStringLiteral("Место"),
+            QStringLiteral("Описание")
+        });
+
+    problemsTable_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    problemsTable_->setSelectionMode(QAbstractItemView::SingleSelection);
+    problemsTable_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    problemsTable_->setAlternatingRowColors(true);
+    problemsTable_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    problemsTable_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    problemsTable_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+    layout->addWidget(problemsTable_);
 
     setCentralWidget(centralWidget);
 
@@ -69,7 +114,17 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
             filterRows(text);
         });
 
+    connect(
+        table_,
+        &QTableWidget::itemSelectionChanged,
+        this,
+        [this]()
+        {
+            showSelectedUsage();
+        });
+
     populateTable();
+    populateProblems();
 }
 
 void LocalizationDashboardWindow::populateTable()
@@ -90,11 +145,13 @@ void LocalizationDashboardWindow::populateTable()
 
         const QString ru = entry->translations.value(QStringLiteral("ru"));
         const QString en = entry->translations.value(QStringLiteral("en"));
+        const int usageCount = usageIndex_.usageCount(id);
 
         table_->setItem(row, 0, new QTableWidgetItem(id));
         table_->setItem(row, 1, new QTableWidgetItem(ru));
         table_->setItem(row, 2, new QTableWidgetItem(en));
-        table_->setItem(row, 3, new QTableWidgetItem(QString::number(usageIndex_.usageCount(id))));
+        table_->setItem(row, 3, new QTableWidgetItem(QString::number(usageCount)));
+        table_->setItem(row, 4, new QTableWidgetItem(usageCount > 0 ? QStringLiteral("Используется") : QStringLiteral("Не используется")));
     }
 
     table_->setSortingEnabled(true);
@@ -131,3 +188,75 @@ void LocalizationDashboardWindow::filterRows(const QString &text)
         table_->setRowHidden(row, !visible);
     }
 }
+
+void LocalizationDashboardWindow::showSelectedUsage()
+{
+    usageTable_->setRowCount(0);
+
+    const QList<QTableWidgetItem *> selectedItems = table_->selectedItems();
+
+    if (selectedItems.isEmpty()){return;}
+
+    const QString id = selectedItems.first()->text();
+    const QVector<LocalizationUsage> usages = usageIndex_.usagesFor(id);
+
+    for (const LocalizationUsage &usage : usages)
+    {
+        const int row = usageTable_->rowCount();
+        usageTable_->insertRow(row);
+
+        usageTable_->setItem(row, 0, new QTableWidgetItem(usage.filePath));
+        usageTable_->setItem(row, 1, new QTableWidgetItem(QString::number(usage.line)));
+        usageTable_->setItem(row, 2, new QTableWidgetItem(QString::number(usage.column)));
+    }
+
+    usageTitleLabel_->setText(QStringLiteral("Места использования: %1").arg(id));
+}
+
+void LocalizationDashboardWindow::populateProblems()
+{
+    problemsTable_->setRowCount(0);
+
+    for (const QString &id : catalog_.ids())
+    {
+        if (usageIndex_.usageCount(id) != 0){continue;}
+
+        const int row = problemsTable_->rowCount();
+        problemsTable_->insertRow(row);
+
+        problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("UNUSED")));
+        problemsTable_->setItem(row, 1, new QTableWidgetItem(id));
+        problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("ID есть в каталоге, но статических использований не найдено.")));
+    }
+
+    for (const QString &id : usageIndex_.ids())
+    {
+        if (catalog_.contains(id)){continue;}
+
+        const QVector<LocalizationUsage> usages = usageIndex_.usagesFor(id);
+
+        for (const LocalizationUsage &usage : usages)
+        {
+            const int row = problemsTable_->rowCount();
+            problemsTable_->insertRow(row);
+
+            problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("MISSING")));
+            problemsTable_->setItem(row, 1, new QTableWidgetItem(QStringLiteral("%1:%2:%3").arg(usage.filePath).arg(usage.line).arg(usage.column)));
+            problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("Источник использует ID, отсутствующий в каталоге: %1").arg(id)));
+        }
+    }
+
+    for (const LocalizationDynamicReference &reference :
+         usageIndex_.dynamicReferences())
+    {
+        const int row = problemsTable_->rowCount();
+        problemsTable_->insertRow(row);
+
+        problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("DYNAMIC")));
+        problemsTable_->setItem(row, 1, new QTableWidgetItem(QStringLiteral("%1:%2:%3").arg(reference.filePath).arg(reference.line).arg(reference.column)));
+        problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("Динамическая localization-ссылка не может быть автоматически сопоставлена с ID.")));
+    }
+
+    problemsTitleLabel_->setText(QStringLiteral("Problems: %1").arg(problemsTable_->rowCount()));
+}
+
