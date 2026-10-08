@@ -99,7 +99,7 @@ bool LocalizationSourceScanner::scanFile(const QString &filePath, const QString 
     const QString content = stream.readAll();
 
     const QRegularExpression staticPattern(
-    QStringLiteral(R"LOCALIZATION(\blocalization[A-Za-z0-9_]*\s*(?:->|\.)\s*text\s*\(\s*QStringLiteral\s*\(\s*"([^"]+)"\s*\))LOCALIZATION"), QRegularExpression::CaseInsensitiveOption);
+    QStringLiteral(R"LOCALIZATION(\blocalization[A-Za-z0-9_]*\s*(?:->|\.)\s*text\s*\(\s*QStringLiteral\s*\(\s*"([^"]+)"\s*\)\s*\))LOCALIZATION"), QRegularExpression::CaseInsensitiveOption);
     const QRegularExpression callPattern(QStringLiteral(R"(\blocalization[A-Za-z0-9_]*\s*(?:->|\.)\s*text\s*\()"), QRegularExpression::CaseInsensitiveOption);
 
     QSet<qsizetype> staticReferencePositions;
