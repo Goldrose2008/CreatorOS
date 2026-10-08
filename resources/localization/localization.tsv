@@ -8,8 +8,8 @@ common.action.edit	Изменить	Edit
 common.action.open	Открыть	Open
 common.action.retry	Повторить	Retry
 common.action.save	Сохранить	Save
-common.dialog.delete.title	Удаление	Deletion
 common.dialog.delete.description	Выбранный объект будет удалён. Это действие нельзя отменить.	The selected item will be deleted. This action cannot be undone.
+common.dialog.delete.title	Удаление	Deletion
 common.dialog.edit.title	Редактирование	Editing
 common.entity.content	Контент	Content
 common.entity.project	Проект	Project
@@ -22,25 +22,25 @@ common.label.status	Статус	Status
 common.label.summary	Сводка	Summary
 common.meta.created	Создан	Created
 common.meta.updated	Изменён	Updated
-common.state.empty.title	Пока ничего нет	Nothing here yet
 common.state.empty.description	Здесь пока ничего нет.	There is nothing here yet.
-common.state.error.title	Ошибка	Error
+common.state.empty.title	Пока ничего нет	Nothing here yet
 common.state.error.load	Произошла ошибка при загрузке данных.	An error occurred while loading data.
+common.state.error.title	Ошибка	Error
 common.state.loading	Загрузка...	Loading...
-common.state.not_found.title	Не найдено	Not found
 common.state.not_found.description	Объект больше не существует или недоступен.	The object no longer exists or is unavailable.
+common.state.not_found.title	Не найдено	Not found
+common.status.archived	Архив	Archived
 common.status.draft	Черновик	Draft
 common.status.in_progress	В работе	In progress
 common.status.ready	Готов	Ready
-common.status.archived	Архив	Archived
 common.validation.name_required	Введите название.	Enter a name.
 content.create.title	Новый контент	New content
 content.create.type	Тип контента	Content type
 content.deadline	Производственный дедлайн	Production deadline
 content.delete.error.description	Не удалось удалить контент. Попробуйте ещё раз.	Could not delete the content. Try again.
 content.role	Роль	Role
-content.role.main	Основной	Main
 content.role.additional	Дополнительный	Additional
+content.role.main	Основной	Main
 content.save.error	Не удалось сохранить изменения контента. Проверьте введённые данные.	Could not save the content changes. Check the entered data.
 content.type	Тип	Type
 content.type.none_available	Нет доступных типов контента.	No content types are available.
@@ -50,11 +50,11 @@ planning	Планирование	Planning
 project.create.content_type	Тип основного контента	Main content type
 project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
 project.create.title	Новый проект	New project
+project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
+project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
 project.owner	Владелец	Owner
 project.owner.none	Не назначен	Not assigned
 project.release	Планируемая дата выхода	Planned release date
-project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
-project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
 projects	Проекты	Projects
 projects.create	Создать проект	Create project
 projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
@@ -63,8 +63,8 @@ settings	Настройки	Settings
 system	Система	System
 task.deadline	Дедлайн	Deadline
 task.parent_task	Родительская задача	Parent task
-task.status.todo	К выполнению	To do
-task.status.done	Выполнена	Done
 task.status.cancelled	Отменена	Cancelled
+task.status.done	Выполнена	Done
+task.status.todo	К выполнению	To do
 tasks	Задачи	Tasks
 tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.

@@ -9,11 +9,13 @@ class QLabel;
 class QComboBox;
 class QLineEdit;
 class QTableWidget;
+class QTableWidgetItem;
+class QPushButton;
 
 class LocalizationDashboardWindow final : public QMainWindow
 {
 public:
-    LocalizationDashboardWindow(const LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, QWidget *parent = nullptr);
+    LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent = nullptr);
 
 private:
     void populateTable();
@@ -22,14 +24,20 @@ private:
     void showSelectedUsage();
     void populateProblems();
     void selectProblemTarget();
+    void onTranslationChanged(QTableWidgetItem *item);
+    void saveCatalog();
+    void updateDirtyState(bool dirty);
 
-    const LocalizationCatalog &catalog_;
+    LocalizationCatalog &catalog_;
     const LocalizationUsageIndex &usageIndex_;
 
     QLineEdit *searchEdit_ = nullptr;
+    QPushButton *saveButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
+    QString localizationPath_;
+    bool dirty_ = false;
     QTableWidget *usageTable_ = nullptr;
     QTableWidget *problemsTable_ = nullptr;
     QLabel *usageTitleLabel_ = nullptr;

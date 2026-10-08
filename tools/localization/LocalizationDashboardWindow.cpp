@@ -1,4 +1,5 @@
 #include "LocalizationDashboardWindow.h"
+#include "LocalizationTsvStore.h"
 
 #include <QAbstractItemView>
 #include <QComboBox>
@@ -11,9 +12,11 @@
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QMessageBox>
+#include <QPushButton>
 
-LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, QWidget *parent)
-    : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex)
+LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent)
+    : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath)
 {
     setWindowTitle(QStringLiteral("CreatorOS — Панель локализации"));
     resize(1100, 700);
@@ -44,6 +47,11 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
 
     filterLayout->addWidget(statusFilter_);
 
+    saveButton_ = new QPushButton(QStringLiteral("Сохранить"), centralWidget);
+    saveButton_->setEnabled(false);
+
+    filterLayout->addWidget(saveButton_);
+
     layout->addLayout(filterLayout);
 
     summaryLabel_ = new QLabel(centralWidget);
@@ -57,7 +65,7 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
 
     table_->setSelectionBehavior(QAbstractItemView::SelectRows);
     table_->setSelectionMode(QAbstractItemView::SingleSelection);
-    table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table_->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     table_->setAlternatingRowColors(true);
     table_->setSortingEnabled(true);
 
@@ -154,7 +162,7 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
         {
             showSelectedUsage();
         });
-    
+
     connect(
         problemsTable_,
         &QTableWidget::itemSelectionChanged,
@@ -166,6 +174,24 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(const LocalizationCatal
 
     populateTable();
     populateProblems();
+
+    connect(
+        table_,
+        &QTableWidget::itemChanged,
+        this,
+        [this](QTableWidgetItem *item)
+        {
+            onTranslationChanged(item);
+        });
+
+    connect(
+        saveButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            saveCatalog();
+        });
 }
 
 void LocalizationDashboardWindow::populateTable()
@@ -209,7 +235,10 @@ void LocalizationDashboardWindow::populateTable()
 
         const int row = table_->rowCount();
         table_->insertRow(row);
-        table_->setItem(row, 0, new QTableWidgetItem(id));
+
+        auto *idItem = new QTableWidgetItem(id);
+        idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
+        table_->setItem(row, 0, idItem);
 
         for (int localeIndex = 0; localeIndex < locales.size(); ++localeIndex)
         {
@@ -223,7 +252,10 @@ void LocalizationDashboardWindow::populateTable()
         usageItem->setTextAlignment(Qt::AlignCenter);
 
         table_->setItem(row, usageColumn, usageItem);
-        table_->setItem(row, statusColumn, new QTableWidgetItem(usageCount > 0 ? QStringLiteral("Используется") : QStringLiteral("Не используется")));
+
+        auto *statusItem = new QTableWidgetItem(usageCount > 0 ? QStringLiteral("Используется") : QStringLiteral("Не используется"));
+        statusItem->setFlags(statusItem->flags() & ~Qt::ItemIsEditable);
+        table_->setItem(row, statusColumn, statusItem);
     }
 
     table_->setSortingEnabled(true);
@@ -386,5 +418,55 @@ void LocalizationDashboardWindow::selectProblemTarget()
     table_->setCurrentItem(item);
     table_->scrollToItem(item);
     table_->selectRow(item->row());
+}
+
+void LocalizationDashboardWindow::onTranslationChanged(QTableWidgetItem *item)
+{
+    if (!item){return;}
+
+    const int column = item->column();
+    if (column <= 0){return;}
+
+    const int localeCount = catalog_.locales().size();
+    if (column > localeCount){return;}
+
+    QTableWidgetItem *idItem = table_->item(item->row(), 0);
+    if (!idItem){return;}
+
+    const QString id = idItem->text();
+    const QString locale = catalog_.locales().at(column - 1);
+    QString error;
+
+    if (!catalog_.updateTranslation(id, locale, item->text(), &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка"), error);
+        populateTable();
+        return;
+    }
+
+    updateDirtyState(true);
+}
+
+void LocalizationDashboardWindow::updateDirtyState(bool dirty)
+{
+    dirty_ = dirty;
+    saveButton_->setEnabled(dirty_);
+    setWindowTitle(dirty_ ? QStringLiteral("CreatorOS — Панель локализации *") : QStringLiteral("CreatorOS — Панель локализации"));
+}
+
+void LocalizationDashboardWindow::saveCatalog()
+{
+    if (!dirty_){return;}
+
+    QString error;
+
+    if (!LocalizationTsvStore::save(localizationPath_, catalog_, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка сохранения"), error);
+        return;
+    }
+
+    updateDirtyState(false);
+    QMessageBox::information(this, QStringLiteral("Сохранение"), QStringLiteral("Изменения успешно сохранены."));
 }
 
