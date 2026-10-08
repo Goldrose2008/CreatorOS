@@ -553,5 +553,10 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationCatalog.cpp` | Добавление, изменение, удаление и переименование записей каталога. |
 | `tools/localization/LocalizationTsvStore.h` | Контракт чтения и сохранения каталога в TSV. |
 | `tools/localization/LocalizationTsvStore.cpp` | Загрузка TSV с проверкой структуры и безопасное сохранение через `QSaveFile`. |
-| `tools/localization/main.cpp` | Временная CLI-точка входа developer tool для проверки слоя каталога. На следующем этапе расширяется source scanner. |
+| `tools/localization/LocalizationUsage.h` | Модели статического использования localization ID и динамической ссылки на localization-вызов. |
+| `tools/localization/LocalizationUsageIndex.h` | Контракт индекса использований localization ID и динамических ссылок. |
+| `tools/localization/LocalizationUsageIndex.cpp` | Хранит статические использования по ID, места использования и динамические ссылки. |
+| `tools/localization/LocalizationSourceScanner.h` | Контракт рекурсивного сканирования исходного дерева. |
+| `tools/localization/LocalizationSourceScanner.cpp` | Сканирует `src/`, распознаёт безопасный статический формат localization references и отдельно фиксирует динамические вызовы. |
+| `tools/localization/main.cpp` | CLI-точка входа developer tool: загружает TSV, запускает source scanner и выводит usage, unused, missing и dynamic references. |
 
