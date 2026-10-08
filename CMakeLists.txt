@@ -164,11 +164,14 @@ qt_add_executable(CreatorOSLocalization
     tools/localization/LocalizationUsageIndex.h
     tools/localization/LocalizationSourceScanner.cpp
     tools/localization/LocalizationSourceScanner.h
+    tools/localization/LocalizationDashboardWindow.cpp
+    tools/localization/LocalizationDashboardWindow.h
 )
 
 target_link_libraries(CreatorOSLocalization
     PRIVATE
         Qt6::Core
+        Qt6::Widgets
 )
 
 target_link_libraries(CreatorOS

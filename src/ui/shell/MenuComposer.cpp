@@ -25,15 +25,10 @@ namespace
     }
 }
 
-void MenuComposer::build(
-    Sidebar *sidebar,
-    const LocalizationService *localization
-)
+void MenuComposer::build(Sidebar *sidebar, const LocalizationService *localization)
 {
     auto *workspace = new MenuSection(sidebar);
-
     workspace->setText(localization->text(QStringLiteral("common.entity.workspace")));
-
     sidebar->addSection(workspace);
 
     addItem(
