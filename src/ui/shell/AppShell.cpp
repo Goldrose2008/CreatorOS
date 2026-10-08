@@ -81,9 +81,12 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
     layout->addWidget(sidebar_);
     layout->addWidget(workspace_, 1);
 
-    auto *tasksPage = new TasksPage(*taskService_, *localization_, workspace_);
-
-    navigation_->addPage(CurrentPage{QStringLiteral("tasks"), tasksPage});
+    addPlaceholderPage(
+        navigation_,
+        workspace_,
+        QStringLiteral("home"),
+        localization_->text(QStringLiteral("home"))
+    );
 
     auto *projectsPage = new ProjectsPage(*projectService_, *localization_, workspace_);
     auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *contentService_, *localization_, workspace_);
@@ -100,12 +103,8 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
         localization_->text(QStringLiteral("planning"))
     );
 
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("tasks"),
-        localization_->text(QStringLiteral("tasks"))
-    );
+    auto *tasksPage = new TasksPage(*taskService_, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("tasks"), tasksPage});
 
     addPlaceholderPage(
         navigation_,
