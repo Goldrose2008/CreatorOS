@@ -14,6 +14,9 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QFormLayout>
 
 LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath)
@@ -46,10 +49,12 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     statusFilter_->addItem(QStringLiteral("Не используется"), QStringLiteral("unused"));
 
     filterLayout->addWidget(statusFilter_);
+    
+    addButton_ = new QPushButton(QStringLiteral("Добавить"), centralWidget);
+    filterLayout->addWidget(addButton_);
 
     saveButton_ = new QPushButton(QStringLiteral("Сохранить"), centralWidget);
     saveButton_->setEnabled(false);
-
     filterLayout->addWidget(saveButton_);
 
     layout->addLayout(filterLayout);
@@ -182,6 +187,15 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this](QTableWidgetItem *item)
         {
             onTranslationChanged(item);
+        });
+
+    connect(
+        addButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            addEntry();
         });
 
     connect(
@@ -468,5 +482,100 @@ void LocalizationDashboardWindow::saveCatalog()
 
     updateDirtyState(false);
     QMessageBox::information(this, QStringLiteral("Сохранение"), QStringLiteral("Изменения успешно сохранены."));
+}
+
+void LocalizationDashboardWindow::addEntry()
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle(QStringLiteral("Новая запись локализации"));
+    auto *layout = new QFormLayout(&dialog);
+    auto *idEdit = new QLineEdit(&dialog);
+    layout->addRow(QStringLiteral("Идентификатор:"), idEdit);
+    const QStringList locales = catalog_.locales();
+    QMap<QString, QLineEdit *> translationEdits;
+
+    for (const QString &locale : locales)
+    {
+        auto *edit = new QLineEdit(&dialog);
+        translationEdits.insert(locale, edit);
+        layout->addRow(QStringLiteral("%1:").arg(locale.toUpper()), edit);
+    }
+
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+
+    connect(
+        buttons,
+        &QDialogButtonBox::accepted,
+        &dialog,
+        [&]()
+        {
+            const QString id = idEdit->text().trimmed();
+
+            if (id.isEmpty())
+            {
+                QMessageBox::warning(
+                    &dialog,
+                    QStringLiteral("Новая запись"),
+                    QStringLiteral("Идентификатор не может быть пустым."));
+
+                idEdit->setFocus();
+                return;
+            }
+
+            if (catalog_.contains(id))
+            {
+                QMessageBox::warning(
+                    &dialog,
+                    QStringLiteral("Новая запись"),
+                    QStringLiteral("Идентификатор уже существует: %1").arg(id));
+
+                idEdit->setFocus();
+                idEdit->selectAll();
+
+                return;
+            }
+
+            dialog.accept();
+        });
+
+    connect(
+        buttons,
+        &QDialogButtonBox::rejected,
+        &dialog,
+        &QDialog::reject);
+
+    if (dialog.exec() != QDialog::Accepted){return;}
+
+    LocalizationEntry entry;
+    entry.id = idEdit->text().trimmed();
+
+    for (const QString &locale : locales)
+    {
+        entry.translations.insert(locale, translationEdits.value(locale)->text());
+    }
+
+    QString error;
+
+    if (!catalog_.addEntry(entry, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка"), error);
+        return;
+    }
+
+    updateDirtyState(true);
+
+    populateTable();
+    populateProblems();
+
+    const QList<QTableWidgetItem *> matches = table_->findItems(entry.id, Qt::MatchExactly);
+
+    if (!matches.isEmpty())
+    {
+        QTableWidgetItem *item = matches.first();
+        table_->setCurrentItem(item);
+        table_->scrollToItem(item);
+        table_->selectRow(item->row());
+    }
 }
 

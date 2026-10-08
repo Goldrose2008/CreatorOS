@@ -68,3 +68,4 @@ task.status.done	Выполнена	Done
 task.status.todo	К выполнению	To do
 tasks	Задачи	Tasks
 tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.
+test.dashboard.entry	Тестовая запись	Test entry

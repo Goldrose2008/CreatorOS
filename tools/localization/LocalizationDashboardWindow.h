@@ -26,6 +26,7 @@ private:
     void selectProblemTarget();
     void onTranslationChanged(QTableWidgetItem *item);
     void saveCatalog();
+    void addEntry();
     void updateDirtyState(bool dirty);
 
     LocalizationCatalog &catalog_;
@@ -33,6 +34,7 @@ private:
 
     QLineEdit *searchEdit_ = nullptr;
     QPushButton *saveButton_ = nullptr;
+    QPushButton *addButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
