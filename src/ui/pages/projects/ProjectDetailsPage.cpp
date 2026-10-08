@@ -77,7 +77,7 @@ ProjectDetailsPage::ProjectDetailsPage(
       contentSection_(new Section(this)),
       contentCardsLayout_(new QVBoxLayout())
 {
-    auto *backButton = new QPushButton(localization_.text(QStringLiteral("project.back")), this);
+    auto *backButton = new QPushButton(localization_.text(QStringLiteral("common.action.back")), this);
 
     connect(
         backButton,
@@ -132,8 +132,8 @@ ProjectDetailsPage::ProjectDetailsPage(
 
             ConfirmModal::confirm(
                 this,
-                localization_.text(QStringLiteral("project.delete.title")),
-                localization_.text(QStringLiteral("project.delete.description")),
+                localization_.text(QStringLiteral("common.dialog.delete.title")),
+                localization_.text(QStringLiteral("common.dialog.delete.description")),
                 localization_.text(QStringLiteral("common.action.delete")),
                 localization_.text(QStringLiteral("common.action.cancel")),
                 [this, projectId]()
@@ -144,7 +144,7 @@ ProjectDetailsPage::ProjectDetailsPage(
                         {
                             QMessageBox::critical(
                                 this,
-                                localization_.text(QStringLiteral("project.delete.error.title")),
+                                localization_.text(QStringLiteral("common.state.error.title")),
                                 localization_.text(QStringLiteral("project.delete.error.description"))
                             );
 
@@ -158,7 +158,7 @@ ProjectDetailsPage::ProjectDetailsPage(
                     {
                         QMessageBox::critical(
                             this,
-                            localization_.text(QStringLiteral("project.delete.error.title")),
+                            localization_.text(QStringLiteral("common.state.error.title")),
                             localization_.text(QStringLiteral("project.delete.error.description"))
                         );
                     }
@@ -205,7 +205,7 @@ ProjectDetailsPage::ProjectDetailsPage(
     grid->addWidget(statusLabel_, 0, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.release")), summarySection_), 1, 0);
     grid->addWidget(releaseLabel_, 1, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.progress")), summarySection_), 2, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.progress")), summarySection_), 2, 0);
     grid->addWidget(progressLabel_, 2, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.owner")), summarySection_), 3, 0);
     grid->addWidget(ownerLabel_, 3, 1);
@@ -277,8 +277,8 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
             contentSection_->setVisible(false);
             descriptionSection_->setVisible(false);
             clearContentCards();
-            header_->setTitle(localization_.text(QStringLiteral("project.not_found.title")));
-            header_->setDescription(localization_.text(QStringLiteral("project.not_found.description")));
+            header_->setTitle(localization_.text(QStringLiteral("common.state.not_found.title")));
+            header_->setDescription(localization_.text(QStringLiteral("common.state.not_found.description")));
             project_ = {};
             editButton_->setVisible(false);
             deleteButton_->setVisible(false);
@@ -360,8 +360,8 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         contentSection_->setVisible(false);
         descriptionSection_->setVisible(false);
         clearContentCards();
-        header_->setTitle(localization_.text(QStringLiteral("project.error.title")));
-        header_->setDescription(localization_.text(QStringLiteral("project.error.description")));
+        header_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
+        header_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
         project_ = {};
         editButton_->setVisible(false);
         deleteButton_->setVisible(false);

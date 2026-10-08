@@ -63,13 +63,13 @@ ProjectsPage::ProjectsPage(
         }
     );
 
-    loadingState_->setTitle(localization_.text(QStringLiteral("projects.loading")));
+    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
     
-    emptyState_->setTitle(localization_.text(QStringLiteral("projects.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description")));
+    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
+    emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description_once")));
 
-    errorState_->setTitle(localization_.text(QStringLiteral("projects.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("projects.error.description")));
+    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
+    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
     errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
 
     stateStack_->addWidget(projectList_);

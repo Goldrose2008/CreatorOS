@@ -1,106 +1,74 @@
 id	ru	en
 analytics	Аналитика	Analytics
-common.action.edit	Изменить	Edit
+common.action.back	Назад	Back
 common.action.cancel	Отмена	Cancel
 common.action.create	Создать	Create
 common.action.delete	Удалить	Delete
+common.action.edit	Изменить	Edit
 common.action.open	Открыть	Open
 common.action.retry	Повторить	Retry
 common.action.save	Сохранить	Save
+common.dialog.delete.title	Удаление	Delete
+common.dialog.delete.description	Выбранный объект будет удалён. Это действие нельзя отменить.	The selected item will be deleted. This action cannot be undone.
+common.dialog.edit.title	Редактирование	Edit
 common.entity.content	Контент	Content
 common.entity.project	Проект	Project
+common.entity.workspace	Рабочее пространство	Workspace
 common.label.description	Описание	Description
+common.label.name	Название	Name
 common.label.priority	Приоритет	Priority
+common.label.progress	Прогресс	Progress
 common.label.summary	Сводка	Summary
 common.meta.created	Создан	Created
 common.meta.updated	Изменён	Updated
+common.state.empty.title	Пока ничего нет	Nothing here yet
+common.state.empty.description	Здесь пока ничего нет.	There is nothing here yet.
+common.state.error.title	Ошибка	Error
+common.state.error.load	Произошла ошибка при загрузке данных.	An error occurred while loading data.
+common.state.loading	Загрузка...	Loading...
+common.state.not_found.title	Не найдено	Not found
+common.state.not_found.description	Объект больше не существует или недоступен.	The object no longer exists or is unavailable.
 common.status.draft	Черновик	Draft
 common.status.in_progress	В работе	In progress
 common.status.ready	Готов	Ready
 common.status.archived	Архив	Archived
-content.back	Назад к проекту	Back to project
-content.create.name	Название контента	Content name
-content.create.name_required	Введите название контента.	Enter a content name.
+common.validation.name_required	Введите название.	Enter a name.
 content.create.title	Новый контент	New content
 content.create.type	Тип контента	Content type
 content.deadline	Производственный дедлайн	Production deadline
-content.delete.description	Дополнительный контент будет удалён. Это действие нельзя отменить.	The additional content will be deleted. This action cannot be undone.
-content.delete.error.title	Не удалось удалить контент	Content deletion failed
 content.delete.error.description	Не удалось удалить контент. Попробуйте ещё раз.	Could not delete the content. Try again.
-content.delete.title	Удаление контента	Delete content
-content.error.title	Ошибка контента	Content error
-content.error.description	Не удалось получить данные контента.	Could not load content data.
-content.edit.title	Редактирование контента	Edit content
-content.not_found.title	Контент не найден	Content not found
-content.not_found.description	Контент больше не существует или недоступен.	The content no longer exists or is unavailable.
-content.progress	Прогресс	Progress
 content.role	Роль	Role
 content.role.main	Основной	Main
 content.role.additional	Дополнительный	Additional
 content.save.error	Не удалось сохранить изменения контента. Проверьте введённые данные.	Could not save the content changes. Check the entered data.
 content.type	Тип	Type
 content.type.none_available	Нет доступных типов контента.	No content types are available.
-
-
-
-
-
-
 home	Главная	Home
 home.description	{appName} объединяет проекты, контент, задачи, материалы, публикации и аналитику в одном рабочем пространстве.	{appName} brings projects, content, tasks, materials, publications and analytics together in one workspace.
 library	Библиотека	Library
 main_navigation	Основная навигация	Main navigation
 planning	Планирование	Planning
-projects	Проекты	Projects
-projects.empty	Пока нет созданных проектов	No projects have been created yet
-projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
-projects.loading	Загрузка проектов...	Loading projects...
-projects.empty.title	Проектов пока нет	No projects yet
-projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
-projects.error.title	Не удалось загрузить проекты	Could not load projects
-projects.error.description	Произошла ошибка при загрузке проектов.	An error occurred while loading projects.
-project.back	Назад к проектам	Back to projects
-project.status	Статус	Status
-project.release	Планируемая дата выхода	Planned release date
-project.progress	Прогресс	Progress
+project.create.content_type	Тип основного контента	Main content type
+project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
+project.create.title	Новый проект	New project
 project.owner	Владелец	Owner
 project.owner.none	Не назначен	Not assigned
-project.not_found.title	Проект не найден	Project not found
-project.not_found.description	Проект больше не существует или недоступен.	The project no longer exists or is unavailable.
-project.error.title	Ошибка проекта	Project error
-project.error.description	Не удалось получить данные проекта.	Could not load project data.
-projects.create	Создать проект	Create project
-project.create.title	Новый проект	New project
-project.create.name	Название проекта	Project name
-project.create.content_type	Тип основного контента	Main content type
-project.create.content_name	Название основного контента	Main content name
-project.create.error.title	Не удалось создать проект	Project creation failed
-project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
-project.create.name_required	Введите название проекта.	Enter a project name.
-project.create.content_name_required	Введите название основного контента.	Enter a name for the main content.
-project.edit.title	Редактирование проекта	Edit project
-project.edit.error.title	Не удалось изменить проект	Project update failed
-project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
-project.delete.title	Удаление проекта	Delete project
-project.delete.description	Проект и весь связанный с ним контент будут удалены. Это действие нельзя отменить.	The project and all related content will be deleted. This action cannot be undone.
-project.delete.error.title	Не удалось удалить проект	Project deletion failed
+project.release	Планируемая дата выхода	Planned release date
+project.status	Статус	Status
 project.delete.error.description	Не удалось удалить проект. Попробуйте ещё раз.	Could not delete the project. Try again.
+project.edit.error.description	Не удалось сохранить изменения проекта. Проверьте введённые данные.	Could not save the project changes. Check the entered data.
+projects	Проекты	Projects
+projects.create	Создать проект	Create project
+projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
+projects.empty.description_once	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
 settings	Настройки	Settings
 system	Система	System
-tasks	Задачи	Tasks
-tasks.active	Активные задачи появятся здесь	Active tasks will appear here
-tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.
-tasks.loading	Загрузка задач...	Loading tasks...
-tasks.empty.title	Задач пока нет	No tasks yet
-tasks.empty.description	Созданные задачи появятся здесь.	Created tasks will appear here.
-tasks.error.title	Не удалось загрузить задачи	Could not load tasks
-tasks.error.description	Произошла ошибка при загрузке задач.	An error occurred while loading tasks.
+task.deadline	Дедлайн	Deadline
+task.parent_task	Родительская задача	Parent task
 task.status.todo	К выполнению	To do
 task.status.done	Выполнена	Done
 task.status.cancelled	Отменена	Cancelled
-task.deadline	Дедлайн	Deadline
-task.parent_task	Родительская задача	Parent task
-workspace	Рабочее пространство	Workspace
-workspace.lowercase	рабочее пространство	workspace
+tasks	Задачи	Tasks
+tasks.active	Активные задачи появятся здесь	Active tasks will appear here
+tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.
 welcome	Добро пожаловать	Welcome
-your_workspace	Ваше рабочее пространство	Your workspace

@@ -23,8 +23,8 @@ ContentEditorDialog::ContentEditorDialog(
 )
     : EditorDialog(
         content.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
-        content.has_value() ? localization.text(QStringLiteral("content.edit.title")) : localization.text(QStringLiteral("content.create.title")),
-        content.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("contcommon.action.create")),
+        content.has_value() ? localization.text(QStringLiteral("common.dialog.edit.title")) : localization.text(QStringLiteral("content.create.title")),
+        content.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("common.action.create")),
         localization.text(QStringLiteral("common.action.cancel")),
         parent
     ),
@@ -45,7 +45,7 @@ ContentEditorDialog::ContentEditorDialog(
     contentTypeField->setField(contentTypeCombo_);
 
     auto *nameField = new FormField(this);
-    nameField->setLabel(localization_.text(QStringLiteral("content.create.name")));
+    nameField->setLabel(localization_.text(QStringLiteral("common.label.name")));
     nameField->setField(nameEdit_);
 
     auto *descriptionField = new FormField(this);
@@ -90,7 +90,7 @@ ContentEditorDialog::ContentEditorDialog(
 
         QMessageBox::warning(
             this,
-            localization_.text(QStringLiteral("content.error.title")),
+            localization_.text(QStringLiteral("common.state.error.title")),
             localization_.text(QStringLiteral("content.type.none_available"))
         );
     }
@@ -102,8 +102,8 @@ bool ContentEditorDialog::save()
     {
         QMessageBox::warning(
             this,
-            localization_.text(QStringLiteral("content.error.title")),
-            localization_.text(QStringLiteral("content.create.name_required"))
+            localization_.text(QStringLiteral("common.state.error.title")),
+            localization_.text(QStringLiteral("common.validation.name_required"))
         );
 
         nameEdit_->setFocus();
@@ -142,7 +142,7 @@ bool ContentEditorDialog::save()
     {
         QMessageBox::critical(
             this,
-            localization_.text(QStringLiteral("content.error.title")),
+            localization_.text(QStringLiteral("common.state.error.title")),
             localization_.text(QStringLiteral("content.save.error"))
         );
 

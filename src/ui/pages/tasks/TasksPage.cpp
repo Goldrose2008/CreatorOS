@@ -34,13 +34,13 @@ TasksPage::TasksPage(TaskService &taskService, LocalizationService &localization
     header_->setTitle(localization_.text(QStringLiteral("tasks")));
     header_->setDescription(localization_.text(QStringLiteral("tasks.description")));
     
-    loadingState_->setTitle(localization_.text(QStringLiteral("tasks.loading")));
+    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
     
-    emptyState_->setTitle(localization_.text(QStringLiteral("tasks.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("tasks.empty.description")));
+    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
+    emptyState_->setDescription(localization_.text(QStringLiteral("common.state.empty.description")));
     
-    errorState_->setTitle(localization_.text(QStringLiteral("tasks.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("tasks.error.description")));
+    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
+    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
     errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
 
     stateStack_->addWidget(taskList_);

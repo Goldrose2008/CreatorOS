@@ -71,7 +71,7 @@ ContentDetails::ContentDetails(
       summarySection_(new Section(this)),
       descriptionSection_(new Section(this))
 {
-    auto *backButton = new QPushButton(localization_.text(QStringLiteral("content.back")), this);
+    auto *backButton = new QPushButton(localization_.text(QStringLiteral("common.action.back")), this);
 
     connect(
         backButton,
@@ -136,8 +136,8 @@ ContentDetails::ContentDetails(
 
             ConfirmModal::confirm(
                 this,
-                localization_.text(QStringLiteral("content.delete.title")),
-                localization_.text(QStringLiteral("content.delete.description")),
+                localization_.text(QStringLiteral("common.dialog.delete.title")),
+                localization_.text(QStringLiteral("common.dialog.delete.description")),
                 localization_.text(QStringLiteral("common.action.delete")),
                 localization_.text(QStringLiteral("common.action.cancel")),
                 [this, contentId, projectId]()
@@ -148,7 +148,7 @@ ContentDetails::ContentDetails(
                         {
                             QMessageBox::critical(
                                 this,
-                                localization_.text(QStringLiteral("content.delete.error.title")),
+                                localization_.text(QStringLiteral("common.state.error.title")),
                                 localization_.text(QStringLiteral("content.delete.error.description"))
                             );
 
@@ -162,7 +162,7 @@ ContentDetails::ContentDetails(
                     {
                         QMessageBox::critical(
                             this,
-                            localization_.text(QStringLiteral("content.delete.error.title")),
+                            localization_.text(QStringLiteral("common.state.error.title")),
                             localization_.text(QStringLiteral("content.delete.error.description"))
                         );
                     }
@@ -189,7 +189,7 @@ ContentDetails::ContentDetails(
     grid->addWidget(priorityLabel_, 4, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.deadline")), summarySection_), 5, 0);
     grid->addWidget(deadlineLabel_, 5, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.progress")), summarySection_), 6, 0);
+    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.progress")), summarySection_), 6, 0);
     grid->addWidget(progressLabel_, 6, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 7, 0);
     grid->addWidget(createdLabel_, 7, 1);
@@ -232,8 +232,8 @@ void ContentDetails::showContent(std::int64_t contentId)
             summarySection_->setVisible(false);
             descriptionSection_->setVisible(false);
             content_ = {};
-            header_->setTitle(localization_.text(QStringLiteral("content.not_found.title")));
-            header_->setDescription(localization_.text(QStringLiteral("content.not_found.description")));
+            header_->setTitle(localization_.text(QStringLiteral("common.state.not_found.title")));
+            header_->setDescription(localization_.text(QStringLiteral("common.state.not_found.description")));
             editButton_->setVisible(false);
             deleteButton_->setVisible(false);
 
@@ -300,8 +300,8 @@ void ContentDetails::showContent(std::int64_t contentId)
         descriptionSection_->setVisible(false);
         content_ = {};
 
-        header_->setTitle(localization_.text(QStringLiteral("content.error.title")));
-        header_->setDescription(localization_.text(QStringLiteral("content.error.description")));
+        header_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
+        header_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
         
         editButton_->setVisible(false);
         deleteButton_->setVisible(false);    

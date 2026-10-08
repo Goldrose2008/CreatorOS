@@ -16,7 +16,7 @@
 ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
     : EditorDialog(
         project.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
-        project.has_value() ? localization.text(QStringLiteral("project.edit.title")) : localization.text(QStringLiteral("project.create.title")),
+        project.has_value() ? localization.text(QStringLiteral("common.dialog.edit")) : localization.text(QStringLiteral("project.create.title")),
         project.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("common.action.create")),
         localization.text(QStringLiteral("common.action.cancel")),
         parent
@@ -33,7 +33,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     resize(560, 520);
 
     auto *nameField = new FormField(this);
-    nameField->setLabel(localization_.text(QStringLiteral("project.create.name")));
+    nameField->setLabel(localization_.text(QStringLiteral("common.label.name")));
     nameField->setField(nameEdit_);
 
     auto *descriptionField = new FormField(this);
@@ -75,7 +75,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
 
         auto *contentNameField = new FormField(this);
 
-        contentNameField->setLabel(localization_.text(QStringLiteral("project.create.content_name")));
+        contentNameField->setLabel(localization_.text(QStringLiteral("common.label.name")));
         contentNameEdit_ = new QLineEdit(this);
         contentNameField->setField(contentNameEdit_);
 
@@ -97,7 +97,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
 
             QMessageBox::warning(
                 this,
-                localization_.text(QStringLiteral("project.create.error.title")),
+                localization_.text(QStringLiteral("common.state.error.title")),
                 localization_.text(QStringLiteral("content.type.none_available"))
             );
         }
@@ -110,8 +110,8 @@ bool ProjectEditorDialog::save()
     {
         QMessageBox::warning(
             this,
-            localization_.text(QStringLiteral("project.create.error.title")),
-            localization_.text(QStringLiteral("project.create.name_required"))
+            localization_.text(QStringLiteral("procommon.state.error.title")),
+            localization_.text(QStringLiteral("common.validation.name_required"))
         );
 
         nameEdit_->setFocus();
@@ -133,7 +133,7 @@ bool ProjectEditorDialog::save()
         {
             QMessageBox::critical(
                 this,
-                localization_.text(QStringLiteral("project.edit.error.title")),
+                localization_.text(QStringLiteral("common.state.error.title")),
                 localization_.text(QStringLiteral("project.edit.error.description"))
             );
 
@@ -145,8 +145,8 @@ bool ProjectEditorDialog::save()
     {
         QMessageBox::warning(
             this,
-            localization_.text(QStringLiteral("project.create.error.title")),
-            localization_.text(QStringLiteral("project.create.content_name_required"))
+            localization_.text(QStringLiteral("common.state.error.title")),
+            localization_.text(QStringLiteral("common.validation.name_required"))
         );
 
         contentNameEdit_->setFocus();
@@ -176,7 +176,7 @@ bool ProjectEditorDialog::save()
     {
         QMessageBox::critical(
             this,
-            localization_.text(QStringLiteral("project.create.error.title")),
+            localization_.text(QStringLiteral("common.state.error.title")),
             localization_.text(QStringLiteral("project.create.error.description"))
         );
 

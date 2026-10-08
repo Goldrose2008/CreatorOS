@@ -32,7 +32,7 @@ void MenuComposer::build(
 {
     auto *workspace = new MenuSection(sidebar);
 
-    workspace->setText(localization->text(QStringLiteral("workspace")));
+    workspace->setText(localization->text(QStringLiteral("common.entity.workspace")));
 
     sidebar->addSection(workspace);
 

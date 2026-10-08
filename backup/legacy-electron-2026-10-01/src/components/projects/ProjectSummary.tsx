@@ -35,7 +35,7 @@ function ProjectSummary({ project }: ProjectSummaryProps) {
                     </span>
 
                     <span>
-                        Готовность: {project.progress}%
+                        Прогресс: {project.progress}%
                     </span>
                 </div>
 
