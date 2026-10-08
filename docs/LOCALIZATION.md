@@ -44,14 +44,14 @@
 
 | Новый ID | Текущие дублирующиеся ID |
 |---|---|
-| `common.priority` | `content.priority`, `content.create.priority` |
+| `common.label.priority` | `content.priority`, `content.create.priority` |
 | `common.status.draft` | `content.status.draft`, `project.status.draft` |
 | `common.status.in_progress` | `content.status.in_progress`, `project.status.active`, `task.status.in_progress` |
 | `common.status.archived` | `content.status.archived`, `project.status.archived` |
 | `common.action.open` | `content.open`, `project.open` |
-| `common.summary` | `content.summary`, `project.summary` |
+| `common.label.summary` | `content.summary`, `project.summary` |
 | `common.entity.project` | `content.project`, `project.not_selected` |
-| `common.description` | `content.description`, `content.create.description`, `project.description`, `project.create.description` |
+| `common.label.description` | `content.description`, `content.create.description`, `project.description`, `project.create.description` |
 | `common.entity.content` | `content.not_selected`, `project.content` |
 | `common.action.edit` | `content.edit`, `project.edit` |
 | `common.action.delete` | `content.delete`, `content.delete.confirm`, `project.delete`, `project.delete.confirm` |
