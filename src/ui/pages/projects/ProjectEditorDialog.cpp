@@ -16,7 +16,7 @@
 ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
     : EditorDialog(
         project.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
-        project.has_value() ? localization.text(QStringLiteral("common.dialog.edit")) : localization.text(QStringLiteral("project.create.title")),
+        project.has_value() ? localization.text(QStringLiteral("common.dialog.edit.title")) : localization.text(QStringLiteral("project.create.title")),
         project.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("common.action.create")),
         localization.text(QStringLiteral("common.action.cancel")),
         parent
@@ -110,7 +110,7 @@ bool ProjectEditorDialog::save()
     {
         QMessageBox::warning(
             this,
-            localization_.text(QStringLiteral("procommon.state.error.title")),
+            localization_.text(QStringLiteral("common.state.error.title")),
             localization_.text(QStringLiteral("common.validation.name_required"))
         );
 
