@@ -185,3 +185,14 @@
 - Создан отдельный документ docs/THIRD_PARTY_LICENSES.md с реестром, release checklist и правилами для будущих зависимостей.
 - PROGRAM_STRUCTURE.md дополнен новым документом, а TECHNICAL_SPEC.md теперь прямо ссылается на него как на рабочий реестр лицензий.
 
+
+## 08.10.2026
+
+### Аудит и дедупликация локализации
+- Проверен фактический `resources/localization/localization.tsv` и текущие вызовы `LocalizationService::text()` в Project, Content, Task и page-level UI.
+- Подтверждено, что одинаковые переводы сейчас могут храниться под разными ID: `LocalizationService` не выполняет семантическую проверку дублей.
+- Определена модель канонических общих ключей `common.*` для общих действий, статусов, подписей и метаданных.
+- Зафиксированы случаи, которые не следует объединять автоматически: destination-specific Back, entity-specific not-found/error/edit titles and descriptions, form field names, page-specific loading/empty/error states, а также `content.progress` и `project.progress`, поскольку их русские формулировки различаются.
+- Создан `docs/LOCALIZATION.md` с правилами именования text ID и таблицей предстоящей дедупликации.
+- `TECHNICAL_SPEC.md` дополнен постоянными правилами предотвращения дублирования локализаций, а `PROGRAM_STRUCTURE.md` отражает новый документ.
+- Изменение `localization.tsv` и source-code вызовов остаётся пользовательской правкой по проектному правилу; после выполнения потребуется Debug build и функциональная проверка всех затронутых экранов.
