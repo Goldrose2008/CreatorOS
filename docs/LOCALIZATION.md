@@ -47,6 +47,7 @@
 | `common.label.priority` | `content.priority`, `content.create.priority` |
 | `common.status.draft` | `content.status.draft`, `project.status.draft` |
 | `common.status.in_progress` | `content.status.in_progress`, `project.status.active`, `task.status.in_progress` |
+| `common.status.ready` | `content.status.ready` |
 | `common.status.archived` | `content.status.archived`, `project.status.archived` |
 | `common.action.open` | `content.open`, `project.open` |
 | `common.label.summary` | `content.summary`, `project.summary` |
