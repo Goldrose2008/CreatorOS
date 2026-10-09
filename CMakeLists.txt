@@ -179,6 +179,38 @@ target_link_libraries(CreatorOSLocalization
         Qt6::Widgets
 )
 
+include(CTest)
+
+if(BUILD_TESTING)
+    qt_add_executable(CreatorOSLocalizationTests
+        tools/localization/tests/LocalizationValidatorTests.cpp
+        tools/localization/LocalizationEntry.h
+        tools/localization/LocalizationCatalog.cpp
+        tools/localization/LocalizationCatalog.h
+        tools/localization/LocalizationUsage.h
+        tools/localization/LocalizationUsageIndex.cpp
+        tools/localization/LocalizationUsageIndex.h
+        tools/localization/LocalizationValidationIssue.h
+        tools/localization/LocalizationValidator.cpp
+        tools/localization/LocalizationValidator.h
+    )
+
+    target_include_directories(CreatorOSLocalizationTests
+        PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/tools/localization"
+    )
+
+    target_link_libraries(CreatorOSLocalizationTests
+        PRIVATE
+            Qt6::Core
+    )
+
+    add_test(
+        NAME CreatorOSLocalizationTests
+        COMMAND CreatorOSLocalizationTests
+    )
+endif()
+
 target_link_libraries(CreatorOS
     PRIVATE
         Qt6::Core
