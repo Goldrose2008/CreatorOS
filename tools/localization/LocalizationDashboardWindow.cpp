@@ -3,6 +3,8 @@
 #include "LocalizationTsvStore.h"
 #include "LocalizationValidator.h"
 
+#include <QBrush>
+#include <QColor>
 #include <QAbstractItemView>
 #include <QComboBox>
 #include <QHeaderView>
@@ -405,16 +407,20 @@ void LocalizationDashboardWindow::populateProblems()
     for (const LocalizationValidationIssue &issue : issues)
     {
         QString severityText;
+        QColor severityColor(255, 249, 196);
 
         switch (issue.severity)
         {
         case LocalizationValidationSeverity::Error: severityText = QStringLiteral("ERROR");
+            severityColor = QColor(255, 205, 210);
             ++errorCount;
             break;
         case LocalizationValidationSeverity::Warning: severityText = QStringLiteral("WARNING");
+            severityColor = QColor(255, 224, 178);
             ++warningCount;
             break;
         case LocalizationValidationSeverity::Info: severityText = QStringLiteral("INFO");
+            severityColor = QColor(255, 249, 196);
             ++infoCount;
             break;
         }
@@ -470,6 +476,12 @@ void LocalizationDashboardWindow::populateProblems()
 
         problemsTable_->setItem(row, 2, locationItem);
         problemsTable_->setItem(row, 3, new QTableWidgetItem(issue.message));
+
+        for (int column = 0; column < problemsTable_->columnCount(); ++column)
+        {
+            QTableWidgetItem *cell = problemsTable_->item(row, column);
+            if (cell){cell->setBackground(QBrush(severityColor));}
+        }
     }
 
     if (issues.isEmpty())
