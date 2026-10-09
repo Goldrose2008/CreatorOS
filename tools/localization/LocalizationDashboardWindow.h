@@ -27,6 +27,7 @@ private:
     void applyCatalogFilters();
     void showSelectedUsage();
     void populateProblems();
+    void applyProblemsSeverityFilter();
     void selectProblemTarget();
     void onTranslationChanged(QTableWidgetItem *item);
     bool saveCatalog();
@@ -47,6 +48,7 @@ private:
     QPushButton *deleteButton_ = nullptr;
     QPushButton *renameButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
+    QComboBox *problemsSeverityFilter_ = nullptr;
     QTableWidget *table_ = nullptr;
     QLabel *summaryLabel_ = nullptr;
     QString localizationPath_;

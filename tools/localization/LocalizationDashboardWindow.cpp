@@ -120,6 +120,16 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
 
     problemsTitleLabel_ = new QLabel(QStringLiteral("Проблемы"), problemsPanel);
     problemsLayout->addWidget(problemsTitleLabel_);
+    auto *problemsFilterLayout = new QHBoxLayout;
+    problemsFilterLayout->addWidget(new QLabel(QStringLiteral("Показывать:"), problemsPanel));
+    problemsSeverityFilter_ = new QComboBox(problemsPanel);
+    problemsSeverityFilter_->addItem(QStringLiteral("Все"), QStringLiteral("all"));
+    problemsSeverityFilter_->addItem(QStringLiteral("Только ошибки"), QStringLiteral("ERROR"));
+    problemsSeverityFilter_->addItem(QStringLiteral("Только предупреждения"), QStringLiteral("WARNING"));
+    problemsSeverityFilter_->addItem(QStringLiteral("Только информацию"), QStringLiteral("INFO"));
+    problemsFilterLayout->addWidget(problemsSeverityFilter_);
+    problemsFilterLayout->addStretch();
+    problemsLayout->addLayout(problemsFilterLayout);
     problemsTable_ = new QTableWidget(problemsPanel);
     problemsTable_->setColumnCount(4);
     problemsTable_->setHorizontalHeaderLabels(
@@ -193,6 +203,16 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this]()
         {
             selectProblemTarget();
+        });
+
+    connect(
+        problemsSeverityFilter_,
+        &QComboBox::currentIndexChanged,
+        this,
+        [this](int)
+        {
+            problemsTable_->clearSelection();
+            applyProblemsSeverityFilter();
         });
 
     populateTable();
@@ -491,6 +511,24 @@ void LocalizationDashboardWindow::populateProblems()
     else
     {
         problemsTitleLabel_->setText(QStringLiteral("Критические ошибки: %1 | Ошибки: %2 | Предупреждения: %3 | Информация: %4").arg(issues.size()).arg(errorCount).arg(warningCount).arg(infoCount));
+    }
+    
+    applyProblemsSeverityFilter();
+}
+
+void LocalizationDashboardWindow::applyProblemsSeverityFilter()
+{
+    if (!problemsSeverityFilter_ || !problemsTable_){return;}
+
+    const QString selectedSeverity = problemsSeverityFilter_->currentData().toString();
+    const bool showAll = selectedSeverity == QStringLiteral("all");
+
+    for (int row = 0; row < problemsTable_->rowCount(); ++row)
+    {
+        const QTableWidgetItem *severityItem = problemsTable_->item(row, 0);
+        const QString rowSeverity = severityItem ? severityItem->text() : QString();
+        const bool matchesSeverity = showAll || rowSeverity == selectedSeverity;
+        problemsTable_->setRowHidden(row, !matchesSeverity);
     }
 }
 
