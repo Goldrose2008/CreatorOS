@@ -16,7 +16,7 @@ class QPushButton;
 class LocalizationDashboardWindow final : public QMainWindow
 {
 public:
-    LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent = nullptr);
+    LocalizationDashboardWindow(LocalizationCatalog &catalog, LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -38,7 +38,7 @@ private:
     void updateDirtyState(bool dirty);
 
     LocalizationCatalog &catalog_;
-    const LocalizationUsageIndex &usageIndex_;
+    LocalizationUsageIndex &usageIndex_;
 
     QLineEdit *searchEdit_ = nullptr;
     QPushButton *saveButton_ = nullptr;

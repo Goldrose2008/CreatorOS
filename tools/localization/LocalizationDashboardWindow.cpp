@@ -20,7 +20,7 @@
 #include <QFormLayout>
 #include <QCloseEvent>
 
-LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, const LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent)
+LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath), sourceRoot_(sourceRoot)
 {
     setWindowTitle(QStringLiteral("CreatorOS — Панель локализации"));
@@ -713,6 +713,16 @@ void LocalizationDashboardWindow::renameEntry()
     const QList<QTableWidgetItem *> selectedItems = table_->selectedItems();
     if (selectedItems.isEmpty()){return;}
 
+    if (dirty_)
+    {
+        QMessageBox::warning(
+            this,
+            QStringLiteral("Переименование"),
+            QStringLiteral("Перед переименованием сначала сохраните текущие изменения каталога."));
+
+        return;
+    }
+
     const int row = selectedItems.first()->row();
     QTableWidgetItem *idItem = table_->item(row, 0);
     if (!idItem){return;}
@@ -859,10 +869,51 @@ void LocalizationDashboardWindow::renameEntry()
                     "Будет изменён только ID в каталоге."), &previewDialog));
     }
 
-    auto *previewButtons = new QDialogButtonBox(QDialogButtonBox::Close, &previewDialog);
+    auto *previewButtons = new QDialogButtonBox(QDialogButtonBox::Cancel, &previewDialog);
+    QPushButton *applyButton = previewButtons->addButton(QStringLiteral("Применить"), QDialogButtonBox::AcceptRole);
+    applyButton->setDefault(true);
     previewLayout->addWidget(previewButtons);
 
-    connect(previewButtons, &QDialogButtonBox::rejected, &previewDialog, &QDialog::reject);
-    previewDialog.exec();
+    connect(
+        previewButtons,
+        &QDialogButtonBox::accepted,
+        &previewDialog,
+        &QDialog::accept);
+
+    connect(
+        previewButtons, 
+        &QDialogButtonBox::rejected, 
+        &previewDialog, 
+        &QDialog::reject);
+
+    if (previewDialog.exec() != QDialog::Accepted){return;}
+
+    if (!refactorService.applyRename(sourceRoot_, localizationPath_, catalog_, usageIndex_, oldId, newId, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка переименования"), error);
+        return;
+    }
+
+    updateDirtyState(false);
+    populateTable();
+    populateProblems();
+    searchEdit_->clear();
+
+    const QList<QTableWidgetItem *> matches = table_->findItems(newId, Qt::MatchExactly);
+
+    if (!matches.isEmpty())
+    {
+        QTableWidgetItem *item = matches.first();
+        table_->setCurrentItem(item);
+        table_->scrollToItem(item);
+        table_->selectRow(item->row());
+    }
+
+    updateDeleteButtonState();
+    updateRenameButtonState();
+    QMessageBox::information(
+        this,
+        QStringLiteral("Переименование"),
+        QStringLiteral("Localization ID успешно переименован:\n%1 → %2").arg(oldId, newId));
 }
 

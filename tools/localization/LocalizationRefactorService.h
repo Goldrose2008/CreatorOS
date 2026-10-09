@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LocalizationUsageIndex.h"
+#include "LocalizationCatalog.h"
 
 #include <QString>
 #include <QVector>
@@ -26,6 +27,7 @@ class LocalizationRefactorService final
 {
 public:
     bool previewRename(const QString &sourceRoot, const LocalizationUsageIndex &usageIndex, const QString &oldId, const QString &newId, LocalizationRenamePreview &preview, QString *error = nullptr) const;
+    bool applyRename(const QString &sourceRoot, const QString &localizationPath, LocalizationCatalog &catalog, LocalizationUsageIndex &usageIndex, const QString &oldId, const QString &newId, QString *error = nullptr) const;
 
 private:
     bool readSourceLine(const QString &sourceRoot, const LocalizationUsage &usage, QString &line, QString *error) const;
