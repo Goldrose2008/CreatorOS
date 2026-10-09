@@ -1,6 +1,7 @@
 #include "LocalizationDashboardWindow.h"
 #include "LocalizationRefactorService.h"
 #include "LocalizationTsvStore.h"
+#include "LocalizationValidator.h"
 
 #include <QAbstractItemView>
 #include <QComboBox>
@@ -114,12 +115,13 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     auto *problemsPanel = new QWidget(detailsSplitter);
     auto *problemsLayout = new QVBoxLayout(problemsPanel);
 
-    problemsTitleLabel_ = new QLabel(QStringLiteral("Problems"), problemsPanel);
+    problemsTitleLabel_ = new QLabel(QStringLiteral("Проблемы"), problemsPanel);
     problemsLayout->addWidget(problemsTitleLabel_);
     problemsTable_ = new QTableWidget(problemsPanel);
-    problemsTable_->setColumnCount(3);
+    problemsTable_->setColumnCount(4);
     problemsTable_->setHorizontalHeaderLabels(
         {
+            QStringLiteral("Важность"),
             QStringLiteral("Тип"),
             QStringLiteral("Место"),
             QStringLiteral("Описание")
@@ -132,7 +134,8 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
 
     problemsTable_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     problemsTable_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    problemsTable_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    problemsTable_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    problemsTable_->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
     problemsLayout->addWidget(problemsTable_);
 
     detailsSplitter->addWidget(usagePanel);
@@ -391,52 +394,91 @@ void LocalizationDashboardWindow::populateProblems()
 {
     problemsTable_->setRowCount(0);
 
-    for (const QString &id : catalog_.ids())
+    LocalizationValidator validator;
+    const QVector<LocalizationValidationIssue> issues = validator.validate(catalog_, usageIndex_);
+
+    int errorCount = 0;
+    int warningCount = 0;
+    int infoCount = 0;
+
+    for (const LocalizationValidationIssue &issue : issues)
     {
-        if (usageIndex_.usageCount(id) != 0){continue;}
+        QString severityText;
 
-        const int row = problemsTable_->rowCount();
-        problemsTable_->insertRow(row);
-
-        problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("UNUSED")));
-        auto *locationItem = new QTableWidgetItem(id);
-        locationItem->setData(Qt::UserRole, id);
-        problemsTable_->setItem(row, 1, locationItem);
-        problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("ID есть в каталоге, но статических использований не найдено.")));
-    }
-
-    for (const QString &id : usageIndex_.ids())
-    {
-        if (catalog_.contains(id)){continue;}
-
-        const QVector<LocalizationUsage> usages = usageIndex_.usagesFor(id);
-
-        for (const LocalizationUsage &usage : usages)
+        switch (issue.severity)
         {
-            const int row = problemsTable_->rowCount();
-            problemsTable_->insertRow(row);
-
-            problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("MISSING")));
-            auto *locationItem = new QTableWidgetItem(QStringLiteral("%1:%2:%3").arg(usage.filePath).arg(usage.line).arg(usage.column));
-            locationItem->setData(Qt::UserRole, id);
-            problemsTable_->setItem(row, 1, locationItem);
-            problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("Источник использует ID, отсутствующий в каталоге: %1").arg(id)));
+        case LocalizationValidationSeverity::Error: severityText = QStringLiteral("ERROR");
+            ++errorCount;
+            break;
+        case LocalizationValidationSeverity::Warning: severityText = QStringLiteral("WARNING");
+            ++warningCount;
+            break;
+        case LocalizationValidationSeverity::Info: severityText = QStringLiteral("INFO");
+            ++infoCount;
+            break;
         }
-    }
 
-    for (const LocalizationDynamicReference &reference :
-         usageIndex_.dynamicReferences())
-    {
+        QString typeText;
+
+        switch (issue.type)
+        {
+        case LocalizationValidationType::MissingId: typeText = QStringLiteral("MISSING");
+            break;
+        case LocalizationValidationType::UnusedId: typeText = QStringLiteral("UNUSED");
+            break;
+        case LocalizationValidationType::EmptyTranslation: typeText = QStringLiteral("EMPTY_TRANSLATION");
+            break;
+        case LocalizationValidationType::DuplicateTranslation: typeText = QStringLiteral("DUPLICATE_TRANSLATION");
+            break;
+        case LocalizationValidationType::PlaceholderMismatch: typeText = QStringLiteral("PLACEHOLDER_MISMATCH");
+            break;
+        case LocalizationValidationType::DynamicReference: typeText = QStringLiteral("DYNAMIC");
+            break;
+        }
+
+        QString locationText;
+
+        if (!issue.filePath.isEmpty())
+        {
+            locationText = QStringLiteral("%1:%2:%3").arg(issue.filePath).arg(issue.line).arg(issue.column);
+        }
+        else if (!issue.id.isEmpty() && !issue.locale.isEmpty())
+        {
+            locationText = QStringLiteral("%1 [%2]").arg(issue.id, issue.locale);
+        }
+        else if (!issue.id.isEmpty())
+        {
+            locationText = issue.id;
+        }
+        else
+        {
+            locationText = QStringLiteral("—");
+        }
+
         const int row = problemsTable_->rowCount();
         problemsTable_->insertRow(row);
+        problemsTable_->setItem(row, 0, new QTableWidgetItem(severityText));
+        problemsTable_->setItem(row, 1, new QTableWidgetItem(typeText));
 
-        problemsTable_->setItem(row, 0, new QTableWidgetItem(QStringLiteral("DYNAMIC")));
-        problemsTable_->setItem(row, 1, new QTableWidgetItem(QStringLiteral("%1:%2:%3").arg(reference.filePath).arg(reference.line).arg(reference.column)));
-        problemsTable_->setItem(row, 2, new QTableWidgetItem(QStringLiteral("Динамическая localization-ссылка не может быть автоматически сопоставлена с ID.")));
+        auto *locationItem = new QTableWidgetItem(locationText);
+
+        if (!issue.id.isEmpty())
+        {
+            locationItem->setData(Qt::UserRole, issue.id);
+        }
+
+        problemsTable_->setItem(row, 2, locationItem);
+        problemsTable_->setItem(row, 3, new QTableWidgetItem(issue.message));
     }
 
-    const int problemCount = problemsTable_->rowCount();
-    problemsTitleLabel_->setText(problemCount == 0 ? QStringLiteral("Problems: нет проблем") : QStringLiteral("Problems: %1").arg(problemCount));
+    if (issues.isEmpty())
+    {
+        problemsTitleLabel_->setText(QStringLiteral("Критические ошибки: нет"));
+    }
+    else
+    {
+        problemsTitleLabel_->setText(QStringLiteral("Критические ошибки: %1 | Ошибки: %2 | Предупреждения: %3 | Информация: %4").arg(issues.size()).arg(errorCount).arg(warningCount).arg(infoCount));
+    }
 }
 
 void LocalizationDashboardWindow::selectProblemTarget()
@@ -444,7 +486,7 @@ void LocalizationDashboardWindow::selectProblemTarget()
     const QList<QTableWidgetItem *> selectedItems = problemsTable_->selectedItems();
     if (selectedItems.isEmpty()){return;}
 
-    const QTableWidgetItem *locationItem = problemsTable_->item(selectedItems.first()->row(), 1);
+    const QTableWidgetItem *locationItem = problemsTable_->item(selectedItems.first()->row(), 2);
     if (!locationItem){return;}
 
     const QVariant idValue = locationItem->data(Qt::UserRole);
