@@ -370,3 +370,10 @@ Localization Dashboard считается базово готовым, когд�
 - При ошибках сохранения выполняется попытка отката изменённых source-файлов и восстановления in-memory каталога.
 - Пользователь подтвердил успешную сборку, прохождение тестов и push commit `63350534023db6a4a72d50e6283c3fcf0a4c8f0f` (`Этап LD-5.3 — безопасный Rename ID`).
 - LD-5 завершён. Следующий этап — LD-6: Validator и защита качества локализации.
+
+### Этап LD-6.1 — фундамент Validator
+- Созданы `LocalizationValidationIssue`, `LocalizationValidator` и структурированный результат с severity, типом, ID, locale и координатами source.
+- Валидатор проверяет Missing ID, Unused ID, пустые переводы, дубли переводов, соответствие placeholders и динамические ссылки. Он не изменяет каталог и файлы.
+- Новые файлы зарегистрированы в `docs/PROGRAM_STRUCTURE.md`; постоянная граница Validator зафиксирована в `docs/TECHNICAL_SPEC.md`.
+- Пользователь подтвердил успешную Debug-сборку и push commit `4dd6663d45dbe2bb0d78e7bfedf379e4727fced4` (`Этап LD-6.1 — Validator и защита качества`).
+- Следующая подстадия — интеграция результатов Validator в Dashboard Problems.
