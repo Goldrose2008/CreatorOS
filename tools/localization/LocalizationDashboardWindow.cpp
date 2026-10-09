@@ -544,6 +544,7 @@ void LocalizationDashboardWindow::onTranslationChanged(QTableWidgetItem *item)
     }
 
     updateDirtyState(true);
+    populateProblems();
 }
 
 void LocalizationDashboardWindow::updateDirtyState(bool dirty)
