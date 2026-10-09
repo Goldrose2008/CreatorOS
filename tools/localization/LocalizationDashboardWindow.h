@@ -30,6 +30,7 @@ private:
     void selectProblemTarget();
     void onTranslationChanged(QTableWidgetItem *item);
     bool saveCatalog();
+    bool validateBeforeWrite(const QString &operationName);
     void addEntry();
     void deleteEntry();
     void updateDeleteButtonState();

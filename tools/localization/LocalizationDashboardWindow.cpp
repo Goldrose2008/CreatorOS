@@ -20,6 +20,7 @@
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QCloseEvent>
+#include <QStringList>
 
 LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &catalog, LocalizationUsageIndex &usageIndex, const QString &localizationPath, const QString &sourceRoot, QWidget *parent)
     : QMainWindow(parent), catalog_(catalog), usageIndex_(usageIndex), localizationPath_(localizationPath), sourceRoot_(sourceRoot)
@@ -540,10 +541,93 @@ void LocalizationDashboardWindow::updateDirtyState(bool dirty)
     setWindowTitle(dirty_ ? QStringLiteral("CreatorOS — Панель локализации *") : QStringLiteral("CreatorOS — Панель локализации"));
 }
 
+bool LocalizationDashboardWindow::validateBeforeWrite(const QString &operationName)
+{
+    LocalizationValidator validator;
+    const QVector<LocalizationValidationIssue> issues = validator.validate(catalog_, usageIndex_);
+    QStringList errors;
+    QStringList warnings;
+
+    for (const LocalizationValidationIssue &issue : issues)
+    {
+        QString location = issue.id;
+
+        if (!issue.locale.isEmpty())
+        {
+            location += QStringLiteral(" [%1]").arg(issue.locale);
+        }
+
+        if (!issue.filePath.isEmpty())
+        {
+            location = QStringLiteral("%1:%2:%3").arg(issue.filePath).arg(issue.line).arg(issue.column);
+        }
+
+        if (location.isEmpty())
+        {
+            location = QStringLiteral("—");
+        }
+
+        const QString description = QStringLiteral("%1 — %2").arg(location, issue.message);
+
+        if (issue.severity == LocalizationValidationSeverity::Error)
+        {
+            errors.append(description);
+        }
+        else if (issue.severity == LocalizationValidationSeverity::Warning)
+        {
+            warnings.append(description);
+        }
+    }
+
+    const auto formatIssues = [](const QStringList &items, int limit)
+        {
+            QStringList visibleItems;
+            const int count = qMin(items.size(), limit);
+
+            for (int index = 0; index < count; ++index)
+            {
+                visibleItems.append(QStringLiteral("• %1").arg(items.at(index)));
+            }
+
+            if (items.size() > limit)
+            {
+                visibleItems.append(QStringLiteral("… и ещё %1").arg(items.size() - limit));
+            }
+
+            return visibleItems.join('\n');
+        };
+
+    if (!errors.isEmpty())
+    {
+        QMessageBox::critical(
+            this,
+            QStringLiteral("Проверка локализации"),
+            QStringLiteral("Операция «%1» отменена.\nОбнаружено ошибок: %2.\n\n%3\n\nИсправьте ошибки перед сохранением.").arg(operationName).arg(errors.size()).arg(formatIssues(errors, 10)));
+
+        return false;
+    }
+
+    if (!warnings.isEmpty())
+    {
+        QMessageBox messageBox(this);
+        messageBox.setIcon(QMessageBox::Warning);
+        messageBox.setWindowTitle(QStringLiteral("Предупреждения локализации"));
+        messageBox.setText(QStringLiteral("Перед операцией «%1» обнаружено предупреждений: %2.").arg(operationName).arg(warnings.size()));
+        messageBox.setInformativeText(formatIssues(warnings, 10) + QStringLiteral("\n\nПродолжить операцию несмотря на предупреждения?"));
+        QPushButton *continueButton = messageBox.addButton(QStringLiteral("Продолжить"), QMessageBox::AcceptRole);
+        QPushButton *cancelButton = messageBox.addButton(QStringLiteral("Отмена"), QMessageBox::RejectRole);
+        messageBox.setDefaultButton(cancelButton);
+        messageBox.exec();
+        return messageBox.clickedButton() == continueButton;
+    }
+
+    return true;
+}
+
 bool LocalizationDashboardWindow::saveCatalog()
 {
     if (!dirty_){return true;}
-
+    if (!validateBeforeWrite(QStringLiteral("сохранение"))){return false;}
     QString error;
 
     if (!LocalizationTsvStore::save(localizationPath_, catalog_, &error))
@@ -929,7 +1013,7 @@ void LocalizationDashboardWindow::renameEntry()
         &QDialog::reject);
 
     if (previewDialog.exec() != QDialog::Accepted){return;}
-
+    if (!validateBeforeWrite(QStringLiteral("переименование"))){return;}
     if (!refactorService.applyRename(sourceRoot_, localizationPath_, catalog_, usageIndex_, oldId, newId, &error))
     {
         QMessageBox::critical(this, QStringLiteral("Ошибка переименования"), error);
