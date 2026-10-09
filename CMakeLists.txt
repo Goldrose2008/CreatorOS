@@ -168,6 +168,9 @@ qt_add_executable(CreatorOSLocalization
     tools/localization/LocalizationDashboardWindow.h
     tools/localization/LocalizationRefactorService.cpp
     tools/localization/LocalizationRefactorService.h
+    tools/localization/LocalizationValidationIssue.h
+    tools/localization/LocalizationValidator.cpp
+    tools/localization/LocalizationValidator.h
 )
 
 target_link_libraries(CreatorOSLocalization
