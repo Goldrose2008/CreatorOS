@@ -52,6 +52,8 @@ QVector<LocalizationValidationIssue>LocalizationValidator::validate( const Local
             issues.append(LocalizationValidationIssue{severity, type, id, locale, filePath, line, column, message});
         };
 
+    static const QRegularExpression idPattern(QStringLiteral("^[a-z][a-z0-9]*(?:[._][a-z0-9]+)*$"));
+
     // Запоминаем первую запись с каждым переводом
     // в пределах конкретного языка.
     QHash<QString, QHash<QString, QString>> seenTranslations;
@@ -61,6 +63,11 @@ QVector<LocalizationValidationIssue>LocalizationValidator::validate( const Local
     {
         const LocalizationEntry *entry = catalog.find(id);
         if (!entry){continue;}
+
+        if (!idPattern.match(id).hasMatch())
+        {
+            appendIssue(LocalizationValidationSeverity::Warning, LocalizationValidationType::InvalidIdFormat, id, QString(), QString(), 0, 0, QStringLiteral("ID нарушает формат: используйте строчные латинские буквы и цифры, разделённые точками или подчёркиваниями."));
+        }
 
         bool hasReferencePlaceholders = false;
         QString referenceLocale;

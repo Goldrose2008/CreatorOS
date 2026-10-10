@@ -451,6 +451,8 @@ void LocalizationDashboardWindow::populateProblems()
         {
         case LocalizationValidationType::MissingId: typeText = QStringLiteral("MISSING");
             break;
+        case LocalizationValidationType::InvalidIdFormat: typeText = QStringLiteral("INVALID_ID_FORMAT");
+            break;
         case LocalizationValidationType::UnusedId: typeText = QStringLiteral("UNUSED");
             break;
         case LocalizationValidationType::EmptyTranslation: typeText = QStringLiteral("EMPTY_TRANSLATION");

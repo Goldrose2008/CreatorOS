@@ -162,15 +162,37 @@ int main()
     }
 
     // 9. Количество повторений placeholder должно совпадать.
-{
-    LocalizationCatalog catalog;
-    catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
-    addEntry(catalog, QStringLiteral("repeated.placeholder"), QStringLiteral("Значения: %1 и %1"), QStringLiteral("Values: %1"));
-    LocalizationUsageIndex usageIndex;
-    usageIndex.addStaticUsage(QStringLiteral("repeated.placeholder"), LocalizationUsage{QStringLiteral("src/Repeated.cpp"), 1, 1});
-    const auto issues = validator.validate(catalog, usageIndex);
-    check(QStringLiteral("Repeated placeholders must have matching counts"), hasIssue(issues, LocalizationValidationType::PlaceholderMismatch, QStringLiteral("repeated.placeholder"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
-}
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("repeated.placeholder"), QStringLiteral("Значения: %1 и %1"), QStringLiteral("Values: %1"));
+        LocalizationUsageIndex usageIndex;
+        usageIndex.addStaticUsage(QStringLiteral("repeated.placeholder"), LocalizationUsage{QStringLiteral("src/Repeated.cpp"), 1, 1});
+        const auto issues = validator.validate(catalog, usageIndex);
+        check(QStringLiteral("Repeated placeholders must have matching counts"), hasIssue(issues, LocalizationValidationType::PlaceholderMismatch, QStringLiteral("repeated.placeholder"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
+    }
+
+    // 10. Точки и подчёркивания допустимы в составном ID.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("common.state.not_found"), QStringLiteral("Не найдено"), QStringLiteral("Not found"));
+        LocalizationUsageIndex usageIndex;
+        usageIndex.addStaticUsage(QStringLiteral("common.state.not_found"), LocalizationUsage{QStringLiteral("src/State.cpp"), 1, 1});
+        const auto issues = validator.validate(catalog, usageIndex);
+        check(QStringLiteral("Namespaced ID with underscore is valid"), !hasIssue(issues, LocalizationValidationType::InvalidIdFormat, QStringLiteral("common.state.not_found"), QString(), LocalizationValidationSeverity::Warning));
+    }
+
+    // 11. Заглавные буквы и дефисы в ID должны вызывать предупреждение.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("Menu-Bad"), QStringLiteral("Пункт"), QStringLiteral("Item"));
+        LocalizationUsageIndex usageIndex;
+        usageIndex.addStaticUsage(QStringLiteral("Menu-Bad"), LocalizationUsage{QStringLiteral("src/Menu.cpp"), 1, 1});
+        const auto issues = validator.validate(catalog, usageIndex);
+        check(QStringLiteral("Invalid localization ID format is reported as a warning"), hasIssue(issues, LocalizationValidationType::InvalidIdFormat, QStringLiteral("Menu-Bad"), QString(), LocalizationValidationSeverity::Warning));
+    }
 
     qInfo() << "Tests passed:" << passedTests << "| failed:" << failedTests;
     return failedTests == 0 ? 0 : 1;

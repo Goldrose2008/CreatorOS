@@ -12,6 +12,7 @@ enum class LocalizationValidationSeverity
 enum class LocalizationValidationType
 {
     MissingId,
+    InvalidIdFormat,
     UnusedId,
     EmptyTranslation,
     DuplicateTranslation,
