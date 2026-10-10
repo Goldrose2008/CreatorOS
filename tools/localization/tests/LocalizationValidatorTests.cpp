@@ -84,11 +84,12 @@ int main()
     {
         LocalizationCatalog catalog;
         catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
-        addEntry(catalog, QStringLiteral("empty.translation"), QStringLiteral("Привет"), QStringLiteral("   "));
+        addEntry(catalog, QStringLiteral("empty.translation"), QStringLiteral("Привет, %1"), QStringLiteral("   "));
         LocalizationUsageIndex usageIndex;
         usageIndex.addStaticUsage(QStringLiteral("empty.translation"), LocalizationUsage{QStringLiteral("src/Test.cpp"), 1, 1});
         const auto issues = validator.validate(catalog, usageIndex);
         check(QStringLiteral("Empty translation is an error"), hasIssue(issues, LocalizationValidationType::EmptyTranslation, QStringLiteral("empty.translation"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
+        check(QStringLiteral("Empty translation does not cause a redundant placeholder mismatch"), !hasIssue(issues, LocalizationValidationType::PlaceholderMismatch, QStringLiteral("empty.translation"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
     }
 
     // 3. Дубликаты должны находиться без учёта регистра и лишних пробелов.
@@ -148,6 +149,28 @@ int main()
         const bool noMissingId = !hasIssue(issues, LocalizationValidationType::MissingId, QString(), QString(), LocalizationValidationSeverity::Error);
         check(QStringLiteral("Dynamic reference stays a warning"), dynamicWarning && noMissingId);
     }
+
+    // 8. Локализованный placeholder %L1 эквивалентен %1.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("localized.number"), QStringLiteral("Число: %L1"), QStringLiteral("Number: %1"));
+        LocalizationUsageIndex usageIndex;
+        usageIndex.addStaticUsage(QStringLiteral("localized.number"), LocalizationUsage{QStringLiteral("src/Number.cpp"), 1, 1});
+        const auto issues = validator.validate(catalog, usageIndex);
+        check(QStringLiteral("Qt localized placeholder %L1 matches %1"), !hasIssue(issues, LocalizationValidationType::PlaceholderMismatch, QStringLiteral("localized.number"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
+    }
+
+    // 9. Количество повторений placeholder должно совпадать.
+{
+    LocalizationCatalog catalog;
+    catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+    addEntry(catalog, QStringLiteral("repeated.placeholder"), QStringLiteral("Значения: %1 и %1"), QStringLiteral("Values: %1"));
+    LocalizationUsageIndex usageIndex;
+    usageIndex.addStaticUsage(QStringLiteral("repeated.placeholder"), LocalizationUsage{QStringLiteral("src/Repeated.cpp"), 1, 1});
+    const auto issues = validator.validate(catalog, usageIndex);
+    check(QStringLiteral("Repeated placeholders must have matching counts"), hasIssue(issues, LocalizationValidationType::PlaceholderMismatch, QStringLiteral("repeated.placeholder"), QStringLiteral("en"), LocalizationValidationSeverity::Error));
+}
 
     qInfo() << "Tests passed:" << passedTests << "| failed:" << failedTests;
     return failedTests == 0 ? 0 : 1;

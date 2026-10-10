@@ -75,6 +75,7 @@ QVector<LocalizationValidationIssue>LocalizationValidator::validate( const Local
                 appendIssue(
                     LocalizationValidationSeverity::Error,
                     LocalizationValidationType::EmptyTranslation, id, locale, QString(), 0, 0, QStringLiteral("Перевод для языка '%1' пуст.").arg(locale));
+                continue;   
             }
 
             const QStringList currentPlaceholders = extractPlaceholders(value);
