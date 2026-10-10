@@ -508,11 +508,11 @@ void LocalizationDashboardWindow::populateProblems()
 
     if (issues.isEmpty())
     {
-        problemsTitleLabel_->setText(QStringLiteral("Критические ошибки: нет"));
+        problemsTitleLabel_->setText(QStringLiteral("Проблем нет"));
     }
     else
     {
-        problemsTitleLabel_->setText(QStringLiteral("Критические ошибки: %1 | Ошибки: %2 | Предупреждения: %3 | Информация: %4").arg(issues.size()).arg(errorCount).arg(warningCount).arg(infoCount));
+        problemsTitleLabel_->setText(QStringLiteral("Всего проблем: %1 | Ошибки: %2 | Предупреждения: %3 | Информация: %4").arg(issues.size()).arg(errorCount).arg(warningCount).arg(infoCount));
     }
     
     applyProblemsSeverityFilter();
