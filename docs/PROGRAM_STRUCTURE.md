@@ -562,7 +562,7 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationRefactorService.cpp` | Строит preview и безопасно применяет Rename к распознанным static references с повторной проверкой, откатом при ошибке и сохранением каталога. |
 | `tools/localization/LocalizationValidationIssue.h` | Модель структурированной проблемы Validator: тип, severity, ID, locale и расположение. |
 | `tools/localization/LocalizationValidator.h` | Контракт проверки LocalizationCatalog и LocalizationUsageIndex без изменения данных. |
-| `tools/localization/LocalizationValidator.cpp` | Проверяет пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, placeholders и динамические ссылки. |
+| `tools/localization/LocalizationValidator.cpp` | Проверяет формат ID, пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, согласованность placeholders и динамические ссылки. |
 | `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты правил Validator на изолированных каталогах и Usage Index; не изменяет рабочий localization.tsv. |
 | `tools/localization/LocalizationDashboardWindow.h` | Контракт главного Qt Widgets-окна Localization Dashboard и его таблицы/поиска. |
 | `tools/localization/LocalizationDashboardWindow.cpp` | Реализация Dashboard UI: таблица каталога, поиск и фильтры каталога/важности Problems, usage/problems с цветовой индикацией severity, редактирование, добавление/удаление/Rename, validation перед записью и защита от потери несохранённых изменений. |
