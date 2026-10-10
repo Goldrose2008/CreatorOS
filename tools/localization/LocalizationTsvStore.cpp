@@ -1,5 +1,6 @@
 #include "LocalizationTsvStore.h"
 
+#include <QSet>
 #include <QFile>
 #include <QSaveFile>
 #include <QStringConverter>
@@ -67,6 +68,21 @@ bool LocalizationTsvStore::load(const QString &filePath, LocalizationCatalog &ca
         }
 
         return false;
+    }
+
+    QSet<QString> seenHeaders;
+
+    for (const QString &header : headers)
+    {
+        if (seenHeaders.contains(header))
+        {
+            if (error)
+            {
+                *error = QStringLiteral("Duplicate localization column: %1").arg(header);
+            }
+            return false;
+        }
+        seenHeaders.insert(header);
     }
 
     QStringList locales;

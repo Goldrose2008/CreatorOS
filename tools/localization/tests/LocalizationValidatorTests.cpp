@@ -1,7 +1,11 @@
 #include "../LocalizationCatalog.h"
 #include "../LocalizationUsageIndex.h"
 #include "../LocalizationValidator.h"
+#include "../LocalizationTsvStore.h"
 
+#include <QByteArray>
+#include <QFile>
+#include <QTemporaryDir>
 #include <QDebug>
 #include <QString>
 
@@ -37,6 +41,46 @@ namespace
         {
             qCritical().noquote() << "Test setup failed:" << error; ++failedTests;
         }
+    }
+
+    bool loadTsvText(const QString &text, LocalizationCatalog &catalog, QString *error)
+    {
+        QTemporaryDir temporaryDirectory;
+
+        if (!temporaryDirectory.isValid())
+        {
+            if (error)
+            {
+                *error = QStringLiteral("Could not create temporary directory.");
+            }
+            return false;
+        }
+
+        const QString filePath = temporaryDirectory.filePath(QStringLiteral("localization.tsv"));
+        QFile file(filePath);
+
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            if (error)
+            {
+                *error = QStringLiteral("Could not open temporary TSV for writing.");
+            }
+            return false;
+        }
+
+        const QByteArray bytes = text.toUtf8();
+
+        if (file.write(bytes) != bytes.size())
+        {
+            if (error)
+            {
+                *error = QStringLiteral("Could not write temporary TSV.");
+            }
+            return false;
+        }
+
+        file.close();
+        return LocalizationTsvStore::load(filePath, catalog, error);
     }
 
     bool hasIssue(
@@ -192,6 +236,90 @@ int main()
         usageIndex.addStaticUsage(QStringLiteral("Menu-Bad"), LocalizationUsage{QStringLiteral("src/Menu.cpp"), 1, 1});
         const auto issues = validator.validate(catalog, usageIndex);
         check(QStringLiteral("Invalid localization ID format is reported as a warning"), hasIssue(issues, LocalizationValidationType::InvalidIdFormat, QStringLiteral("Menu-Bad"), QString(), LocalizationValidationSeverity::Warning));
+    }
+
+    // 12. Корректный TSV загружается.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\nhello\tПривет\tHello\n"), catalog, &error);
+        const LocalizationEntry *entry = catalog.find(QStringLiteral("hello"));
+        check(QStringLiteral("Valid TSV loads entries and locales"), loaded && catalog.size() == 1 && catalog.locales() == QStringList{QStringLiteral("ru"), QStringLiteral("en")} && entry && entry->translations.value(QStringLiteral("ru")) == QStringLiteral("Привет") && entry->translations.value(QStringLiteral("en")) == QStringLiteral("Hello"));
+    }
+
+    // 13. Пустой TSV отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QString(), catalog, &error);
+        check(QStringLiteral("Empty TSV is rejected"), !loaded && error.contains(QStringLiteral("Localization file is empty.")));
+    }
+
+    // 14. Отсутствие id отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("ru\ten\nПривет\tHello\n"), catalog, &error);
+        check(QStringLiteral("Missing id column is rejected"), !loaded && error.contains(QStringLiteral("'id' column")));
+    }
+
+    // 15. Отсутствие ru отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\ten\nhello\tHello\n"), catalog, &error);
+        check(QStringLiteral("Missing ru column is rejected"), !loaded && error.contains(QStringLiteral("'ru' column")));
+    }
+
+    // 16. Повторная колонка ru отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\tru\nhello\tПривет\tПривет2\n"), catalog, &error);
+        check(QStringLiteral("Duplicate locale column is rejected"), !loaded && error.contains(QStringLiteral("Duplicate localization column: ru")));
+    }
+
+    // 17. Повторная колонка id отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\tid\nhello\tПривет\thello\n"), catalog, &error);
+        check(QStringLiteral("Duplicate id column is rejected"), !loaded && error.contains(QStringLiteral("Duplicate localization column: id")));
+    }
+
+    // 18. Неверное число значений в строке отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\nhello\tПривет\n"), catalog, &error);
+        check(QStringLiteral("Invalid row column count is rejected"), !loaded && error.contains(QStringLiteral("Invalid column count at line 2")));
+    }
+
+    // 19. Пустой ID отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\n\tПривет\tHello\n"), catalog, &error);
+        check(QStringLiteral("Empty ID is rejected"), !loaded && error.contains(QStringLiteral("Localization ID is empty at line 2")));
+    }
+
+    // 20. Дублирующийся ID отклоняется.
+    {
+        LocalizationCatalog catalog;
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\nhello\tПривет\tHello\nhello\tЕщё\tAgain\n"), catalog, &error);
+        check(QStringLiteral("Duplicate ID is rejected"), !loaded && error.contains(QStringLiteral("Line 3")) && error.contains(QStringLiteral("already exists")));
+    }
+
+    // 21. Неудачная загрузка не заменяет существующий каталог.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("keep.key"), QStringLiteral("Сохранить"), QStringLiteral("Keep"));
+        QString error;
+        const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\nnew.key\tНовое\tNew\nbroken\tТолько ru\n"), catalog, &error);
+        const LocalizationEntry *keptEntry = catalog.find(QStringLiteral("keep.key"));
+        check(QStringLiteral("Failed load preserves the existing catalog"), !loaded && catalog.size() == 1 && keptEntry && keptEntry->translations.value(QStringLiteral("ru")) == QStringLiteral("Сохранить") && !catalog.contains(QStringLiteral("new.key")));
     }
 
     qInfo() << "Tests passed:" << passedTests << "| failed:" << failedTests;

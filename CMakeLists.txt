@@ -187,12 +187,14 @@ if(BUILD_TESTING)
         tools/localization/LocalizationEntry.h
         tools/localization/LocalizationCatalog.cpp
         tools/localization/LocalizationCatalog.h
+        tools/localization/LocalizationTsvStore.cpp
+        tools/localization/LocalizationTsvStore.h
         tools/localization/LocalizationUsage.h
         tools/localization/LocalizationUsageIndex.cpp
         tools/localization/LocalizationUsageIndex.h
         tools/localization/LocalizationValidationIssue.h
         tools/localization/LocalizationValidator.cpp
-        tools/localization/LocalizationValidator.h
+        tools/localization/LocalizationValidator.h  
     )
 
     target_include_directories(CreatorOSLocalizationTests
