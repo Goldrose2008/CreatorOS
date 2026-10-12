@@ -3,6 +3,10 @@
 #include "LocalizationTsvStore.h"
 #include "LocalizationValidator.h"
 
+#include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QStandardPaths>
 #include <QBrush>
 #include <QColor>
 #include <QAbstractItemView>
@@ -70,6 +74,9 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     saveButton_ = new QPushButton(QStringLiteral("Сохранить"), centralWidget);
     saveButton_->setEnabled(false);
     filterLayout->addWidget(saveButton_);
+
+    exportButton_ = new QPushButton(QStringLiteral("Экспорт TSV"), centralWidget);
+    filterLayout->addWidget(exportButton_);
 
     layout->addLayout(filterLayout);
 
@@ -261,6 +268,15 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this]()
         {
             saveCatalog();
+        });
+
+    connect(
+        exportButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            exportCatalog();
         });
 }
 
@@ -692,6 +708,57 @@ bool LocalizationDashboardWindow::saveCatalog()
     updateDirtyState(false);
     QMessageBox::information(this, QStringLiteral("Сохранение"), QStringLiteral("Изменения успешно сохранены."));
     return true;
+}
+
+void LocalizationDashboardWindow::exportCatalog()
+{
+    QString exportDirectory = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+    if (exportDirectory.isEmpty())
+    {
+        exportDirectory = QFileInfo(localizationPath_).absolutePath();
+    }
+
+    const QString initialPath = QDir(exportDirectory).filePath(QStringLiteral("CreatorOS-localization-export.tsv"));
+    const QString exportPath = QFileDialog::getSaveFileName(this, QStringLiteral("Экспорт каталога локализации"), initialPath, QStringLiteral("TSV-файлы (*.tsv);;Все файлы (*.*)"));
+    if (exportPath.isEmpty()){return;}
+
+    QFileInfo sourceInfo(localizationPath_);
+    QFileInfo destinationInfo(exportPath);
+    QString sourcePath = sourceInfo.canonicalFilePath();
+    QString destinationPath = destinationInfo.canonicalFilePath();
+
+    if (sourcePath.isEmpty())
+    {
+        sourcePath = QDir::cleanPath(sourceInfo.absoluteFilePath());
+    }
+
+    if (destinationPath.isEmpty())
+    {
+        destinationPath = QDir::cleanPath(destinationInfo.absoluteFilePath());
+    }
+
+    Qt::CaseSensitivity pathCaseSensitivity = Qt::CaseSensitive;
+
+#ifdef Q_OS_WIN
+    pathCaseSensitivity = Qt::CaseInsensitive;
+#endif
+
+    if (QString::compare(sourcePath, destinationPath, pathCaseSensitivity) == 0)
+    {
+        QMessageBox::warning(this, QStringLiteral("Экспорт каталога"), QStringLiteral("Для экспорта выберите другой файл. Исходный localization.tsv нельзя перезаписывать через экспорт."));
+        return;
+    }
+
+    QString error;
+
+    if (!LocalizationTsvStore::save(exportPath, catalog_, &error))
+    {
+        QMessageBox::critical(this, QStringLiteral("Ошибка экспорта"), error);
+        return;
+    }
+
+    QMessageBox::information(this, QStringLiteral("Экспорт каталога"), QStringLiteral("Копия каталога успешно сохранена:\n%1").arg(exportPath));
 }
 
 void LocalizationDashboardWindow::addEntry()

@@ -31,6 +31,7 @@ private:
     void selectProblemTarget();
     void onTranslationChanged(QTableWidgetItem *item);
     bool saveCatalog();
+    void exportCatalog();
     bool validateBeforeWrite(const QString &operationName);
     void addEntry();
     void deleteEntry();
@@ -44,6 +45,7 @@ private:
 
     QLineEdit *searchEdit_ = nullptr;
     QPushButton *saveButton_ = nullptr;
+    QPushButton *exportButton_ = nullptr;
     QPushButton *addButton_ = nullptr;
     QPushButton *deleteButton_ = nullptr;
     QPushButton *renameButton_ = nullptr;
