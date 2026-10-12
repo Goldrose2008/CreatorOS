@@ -14,12 +14,9 @@ class IProjectRepository;
 class ContentService
 {
 public:
-    explicit ContentService(
-        IContentRepository &repository,
-        IProjectRepository &projectRepository,
-        IContentTypeRepository &contentTypeRepository
-    );
+    explicit ContentService(IContentRepository &repository, IProjectRepository &projectRepository, IContentTypeRepository &contentTypeRepository);
 
+    std::vector<Content> getAllContents() const;
     std::vector<Content> getProjectContents(std::int64_t projectId) const;
     std::optional<Content> getContent(std::int64_t id) const;
 

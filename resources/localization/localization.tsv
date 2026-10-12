@@ -13,6 +13,7 @@ common.dialog.delete.title	Удаление	Deletion
 common.dialog.edit.title	Редактирование	Editing
 common.entity.content	Контент	Content
 common.entity.project	Проект	Project
+common.entity.task	Задача	Task
 common.entity.workspace	Рабочее пространство	Workspace
 common.label.description	Описание	Description
 common.label.name	Название	Name
@@ -61,10 +62,18 @@ projects.description	Все проекты CreatorOS в одном рабоче�
 projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
 settings	Настройки	Settings
 system	Система	System
+task.create.parent	Родительская сущность	Parent item
+task.create.parent_type	Тип родительской сущности	Parent type
+task.create.title	Новая задача	New task
 task.deadline	Дедлайн	Deadline
+task.deadline.enabled	Указать дедлайн	Set a deadline
+task.delete.error.description	Не удалось удалить задачу. Попробуйте ещё раз.	Could not delete the task. Try again.
+task.parent.none	Сначала создайте проект или контент, к которому будет относиться задача.	Create a project or content item first.
+task.save.error.description	Не удалось сохранить задачу. Проверьте введённые данные.	Could not save the task. Check the entered data.
 task.parent_task	Родительская задача	Parent task
 task.status.cancelled	Отменена	Cancelled
 task.status.done	Выполнена	Done
 task.status.todo	К выполнению	To do
 tasks	Задачи	Tasks
+tasks.create	Создать задачу	Create task
 tasks.description	Все задачи в одном рабочем пространстве.	All tasks in one workspace.

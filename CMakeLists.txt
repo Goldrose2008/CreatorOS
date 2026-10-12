@@ -126,6 +126,10 @@ qt_add_executable(CreatorOS
     src/ui/pages/tasks/TaskCard.h
     src/ui/pages/tasks/TasksPage.cpp
     src/ui/pages/tasks/TasksPage.h
+    src/ui/pages/tasks/TaskEditorDialog.cpp
+    src/ui/pages/tasks/TaskEditorDialog.h
+    src/ui/pages/tasks/TaskDetailsPage.cpp
+    src/ui/pages/tasks/TaskDetailsPage.h
 
     src/application/common/StringUtils.h
 

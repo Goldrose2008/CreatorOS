@@ -18,6 +18,11 @@ ContentService::ContentService(
 {
 }
 
+std::vector<Content> ContentService::getAllContents() const
+{
+    return repository_.findAll();
+}
+
 std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) const
 {
     if (projectId <= 0)

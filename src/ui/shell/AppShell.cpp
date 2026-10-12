@@ -17,6 +17,7 @@
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
 #include "../pages/tasks/TasksPage.h"
+#include "../pages/tasks/TaskDetailsPage.h"
 #include "../../application/content/ContentService.h"
 #include "../../application/projects/ProjectService.h"
 #include "../../application/tasks/TaskService.h"
@@ -103,8 +104,10 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
         localization_->text(QStringLiteral("planning"))
     );
 
-    auto *tasksPage = new TasksPage(*taskService_, *localization_, workspace_);
+    auto *tasksPage = new TasksPage(*taskService_, *projectService_, *contentService_, *localization_, workspace_);
+    auto *taskDetailsPage = new TaskDetailsPage(*taskService_, *projectService_, *contentService_, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("tasks"), tasksPage});
+    navigation_->addPage(CurrentPage{QStringLiteral("task-details"), taskDetailsPage});
 
     addPlaceholderPage(
         navigation_,
@@ -184,6 +187,26 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
             navigation_->navigateTo(QStringLiteral("project-details"));
         }
     );
+
+    connect(
+        tasksPage,
+        &TasksPage::taskOpenRequested,
+        this,
+        [this, taskDetailsPage](std::int64_t taskId)
+        {
+            taskDetailsPage->showTask(taskId);
+            navigation_->navigateTo(QStringLiteral("task-details"));
+        });
+
+    connect(
+        taskDetailsPage,
+        &TaskDetailsPage::backRequested,
+        this,
+        [this, tasksPage]()
+        {
+            tasksPage->reload();
+            navigation_->navigateTo(QStringLiteral("tasks"));
+        });
 
     navigation_->navigateTo(QStringLiteral("home"));
 }

@@ -68,6 +68,30 @@ ContentRepository::ContentRepository(const DatabaseManager &databaseManager)
 {
 }
 
+std::vector<Content> ContentRepository::findAll() const
+{
+    QSqlQuery query(database_);
+
+    query.prepare(
+        QStringLiteral("SELECT ") + selectColumns() +
+        QStringLiteral("FROM contents ORDER BY project_id ASC, priority DESC, id ASC")
+    );
+
+    if (!query.exec())
+    {
+        throw std::runtime_error(query.lastError().text().toStdString());
+    }
+
+    std::vector<Content> contents;
+
+    while (query.next())
+    {
+        contents.push_back(readContent(query));
+    }
+
+    return contents;
+}
+
 std::vector<Content> ContentRepository::findByProjectId(std::int64_t projectId) const
 {
     QSqlQuery query(database_);

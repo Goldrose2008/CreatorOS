@@ -2,9 +2,13 @@
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
+#include <QDialog>
+#include <QPushButton>
 #include <exception>
 
 #include "TaskCard.h"
+#include "TaskEditorDialog.h"
+#include "../../components/forms/EditorDialog.h"
 #include "../../components/lists/EntityList.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../components/states/EmptyState.h"
@@ -13,11 +17,15 @@
 #include "../../localization/LocalizationService.h"
 #include "../../style/Metrics.h"
 #include "../../../application/tasks/TaskService.h"
+#include "../../../application/projects/ProjectService.h"
+#include "../../../application/content/ContentService.h"
 #include "../../../domain/models/Task.h"
 
-TasksPage::TasksPage(TaskService &taskService, LocalizationService &localization, QWidget *parent)
+TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent)
     : QWidget(parent),
       taskService_(taskService),
+      projectService_(projectService),
+      contentService_(contentService),
       localization_(localization),
       header_(new PageHeader(this)),
       taskList_(new EntityList(this)),
@@ -34,6 +42,18 @@ TasksPage::TasksPage(TaskService &taskService, LocalizationService &localization
     header_->setTitle(localization_.text(QStringLiteral("tasks")));
     header_->setDescription(localization_.text(QStringLiteral("tasks.description")));
     
+    auto *createButton = new QPushButton(localization_.text(QStringLiteral("tasks.create")), this);
+    header_->addAction(createButton);
+    connect(
+        createButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            TaskEditorDialog dialog(taskService_, projectService_, contentService_, localization_, this);
+            if (dialog.exec() == QDialog::Accepted){reload();}
+        });
+
     loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
     
     emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
@@ -78,12 +98,15 @@ void TasksPage::reload()
 
         for (const Task &task : tasks)
         {
-            auto *card = new TaskCard(
-                task,
-                localization_,
-                taskList_
+            auto *card = new TaskCard(task, localization_, taskList_);
+           
+            connect(
+                card,
+                &TaskCard::openRequested,
+                this,
+                &TasksPage::taskOpenRequested
             );
-
+            
             taskList_->addItem(card);
         }
 

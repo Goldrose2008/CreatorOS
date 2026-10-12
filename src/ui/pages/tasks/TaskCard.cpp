@@ -3,6 +3,7 @@
 #include <QFont>
 #include <QLabel>
 #include <QPalette>
+#include <QPushButton>
 
 #include "../../../ui/localization/LocalizationService.h"
 #include "../../../ui/style/Colors.h"
@@ -59,4 +60,14 @@ TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget 
 
         addMetaWidget(parentTaskLabel);
     }
+
+    auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
+    addAction(openButton);
+
+    connect(
+        openButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {emit openRequested(task_.id);});
 }
