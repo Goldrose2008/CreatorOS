@@ -98,12 +98,12 @@ src/application/
 |---|---|
 | `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
 | `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение Content по Project/ID, создание, изменение и удаление. |
-| `src/application/content/ContentService.h + ContentService.cpp` | сценариев Content, включая проверки Project/ContentType и запрет удаления Main Content. |
+| `src/application/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая проверки Project/ContentType и запрет удаления Main Content. |
 | `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
-| `src/application/projects/ProjectService.h + ProjectService.cpp` | сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
+| `src/application/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
 | `src/application/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
 | `src/application/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
-| `src/application/tasks/TaskService.h + TaskService.cpp` | сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
+| `src/application/tasks/TaskService.h + TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
 
 ---
 
@@ -185,9 +185,9 @@ src/ui/components/entity/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/components/entity/EntityCard.h + EntityCard.cpp` | общего каркаса и UI-поведения `EntityCard`: заголовок, описание, статус, прогресс, метаданные, дополнительные области и действия. |
-| `src/ui/components/entity/EntityHeader.h + EntityHeader.cpp` | заголовка сущности с названием, описанием, status widget, metadata и action widgets. |
-| `src/ui/components/entity/EntityDetails.h + EntityDetails.cpp` | общей структуры `EntityDetails`: navigation, header, состояния, summary/info, actions и content-регионы. |
+| `src/ui/components/entity/EntityCard.h + EntityCard.cpp` | Реализация общего каркаса и UI-поведения `EntityCard`: заголовок, описание, статус, прогресс, метаданные, дополнительные области и действия. |
+| `src/ui/components/entity/EntityHeader.h + EntityHeader.cpp` | Реализация заголовка сущности с названием, описанием, status widget, metadata и action widgets. |
+| `src/ui/components/entity/EntityDetails.h + EntityDetails.cpp` | Реализация общей структуры `EntityDetails`: navigation, header, состояния, summary/info, actions и content-регионы. |
 
 ### Foundation
 
@@ -215,9 +215,9 @@ src/ui/components/forms/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/components/forms/FormField.h + FormField.cpp` | визуальной структуры и состояний FormField. |
-| `src/ui/components/forms/EditorDialog.h + EditorDialog.cpp` | общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `save()` перед закрытием диалога. |
-| `src/ui/components/forms/ConfirmModal.h + ConfirmModal.cpp` | общего layout, текста подтверждения, кнопок подтверждения/отмены и выполнения переданного callback только после подтверждения. |
+| `src/ui/components/forms/FormField.h + FormField.cpp` | Реализация визуальной структуры и состояний FormField. |
+| `src/ui/components/forms/EditorDialog.h + EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `save()` перед закрытием диалога. |
+| `src/ui/components/forms/ConfirmModal.h + ConfirmModal.cpp` | Реализация общего layout, текста подтверждения, кнопок подтверждения/отмены и выполнения переданного callback только после подтверждения. |
 
 ### Layout
 
@@ -253,7 +253,7 @@ src/ui/components/lists/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/components/lists/EntityList.h + EntityList.cpp` | списка: добавление, очистка элементов и подсчёт текущего количества. |
+| `src/ui/components/lists/EntityList.h + EntityList.cpp` | Реализация списка: добавление, очистка элементов и подсчёт текущего количества. |
 
 ### Navigation
 
@@ -267,8 +267,8 @@ src/ui/components/navigation/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/components/navigation/MenuItem.h + MenuItem.cpp` | визуального элемента меню и сигнала маршрута/действия. |
-| `src/ui/components/navigation/MenuSection.h + MenuSection.cpp` | оформления и размещения элементов секции. |
+| `src/ui/components/navigation/MenuItem.h + MenuItem.cpp` | Реализация визуального элемента меню и сигнала маршрута/действия. |
+| `src/ui/components/navigation/MenuSection.h + MenuSection.cpp` | Реализация оформления и размещения элементов секции. |
 
 ### States
 
@@ -286,7 +286,7 @@ src/ui/components/states/
 |---|---|
 | `src/ui/components/states/StateWidget.h + StateWidget.cpp` | Общая визуальная реализация title/description для state-компонентов. |
 | `src/ui/components/states/EmptyState.h` | Пустое состояние, наследующее общую структуру `StateWidget`. |
-| `src/ui/components/states/ErrorState.h + ErrorState.cpp` | retry-кнопки и сигнала `retryRequested`. |
+| `src/ui/components/states/ErrorState.h + ErrorState.cpp` | Реализация retry-кнопки и сигнала `retryRequested`. |
 | `src/ui/components/states/LoadingState.h` | Специализированное состояние загрузки, наследующее общую UI-механику `StateWidget`; отдельной реализации `.cpp` не требует. |
 
 ---
@@ -361,9 +361,9 @@ src/ui/pages/content/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/pages/content/ContentCard.h + ContentCard.cpp` | карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`; передаёт событие открытия Content. |
-| `src/ui/pages/content/ContentDetails.h + ContentDetails.cpp` | просмотра Content через `ContentService`, отображение полной модели, редактирование через `ContentEditorDialog` и удаление только Additional Content через `ConfirmModal`. |
-| `src/ui/pages/content/ContentEditorDialog.h + ContentEditorDialog.cpp` | формы Content и сохранения через `ContentService`; содержит только редактируемые пользователем поля. |
+| `src/ui/pages/content/ContentCard.h + ContentCard.cpp` | Реализация карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`; передаёт событие открытия Content. |
+| `src/ui/pages/content/ContentDetails.h + ContentDetails.cpp` | Реализация просмотра Content через `ContentService`, отображение полной модели, редактирование через `ContentEditorDialog` и удаление только Additional Content через `ConfirmModal`. |
+| `src/ui/pages/content/ContentEditorDialog.h + ContentEditorDialog.cpp` | Реализация формы Content и сохранения через `ContentService`; содержит только редактируемые пользователем поля. |
 
 
 
@@ -379,8 +379,8 @@ src/ui/pages/tasks/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/pages/tasks/TaskCard.h + TaskCard.cpp` | карточки Task: название, описание, статус, дедлайн и информация о родительской Task через общие механизмы `EntityCard`. |
-| `src/ui/pages/tasks/TasksPage.h + TasksPage.cpp` | загрузки списка Task через `TaskService` и отображение `TaskCard` в единой странице Tasks. |
+| `src/ui/pages/tasks/TaskCard.h + TaskCard.cpp` | Реализация карточки Task: название, описание, статус, дедлайн и информация о родительской Task через общие механизмы `EntityCard`. |
+| `src/ui/pages/tasks/TasksPage.h + TasksPage.cpp` | Реализация загрузки списка Task через `TaskService` и отображение `TaskCard` в единой странице Tasks. |
 
 ## 8.5. Shell — `src/ui/shell`
 
@@ -422,7 +422,7 @@ src/ui/style/
 | `src/ui/style/Colors.h` | Центральные цветовые токены интерфейса. |
 | `src/ui/style/Metrics.h` | Центральные размеры, spacing, высоты контролов и радиусы. |
 | `src/ui/style/CreatorStyle.h + CreatorStyle.cpp` | Настройка базовой Qt палитры под визуальную систему CreatorOS. |
-| `src/ui/style/Icons.h + Icons.cpp` | Текущая реализация доступа к иконкам; временно использует стандартные Qt-иконки там, где собственные ресурсы ещё не подключены. |
+| `src/ui/style/Icons.h + Icons.cpp` | Единый доступ к иконкам интерфейса. |
 
 ---
 
