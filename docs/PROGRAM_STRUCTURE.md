@@ -97,8 +97,8 @@ src/application/
 | Файл | Назначение |
 |---|---|
 | `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
-| `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение Content по Project/ID, создание, изменение и удаление. |
-| `src/application/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая проверки Project/ContentType и запрет удаления Main Content. |
+| `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение всех записей, выборка по Project/ID, создание, изменение и удаление. |
+| `src/application/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая получение всех записей, проверки Project/ContentType и запрет удаления Main Content. |
 | `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 | `src/application/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
 | `src/application/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
@@ -128,7 +128,7 @@ src/infrastructure/
 | Файл | Назначение |
 |---|---|
 | `src/infrastructure/database/ContentTypeRepository.h + ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
-| `src/infrastructure/database/ContentRepository.h + ContentRepository.cpp` | SQL-операции с таблицей `contents`: чтение по Project/ID, создание, изменение и удаление Content. |
+| `src/infrastructure/database/ContentRepository.h + ContentRepository.cpp` | SQL-операции с таблицей `contents`: чтение всех записей и выборка по Project/ID, создание, изменение и удаление Content. |
 | `src/infrastructure/database/DatabaseManager.h + DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
 | `src/infrastructure/database/ProjectRepository.h + ProjectRepository.cpp` | SQL-операции с таблицей `projects`: чтение, создание, изменение и удаление проектов. |
 | `src/infrastructure/database/TaskRepository.h + TaskRepository.cpp` | SQL-операции с таблицей `tasks`: чтение списка, выборка по контексту родителя/иерархии, создание, изменение и удаление Task. |
@@ -373,14 +373,20 @@ src/ui/pages/content/
 src/ui/pages/tasks/
 ├── TaskCard.cpp
 ├── TaskCard.h
+├── TaskDetailsPage.cpp
+├── TaskDetailsPage.h
+├── TaskEditorDialog.cpp
+├── TaskEditorDialog.h
 ├── TasksPage.cpp
 └── TasksPage.h
 ```
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/pages/tasks/TaskCard.h + TaskCard.cpp` | Реализация карточки Task: название, описание, статус, дедлайн и информация о родительской Task через общие механизмы `EntityCard`. |
-| `src/ui/pages/tasks/TasksPage.h + TasksPage.cpp` | Реализация загрузки списка Task через `TaskService` и отображение `TaskCard` в единой странице Tasks. |
+| `src/ui/pages/tasks/TaskCard.h + TaskCard.cpp` | Карточка Task с основными полями, метаданными и действием открытия подробностей через сигнал `openRequested`. |
+| `src/ui/pages/tasks/TasksPage.h + TasksPage.cpp` | Загружает и отображает список Task, открывает форму создания и передаёт события открытия Task в страницу подробностей. |
+| `src/ui/pages/tasks/TaskEditorDialog.h + TaskEditorDialog.cpp` | Форма создания Task с выбором Project/Content-родителя и редактирования названия, описания и дедлайна. |
+| `src/ui/pages/tasks/TaskDetailsPage.h + TaskDetailsPage.cpp` | Подробности Task, отображение родителя и метаданных, редактирование и удаление с подтверждением. |
 
 ## 8.5. Shell — `src/ui/shell`
 
@@ -398,7 +404,7 @@ src/ui/shell/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/shell/AppShell.h + AppShell.cpp` | Собирает Sidebar + Workspace, подключает LocalizationService, NavigationController и прикладные страницы. |
+| `src/ui/shell/AppShell.h + AppShell.cpp` | Собирает Sidebar + Workspace, подключает LocalizationService, NavigationController и страницы; связывает список Task с Task Details. |
 | `src/ui/shell/Sidebar.h + Sidebar.cpp` | Sidebar, добавление секций/элементов и управление активным route. |
 | `src/ui/shell/Workspace.h + Workspace.cpp` | Контейнер отображения текущей страницы приложения. |
 | `src/ui/shell/MenuComposer.h + MenuComposer.cpp` | Собирает Sidebar из MenuSection/MenuItem и передаёт локализованные подписи, иконки и routes. |
