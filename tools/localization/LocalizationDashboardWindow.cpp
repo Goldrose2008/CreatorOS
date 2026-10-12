@@ -3,6 +3,7 @@
 #include "LocalizationTsvStore.h"
 #include "LocalizationValidator.h"
 
+#include <QInputDialog>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -62,6 +63,9 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
     
     addButton_ = new QPushButton(QStringLiteral("Добавить"), centralWidget);
     filterLayout->addWidget(addButton_);
+
+    addLocaleButton_ = new QPushButton(QStringLiteral("Добавить язык"), centralWidget);
+    filterLayout->addWidget(addLocaleButton_);
 
     renameButton_ = new QPushButton(QStringLiteral("Переименовать"), centralWidget);
     renameButton_->setEnabled(false);
@@ -241,6 +245,15 @@ LocalizationDashboardWindow::LocalizationDashboardWindow(LocalizationCatalog &ca
         [this]()
         {
             addEntry();
+        });
+
+    connect(
+        addLocaleButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            addLocale();
         });
 
     connect(
@@ -856,6 +869,46 @@ void LocalizationDashboardWindow::addEntry()
     }
 
     updateDeleteButtonState();
+}
+
+void LocalizationDashboardWindow::addLocale()
+{
+    const QStringList existingLocales = catalog_.locales();
+
+    if (existingLocales.isEmpty())
+    {
+        QMessageBox::warning(this, QStringLiteral("Добавить язык"), QStringLiteral("В каталоге пока нет языков-источников."));
+        return;
+    }
+
+    bool sourceAccepted = false;
+    int sourceIndex = existingLocales.indexOf(QStringLiteral("en"));
+    if (sourceIndex < 0){sourceIndex = 0;}
+
+    const QString sourceLocale = QInputDialog::getItem(this, QStringLiteral("Добавить язык"), QStringLiteral("Скопировать начальные значения из языка:"), existingLocales, sourceIndex, false, &sourceAccepted);
+    if (!sourceAccepted){return;}
+
+    bool localeAccepted = false;
+    const QString localeCode = QInputDialog::getText(this, QStringLiteral("Добавить язык"), QStringLiteral( "Код нового языка (например, de, es или pt_BR):"), QLineEdit::Normal, QString(), &localeAccepted).trimmed();
+    if (!localeAccepted){return;}
+    if (localeCode.isEmpty())
+    {
+        QMessageBox::warning(this, QStringLiteral("Добавить язык"), QStringLiteral("Код языка не может быть пустым."));
+        return;
+    }
+
+    QString error;
+
+    if (!catalog_.addLocale(localeCode, sourceLocale, &error))
+    {
+        QMessageBox::warning(this, QStringLiteral("Не удалось добавить язык"), error);
+        return;
+    }
+
+    updateDirtyState(true);
+    populateTable();
+    populateProblems();
+    QMessageBox::information(this, QStringLiteral("Язык добавлен"), QStringLiteral("Добавлена колонка '%1'.\n\nНачальные значения скопированы из '%2'.\nЗамените их настоящими переводами перед выпуском приложения.").arg(localeCode, sourceLocale));
 }
 
 void LocalizationDashboardWindow::updateDeleteButtonState()

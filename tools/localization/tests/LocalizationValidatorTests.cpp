@@ -380,6 +380,42 @@ int main()
         check(QStringLiteral("TSV serialization sorts IDs consistently"), saved && aPosition >= 0 && zPosition > aPosition);
     }
 
+    // 24. Новая locale получает начальные значения из выбранного источника.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("greeting"), QStringLiteral("Привет"), QStringLiteral("Hello"));
+        addEntry(catalog, QStringLiteral("common.action.save"), QStringLiteral("Сохранить"), QStringLiteral("Save"));
+        QString error;
+        const bool added = catalog.addLocale(QStringLiteral("de"), QStringLiteral("en"), &error);
+        const LocalizationEntry *greeting = catalog.find(QStringLiteral("greeting"));
+        const LocalizationEntry *save = catalog.find(QStringLiteral("common.action.save"));
+        check(QStringLiteral("New locale copies all values from source locale"), added && catalog.locales().contains(QStringLiteral("de")) && greeting && save && greeting->translations.value(QStringLiteral("de")) == QStringLiteral("Hello") && save->translations.value(QStringLiteral("de")) == QStringLiteral("Save"));
+    }
+
+    // 25. Некорректный и повторный код locale не изменяют каталог.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("greeting"), QStringLiteral("Привет"), QStringLiteral("Hello"));
+        QString error;
+        const bool invalidAdded = catalog.addLocale(QStringLiteral("DE"), QStringLiteral("en"), &error);
+        const bool duplicateAdded = catalog.addLocale(QStringLiteral("en"), QStringLiteral("ru"), &error);
+        check(QStringLiteral("Invalid or duplicate locale leaves catalog unchanged"), !invalidAdded && !duplicateAdded && catalog.locales() == QStringList{QStringLiteral("ru"), QStringLiteral("en")});
+    }
+
+    // 26. Если источник содержит пустой перевод, locale не добавляется.
+    {
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(catalog, QStringLiteral("greeting"), QStringLiteral("Привет"), QStringLiteral("Hello"));
+        addEntry(catalog, QStringLiteral("unfinished"), QStringLiteral("Незавершённый"), QString());
+        QString error;
+        const bool added = catalog.addLocale(QStringLiteral("de"), QStringLiteral("en"), &error);
+        const LocalizationEntry *greeting = catalog.find(QStringLiteral("greeting"));
+        check(QStringLiteral("Empty source prevents partial locale addition"), !added && !catalog.locales().contains(QStringLiteral("de")) && greeting && !greeting->translations.contains(QStringLiteral("de")) && error.contains(QStringLiteral("unfinished")));
+    }
+
     qInfo() << "Tests passed:" << passedTests << "| failed:" << failedTests;
     return failedTests == 0 ? 0 : 1;
 }

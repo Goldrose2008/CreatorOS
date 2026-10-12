@@ -9,6 +9,7 @@ class LocalizationCatalog final
 {
 public:
     void setLocales(const QStringList &locales);
+    bool addLocale(const QString &locale, const QString &sourceLocale, QString *error = nullptr);
 
     const QStringList &locales() const;
     QStringList ids() const;

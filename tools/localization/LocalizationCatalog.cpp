@@ -1,10 +1,76 @@
 #include "LocalizationCatalog.h"
 
 #include <algorithm>
+#include <QRegularExpression>
 
 void LocalizationCatalog::setLocales(const QStringList &locales)
 {
     locales_ = locales;
+}
+
+bool LocalizationCatalog::addLocale(const QString &locale, const QString &sourceLocale, QString *error)
+{
+    const QString normalizedLocale = locale.trimmed();
+    const QString normalizedSourceLocale = sourceLocale.trimmed();
+    static const QRegularExpression localePattern(QStringLiteral("^[a-z]{2,3}(?:_[A-Z]{2})?$"));
+
+    if (!localePattern.match(normalizedLocale).hasMatch())
+    {
+        if (error)
+        {
+            *error = QStringLiteral("Код языка должен содержать код языка в нижнем регистре и необязательный код региона в верхнем регистре, например 'de' или 'pt_BR'.");
+        }
+        return false;
+    }
+
+    if (locales_.contains(normalizedLocale))
+    {
+        if (error)
+        {
+            *error = QStringLiteral("Язык уже существует: %1").arg(normalizedLocale);
+        }
+
+        return false;
+    }
+
+    if (!locales_.contains(normalizedSourceLocale))
+    {
+        if (error)
+        {
+            *error = QStringLiteral("Исходный язык не существует: %1").arg(normalizedSourceLocale);
+        }
+
+        return false;
+    }
+
+    // Сначала проверяем все значения источника.
+    // До завершения проверки каталог не изменяется.
+    for (auto it = entries_.cbegin(); it != entries_.cend(); ++it)
+    {
+        const QString sourceValue = it.value().translations.value(normalizedSourceLocale);
+
+        if (sourceValue.trimmed().isEmpty())
+        {
+            if (error)
+            {
+                *error = QStringLiteral("Исходный перевод для ID '%1' на языке '%2' пуст.").arg(it.key(), normalizedSourceLocale);
+            }
+
+            return false;
+        }
+    }
+
+    locales_.append(normalizedLocale);
+
+    for (auto it = entries_.begin(); it != entries_.end(); ++it)
+    {
+        const QString sourceValue = it.value().translations.value(normalizedSourceLocale);
+
+        it.value().translations.insert(normalizedLocale, sourceValue);
+    }
+
+    if (error){error->clear();}
+    return true;
 }
 
 const QStringList &LocalizationCatalog::locales() const
@@ -44,7 +110,7 @@ bool LocalizationCatalog::addEntry(const LocalizationEntry &entry, QString *erro
     {
         if (error)
         {
-            *error = QStringLiteral("Localization ID cannot be empty.");
+            *error = QStringLiteral("ID локализации не может быть пустым.");
         }
 
         return false;
@@ -54,7 +120,7 @@ bool LocalizationCatalog::addEntry(const LocalizationEntry &entry, QString *erro
     {
         if (error)
         {
-            *error = QStringLiteral("Localization ID already exists: %1").arg(id);
+            *error = QStringLiteral("ID локализации уже существует: %1").arg(id);
         }
 
         return false;
@@ -77,7 +143,7 @@ bool LocalizationCatalog::updateTranslation(const QString &id, const QString &lo
     {
         if (error)
         {
-            *error = QStringLiteral("Localization ID not found: %1").arg(normalizedId);
+            *error = QStringLiteral("ID локализации не найден: %1").arg(normalizedId);
         }
 
         return false;
@@ -87,7 +153,7 @@ bool LocalizationCatalog::updateTranslation(const QString &id, const QString &lo
     {
         if (error)
         {
-            *error = QStringLiteral("Unknown locale: %1").arg(normalizedLocale);
+            *error = QStringLiteral("Неизвестный язык: %1").arg(normalizedLocale);
         }
 
         return false;
@@ -105,7 +171,7 @@ bool LocalizationCatalog::removeEntry(const QString &id, QString *error)
     {
         if (error)
         {
-            *error = QStringLiteral("Localization ID not found: %1").arg(normalizedId);
+            *error = QStringLiteral("ID локализации не найден: %1").arg(normalizedId);
         }
 
         return false;
@@ -124,7 +190,7 @@ bool LocalizationCatalog::renameId(const QString &oldId, const QString &newId, Q
     {
         if (error)
         {
-            *error = QStringLiteral("Localization IDs cannot be empty.");
+            *error = QStringLiteral("ID локализации не может быть пустым.");
         }
 
         return false;
@@ -134,7 +200,7 @@ bool LocalizationCatalog::renameId(const QString &oldId, const QString &newId, Q
     {
         if (error)
         {
-            *error = QStringLiteral("Localization ID not found: %1").arg(normalizedOldId);
+            *error = QStringLiteral("ID локализации не найден: %1").arg(normalizedOldId);
         }
 
         return false;

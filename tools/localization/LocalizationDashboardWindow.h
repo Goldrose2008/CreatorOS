@@ -35,6 +35,7 @@ private:
     bool validateBeforeWrite(const QString &operationName);
     void addEntry();
     void deleteEntry();
+    void addLocale();
     void updateDeleteButtonState();
     void updateRenameButtonState();
     void renameEntry();
@@ -47,6 +48,7 @@ private:
     QPushButton *saveButton_ = nullptr;
     QPushButton *exportButton_ = nullptr;
     QPushButton *addButton_ = nullptr;
+    QPushButton *addLocaleButton_ = nullptr;
     QPushButton *deleteButton_ = nullptr;
     QPushButton *renameButton_ = nullptr;
     QComboBox *statusFilter_ = nullptr;
