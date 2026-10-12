@@ -149,7 +149,7 @@ database/
 | Файл | Назначение |
 |---|---|
 | `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
-| `database/migrations/002_content_and_content_types.sql` | Вторая версия структуры SQLite: создаёт `content_types` и `contents`, связывает Content с Project/ContentType, ограничивает один `main` Content на Project и добавляет базовые типы контента. |
+| `database/migrations/002_content_and_content_types.sql` | Создаёт `content_types` и `contents`, задаёт связи и ограничение одного Main Content на Project. |
 | `database/migrations/003_full_content.sql` | Третья версия структуры SQLite: расширяет `contents` полями description, priority, production deadline, status, progress и временными метками. |
 | `database/migrations/004_tasks.sql` | Четвёртая версия структуры SQLite: создаёт `tasks` с контекстом Project/Content, иерархией через `parent_task_id`, статусами, приоритетом и дедлайном. |
 
@@ -341,7 +341,7 @@ src/ui/pages/projects/
 |---|---|
 | `src/ui/pages/projects/ProjectsPage.h + ProjectsPage.cpp` | Загружает Project через `ProjectService`, отображает loading/empty/error состояния и создаёт `ProjectCard`. |
 | `src/ui/pages/projects/ProjectCard.h + ProjectCard.cpp` | `ProjectCard`: настройка общих UI-механизмов `EntityCard`, отображение данных Project и обработка специфических пользовательских действий. |
-| `src/ui/pages/projects/ProjectDetailsPage.h + ProjectDetailsPage.cpp` | `ProjectDetailsPage`: загрузка Project через `ProjectService`, настройка общих механизмов `EntityDetails`, отображение подходящих Project-регионов и локальное UI-поведение. |
+| `src/ui/pages/projects/ProjectDetailsPage.h + ProjectDetailsPage.cpp` | Подробности Project: загрузка данных и действия пользователя через `ProjectService`. |
 | `src/ui/pages/projects/ProjectEditorDialog.h + ProjectEditorDialog.cpp` | Форма создания и редактирования Project; сохраняет данные через `ProjectService`. |
 
 ---
@@ -361,8 +361,8 @@ src/ui/pages/content/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/pages/content/ContentCard.h + ContentCard.cpp` | Реализация карточки Content: отображает название, описание, роль, тип, приоритет, производственный дедлайн, статус и прогресс через общие механизмы `EntityCard`; передаёт событие открытия Content. |
-| `src/ui/pages/content/ContentDetails.h + ContentDetails.cpp` | Реализация просмотра Content через `ContentService`, отображение полной модели, редактирование через `ContentEditorDialog` и удаление только Additional Content через `ConfirmModal`. |
+| `src/ui/pages/content/ContentCard.h + ContentCard.cpp` | Карточка Content с основными полями и событием открытия подробностей. |
+| `src/ui/pages/content/ContentDetails.h + ContentDetails.cpp` | Подробности Content: просмотр, редактирование и удаление Additional Content. |
 | `src/ui/pages/content/ContentEditorDialog.h + ContentEditorDialog.cpp` | Реализация формы Content и сохранения через `ContentService`; содержит только редактируемые пользователем поля. |
 
 
@@ -433,14 +433,14 @@ Developer tool для управления каталогом локализац
 | Файл | Назначение |
 |---|---|
 | `tools/localization/LocalizationEntry.h` | Модель одной записи локализации: ID и набор переводов по locale. |
-| `tools/localization/LocalizationCatalog.h + LocalizationCatalog.cpp` | Операции с записями каталога и locale: добавление/изменение/удаление/переименование ID, добавление языковой колонки с копированием из исходной locale. |
+| `tools/localization/LocalizationCatalog.h + LocalizationCatalog.cpp` | Каталог записей и переводов, операции с ID и добавление языковой колонки. |
 | `tools/localization/LocalizationTsvStore.h + LocalizationTsvStore.cpp` | Загрузка TSV с проверкой структуры и безопасное сохранение через `QSaveFile`. |
 | `tools/localization/LocalizationUsage.h` | Модели статического использования localization ID и динамической ссылки на localization-вызов. |
 | `tools/localization/LocalizationUsageIndex.h + LocalizationUsageIndex.cpp` | Хранит статические использования по ID, места использования и динамические ссылки. |
-| `tools/localization/LocalizationSourceScanner.h + LocalizationSourceScanner.cpp` | Сканирует `src/`, распознаёт безопасный статический формат localization references и отдельно фиксирует динамические вызовы. |
-| `tools/localization/LocalizationRefactorService.h + LocalizationRefactorService.cpp` | Строит preview и безопасно применяет Rename к распознанным static references с повторной проверкой, откатом при ошибке и сохранением каталога. |
+| `tools/localization/LocalizationSourceScanner.h + LocalizationSourceScanner.cpp` | Сканирование исходников и поиск статических/динамических обращений к локализации. |
+| `tools/localization/LocalizationRefactorService.h + LocalizationRefactorService.cpp` | Предварительный просмотр и безопасное переименование распознанных ссылок на localization ID. |
 | `tools/localization/LocalizationValidationIssue.h` | Модель структурированной проблемы Validator: тип, severity, ID, locale и расположение. |
-| `tools/localization/LocalizationValidator.h + LocalizationValidator.cpp` | Проверяет формат ID, пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, согласованность placeholders и динамические ссылки. |
-| `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты Validator, TSV persistence и добавления locale: проверка структуры загрузки, Unicode round-trip, стабильной сортировки, копирования значений из исходного языка и отказов без частичных изменений; использует временные файлы, не изменяет рабочий localization.tsv. |
-| `tools/localization/LocalizationDashboardWindow.h + LocalizationDashboardWindow.cpp` | Окно каталога локализации: редактирование переводов, проблемы проверки, места использования ID, Rename и экспорт TSV. |
+| `tools/localization/LocalizationValidator.h + LocalizationValidator.cpp` | Проверка ID, переводов, placeholders и ссылок на ключи локализации. |
+| `tools/localization/tests/LocalizationValidatorTests.cpp` | Регрессионные тесты Validator, TSV persistence и добавления locale; используют временные файлы и не изменяют рабочий каталог. |
+| `tools/localization/LocalizationDashboardWindow.h + LocalizationDashboardWindow.cpp` | Окно каталога: поиск, редактирование переводов, Problems, использование ID, Rename, экспорт и добавление языка. |
 | `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
