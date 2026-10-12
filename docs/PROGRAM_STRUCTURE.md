@@ -16,7 +16,7 @@
 | `.gitignore` | Список файлов и каталогов, которые Git не должен отслеживать. |
 | `CMakeLists.txt` | Основное описание сборки CreatorOS: C++ standard, Qt-модули, исходные файлы, ресурсы, библиотеки и post-build deployment. |
 | `docs/DEVELOPMENT_LOG.md` | Журнал этапов разработки, контрольных точек, архитектурных изменений и результатов сборки. |
-| `docs/TECHNICAL_SPEC.md` | Основная техническая и архитектурная спецификация CreatorOS. |
+| `docs/TECHNICAL_SPEC.md` | Требования к функциям, модели данных, пользовательскому интерфейсу и технологиям CreatorOS. |
 | `docs/USER_GUIDE.md` | Пользовательская документация приложения. |
 | `docs/PROGRAM_STRUCTURE.md` | Карта структуры проекта с описанием назначения каждого файла. |
 | `docs/THIRD_PARTY_LICENSES.md` | Реестр лицензий Qt и сторонних компонентов, лицензионных обязательств и release-проверок. |
@@ -193,7 +193,7 @@ src/ui/components/entity/
 
 ```text
 src/ui/components/foundation/
-└── SurfaceWidget.cpp
+├── SurfaceWidget.cpp
 └── SurfaceWidget.h
 ```
 
@@ -342,7 +342,7 @@ src/ui/pages/projects/
 | `src/ui/pages/projects/ProjectsPage.h + ProjectsPage.cpp` | Загружает Project через `ProjectService`, отображает loading/empty/error состояния и создаёт `ProjectCard`. |
 | `src/ui/pages/projects/ProjectCard.h + ProjectCard.cpp` | `ProjectCard`: настройка общих UI-механизмов `EntityCard`, отображение данных Project и обработка специфических пользовательских действий. |
 | `src/ui/pages/projects/ProjectDetailsPage.h + ProjectDetailsPage.cpp` | `ProjectDetailsPage`: загрузка Project через `ProjectService`, настройка общих механизмов `EntityDetails`, отображение подходящих Project-регионов и локальное UI-поведение. |
-| `src/ui/pages/projects/ProjectEditorDialog.h + ProjectEditorDialog.cpp` | UI и сохранения Project через `ProjectService`; использует общий lifecycle `EditorDialog`. |
+| `src/ui/pages/projects/ProjectEditorDialog.h + ProjectEditorDialog.cpp` | Форма создания и редактирования Project; сохраняет данные через `ProjectService`. |
 
 ---
 
@@ -400,7 +400,7 @@ src/ui/shell/
 |---|---|
 | `src/ui/shell/AppShell.h + AppShell.cpp` | Собирает Sidebar + Workspace, подключает LocalizationService, NavigationController и прикладные страницы. |
 | `src/ui/shell/Sidebar.h + Sidebar.cpp` | Sidebar, добавление секций/элементов и управление активным route. |
-| `src/ui/shell/Workspace.h + Workspace.cpp` | Workspace. |
+| `src/ui/shell/Workspace.h + Workspace.cpp` | Контейнер отображения текущей страницы приложения. |
 | `src/ui/shell/MenuComposer.h + MenuComposer.cpp` | Собирает Sidebar из MenuSection/MenuItem и передаёт локализованные подписи, иконки и routes. |
 
 ---
@@ -442,5 +442,5 @@ Developer tool для управления каталогом локализац
 | `tools/localization/LocalizationValidationIssue.h` | Модель структурированной проблемы Validator: тип, severity, ID, locale и расположение. |
 | `tools/localization/LocalizationValidator.h + LocalizationValidator.cpp` | Проверяет формат ID, пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, согласованность placeholders и динамические ссылки. |
 | `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты Validator, TSV persistence и добавления locale: проверка структуры загрузки, Unicode round-trip, стабильной сортировки, копирования значений из исходного языка и отказов без частичных изменений; использует временные файлы, не изменяет рабочий localization.tsv. |
-| `tools/localization/LocalizationDashboardWindow.h + LocalizationDashboardWindow.cpp` | Dashboard UI: таблица каталога, поиск и фильтры каталога/важности Problems, добавление языка и экспорт TSV, usage/problems с цветовой индикацией severity, редактирование, добавление/удаление/Rename, validation перед… |
+| `tools/localization/LocalizationDashboardWindow.h + LocalizationDashboardWindow.cpp` | Окно каталога локализации: редактирование переводов, проблемы проверки, места использования ID, Rename и экспорт TSV. |
 | `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
