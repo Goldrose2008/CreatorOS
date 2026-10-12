@@ -322,6 +322,64 @@ int main()
         check(QStringLiteral("Failed load preserves the existing catalog"), !loaded && catalog.size() == 1 && keptEntry && keptEntry->translations.value(QStringLiteral("ru")) == QStringLiteral("Сохранить") && !catalog.contains(QStringLiteral("new.key")));
     }
 
+    // 22. Сохранение и повторная загрузка сохраняют Unicode-переводы.
+    {
+        QTemporaryDir temporaryDirectory;
+
+        LocalizationCatalog sourceCatalog;
+        sourceCatalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        addEntry(sourceCatalog, QStringLiteral("common.state.ready"), QStringLiteral("Готово — можно продолжать"), QStringLiteral("Ready — continue"));
+        QString error;
+        LocalizationCatalog restoredCatalog;
+        bool saved = false;
+        bool loaded = false;
+        if (temporaryDirectory.isValid())
+        {
+            const QString filePath = temporaryDirectory.filePath(QStringLiteral("roundtrip.tsv"));
+            saved = LocalizationTsvStore::save(filePath, sourceCatalog, &error);
+            if (saved)
+            {
+                loaded = LocalizationTsvStore::load(filePath, restoredCatalog, &error);
+            }
+        }
+        const LocalizationEntry *restoredEntry = restoredCatalog.find(QStringLiteral("common.state.ready"));
+        check(QStringLiteral("TSV save/load preserves Unicode translations"), saved && loaded && restoredEntry && restoredEntry->translations.value(QStringLiteral("ru")) == QStringLiteral("Готово — можно продолжать") && restoredEntry->translations.value(QStringLiteral("en")) == QStringLiteral("Ready — continue") && restoredCatalog.locales() == QStringList{QStringLiteral("ru"), QStringLiteral("en")});
+    }
+
+    // 23. При сохранении записи сериализуются по ID в стабильном порядке.
+    {
+        QTemporaryDir temporaryDirectory;
+        LocalizationCatalog catalog;
+        catalog.setLocales({QStringLiteral("ru"), QStringLiteral("en")});
+        // Намеренно добавляем в порядке, обратном алфавитному.
+        addEntry(catalog, QStringLiteral("z.key"), QStringLiteral("Зета"), QStringLiteral("Zeta"));
+        addEntry(catalog, QStringLiteral("a.key"), QStringLiteral("Альфа"), QStringLiteral("Alpha"));
+        QString error;
+        bool saved = false;
+        QByteArray contents;
+        if (temporaryDirectory.isValid())
+        {
+            const QString filePath = temporaryDirectory.filePath(QStringLiteral("ordered.tsv"));
+            saved = LocalizationTsvStore::save(filePath, catalog, &error);
+            if (saved)
+            {
+                QFile file(filePath);
+
+                if (file.open(QIODevice::ReadOnly))
+                {
+                    contents = file.readAll();
+                }
+                else
+                {
+                    saved = false;
+                }
+            }
+        }
+        const qsizetype aPosition = contents.indexOf(QByteArray("a.key"));
+        const qsizetype zPosition = contents.indexOf(QByteArray("z.key"));
+        check(QStringLiteral("TSV serialization sorts IDs consistently"), saved && aPosition >= 0 && zPosition > aPosition);
+    }
+
     qInfo() << "Tests passed:" << passedTests << "| failed:" << failedTests;
     return failedTests == 0 ? 0 : 1;
 }
