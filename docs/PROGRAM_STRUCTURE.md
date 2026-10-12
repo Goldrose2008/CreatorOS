@@ -544,13 +544,13 @@ UI содержит отображение, локальное состояни�
 
 ## 8.7. Localization Dashboard developer tool — `tools/localization`
 
-Текущий developer-tool слой локализации отделён от runtime-приложения `CreatorOS`.
+Текущий developer-tool слой локализации отделён от runtime-приложения `CreatorOS`. Инструмент завершён по текущему объёму LD-1–LD-7.2; раздел ниже описывает фактический состав оставшегося в репозитории инструмента, который не входит в runtime-зависимости приложения.
 
 | Файл | Назначение |
 |---|---|
 | `tools/localization/LocalizationEntry.h` | Модель одной записи локализации: ID и набор переводов по locale. |
 | `tools/localization/LocalizationCatalog.h` | Публичный контракт каталога локализации в памяти. |
-| `tools/localization/LocalizationCatalog.cpp` | Добавление, изменение, удаление и переименование записей каталога. |
+| `tools/localization/LocalizationCatalog.cpp` | Операции с записями каталога и locale: добавление/изменение/удаление/переименование ID, добавление языковой колонки с копированием из исходной locale. |
 | `tools/localization/LocalizationTsvStore.h` | Контракт чтения и сохранения каталога в TSV. |
 | `tools/localization/LocalizationTsvStore.cpp` | Загрузка TSV с проверкой структуры и безопасное сохранение через `QSaveFile`. |
 | `tools/localization/LocalizationUsage.h` | Модели статического использования localization ID и динамической ссылки на localization-вызов. |
@@ -563,7 +563,7 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationValidationIssue.h` | Модель структурированной проблемы Validator: тип, severity, ID, locale и расположение. |
 | `tools/localization/LocalizationValidator.h` | Контракт проверки LocalizationCatalog и LocalizationUsageIndex без изменения данных. |
 | `tools/localization/LocalizationValidator.cpp` | Проверяет формат ID, пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, согласованность placeholders и динамические ссылки. |
-| `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты Validator и TSV persistence: формат/целостность загрузки, сохранение и повторная загрузка Unicode, стабильная сортировка; использует временные файлы, не изменяет рабочий localization.tsv. |
+| `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты Validator, TSV persistence и добавления locale: проверка структуры загрузки, Unicode round-trip, стабильной сортировки, копирования значений из исходного языка и отказов без частичных изменений; использует временные файлы, не изменяет рабочий localization.tsv. |
 | `tools/localization/LocalizationDashboardWindow.h` | Контракт главного Qt Widgets-окна Localization Dashboard и его таблицы/поиска. |
 | `tools/localization/LocalizationDashboardWindow.cpp` | Реализация Dashboard UI: таблица каталога, поиск и фильтры каталога/важности Problems, добавление языка и экспорт TSV, usage/problems с цветовой индикацией severity, редактирование, добавление/удаление/Rename, validation перед записью и защита от потери несохранённых изменений. |
 | `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
