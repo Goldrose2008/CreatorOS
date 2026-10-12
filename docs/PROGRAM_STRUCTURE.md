@@ -565,6 +565,6 @@ UI содержит отображение, локальное состояни�
 | `tools/localization/LocalizationValidator.cpp` | Проверяет формат ID, пропущенные/неиспользуемые ID, пустые переводы, дубли переводов, согласованность placeholders и динамические ссылки. |
 | `tools/localization/tests/LocalizationValidatorTests.cpp` | Автоматические регрессионные тесты Validator и TSV persistence: формат/целостность загрузки, сохранение и повторная загрузка Unicode, стабильная сортировка; использует временные файлы, не изменяет рабочий localization.tsv. |
 | `tools/localization/LocalizationDashboardWindow.h` | Контракт главного Qt Widgets-окна Localization Dashboard и его таблицы/поиска. |
-| `tools/localization/LocalizationDashboardWindow.cpp` | Реализация Dashboard UI: таблица каталога, поиск и фильтры каталога/важности Problems, usage/problems с цветовой индикацией severity, редактирование, добавление/удаление/Rename, validation перед записью и защита от потери несохранённых изменений. |
+| `tools/localization/LocalizationDashboardWindow.cpp` | Реализация Dashboard UI: таблица каталога, поиск и фильтры каталога/важности Problems, добавление языка и экспорт TSV, usage/problems с цветовой индикацией severity, редактирование, добавление/удаление/Rename, validation перед записью и защита от потери несохранённых изменений. |
 | `tools/localization/main.cpp` | Точка входа developer tool: загружает TSV, запускает source scanner и открывает Localization Dashboard. |
 
