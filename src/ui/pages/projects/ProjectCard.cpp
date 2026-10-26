@@ -1,11 +1,8 @@
 #include "ProjectCard.h"
 
-#include <QFont>
 #include <QLabel>
-#include <QPalette>
 
 #include "../../../ui/localization/LocalizationService.h"
-#include "../../../ui/style/Colors.h"
 
 namespace
 {
@@ -38,10 +35,6 @@ ProjectCard::ProjectCard(const Project &project, LocalizationService &localizati
 
     addMetaWidget(releaseDate);
     setProgress(project_.progress);
-
-    //auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-    //addAction(openButton);
-
 
     setOpenAction(
         localization.text(QStringLiteral("common.action.open")),

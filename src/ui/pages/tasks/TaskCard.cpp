@@ -1,11 +1,8 @@
 #include "TaskCard.h"
 
-#include <QFont>
 #include <QLabel>
-#include <QPalette>
 
 #include "../../../ui/localization/LocalizationService.h"
-#include "../../../ui/style/Colors.h"
 
 namespace
 {
@@ -49,11 +46,8 @@ TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget 
         addMetaWidget(parentTaskLabel);
     }
 
-    //auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-    //addAction(openButton);
-
     setOpenAction(
         localization.text(QStringLiteral("common.action.open")),
         [this](){emit openRequested(task_.id);}
-);
+    );
 }

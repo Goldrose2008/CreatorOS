@@ -1,11 +1,8 @@
 #include "ContentCard.h"
 
-#include <QFont>
 #include <QLabel>
-#include <QPalette>
 
 #include "../../../ui/localization/LocalizationService.h"
-#include "../../../ui/style/Colors.h"
 
 namespace
 {
@@ -77,9 +74,6 @@ ContentCard::ContentCard(
     }
 
     setProgress(content_.progress);
-
-    //auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-    //addAction(openButton);
 
     setOpenAction(
         localization.text(QStringLiteral("common.action.open")),
