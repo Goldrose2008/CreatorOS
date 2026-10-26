@@ -40,7 +40,7 @@ src/app/
 | Файл | Назначение |
 |---|---|
 | `src/app/AppInfo.h` | Единственный источник имени и версии приложения. |
-| `src/app/MainWindow.h + MainWindow.cpp` | Создаёт главное окно, инициализирует БД, собирает Project/Content/Task application-слои, создаёт `AppShell` и устанавливает его как центральный виджет. |
+| `src/app/MainWindow.h + MainWindow.cpp` | Создаёт главное окно, инициализирует БД, собирает Project/Content/Task/Platform/Account application-слои, создаёт `AppShell` и устанавливает его как центральный виджет. |
 
 ## 3.2. Точка входа
 
@@ -346,6 +346,19 @@ src/ui/navigation/
 
 ## 8.4. Pages — `src/ui/pages`
 
+```text
+src/ui/pages/accounts/
+├── AccountEditorDialog.h
+└── AccountsPage.h
+```
+
+| Файл | Назначение |
+|---|---|
+| `src/ui/pages/accounts/AccountEditorDialog.h` | Форма создания и редактирования Account с выбором существующей Platform и полями профиля; сохранение выполняется через `AccountService`. |
+| `src/ui/pages/accounts/AccountsPage.h` | Страница списка Account: отображение платформы и сведений аккаунта, создание, редактирование, удаление с подтверждением и состояния загрузки/пустого списка/ошибки. |
+
+
+
 ### Projects
 
 ```text
@@ -427,7 +440,7 @@ src/ui/shell/
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/shell/AppShell.h + AppShell.cpp` | Собирает Sidebar + Workspace, подключает LocalizationService, NavigationController и страницы; связывает список Task с Task Details. |
+| `src/ui/shell/AppShell.h + AppShell.cpp` | Собирает Sidebar + Workspace, подключает LocalizationService, NavigationController и страницы Project, Content, Task, Platform и Account; связывает списки с соответствующими страницами подробностей. |
 | `src/ui/shell/Sidebar.h + Sidebar.cpp` | Sidebar, добавление секций/элементов и управление активным route. |
 | `src/ui/shell/Workspace.h + Workspace.cpp` | Контейнер отображения текущей страницы приложения. |
 | `src/ui/shell/MenuComposer.h + MenuComposer.cpp` | Собирает Sidebar из MenuSection/MenuItem и передаёт локализованные подписи, иконки и routes. |
