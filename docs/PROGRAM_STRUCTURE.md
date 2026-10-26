@@ -203,7 +203,9 @@ src/ui/components/entity/
 ├── EntityDetails.cpp
 ├── EntityDetails.h
 ├── EntityHeader.cpp
-└── EntityHeader.h
+├── EntityHeader.h
+├── EntityList.cpp
+└── EntityList.h
 ```
 
 | Файл | Назначение |
@@ -211,6 +213,7 @@ src/ui/components/entity/
 | `src/ui/components/entity/EntityCard.h + EntityCard.cpp` | Реализация общего каркаса и UI-поведения `EntityCard`: заголовок, описание, статус, прогресс, метаданные, дополнительные области и действия. |
 | `src/ui/components/entity/EntityHeader.h + EntityHeader.cpp` | Реализация заголовка сущности с названием, описанием, status widget, metadata и action widgets. |
 | `src/ui/components/entity/EntityDetails.h + EntityDetails.cpp` | Реализация общей структуры `EntityDetails`: navigation, header, состояния, summary/info, actions и content-регионы. |
+| `src/ui/components/entity/EntityList.h + EntityList.cpp` | Реализация списка сущностей: добавление и очистка элементов, подсчёт текущего количества; размещён рядом с общими entity-компонентами. |
 
 ### Foundation
 
@@ -265,18 +268,6 @@ src/ui/components/layout/
 | `src/ui/components/layout/Section.h + Section.cpp` | Section. |
 | `src/ui/components/layout/PageHeader.h + PageHeader.cpp` | PageHeader. |
 | `src/ui/components/layout/Toolbar.h + Toolbar.cpp` | Toolbar и его методов добавления widgets/stretch. |
-
-### Lists
-
-```text
-src/ui/components/lists/
-├── EntityList.cpp
-└── EntityList.h
-```
-
-| Файл | Назначение |
-|---|---|
-| `src/ui/components/lists/EntityList.h + EntityList.cpp` | Реализация списка: добавление, очистка элементов и подсчёт текущего количества. |
 
 ### Navigation
 
