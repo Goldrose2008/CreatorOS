@@ -28,29 +28,43 @@ qt_add_executable(CreatorOS
     src/app/MainWindow.cpp
     src/app/MainWindow.h
 
+    src/application/accounts/IAccountRepository.h
+    src/application/accounts/AccountService.cpp
+    src/application/accounts/AccountService.h
+
     src/application/content/IContentTypeRepository.h
     src/application/content/IContentRepository.h
     src/application/content/ContentService.cpp
     src/application/content/ContentService.h
 
+    src/application/platforms/IPlatformRepository.h
+    src/application/platforms/PlatformService.cpp
+    src/application/platforms/PlatformService.h
+
     src/application/projects/IProjectRepository.h
     src/application/projects/ProjectService.cpp
     src/application/projects/ProjectService.h
     
-    src/domain/models/Project.cpp
-    src/domain/models/Project.h
+    src/domain/models/Account.h
     src/domain/models/Content.cpp
     src/domain/models/Content.h
     src/domain/models/ContentType.h
+    src/domain/models/Platform.h
+    src/domain/models/Project.cpp
+    src/domain/models/Project.h
     src/domain/models/Task.cpp
     src/domain/models/Task.h
 
+    src/infrastructure/database/AccountRepository.cpp
+    src/infrastructure/database/AccountRepository.h
     src/infrastructure/database/DatabaseManager.cpp
     src/infrastructure/database/DatabaseManager.h
     src/infrastructure/database/ContentRepository.cpp
     src/infrastructure/database/ContentRepository.h
     src/infrastructure/database/ContentTypeRepository.cpp
     src/infrastructure/database/ContentTypeRepository.h
+    src/infrastructure/database/PlatformRepository.cpp
+    src/infrastructure/database/PlatformRepository.h
     src/infrastructure/database/ProjectRepository.cpp
     src/infrastructure/database/ProjectRepository.h
     src/infrastructure/database/TaskRepository.cpp

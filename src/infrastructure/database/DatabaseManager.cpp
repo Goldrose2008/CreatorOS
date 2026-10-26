@@ -278,6 +278,10 @@ bool DatabaseManager::applySchema(QString *errorMessage)
         {
             4,
             QStringLiteral(":/database/migrations/004_tasks.sql")
+        },
+        {
+            5,
+            QStringLiteral(":/database/migrations/005_platforms_and_accounts.sql")
         }
     };
 
