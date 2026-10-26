@@ -48,18 +48,35 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
     auto *createButton = new QPushButton(localization_.text(QStringLiteral("accounts.create")), this);
     header->addAction(createButton);
 
+    
     connect(
         createButton,
         &QPushButton::clicked,
         this,
         [this]()
         {
-            AccountEditorDialog dialog(accountService_, platformService_, localization_, this);
+            try
+            {
+                const auto platforms = platformService_.getPlatforms();
 
-            if (dialog.exec() == QDialog::Accepted)
-                reload();
+                if (platforms.empty())
+                {
+                    QMessageBox::information(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.platform.none_available")));
+                    return;
+                }
+
+                AccountEditorDialog dialog(accountService_, platformService_, localization_, this);
+
+                if (dialog.exec() == QDialog::Accepted)
+                    reload();
+            }
+            catch (const std::exception &)
+            {
+                QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.state.error.load")));
+            }
         }
     );
+
 
     loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
 

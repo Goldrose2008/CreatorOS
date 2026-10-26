@@ -5,6 +5,9 @@
 #include <QMessageBox>
 #include <QVariant>
 #include <QVBoxLayout>
+#include <QProxyStyle>
+#include <QStyle>
+#include <QStyleOption>
 
 #include <exception>
 
@@ -13,6 +16,32 @@
 #include "../../../application/accounts/AccountService.h"
 #include "../../../application/platforms/PlatformService.h"
 #include "../../../domain/models/Platform.h"
+
+
+namespace
+{
+    class DownwardComboBoxStyle final : public QProxyStyle
+    {
+    public:
+        DownwardComboBoxStyle() : QProxyStyle(QStringLiteral("Fusion"))
+        {
+        }
+
+        int styleHint(
+            StyleHint hint,
+            const QStyleOption *option = nullptr,
+            const QWidget *widget = nullptr,
+            QStyleHintReturn *returnData = nullptr
+        ) const override
+        {
+            if (hint == SH_ComboBox_Popup)
+                return 0;
+
+            return QProxyStyle::styleHint(hint, option, widget, returnData);
+        }
+    };
+}
+
 
 AccountEditorDialog::AccountEditorDialog(
     AccountService &accountService,
@@ -38,6 +67,11 @@ AccountEditorDialog::AccountEditorDialog(
       externalIdEdit_(new QLineEdit(this))
 {
     resize(540, 480);
+
+    auto *comboStyle = new DownwardComboBoxStyle();
+    comboStyle->setParent(platformCombo_);
+    platformCombo_->setStyle(comboStyle);
+    platformCombo_->setMaxVisibleItems(10);
 
     auto *platformField = new FormField(this);
     platformField->setLabel(localization_.text(QStringLiteral("account.field.platform")));
