@@ -9,7 +9,7 @@ import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
-import EntityList from "../components/ui/lists/EntityList";
+import EntityList from "../components/ui/entity/EntityList";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
 import ProjectCard from "../components/projects/ProjectCard";
 import type { Project } from "../models/Project";

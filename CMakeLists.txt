@@ -76,6 +76,8 @@ qt_add_executable(CreatorOS
     src/ui/components/entity/EntityCard.h
     src/ui/components/entity/EntityDetails.cpp
     src/ui/components/entity/EntityDetails.h
+    src/ui/components/entity/EntityList.cpp
+    src/ui/components/entity/EntityList.h
 
     src/ui/components/forms/ConfirmModal.cpp
     src/ui/components/forms/ConfirmModal.h
@@ -97,9 +99,6 @@ qt_add_executable(CreatorOS
     src/ui/components/layout/PageHeader.h
     src/ui/components/layout/Toolbar.cpp
     src/ui/components/layout/Toolbar.h
-    
-    src/ui/components/lists/EntityList.cpp
-    src/ui/components/lists/EntityList.h
 
     src/ui/components/navigation/MenuItem.cpp
     src/ui/components/navigation/MenuItem.h

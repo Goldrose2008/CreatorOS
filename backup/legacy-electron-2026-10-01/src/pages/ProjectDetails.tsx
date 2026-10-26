@@ -21,7 +21,7 @@ import Modal from "../components/ui/overlays/Modal";
 import EntityForm from "../components/ui/forms/EntityForm";
 import EmptyState from "../components/ui/states/EmptyState";
 import ConfirmModal from "../components/ui/overlays/ConfirmModal";
-import EntityList from "../components/ui/lists/EntityList";
+import EntityList from "../components/ui/entity/EntityList";
 import EntityDetails from "../components/entity/EntityDetails";
 import EntityHeader from "../components/entity/EntityHeader";
 import type { Project, ProjectStatus } from "../models/Project";

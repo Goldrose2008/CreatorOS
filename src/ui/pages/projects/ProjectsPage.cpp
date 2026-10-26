@@ -8,7 +8,7 @@
 
 #include "ProjectCard.h"
 #include "ProjectEditorDialog.h"
-#include "../../components/lists/EntityList.h"
+#include "../../components/entity/EntityList.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../components/states/EmptyState.h"
 #include "../../components/states/ErrorState.h"

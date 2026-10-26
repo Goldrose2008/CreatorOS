@@ -7,7 +7,7 @@ import Card from "../components/ui/layout/Card";
 import EmptyState from "../components/ui/states/EmptyState";
 import PageLayout from "../components/ui/layout/PageLayout";
 import PageHeader from "../components/ui/layout/PageHeader";
-import EntityList from "../components/ui/lists/EntityList";
+import EntityList from "../components/ui/entity/EntityList";
 import ProjectSummary from "../components/projects/ProjectSummary";
 import type { Project } from "../models/Project";
 import { getProjects } from "../services/projectService";

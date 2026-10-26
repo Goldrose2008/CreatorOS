@@ -9,7 +9,7 @@ import Modal from "../../components/ui/overlays/Modal";
 import EntityForm from "../../components/ui/forms/EntityForm";
 import EmptyState from "../../components/ui/states/EmptyState";
 import ConfirmModal from "../../components/ui/overlays/ConfirmModal";
-import EntityList from "../../components/ui/lists/EntityList";
+import EntityList from "../../components/ui/entity/EntityList";
 import PageLayout from "../../components/ui/layout/PageLayout";
 import type { ContentType } from "../../models/ContentType";
 import {
