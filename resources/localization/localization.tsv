@@ -1,4 +1,20 @@
 id	ru	en
+account.create.title	Новый аккаунт	New account
+account.delete.error	Не удалось удалить аккаунт. Попробуйте ещё раз.	Could not delete the account. Please try again.
+account.field.external_id	Внешний ID	External ID
+account.field.name.placeholder	Например, Основной канал	For example, Main channel
+account.field.platform	Платформа	Platform
+account.field.profile_url	Ссылка на профиль	Profile URL
+account.field.profile_url.placeholder	https://example.com/profile	https://example.com/profile
+account.field.username	Имя пользователя	Username
+account.field.username.placeholder	Например, @creator	For example, @creator
+account.platform.none_available	Сначала добавьте хотя бы одну платформу.	Create at least one platform first.
+account.save.error	Не удалось сохранить аккаунт. Проверьте введённые данные и выбранную платформу.	Could not save the account. Check the entered data and selected platform.
+accounts	Аккаунты	Accounts
+accounts.create	Добавить аккаунт	Add account
+accounts.description	Аккаунты на платформах, используемые в рабочих процессах CreatorOS.	Accounts on platforms used in CreatorOS workflows.
+accounts.empty.description	Аккаунтов пока нет. Добавьте платформу, затем создайте аккаунт на ней.	There are no accounts yet. Add a platform, then create an account on it.
+
 analytics	Аналитика	Analytics
 
 common.action.back	Назад	Back

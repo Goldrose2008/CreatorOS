@@ -13,12 +13,14 @@
 #include "../style/Metrics.h"
 #include "../navigation/NavigationController.h"
 #include "../navigation/CurrentPage.h"
+#include "../pages/accounts/AccountsPage.h"
 #include "../pages/content/ContentDetails.h"
 #include "../pages/platforms/PlatformsPage.h"
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
 #include "../pages/tasks/TasksPage.h"
 #include "../pages/tasks/TaskDetailsPage.h"
+#include "../../application/accounts/AccountService.h"
 #include "../../application/content/ContentService.h"
 #include "../../application/platforms/PlatformService.h"
 #include "../../application/projects/ProjectService.h"
@@ -56,7 +58,14 @@ namespace
     }
 }
 
-AppShell::AppShell(ProjectService &projectService, ContentService &contentService, TaskService &taskService, PlatformService &platformService, QWidget *parent)
+AppShell::AppShell(
+    ProjectService &projectService,
+    ContentService &contentService,
+    TaskService &taskService,
+    AccountService &accountService,
+    PlatformService &platformService,
+    QWidget *parent
+)
     : QWidget(parent),
       projectService_(&projectService),
       contentService_(&contentService),
@@ -92,6 +101,9 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
 
     auto *contentDetails = new ContentDetails(*contentService_, *projectService_, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("content-details"), contentDetails});
+
+    auto *accountsPage = new AccountsPage(accountService, platformService, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("accounts"), accountsPage});
 
     auto *platformsPage = new PlatformsPage(platformService, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("platforms"), platformsPage});

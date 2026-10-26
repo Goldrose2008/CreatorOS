@@ -2,6 +2,7 @@
 
 #include <QWidget>
 
+class AccountService;
 class ContentService;
 class LocalizationService;
 class NavigationController;
@@ -16,7 +17,14 @@ class AppShell final : public QWidget
     Q_OBJECT
 
 public:
-    explicit AppShell(ProjectService &projectService, ContentService &contentService, TaskService &taskService, PlatformService &platformService, QWidget *parent = nullptr);
+    explicit AppShell(
+        ProjectService &projectService,
+        ContentService &contentService,
+        TaskService &taskService,
+        AccountService &accountService,
+        PlatformService &platformService,
+        QWidget *parent = nullptr
+    );
 
 private:
     LocalizationService *localization_;

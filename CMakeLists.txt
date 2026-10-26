@@ -120,6 +120,11 @@ qt_add_executable(CreatorOS
     src/ui/navigation/NavigationController.cpp
     src/ui/navigation/NavigationController.h
 
+    src/ui/pages/accounts/AccountsPage.cpp
+    src/ui/pages/accounts/AccountsPage.h
+    src/ui/pages/accounts/AccountEditorDialog.cpp
+    src/ui/pages/accounts/AccountEditorDialog.h
+
     src/ui/pages/content/ContentCard.cpp
     src/ui/pages/content/ContentCard.h
     src/ui/pages/content/ContentDetails.cpp
