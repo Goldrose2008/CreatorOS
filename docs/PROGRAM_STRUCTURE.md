@@ -56,6 +56,8 @@ src/app/
 ```text
 src/domain/
 └── models/
+    ├── Account.h
+    ├── Platform.h
     ├── Project.h
     ├── Project.cpp
     ├── Content.h
@@ -65,6 +67,8 @@ src/domain/
 
 | Файл | Назначение |
 |---|---|
+| `src/domain/models/Platform.h` | Доменная модель Platform: идентификатор, название, URL сайта и временные метки. |
+| `src/domain/models/Account.h` | Доменная модель Account: связь с Platform, имя, username, URL профиля, внешний ID и временные метки. |
 | `src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
 | `src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
 | `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
@@ -79,11 +83,19 @@ src/domain/
 src/application/
 ├── common/
 │   └── StringUtils.h
+├── accounts/
+│   ├── AccountService.cpp
+│   ├── AccountService.h
+│   └── IAccountRepository.h
 ├── content/
 │   ├── ContentService.cpp
 │   ├── ContentService.h
 │   ├── IContentRepository.h
 │   └── IContentTypeRepository.h
+├── platforms/
+│   ├── IPlatformRepository.h
+│   ├── PlatformService.cpp
+│   └── PlatformService.h
 ├── projects/
 │   ├── IProjectRepository.h
 │   ├── ProjectService.cpp
@@ -96,6 +108,10 @@ src/application/
 
 | Файл | Назначение |
 |---|---|
+| `src/application/accounts/IAccountRepository.h` | Контракт хранилища Account: список, получение по ID, создание, изменение и удаление. |
+| `src/application/accounts/AccountService.h + AccountService.cpp` | Сценарии Account: проверка существования Platform, нормализация и проверка полей, CRUD. |
+| `src/application/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
+| `src/application/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
 | `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
 | `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение всех записей, выборка по Project/ID, создание, изменение и удаление. |
 | `src/application/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая получение всех записей, проверки Project/ContentType и запрет удаления Main Content. |
@@ -113,12 +129,16 @@ src/application/
 ```text
 src/infrastructure/
 └── database/
+    ├── AccountRepository.cpp
+    ├── AccountRepository.h
     ├── ContentRepository.cpp
     ├── ContentRepository.h
     ├── ContentTypeRepository.cpp
     ├── ContentTypeRepository.h
     ├── DatabaseManager.cpp
     ├── DatabaseManager.h
+    ├── PlatformRepository.cpp
+    ├── PlatformRepository.h
     ├── ProjectRepository.cpp
     ├── ProjectRepository.h
     ├── TaskRepository.cpp
@@ -127,6 +147,8 @@ src/infrastructure/
 
 | Файл | Назначение |
 |---|---|
+| `src/infrastructure/database/AccountRepository.h + AccountRepository.cpp` | SQL-операции с таблицей `accounts`: список, получение по ID, создание, изменение и удаление. |
+| `src/infrastructure/database/PlatformRepository.h + PlatformRepository.cpp` | SQL-операции с таблицей `platforms`: список, получение по ID, CRUD и проверка связанных Accounts. |
 | `src/infrastructure/database/ContentTypeRepository.h + ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
 | `src/infrastructure/database/ContentRepository.h + ContentRepository.cpp` | SQL-операции с таблицей `contents`: чтение всех записей и выборка по Project/ID, создание, изменение и удаление Content. |
 | `src/infrastructure/database/DatabaseManager.h + DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
@@ -152,6 +174,7 @@ database/
 | `database/migrations/002_content_and_content_types.sql` | Создаёт `content_types` и `contents`, задаёт связи и ограничение одного Main Content на Project. |
 | `database/migrations/003_full_content.sql` | Третья версия структуры SQLite: расширяет `contents` полями description, priority, production deadline, status, progress и временными метками. |
 | `database/migrations/004_tasks.sql` | Четвёртая версия структуры SQLite: создаёт `tasks` с контекстом Project/Content, иерархией через `parent_task_id`, статусами, приоритетом и дедлайном. |
+| `database/migrations/005_platforms_and_accounts.sql` | Пятая версия структуры SQLite: создаёт `platforms` и `accounts`, связь Account → Platform и индекс по `platform_id`. |
 
 ---
 
