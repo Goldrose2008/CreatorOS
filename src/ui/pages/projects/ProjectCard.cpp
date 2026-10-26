@@ -3,7 +3,6 @@
 #include <QFont>
 #include <QLabel>
 #include <QPalette>
-#include <QPushButton>
 
 #include "../../../ui/localization/LocalizationService.h"
 #include "../../../ui/style/Colors.h"
@@ -40,16 +39,12 @@ ProjectCard::ProjectCard(const Project &project, LocalizationService &localizati
     addMetaWidget(releaseDate);
     setProgress(project_.progress);
 
-    auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-    addAction(openButton);
+    //auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
+    //addAction(openButton);
 
-    connect(
-        openButton,
-        &QPushButton::clicked,
-        this,
-        [this]()
-        {
-            emit openRequested(project_.id);
-        }
+
+    setOpenAction(
+        localization.text(QStringLiteral("common.action.open")),
+        [this](){emit openRequested(project_.id);}
     );
 }

@@ -3,7 +3,6 @@
 #include <QFont>
 #include <QLabel>
 #include <QPalette>
-#include <QPushButton>
 
 #include "../../../ui/localization/LocalizationService.h"
 #include "../../../ui/style/Colors.h"
@@ -79,16 +78,11 @@ ContentCard::ContentCard(
 
     setProgress(content_.progress);
 
-    auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-    addAction(openButton);
+    //auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
+    //addAction(openButton);
 
-    connect(
-        openButton,
-        &QPushButton::clicked,
-        this,
-        [this]()
-        {
-            emit openRequested(content_.id);
-        }
+    setOpenAction(
+        localization.text(QStringLiteral("common.action.open")),
+        [this](){emit openRequested(content_.id);}
     );
 }

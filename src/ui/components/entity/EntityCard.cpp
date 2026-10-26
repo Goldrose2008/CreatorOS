@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QPalette>
 #include <QProgressBar>
+#include <QPushButton>
+#include <utility>
 
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
@@ -139,6 +141,23 @@ void EntityCard::addAction(QWidget *widget)
 
     widget->setParent(this);
     actionsLayout_->addWidget(widget);
+}
+
+void EntityCard::setOpenAction(const QString &text, std::function<void()> handler)
+{
+    auto *openButton = new QPushButton(text, this);
+    addAction(openButton);
+
+    connect(
+        openButton,
+        &QPushButton::clicked,
+        this,
+        [handler = std::move(handler)]()
+        {
+            if (handler)
+                handler();
+        }
+    );
 }
 
 QLabel *EntityCard::createStatusLabel(const QString &text)
