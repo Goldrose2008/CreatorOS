@@ -17,8 +17,7 @@ EntityHeader::EntityHeader(QWidget *parent)
       metaLayout_(new QHBoxLayout()),
       actionsLayout_(new QHBoxLayout()),
       textLayout_(new QVBoxLayout()),
-      layout_(new QHBoxLayout(this)),
-      statusWidget_(nullptr)
+      layout_(new QHBoxLayout(this))
 {
     layout_->setContentsMargins(0, 0, 0, 0);
     layout_->setSpacing(CreatorMetrics::SpacingLarge);
@@ -72,29 +71,6 @@ void EntityHeader::setDescription(const QString &description)
 {
     descriptionLabel_->setText(description);
     descriptionLabel_->setVisible(!description.isEmpty());
-}
-
-void EntityHeader::setStatusWidget(QWidget *widget)
-{
-    if (statusWidget_ == widget)
-        return;
-
-    if (statusWidget_ != nullptr)
-    {
-        titleLayout_->removeWidget(statusWidget_);
-        statusWidget_->deleteLater();
-        statusWidget_ = nullptr;
-    }
-
-    if (widget == nullptr)
-        return;
-
-    widget->setParent(this);
-
-    const int insertIndex = titleLayout_->count() - 1;
-
-    titleLayout_->insertWidget(insertIndex, widget);
-    statusWidget_ = widget;
 }
 
 void EntityHeader::addMetaWidget(QWidget *widget)

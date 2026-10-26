@@ -18,16 +18,13 @@ public:
 
     void setTitle(const QString &title);
     void setDescription(const QString &description);
-      void setProgress(int value);
+    void setProgress(int value);
     void clearProgress();
 
     void addContentWidget(QWidget *widget);
     void addMetaWidget(QWidget *widget);
     void addAction(QWidget *widget);
     void setOpenAction(const QString &text, std::function<void()> handler);
-
-protected:
-    QLabel *createStatusLabel(const QString &text);
         
 private:
     QLabel *titleLabel_;
@@ -37,6 +34,5 @@ private:
     QHBoxLayout *metaLayout_;
     QHBoxLayout *actionsLayout_;
     QVBoxLayout *contentWidgetsLayout_;
-
     QProgressBar *progressBar_;
 };

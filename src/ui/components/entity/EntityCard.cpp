@@ -20,8 +20,7 @@ EntityCard::EntityCard(QWidget *parent)
       metaLayout_(new QHBoxLayout()),
       actionsLayout_(new QHBoxLayout()),
       contentWidgetsLayout_(new QVBoxLayout()),
-      progressBar_(new QProgressBar(this)),
-      statusWidget_(nullptr)
+      progressBar_(new QProgressBar(this))
 {
     titleLayout_->setContentsMargins(0, 0, 0, 0);
     titleLayout_->setSpacing(CreatorMetrics::SpacingMedium);
@@ -137,24 +136,4 @@ void EntityCard::setOpenAction(const QString &text, std::function<void()> handle
                 handler();
         }
     );
-}
-
-QLabel *EntityCard::createStatusLabel(const QString &text)
-{
-    auto *label = new QLabel(this);
-
-    label->setText(text);
-    label->setAutoFillBackground(true);
-
-    QPalette palette = label->palette();
-    palette.setColor(QPalette::Window, CreatorColors::AccentSoft);
-    palette.setColor(QPalette::WindowText, CreatorColors::Accent);
-
-    label->setPalette(palette);
-
-    QFont font = label->font();
-    font.setBold(true);
-    label->setFont(font);
-
-    return label;
 }
