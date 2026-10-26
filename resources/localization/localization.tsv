@@ -48,6 +48,9 @@ content.type.none_available	Нет доступных типов контент�
 home	Главная	Home
 library	Библиотека	Library
 planning	Планирование	Planning
+platforms	Платформы	Platforms
+platforms.description	Платформы, с которыми связаны аккаунты CreatorOS.	Platforms associated with CreatorOS accounts.
+platforms.empty.description	Платформ пока нет. На следующем шаге добавим создание платформ.	There are no platforms yet. Platform creation will be added in the next step.
 project.create.content_type	Тип основного контента	Main content type
 project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
 project.create.title	Новый проект	New project

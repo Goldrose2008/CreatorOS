@@ -40,11 +40,7 @@ PlatformRepository::PlatformRepository(const DatabaseManager &databaseManager) :
 std::vector<Platform> PlatformRepository::findAll() const
 {
     QSqlQuery query(database_);
-
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral("FROM platforms ORDER BY name COLLATE NOCASE ASC, id ASC")
-    );
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM platforms ORDER BY name COLLATE NOCASE ASC, id ASC"));
 
     if (!query.exec())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -61,11 +57,7 @@ std::optional<Platform> PlatformRepository::findById(std::int64_t id) const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral("FROM platforms WHERE id = :id")
-    );
-
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM platforms WHERE id = :id"));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
 
     if (!query.exec())
@@ -81,13 +73,7 @@ bool PlatformRepository::hasAccounts(std::int64_t id) const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "SELECT 1 FROM accounts "
-            "WHERE platform_id = :platform_id LIMIT 1"
-        )
-    );
-
+    query.prepare(QStringLiteral("SELECT 1 FROM accounts WHERE platform_id = :platform_id LIMIT 1"));
     query.bindValue(QStringLiteral(":platform_id"), QVariant::fromValue(id));
 
     if (!query.exec())
@@ -100,13 +86,7 @@ std::int64_t PlatformRepository::create(const Platform &platform)
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "INSERT INTO platforms (name, website_url) "
-            "VALUES (:name, :website_url)"
-        )
-    );
-
+    query.prepare(QStringLiteral("INSERT INTO platforms (name, website_url) VALUES (:name, :website_url)"));
     query.bindValue(QStringLiteral(":name"), QString::fromUtf8(platform.name.c_str()));
     query.bindValue(QStringLiteral(":website_url"), QString::fromUtf8(platform.websiteUrl.c_str()));
 
@@ -120,16 +100,7 @@ bool PlatformRepository::update(const Platform &platform)
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "UPDATE platforms "
-            "SET name = :name, "
-            "website_url = :website_url, "
-            "updated_at = CURRENT_TIMESTAMP "
-            "WHERE id = :id"
-        )
-    );
-
+    query.prepare(QStringLiteral("UPDATE platforms SET name = :name, website_url = :website_url, updated_at = CURRENT_TIMESTAMP WHERE id = :id"));
     query.bindValue(QStringLiteral(":name"), QString::fromUtf8(platform.name.c_str()));
     query.bindValue(QStringLiteral(":website_url"), QString::fromUtf8(platform.websiteUrl.c_str()));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(platform.id));
@@ -143,7 +114,6 @@ bool PlatformRepository::update(const Platform &platform)
 bool PlatformRepository::remove(std::int64_t id)
 {
     QSqlQuery query(database_);
-
     query.prepare(QStringLiteral("DELETE FROM platforms WHERE id = :id"));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
 

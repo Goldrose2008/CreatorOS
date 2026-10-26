@@ -17,12 +17,7 @@ EditorDialog::EditorDialog(
       mode_(mode),
       layout_(new QVBoxLayout(this)),
       contentLayout_(new QVBoxLayout()),
-      buttonBox_(
-          new QDialogButtonBox(
-              QDialogButtonBox::Cancel | QDialogButtonBox::Save,
-              this
-          )
-      )
+      buttonBox_(new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Save, this))
 {
     setWindowTitle(title);
 
@@ -78,7 +73,5 @@ void EditorDialog::setSaveEnabled(bool enabled)
 void EditorDialog::handleSave()
 {
     if (save())
-    {
         accept();
-    }
 }

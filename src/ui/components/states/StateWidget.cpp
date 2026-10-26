@@ -20,23 +20,21 @@ StateWidget::StateWidget(QWidget *parent)
         CreatorMetrics::SpacingXLarge,
         CreatorMetrics::SpacingXLarge
     );
-
     layout_->setSpacing(CreatorMetrics::SpacingSmall);
     layout_->setAlignment(Qt::AlignCenter);
 
     QFont titleFont = titleLabel_->font();
-
     titleFont.setPointSize(18);
     titleFont.setBold(true);
+
     titleLabel_->setFont(titleFont);
 
     QPalette titlePalette = titleLabel_->palette();
-
     titlePalette.setColor(QPalette::WindowText, CreatorColors::TextPrimary);
+
     titleLabel_->setPalette(titlePalette);
 
     QPalette descriptionPalette = descriptionLabel_->palette();
-
     descriptionPalette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
     descriptionLabel_->setPalette(descriptionPalette);
     descriptionLabel_->setAlignment(Qt::AlignCenter);
@@ -55,7 +53,6 @@ void StateWidget::setTitle(const QString &title)
 void StateWidget::setDescription(const QString &description)
 {
     descriptionLabel_->setText(description);
-
     descriptionLabel_->setVisible(!description.isEmpty());
 }
 

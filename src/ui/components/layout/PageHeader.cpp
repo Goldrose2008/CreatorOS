@@ -20,18 +20,15 @@ PageHeader::PageHeader(QWidget *parent)
     textLayout->setSpacing(CreatorMetrics::SpacingSmall);
 
     QFont titleFont = titleLabel_->font();
-
     titleFont.setPointSize(24);
     titleFont.setBold(true);
     titleLabel_->setFont(titleFont);
 
     QPalette titlePalette = titleLabel_->palette();
-
     titlePalette.setColor(QPalette::WindowText, CreatorColors::TextPrimary);
     titleLabel_->setPalette(titlePalette);
 
     QPalette descriptionPalette = descriptionLabel_->palette();
-
     descriptionPalette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
     descriptionLabel_->setPalette(descriptionPalette);
     descriptionLabel_->setWordWrap(true);
@@ -40,9 +37,7 @@ PageHeader::PageHeader(QWidget *parent)
     textLayout->addWidget(descriptionLabel_);
 
     layout_->setContentsMargins(0, 0, 0, 0);
-
     layout_->setSpacing(CreatorMetrics::SpacingMedium);
-
     layout_->addLayout(textLayout, 1);
 }
 
@@ -60,9 +55,7 @@ void PageHeader::setDescription(const QString &description)
 void PageHeader::addAction(QWidget *widget)
 {
     if (widget == nullptr)
-    {
         return;
-    }
 
     layout_->addWidget(widget);
 }

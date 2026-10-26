@@ -16,10 +16,8 @@ namespace
         {
         case ProjectStatus::Draft:
             return localization.text(QStringLiteral("common.status.draft"));
-
         case ProjectStatus::Active:
             return localization.text(QStringLiteral("common.status.in_progress"));
-
         case ProjectStatus::Archived:
             return localization.text(QStringLiteral("common.status.archived"));
         }
@@ -28,14 +26,12 @@ namespace
     }
 }
 
-ProjectCard::ProjectCard(const Project &project, LocalizationService &localization, QWidget *parent)
-    : EntityCard(parent), project_(project)
+ProjectCard::ProjectCard(const Project &project, LocalizationService &localization, QWidget *parent) : EntityCard(parent), project_(project)
 {
     setTitle(QString::fromUtf8(project_.name.c_str()));
     setDescription(QString::fromUtf8(project_.description.c_str()));
 
     auto *status = createStatusLabel(statusText(project_.status, localization));
-
     setStatusWidget(status);
 
     auto *releaseDate = new QLabel(this);
@@ -45,7 +41,6 @@ ProjectCard::ProjectCard(const Project &project, LocalizationService &localizati
     setProgress(project_.progress);
 
     auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-
     addAction(openButton);
 
     connect(

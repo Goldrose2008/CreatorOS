@@ -66,9 +66,7 @@ ContentEditorDialog::ContentEditorDialog(
     const auto contentTypes = projectService_.getContentTypes();
 
     for (const ContentType &contentType : contentTypes)
-    {
         contentTypeCombo_->addItem(QString::fromUtf8(contentType.name.c_str()), QVariant::fromValue(contentType.id));
-    }
 
     if (content.has_value())
     {
@@ -79,20 +77,13 @@ ContentEditorDialog::ContentEditorDialog(
         const int index = contentTypeCombo_->findData(QVariant::fromValue(content->contentTypeId));
 
         if (index >= 0)
-        {
             contentTypeCombo_->setCurrentIndex(index);
-        }
     }
 
     if (contentTypeCombo_->count() == 0)
     {
         setSaveEnabled(false);
-
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("content.type.none_available"))
-        );
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("content.type.none_available")));
     }
 }
 
@@ -100,18 +91,13 @@ bool ContentEditorDialog::save()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("common.validation.name_required"))
-        );
-
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         nameEdit_->setFocus();
-
         return false;
     }
 
-    if (contentTypeCombo_->currentIndex() < 0){return false;}
+    if (contentTypeCombo_->currentIndex() < 0)
+        return false;
 
     const std::int64_t contentTypeId = contentTypeCombo_->currentData().toLongLong();
 
@@ -140,12 +126,7 @@ bool ContentEditorDialog::save()
     }
     catch (const std::exception &)
     {
-        QMessageBox::critical(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("content.save.error"))
-        );
-
+        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("content.save.error")));
         return false;
     }
 }

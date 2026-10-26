@@ -80,9 +80,7 @@ void MenuComposer::build(Sidebar *sidebar, const LocalizationService *localizati
     );
 
     auto *system = new MenuSection(sidebar);
-
     system->setText(localization->text(QStringLiteral("system")));
-
     sidebar->addSection(system);
 
     addItem(

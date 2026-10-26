@@ -50,48 +50,27 @@ void MenuItem::paintEvent(QPaintEvent *)
     };
 
     if (isChecked())
-    {
         painter.setBrush(CreatorColors::Active);
-    }
     else if (underMouse())
-    {
         painter.setBrush(CreatorColors::Hover);
-    }
     else
-    {
         painter.setBrush(Qt::NoBrush);
-    }
 
     painter.setPen(Qt::NoPen);
-
-    painter.drawRoundedRect(
-        backgroundRect,
-        CreatorMetrics::SmallCornerRadius,
-        CreatorMetrics::SmallCornerRadius
-    );
+    painter.drawRoundedRect(backgroundRect, CreatorMetrics::SmallCornerRadius, CreatorMetrics::SmallCornerRadius);
 
     constexpr int iconSize = 20;
     constexpr int iconLeft = 14;
-
     const int iconTop = (height() - iconSize) / 2;
 
-    icon_.paint(
-        &painter,
-        QRect(iconLeft, iconTop, iconSize, iconSize),
-        Qt::AlignCenter
-    );
-
+    icon_.paint(&painter, QRect(iconLeft, iconTop, iconSize, iconSize), Qt::AlignCenter);
     QColor textColor = CreatorColors::TextSecondary;
 
     if (isChecked() || underMouse())
-    {
         textColor = CreatorColors::TextPrimary;
-    }
 
     if (!isEnabled())
-    {
         textColor = CreatorColors::TextMuted;
-    }
 
     painter.setPen(textColor);
     painter.setFont(font());
@@ -103,11 +82,7 @@ void MenuItem::paintEvent(QPaintEvent *)
         height()
     };
 
-    painter.drawText(
-        textRect,
-        Qt::AlignVCenter | Qt::AlignLeft,
-        text()
-    );
+    painter.drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, text());
 }
 
 QSize MenuItem::sizeHint() const

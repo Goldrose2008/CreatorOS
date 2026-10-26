@@ -76,7 +76,8 @@ void EntityHeader::setDescription(const QString &description)
 
 void EntityHeader::setStatusWidget(QWidget *widget)
 {
-    if (statusWidget_ == widget){return;}
+    if (statusWidget_ == widget)
+        return;
 
     if (statusWidget_ != nullptr)
     {
@@ -85,7 +86,8 @@ void EntityHeader::setStatusWidget(QWidget *widget)
         statusWidget_ = nullptr;
     }
 
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
 
@@ -97,7 +99,8 @@ void EntityHeader::setStatusWidget(QWidget *widget)
 
 void EntityHeader::addMetaWidget(QWidget *widget)
 {
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
     const int insertIndex = metaLayout_->count() - 1;
@@ -106,8 +109,9 @@ void EntityHeader::addMetaWidget(QWidget *widget)
 
 void EntityHeader::addAction(QWidget *widget)
 {
-    if (widget == nullptr){return;}
-
+    if (widget == nullptr)
+        return;
+        
     widget->setParent(this);
     actionsLayout_->addWidget(widget);
 }

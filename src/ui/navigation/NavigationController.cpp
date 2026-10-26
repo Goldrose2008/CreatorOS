@@ -2,20 +2,14 @@
 
 #include "../shell/Workspace.h"
 
-NavigationController::NavigationController(
-    Workspace *workspace, QObject *parent)
-    : QObject(parent), workspace_(workspace)
+NavigationController::NavigationController(Workspace *workspace, QObject *parent) : QObject(parent), workspace_(workspace)
 {
 }
 
 bool NavigationController::addPage(const CurrentPage &page)
 {
-    if (page.route.trimmed().isEmpty()
-        || page.widget == nullptr
-        || pages_.contains(page.route))
-    {
+    if (page.route.trimmed().isEmpty() || page.widget == nullptr || pages_.contains(page.route))
         return false;
-    }
 
     workspace_->addWidget(page.widget);
     pages_.insert(page.route, page);
@@ -28,9 +22,7 @@ bool NavigationController::navigateTo(const QString &route)
     const auto iterator = pages_.constFind(route);
 
     if (iterator == pages_.cend())
-    {
         return false;
-    }
 
     workspace_->setCurrentWidget(iterator.value().widget);
 

@@ -41,11 +41,7 @@ Platform PlatformService::createPlatform(const std::string &name, const std::str
     return createdPlatform.value();
 }
 
-bool PlatformService::updatePlatform(
-    std::int64_t id,
-    const std::string &name,
-    const std::string &websiteUrl
-)
+bool PlatformService::updatePlatform(std::int64_t id, const std::string &name, const std::string &websiteUrl)
 {
     const auto existing = repository_.findById(id);
 

@@ -19,9 +19,7 @@ namespace
         const auto role = contentRoleFromString(query.value("content_role").toString().toStdString());
 
         if (!role.has_value())
-        {
             throw std::runtime_error("Database contains invalid Content role.");
-        }
 
         content.role = role.value();
         content.name = query.value("name").toString().toStdString();
@@ -32,9 +30,7 @@ namespace
         const auto status = contentStatusFromString(query.value("status").toString().toStdString());
 
         if (!status.has_value())
-        {
             throw std::runtime_error("Database contains invalid Content status.");
-        }
 
         content.status = status.value();
         content.progress = query.value("progress").toInt();
@@ -63,8 +59,7 @@ namespace
     }
 }
 
-ContentRepository::ContentRepository(const DatabaseManager &databaseManager)
-    : database_(databaseManager.database())
+ContentRepository::ContentRepository(const DatabaseManager &databaseManager) : database_(databaseManager.database())
 {
 }
 
@@ -72,22 +67,15 @@ std::vector<Content> ContentRepository::findAll() const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral("FROM contents ORDER BY project_id ASC, priority DESC, id ASC")
-    );
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM contents ORDER BY project_id ASC, priority DESC, id ASC"));
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
     std::vector<Content> contents;
 
     while (query.next())
-    {
         contents.push_back(readContent(query));
-    }
 
     return contents;
 }
@@ -96,28 +84,16 @@ std::vector<Content> ContentRepository::findByProjectId(std::int64_t projectId) 
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral(
-            "FROM contents "
-            "WHERE project_id = :project_id "
-            "ORDER BY priority DESC, id ASC"
-        )
-    );
-
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM contents WHERE project_id = :project_id ORDER BY priority DESC, id ASC"));
     query.bindValue(QStringLiteral(":project_id"), QVariant::fromValue(projectId));
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
     std::vector<Content> contents;
 
     while (query.next())
-    {
         contents.push_back(readContent(query));
-    }
 
     return contents;
 }
@@ -126,22 +102,14 @@ std::optional<Content> ContentRepository::findById(std::int64_t id) const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral(
-            "FROM contents "
-            "WHERE id = :id"
-        )
-    );
-
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM contents WHERE id = :id"));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
-    if (!query.next()){return std::nullopt;}
+    if (!query.next())
+        return std::nullopt;
 
     return readContent(query);
 }
@@ -150,15 +118,9 @@ std::int64_t ContentRepository::create(const Content &content)
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "INSERT INTO contents "
-            "(project_id, content_type_id, content_role, name, "
-            "description, priority, status, progress) "
-            "VALUES "
-            "(:project_id, :content_type_id, :content_role, :name, "
-            ":description, :priority, :status, :progress)"
-        )
+    query.prepare(QStringLiteral(
+        "INSERT INTO contents (project_id, content_type_id, content_role, name, description, priority, status, progress) "
+        "VALUES (:project_id, :content_type_id, :content_role, :name, :description, :priority, :status, :progress)")
     );
 
     query.bindValue(QStringLiteral(":project_id"), QVariant::fromValue(content.projectId));
@@ -171,9 +133,7 @@ std::int64_t ContentRepository::create(const Content &content)
     query.bindValue(QStringLiteral(":progress"), content.progress);
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
     return query.lastInsertId().toLongLong();
 }
@@ -194,7 +154,6 @@ bool ContentRepository::update(const Content &content)
             "WHERE id = :id"
         )
     );
-
     query.bindValue(QStringLiteral(":content_type_id"), QVariant::fromValue(content.contentTypeId));
     query.bindValue(QStringLiteral(":name"), QString::fromUtf8(content.name.c_str()));
     query.bindValue(QStringLiteral(":description"), QString::fromUtf8(content.description.c_str()));
@@ -202,9 +161,7 @@ bool ContentRepository::update(const Content &content)
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(content.id));
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
     return query.numRowsAffected() > 0;
 }
@@ -213,19 +170,11 @@ bool ContentRepository::remove(std::int64_t id)
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "DELETE FROM contents "
-            "WHERE id = :id"
-        )
-    );
-
+    query.prepare(QStringLiteral("DELETE FROM contents WHERE id = :id"));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
 
     if (!query.exec())
-    {
         throw std::runtime_error(query.lastError().text().toStdString());
-    }
 
     return query.numRowsAffected() > 0;
 }

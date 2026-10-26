@@ -23,9 +23,7 @@ EntityList::EntityList(QWidget *parent)
 void EntityList::addItem(QWidget *item)
 {
     if (item == nullptr)
-    {
         return;
-    }
 
     layout_->insertWidget(layout_->count() - 1, item);
     ++itemCount_;
@@ -38,18 +36,13 @@ void EntityList::clearItems()
         QLayoutItem *layoutItem = layout_->takeAt(0);
 
         if (layoutItem == nullptr)
-        {
             continue;
-        }
 
         QWidget *widget = layoutItem->widget();
-
         delete layoutItem;
 
         if (widget != nullptr)
-        {
             widget->deleteLater();
-        }
     }
 
     itemCount_ = 0;

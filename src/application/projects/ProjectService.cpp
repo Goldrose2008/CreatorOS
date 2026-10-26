@@ -19,14 +19,10 @@ namespace
         const std::string normalizedReleaseAt = CreatorStringUtils::trim(plannedReleaseAt);
 
         if (normalizedName.empty())
-        {
             throw std::invalid_argument("Project name cannot be empty.");
-        }
 
         if (normalizedReleaseAt.empty())
-        {
             throw std::invalid_argument("Project planned release date cannot be empty.");
-        }
 
         project.name = normalizedName;
         project.description = normalizedDescription;
@@ -34,12 +30,8 @@ namespace
     }
 }
 
-ProjectService::ProjectService(
-    IProjectRepository &repository,
-    IContentTypeRepository &contentTypeRepository
-)
-    : repository_(repository),
-      contentTypeRepository_(contentTypeRepository)
+ProjectService::ProjectService(IProjectRepository &repository, IContentTypeRepository &contentTypeRepository)
+    : repository_(repository), contentTypeRepository_(contentTypeRepository)
 {
 }
 
@@ -67,44 +59,33 @@ Project ProjectService::createProject(
 )
 {
     Project project;
-
     setEditableFields(project, name, description, plannedReleaseAt);
-
     const std::string normalizedContentName = CreatorStringUtils::trim(mainContentName);
 
     if (normalizedContentName.empty())
-    {
         throw std::invalid_argument("Main content name cannot be empty.");
-    }
 
     if (mainContentTypeId <= 0)
-    {
         throw std::invalid_argument("Main content type is required.");
-    }
 
     const auto mainContentType = contentTypeRepository_.findById(mainContentTypeId);
+    
     if (!mainContentType.has_value())
-    {
         throw std::invalid_argument("Main content type was not found.");
-    }
 
     project.status = ProjectStatus::Draft;
     project.progress = 0;
 
     Content mainContent;
-
     mainContent.contentTypeId = mainContentTypeId;
     mainContent.role = ContentRole::Main;
     mainContent.name = normalizedContentName;
 
     const std::int64_t id = repository_.createWithMainContent(project, mainContent);
-
     const auto createdProject = repository_.findById(id);
 
     if (!createdProject.has_value())
-    {
         throw std::runtime_error("Created project could not be loaded.");
-    }
 
     return createdProject.value();
 }
@@ -113,10 +94,10 @@ bool ProjectService::updateProject(std::int64_t id, const std::string &name, con
 {
     const auto existingProject = repository_.findById(id);
 
-    if (!existingProject.has_value()){return false;}
+    if (!existingProject.has_value())
+        return false;
 
     Project project = existingProject.value();
-
     setEditableFields(project, name, description, plannedReleaseAt);
 
     return repository_.update(project);

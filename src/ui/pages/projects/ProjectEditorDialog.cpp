@@ -61,20 +61,16 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
         const QDate plannedReleaseDate = QDate::fromString(QString::fromUtf8(project->plannedReleaseAt.c_str()), Qt::ISODate);
 
         if (plannedReleaseDate.isValid())
-        {
             plannedReleaseEdit_->setDate(plannedReleaseDate);
-        }
     }
     else
     {
         auto *contentTypeField = new FormField(this);
-
         contentTypeField->setLabel(localization_.text(QStringLiteral("project.create.content_type")));
         contentTypeCombo_ = new QComboBox(this);
         contentTypeField->setField(contentTypeCombo_);
 
         auto *contentNameField = new FormField(this);
-
         contentNameField->setLabel(localization_.text(QStringLiteral("common.label.name")));
         contentNameEdit_ = new QLineEdit(this);
         contentNameField->setField(contentNameEdit_);
@@ -85,21 +81,12 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
         const auto contentTypes = projectService_.getContentTypes();
 
         for (const ContentType &contentType : contentTypes)
-        {
-            contentTypeCombo_->addItem(
-                QString::fromUtf8(contentType.name.c_str()),
-                QVariant::fromValue(contentType.id));
-        }
+            contentTypeCombo_->addItem(QString::fromUtf8(contentType.name.c_str()), QVariant::fromValue(contentType.id));
 
         if (contentTypeCombo_->count() == 0)
         {
             setSaveEnabled(false);
-
-            QMessageBox::warning(
-                this,
-                localization_.text(QStringLiteral("common.state.error.title")),
-                localization_.text(QStringLiteral("content.type.none_available"))
-            );
+            QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("content.type.none_available")));
         }
     }
 }
@@ -108,11 +95,7 @@ bool ProjectEditorDialog::save()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("common.validation.name_required"))
-        );
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
 
         nameEdit_->setFocus();
         return false;
@@ -131,32 +114,20 @@ bool ProjectEditorDialog::save()
         }
         catch (const std::exception &)
         {
-            QMessageBox::critical(
-                this,
-                localization_.text(QStringLiteral("common.state.error.title")),
-                localization_.text(QStringLiteral("project.edit.error.description"))
-            );
-
+            QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("project.edit.error.description")));
             return false;
         }
     }
 
     if (contentNameEdit_->text().trimmed().isEmpty())
     {
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("common.validation.name_required"))
-        );
-
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         contentNameEdit_->setFocus();
         return false;
     }
 
     if (contentTypeCombo_->currentIndex() < 0)
-    {
         return false;
-    }
 
     const std::int64_t contentTypeId = contentTypeCombo_->currentData().toLongLong();
 
@@ -174,11 +145,7 @@ bool ProjectEditorDialog::save()
     }
     catch (const std::exception &)
     {
-        QMessageBox::critical(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("project.create.error.description"))
-        );
+        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("project.create.error.description")));
 
         return false;
     }

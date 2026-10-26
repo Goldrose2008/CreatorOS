@@ -44,6 +44,7 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
     
     auto *createButton = new QPushButton(localization_.text(QStringLiteral("tasks.create")), this);
     header_->addAction(createButton);
+    
     connect(
         createButton,
         &QPushButton::clicked,
@@ -51,7 +52,9 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
         [this]()
         {
             TaskEditorDialog dialog(taskService_, projectService_, contentService_, localization_, this);
-            if (dialog.exec() == QDialog::Accepted){reload();}
+            
+            if (dialog.exec() == QDialog::Accepted)
+                reload();
         });
 
     loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));

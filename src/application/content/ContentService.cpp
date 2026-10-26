@@ -7,14 +7,8 @@
 #include "../projects/IProjectRepository.h"
 #include "../common/StringUtils.h"
 
-ContentService::ContentService(
-    IContentRepository &repository,
-    IProjectRepository &projectRepository,
-    IContentTypeRepository &contentTypeRepository
-)
-    : repository_(repository),
-      projectRepository_(projectRepository),
-      contentTypeRepository_(contentTypeRepository)
+ContentService::ContentService(IContentRepository &repository, IProjectRepository &projectRepository, IContentTypeRepository &contentTypeRepository)
+    : repository_(repository), projectRepository_(projectRepository), contentTypeRepository_(contentTypeRepository)
 {
 }
 
@@ -26,9 +20,7 @@ std::vector<Content> ContentService::getAllContents() const
 std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) const
 {
     if (projectId <= 0)
-    {
         return {};
-    }
 
     return repository_.findByProjectId(projectId);
 }
@@ -48,31 +40,21 @@ Content ContentService::createAdditionalContent(
 )
 {
     if (projectId <= 0)
-    {
         throw std::invalid_argument("Project is required.");
-    }
 
     if (!projectRepository_.findById(projectId).has_value())
-    {
         throw std::invalid_argument("Project was not found.");
-    }
 
     if (contentTypeId <= 0)
-    {
         throw std::invalid_argument("Content type is required.");
-    }
 
     if (!contentTypeRepository_.findById(contentTypeId).has_value())
-    {
         throw std::invalid_argument("Content type was not found.");
-    }
 
     const std::string normalizedName = CreatorStringUtils::trim(name);
 
     if (normalizedName.empty())
-    {
         throw std::invalid_argument("Content name cannot be empty.");
-    }
 
     Content content;
 
@@ -90,9 +72,7 @@ Content ContentService::createAdditionalContent(
     const auto createdContent = repository_.findById(id);
 
     if (!createdContent.has_value())
-    {
         throw std::runtime_error("Created content could not be loaded.");
-    }
 
     return createdContent.value();
 }
@@ -108,26 +88,18 @@ bool ContentService::updateContent(
     const auto existingContent = repository_.findById(id);
 
     if (!existingContent.has_value())
-    {
         return false;
-    }
 
     if (contentTypeId <= 0)
-    {
         throw std::invalid_argument("Content type is required.");
-    }
 
     if (!contentTypeRepository_.findById(contentTypeId).has_value())
-    {
         throw std::invalid_argument("Content type was not found.");
-    }
 
     const std::string normalizedName = CreatorStringUtils::trim(name);
 
     if (normalizedName.empty())
-    {
         throw std::invalid_argument("Content name cannot be empty.");
-    }
 
     Content content = existingContent.value();
 
@@ -143,12 +115,11 @@ bool ContentService::deleteContent(std::int64_t id) const
 {
     const auto existingContent = repository_.findById(id);
 
-    if (!existingContent.has_value()){return false;}
+    if (!existingContent.has_value())
+        return false;
 
     if (existingContent->role == ContentRole::Main)
-    {
         throw std::invalid_argument("Main content cannot be deleted from its project.");
-    }
 
     return repository_.remove(id);
 }

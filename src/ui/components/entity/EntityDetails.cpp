@@ -7,21 +7,20 @@
 
 namespace
 {
-    void replaceWidget(
-        QVBoxLayout *layout,
-        QWidget *&currentWidget,
-        QWidget *newWidget,
-        QWidget *owner
-    )
+    void replaceWidget(QVBoxLayout *layout, QWidget *&currentWidget, QWidget *newWidget, QWidget *owner)
     {
-        if (currentWidget == newWidget){return;}
+        if (currentWidget == newWidget)
+            return;
+
         if (currentWidget != nullptr)
         {
             layout->removeWidget(currentWidget);
             currentWidget->deleteLater();
             currentWidget = nullptr;
         }
-        if (newWidget == nullptr){return;}
+
+        if (newWidget == nullptr)
+            return;
 
         newWidget->setParent(owner);
         layout->addWidget(newWidget);
@@ -94,38 +93,31 @@ void EntityDetails::setSummaryWidget(QWidget *widget)
 void EntityDetails::setNavigationVisible(bool visible)
 {
     if (navigationWidget_ != nullptr)
-    {
         navigationWidget_->setVisible(visible);
-    }
 }
 
 void EntityDetails::setHeaderVisible(bool visible)
 {
     if (headerWidget_ != nullptr)
-    {
         headerWidget_->setVisible(visible);
-    }
 }
 
 void EntityDetails::setStateVisible(bool visible)
 {
     if (stateWidget_ != nullptr)
-    {
         stateWidget_->setVisible(visible);
-    }
 }
 
 void EntityDetails::setSummaryVisible(bool visible)
 {
     if (summaryWidget_ != nullptr)
-    {
         summaryWidget_->setVisible(visible);
-    }
 }
 
 void EntityDetails::addContentWidget(QWidget *widget)
 {
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(contentWidget_);
     contentLayout_->addWidget(widget);

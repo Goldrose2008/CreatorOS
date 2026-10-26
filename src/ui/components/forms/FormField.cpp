@@ -16,26 +16,21 @@ FormField::FormField(QWidget *parent)
       layout_(new QVBoxLayout(this))
 {
     layout_->setContentsMargins(0, 0, 0, 0);
-
     layout_->setSpacing(CreatorMetrics::SpacingSmall);
 
     QFont labelFont = label_->font();
-
     labelFont.setBold(true);
     label_->setFont(labelFont);
 
     QPalette labelPalette = label_->palette();
-
     labelPalette.setColor(QPalette::WindowText, CreatorColors::TextPrimary);
     label_->setPalette(labelPalette);
 
     QPalette descriptionPalette = descriptionLabel_->palette();
-
     descriptionPalette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
     descriptionLabel_->setPalette(descriptionPalette);
 
     QPalette errorPalette = errorLabel_->palette();
-
     errorPalette.setColor(QPalette::WindowText, CreatorColors::Accent);
     errorLabel_->setPalette(errorPalette);
     descriptionLabel_->setWordWrap(true);
@@ -66,9 +61,7 @@ void FormField::setError(const QString &error)
 void FormField::setField(QWidget *field)
 {
     if (field == nullptr)
-    {
         return;
-    }
 
     layout_->insertWidget(1, field);
 }

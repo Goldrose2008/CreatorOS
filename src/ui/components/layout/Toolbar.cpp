@@ -13,9 +13,7 @@ Toolbar::Toolbar(QWidget *parent) : QWidget(parent), layout_(new QHBoxLayout(thi
 void Toolbar::addWidget(QWidget *widget)
 {
     if (widget == nullptr)
-    {
         return;
-    }
 
     layout_->addWidget(widget);
 }

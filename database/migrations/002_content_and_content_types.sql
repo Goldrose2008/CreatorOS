@@ -5,14 +5,9 @@ CREATE TABLE IF NOT EXISTS content_types (
 
 CREATE TABLE IF NOT EXISTS contents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    project_id INTEGER NOT NULL
-        REFERENCES projects(id)
-        ON DELETE CASCADE,
-    content_type_id INTEGER NOT NULL
-        REFERENCES content_types(id)
-        ON DELETE RESTRICT,
-    content_role TEXT NOT NULL
-        CHECK (content_role IN ('main', 'additional')),
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    content_type_id INTEGER NOT NULL REFERENCES content_types(id) ON DELETE RESTRICT,
+    content_role TEXT NOT NULL CHECK (content_role IN ('main', 'additional')),
     name TEXT NOT NULL
 );
 

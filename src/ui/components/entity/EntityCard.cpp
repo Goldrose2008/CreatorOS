@@ -78,7 +78,8 @@ void EntityCard::setDescription(const QString &description)
 
 void EntityCard::setStatusWidget(QWidget *widget)
 {
-    if (statusWidget_ == widget){return;}
+    if (statusWidget_ == widget)
+        return;
 
     if (statusWidget_ != nullptr)
     {
@@ -87,7 +88,8 @@ void EntityCard::setStatusWidget(QWidget *widget)
         statusWidget_ = nullptr;
     }
 
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
     const int insertIndex = titleLayout_->count() - 1;
@@ -98,13 +100,9 @@ void EntityCard::setStatusWidget(QWidget *widget)
 void EntityCard::setProgress(int value)
 {
     if (value < 0)
-    {
         value = 0;
-    }
     else if (value > 100)
-    {
         value = 100;
-    }
 
     progressBar_->setValue(value);
     progressBar_->setVisible(true);
@@ -117,7 +115,8 @@ void EntityCard::clearProgress()
 
 void EntityCard::addContentWidget(QWidget *widget)
 {
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
     contentWidgetsLayout_->addWidget(widget);
@@ -125,7 +124,8 @@ void EntityCard::addContentWidget(QWidget *widget)
 
 void EntityCard::addMetaWidget(QWidget *widget)
 {
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
     const int insertIndex = metaLayout_->count() - 1;
@@ -134,7 +134,8 @@ void EntityCard::addMetaWidget(QWidget *widget)
 
 void EntityCard::addAction(QWidget *widget)
 {
-    if (widget == nullptr){return;}
+    if (widget == nullptr)
+        return;
 
     widget->setParent(this);
     actionsLayout_->addWidget(widget);

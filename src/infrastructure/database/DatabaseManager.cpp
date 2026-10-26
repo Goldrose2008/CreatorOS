@@ -27,13 +27,9 @@ namespace
                 currentStatement += character;
 
                 if (insideSingleQuotes && i + 1 < sql.size() && sql.at(i + 1) == '\'')
-                {
                     currentStatement += sql.at(++i);
-                }
                 else
-                {
                     insideSingleQuotes = !insideSingleQuotes;
-                }
 
                 continue;
             }
@@ -43,13 +39,9 @@ namespace
                 currentStatement += character;
 
                 if (insideDoubleQuotes && i + 1 < sql.size() && sql.at(i + 1) == '"')
-                {
                     currentStatement += sql.at(++i);
-                }
                 else
-                {
                     insideDoubleQuotes = !insideDoubleQuotes;
-                }
 
                 continue;
             }
@@ -59,9 +51,7 @@ namespace
                 const QString statement = currentStatement.trimmed();
 
                 if (!statement.isEmpty())
-                {
                     statements.append(statement);
-                }
 
                 currentStatement.clear();
                 continue;
@@ -73,9 +63,7 @@ namespace
         const QString lastStatement = currentStatement.trimmed();
 
         if (!lastStatement.isEmpty())
-        {
             statements.append(lastStatement);
-        }
 
         return statements;
     }
@@ -87,9 +75,7 @@ namespace
         if (!migrationFile.open(QIODevice::ReadOnly))
         {
             if (errorMessage != nullptr)
-            {
                 *errorMessage = QStringLiteral("Database migration was not found: ") + resourcePath;
-            }
 
             return false;
         }
@@ -99,9 +85,7 @@ namespace
         if (!database.transaction())
         {
             if (errorMessage != nullptr)
-            {
                 *errorMessage = database.lastError().text();
-            }
 
             return false;
         }
@@ -117,9 +101,7 @@ namespace
                 database.rollback();
 
                 if (errorMessage != nullptr)
-                {
                     *errorMessage = schemaQuery.lastError().text();
-                }
 
                 return false;
             }
@@ -132,9 +114,7 @@ namespace
             database.rollback();
 
             if (errorMessage != nullptr)
-            {
                 *errorMessage = versionUpdate.lastError().text();
-            }
 
             return false;
         }
@@ -142,9 +122,7 @@ namespace
         if (!database.commit())
         {
             if (errorMessage != nullptr)
-            {
                 *errorMessage = database.lastError().text();
-            }
 
             return false;
         }
@@ -159,7 +137,8 @@ DatabaseManager::DatabaseManager() : connectionName_(QStringLiteral("CreatorOS.M
 
 DatabaseManager::~DatabaseManager()
 {
-    if (!database_.isValid()){return;}
+    if (!database_.isValid())
+        return;
 
     const QString connectionName = database_.connectionName();
     database_.close();
@@ -169,16 +148,16 @@ DatabaseManager::~DatabaseManager()
 
 bool DatabaseManager::initialize(QString *errorMessage)
 {
-    if (database_.isOpen()){return true;}
+    if (database_.isOpen())
+        return true;
 
     const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     if (appDataPath.isEmpty())
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = QStringLiteral("Application data directory is unavailable.");
-        }
+
         return false;
     }
 
@@ -187,9 +166,8 @@ bool DatabaseManager::initialize(QString *errorMessage)
     if (!directory.mkpath(appDataPath))
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = QStringLiteral("Failed to create application data directory.");
-        }
+
         return false;
     }
 
@@ -200,9 +178,8 @@ bool DatabaseManager::initialize(QString *errorMessage)
     if (!database_.open())
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = database_.lastError().text();
-        }
+
         return false;
     }
 
@@ -211,9 +188,8 @@ bool DatabaseManager::initialize(QString *errorMessage)
     if (!foreignKeysQuery.exec(QStringLiteral("PRAGMA foreign_keys = ON")))
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = foreignKeysQuery.lastError().text();
-        }
+
         return false;
     }
     return applySchema(errorMessage);
@@ -236,9 +212,7 @@ bool DatabaseManager::applySchema(QString *errorMessage)
     if (!versionQuery.exec(QStringLiteral("PRAGMA user_version")))
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = versionQuery.lastError().text();
-        }
 
         return false;
     }
@@ -246,9 +220,7 @@ bool DatabaseManager::applySchema(QString *errorMessage)
     if (!versionQuery.next())
     {
         if (errorMessage != nullptr)
-        {
             *errorMessage = QStringLiteral("Failed to read database schema version.");
-        }
 
         return false;
     }
@@ -264,38 +236,29 @@ bool DatabaseManager::applySchema(QString *errorMessage)
     const Migration migrations[] =
     {
         {
-            1,
-            QStringLiteral(":/database/migrations/001_initial.sql")
+            1, QStringLiteral(":/database/migrations/001_initial.sql")
         },
         {
-            2,
-            QStringLiteral(":/database/migrations/002_content_and_content_types.sql")
+            2, QStringLiteral(":/database/migrations/002_content_and_content_types.sql")
         },
         {
-            3,
-            QStringLiteral(":/database/migrations/003_full_content.sql")
+            3, QStringLiteral(":/database/migrations/003_full_content.sql")
         },
         {
-            4,
-            QStringLiteral(":/database/migrations/004_tasks.sql")
+            4, QStringLiteral(":/database/migrations/004_tasks.sql")
         },
         {
-            5,
-            QStringLiteral(":/database/migrations/005_platforms_and_accounts.sql")
+            5, QStringLiteral(":/database/migrations/005_platforms_and_accounts.sql")
         }
     };
 
     for (const Migration &migration : migrations)
     {
         if (currentVersion >= migration.version)
-        {
             continue;
-        }
 
         if (!applyMigration(database_, migration.version, migration.resourcePath, errorMessage))
-        {
             return false;
-        }
 
         currentVersion = migration.version;
     }

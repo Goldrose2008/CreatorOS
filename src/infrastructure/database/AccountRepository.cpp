@@ -47,13 +47,7 @@ std::vector<Account> AccountRepository::findAll() const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral(
-            "FROM accounts "
-            "ORDER BY platform_id ASC, name COLLATE NOCASE ASC, id ASC"
-        )
-    );
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM accounts ORDER BY platform_id ASC, name COLLATE NOCASE ASC, id ASC"));
 
     if (!query.exec())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -70,11 +64,7 @@ std::optional<Account> AccountRepository::findById(std::int64_t id) const
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral("SELECT ") + selectColumns() +
-        QStringLiteral("FROM accounts WHERE id = :id")
-    );
-
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM accounts WHERE id = :id"));
     query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
 
     if (!query.exec())
@@ -90,15 +80,7 @@ std::int64_t AccountRepository::create(const Account &account)
 {
     QSqlQuery query(database_);
 
-    query.prepare(
-        QStringLiteral(
-            "INSERT INTO accounts "
-            "(platform_id, name, username, profile_url, external_id) "
-            "VALUES "
-            "(:platform_id, :name, :username, :profile_url, :external_id)"
-        )
-    );
-
+    query.prepare(QStringLiteral("INSERT INTO accounts (platform_id, name, username, profile_url, external_id) VALUES (:platform_id, :name, :username, :profile_url, :external_id)"));
     query.bindValue(QStringLiteral(":platform_id"), QVariant::fromValue(account.platformId));
     query.bindValue(QStringLiteral(":name"), QString::fromUtf8(account.name.c_str()));
     query.bindValue(QStringLiteral(":username"), QString::fromUtf8(account.username.c_str()));

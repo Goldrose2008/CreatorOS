@@ -78,7 +78,8 @@ TaskDetailsPage::TaskDetailsPage(
         this,
         [this]()
         {
-            if (task_.id > 0){emit backRequested();}
+            if (task_.id > 0)
+                emit backRequested();
         });
 
     setNavigationWidget(backButton);
@@ -95,10 +96,14 @@ TaskDetailsPage::TaskDetailsPage(
         this,
         [this]()
         {
-            if (task_.id <= 0){return;}
+            if (task_.id <= 0)
+                return;
+
             const std::int64_t taskId = task_.id;
             TaskEditorDialog dialog(taskService_, projectService_, contentService_, localization_, this, task_);
-            if (dialog.exec() == QDialog::Accepted){showTask(taskId);}
+            
+            if (dialog.exec() == QDialog::Accepted)
+                showTask(taskId);
         });
 
     connect(
@@ -107,7 +112,8 @@ TaskDetailsPage::TaskDetailsPage(
         this,
         [this]()
         {
-            if (task_.id <= 0){return;}
+            if (task_.id <= 0)
+                return;
 
             const std::int64_t taskId = task_.id;
 
@@ -123,10 +129,7 @@ TaskDetailsPage::TaskDetailsPage(
                     {
                         if (!taskService_.deleteTask(taskId))
                         {
-                            QMessageBox::critical(
-                                this,
-                                localization_.text(QStringLiteral("common.state.error.title")),
-                                localization_.text(QStringLiteral("task.delete.error.description")));
+                            QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.delete.error.description")));
                             return;
                         }
 
@@ -135,10 +138,7 @@ TaskDetailsPage::TaskDetailsPage(
                     }
                     catch (const std::exception &)
                     {
-                        QMessageBox::critical(
-                            this,
-                            localization_.text(QStringLiteral("common.state.error.title")),
-                            localization_.text(QStringLiteral("task.delete.error.description")));
+                        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.delete.error.description")));
                     }
                 });
         });
@@ -198,7 +198,6 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
         }
 
         task_ = task.value();
-
         QString parentName;
 
         if (task_.parentType == TaskParentType::Project)
@@ -206,24 +205,18 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
             const auto project = projectService_.getProject(task_.parentId);
 
             if (project.has_value())
-            {
                 parentName = QString::fromUtf8(project->name.c_str());
-            }
         }
         else
         {
             const auto content = contentService_.getContent(task_.parentId);
 
             if (content.has_value())
-            {
                 parentName = QString::fromUtf8(content->name.c_str());
-            }
         }
 
         if (parentName.isEmpty())
-        {
             parentName = localization_.text(QStringLiteral("common.state.not_found.title"));
-        }
 
         if (task_.parentTaskId.has_value())
         {

@@ -14,22 +14,19 @@
 #include "../navigation/NavigationController.h"
 #include "../navigation/CurrentPage.h"
 #include "../pages/content/ContentDetails.h"
+#include "../pages/platforms/PlatformsPage.h"
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
 #include "../pages/tasks/TasksPage.h"
 #include "../pages/tasks/TaskDetailsPage.h"
 #include "../../application/content/ContentService.h"
+#include "../../application/platforms/PlatformService.h"
 #include "../../application/projects/ProjectService.h"
 #include "../../application/tasks/TaskService.h"
 
 namespace
 {
-    void addPlaceholderPage(
-        NavigationController *navigation,
-        Workspace *workspace,
-        const QString &route,
-        const QString &title
-    )
+    void addPlaceholderPage(NavigationController *navigation, Workspace *workspace, const QString &route, const QString &title)
     {
         auto *page = new QWidget(workspace);
         auto *titleLabel = new QLabel(page);
@@ -45,12 +42,10 @@ namespace
         titleLabel->setAlignment(Qt::AlignCenter);
 
         QPalette palette = titleLabel->palette();
-
         palette.setColor(QPalette::WindowText, CreatorColors::TextPrimary);
         titleLabel->setPalette(palette);
 
         QFont titleFont = titleLabel->font();
-
         titleFont.setPointSize(24);
         titleFont.setBold(true);
         titleLabel->setFont(titleFont);
@@ -61,7 +56,7 @@ namespace
     }
 }
 
-AppShell::AppShell(ProjectService &projectService, ContentService &contentService, TaskService &taskService, QWidget *parent)
+AppShell::AppShell(ProjectService &projectService, ContentService &contentService, TaskService &taskService, PlatformService &platformService, QWidget *parent)
     : QWidget(parent),
       projectService_(&projectService),
       contentService_(&contentService),
@@ -91,44 +86,27 @@ AppShell::AppShell(ProjectService &projectService, ContentService &contentServic
 
     auto *projectsPage = new ProjectsPage(*projectService_, *localization_, workspace_);
     auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *contentService_, *localization_, workspace_);
+
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
     navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
 
     auto *contentDetails = new ContentDetails(*contentService_, *projectService_, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("content-details"), contentDetails});
 
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("planning"),
-        localization_->text(QStringLiteral("planning"))
-    );
+    auto *platformsPage = new PlatformsPage(platformService, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("platforms"), platformsPage});
+
+    addPlaceholderPage(navigation_, workspace_, QStringLiteral("planning"), localization_->text(QStringLiteral("planning")));
 
     auto *tasksPage = new TasksPage(*taskService_, *projectService_, *contentService_, *localization_, workspace_);
     auto *taskDetailsPage = new TaskDetailsPage(*taskService_, *projectService_, *contentService_, *localization_, workspace_);
+
     navigation_->addPage(CurrentPage{QStringLiteral("tasks"), tasksPage});
     navigation_->addPage(CurrentPage{QStringLiteral("task-details"), taskDetailsPage});
 
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("library"),
-        localization_->text(QStringLiteral("library"))
-    );
-
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("analytics"),
-        localization_->text(QStringLiteral("analytics"))
-    );
-
-    addPlaceholderPage(
-        navigation_,
-        workspace_,
-        QStringLiteral("settings"),
-        localization_->text(QStringLiteral("settings"))
-    );
+    addPlaceholderPage(navigation_, workspace_, QStringLiteral("library"), localization_->text(QStringLiteral("library")));
+    addPlaceholderPage(navigation_, workspace_, QStringLiteral("analytics"), localization_->text(QStringLiteral("analytics")));
+    addPlaceholderPage(navigation_, workspace_, QStringLiteral("settings"), localization_->text(QStringLiteral("settings")));
 
     connect(
         sidebar_,

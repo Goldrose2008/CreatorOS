@@ -7,14 +7,7 @@
 
 #include "../../style/Metrics.h"
 
-ConfirmModal::ConfirmModal(
-    const QString &title,
-    const QString &description,
-    const QString &confirmText,
-    const QString &cancelText,
-    QWidget *parent
-)
-    : QDialog(parent)
+ConfirmModal::ConfirmModal(const QString &title, const QString &description, const QString &confirmText, const QString &cancelText, QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(title);
     resize(480, 220);
@@ -36,11 +29,7 @@ ConfirmModal::ConfirmModal(
     layout->addWidget(descriptionLabel);
     layout->addStretch();
 
-    auto *buttonBox = new QDialogButtonBox(
-        QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-        this
-    );
-
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok, this);
     buttonBox->button(QDialogButtonBox::Ok)->setText(confirmText);
     buttonBox->button(QDialogButtonBox::Cancel)->setText(cancelText);
 
@@ -70,16 +59,8 @@ void ConfirmModal::confirm(
     std::function<void()> onConfirmed
 )
 {
-    ConfirmModal dialog(
-        title,
-        description,
-        confirmText,
-        cancelText,
-        parent
-    );
+    ConfirmModal dialog(title, description, confirmText, cancelText, parent);
 
     if (dialog.exec() == QDialog::Accepted && onConfirmed)
-    {
         onConfirmed();
-    }
 }

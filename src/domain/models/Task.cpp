@@ -16,15 +16,10 @@ std::string taskParentTypeToString(TaskParentType type)
 std::optional<TaskParentType> taskParentTypeFromString(std::string_view value)
 {
     if (value == "project")
-    {
         return TaskParentType::Project;
-    }
 
     if (value == "content")
-    {
         return TaskParentType::Content;
-    }
-
     return std::nullopt;
 }
 
@@ -48,24 +43,16 @@ std::string taskStatusToString(TaskStatus status)
 std::optional<TaskStatus> taskStatusFromString(std::string_view value)
 {
     if (value == "todo")
-    {
         return TaskStatus::Todo;
-    }
 
     if (value == "in_progress")
-    {
         return TaskStatus::InProgress;
-    }
 
     if (value == "done")
-    {
         return TaskStatus::Done;
-    }
 
     if (value == "cancelled")
-    {
         return TaskStatus::Cancelled;
-    }
 
     return std::nullopt;
 }

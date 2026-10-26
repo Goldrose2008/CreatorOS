@@ -22,26 +22,18 @@ namespace
     QLabel *createLabel(QWidget *parent)
     {
         auto *label = new QLabel(parent);
-
         label->setWordWrap(true);
-
         return label;
     }
 
     QString localizedContentRole(ContentRole role, const LocalizationService &localization)
     {
-        return localization.text(
-            QStringLiteral("content.role.") +
-            QString::fromStdString(contentRoleToString(role))
-        );
+        return localization.text(QStringLiteral("content.role.") + QString::fromStdString(contentRoleToString(role)));
     }
 
     QString localizedContentStatus(ContentStatus status, const LocalizationService &localization)
     {
-        return localization.text(
-            QStringLiteral("common.status.") +
-            QString::fromStdString(contentStatusToString(status))
-        );
+        return localization.text(QStringLiteral("common.status.") + QString::fromStdString(contentStatusToString(status)));
     }
 }
 
@@ -80,9 +72,7 @@ ContentDetails::ContentDetails(
         [this]()
         {
             if (content_.id <= 0)
-            {
                 return;
-            }
 
             emit backRequested(content_.projectId);
         }
@@ -129,7 +119,8 @@ ContentDetails::ContentDetails(
         this,
         [this]()
         {
-            if (content_.id <= 0){return;}
+            if (content_.id <= 0)
+                return;
 
             const std::int64_t contentId = content_.id;
             const std::int64_t projectId = content_.projectId;
@@ -146,12 +137,7 @@ ContentDetails::ContentDetails(
                     {
                         if (!contentService_.deleteContent(contentId))
                         {
-                            QMessageBox::critical(
-                                this,
-                                localization_.text(QStringLiteral("common.state.error.title")),
-                                localization_.text(QStringLiteral("content.delete.error.description"))
-                            );
-
+                            QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("content.delete.error.description")));
                             return;
                         }
 
@@ -160,11 +146,7 @@ ContentDetails::ContentDetails(
                     }
                     catch (const std::exception &)
                     {
-                        QMessageBox::critical(
-                            this,
-                            localization_.text(QStringLiteral("common.state.error.title")),
-                            localization_.text(QStringLiteral("content.delete.error.description"))
-                        );
+                        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("content.delete.error.description")));
                     }
                 }
             );
@@ -175,7 +157,6 @@ ContentDetails::ContentDetails(
 
     auto *summaryLayout = summarySection_->contentLayout();
     auto *grid = new QGridLayout();
-
     grid->setContentsMargins(0, 0, 0, 0);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.entity.project")), summarySection_), 0, 0);
     grid->addWidget(projectLabel_, 0, 1);
@@ -241,16 +222,12 @@ void ContentDetails::showContent(std::int64_t contentId)
         }
 
         const Content &value = content.value();
-
         const auto project = projectService_.getProject(value.projectId);
 
         if (!project.has_value())
-        {
             throw std::runtime_error("Content project was not found.");
-        }
 
         const auto contentTypes = projectService_.getContentTypes();
-
         QString contentTypeName;
 
         for (const ContentType &contentType : contentTypes)
@@ -263,9 +240,7 @@ void ContentDetails::showContent(std::int64_t contentId)
         }
 
         if (contentTypeName.isEmpty())
-        {
             throw std::runtime_error("Content type was not found.");
-        }
 
         content_ = value;
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
@@ -279,13 +254,9 @@ void ContentDetails::showContent(std::int64_t contentId)
         deleteButton_->setVisible(value.role == ContentRole::Additional);
 
         if (value.productionDeadlineAt.empty())
-        {
             deadlineLabel_->setText(QStringLiteral("—"));
-        }
         else
-        {
             deadlineLabel_->setText(QString::fromUtf8(value.productionDeadlineAt.c_str()));
-        }
 
         progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
         createdLabel_->setText(QString::fromUtf8(value.createdAt.c_str()));

@@ -29,10 +29,8 @@ namespace
         {
         case ProjectStatus::Draft:
             return localization.text(QStringLiteral("common.status.draft"));
-
         case ProjectStatus::Active:
             return localization.text(QStringLiteral("common.status.in_progress"));
-
         case ProjectStatus::Archived:
             return localization.text(QStringLiteral("common.status.archived"));
         }
@@ -51,12 +49,7 @@ namespace
     }
 }
 
-ProjectDetailsPage::ProjectDetailsPage(
-    ProjectService &projectService,
-    ContentService &contentService,
-    LocalizationService &localization,
-    QWidget *parent
-)
+ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent)
     : EntityDetails(parent),
       projectService_(projectService),
       contentService_(contentService),
@@ -92,6 +85,7 @@ ProjectDetailsPage::ProjectDetailsPage(
     header_->addAction(editButton_);
     header_->addAction(deleteButton_);
     header_->addAction(addContentButton_);
+
     editButton_->setVisible(false);
     deleteButton_->setVisible(false);
     addContentButton_->setVisible(false);
@@ -126,7 +120,8 @@ ProjectDetailsPage::ProjectDetailsPage(
         this,
         [this]()
         {
-            if (project_.id <= 0) {return;}
+            if (project_.id <= 0) 
+                return;
 
             const std::int64_t projectId = project_.id;
 
@@ -142,12 +137,7 @@ ProjectDetailsPage::ProjectDetailsPage(
                     {
                         if (!projectService_.deleteProject(projectId))
                         {
-                            QMessageBox::critical(
-                                this,
-                                localization_.text(QStringLiteral("common.state.error.title")),
-                                localization_.text(QStringLiteral("project.delete.error.description"))
-                            );
-
+                            QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("project.delete.error.description")));
                             return;
                         }
 
@@ -156,11 +146,7 @@ ProjectDetailsPage::ProjectDetailsPage(
                     }
                     catch (const std::exception &)
                     {
-                        QMessageBox::critical(
-                            this,
-                            localization_.text(QStringLiteral("common.state.error.title")),
-                            localization_.text(QStringLiteral("project.delete.error.description"))
-                        );
+                        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("project.delete.error.description")));
                     }
                 }
             );
@@ -168,36 +154,25 @@ ProjectDetailsPage::ProjectDetailsPage(
     );
 
     connect(
-    addContentButton_,
-    &QPushButton::clicked,
-    this,
-    [this]()
-    {
-        if (project_.id <= 0)
+        addContentButton_,
+        &QPushButton::clicked,
+        this,
+        [this]()
         {
-            return;
-        }
+            if (project_.id <= 0)
+                return;
 
-        ContentEditorDialog dialog(
-            contentService_,
-            projectService_,
-            localization_,
-            this,
-            project_.id
-        );
+            ContentEditorDialog dialog(contentService_, projectService_, localization_, this, project_.id);
 
-        if (dialog.exec() == QDialog::Accepted)
-        {
-            showProject(project_.id);
+            if (dialog.exec() == QDialog::Accepted)
+                showProject(project_.id);
         }
-    }
-);
+    );
 
     summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
 
     auto *summaryLayout = summarySection_->contentLayout();
     auto *grid = new QGridLayout();
-
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setHorizontalSpacing(CreatorMetrics::SpacingLarge);
     grid->setVerticalSpacing(CreatorMetrics::SpacingSmall);
@@ -240,12 +215,14 @@ void ProjectDetailsPage::clearContentCards()
     {
         QLayoutItem *layoutItem = contentCardsLayout_->takeAt(0);
 
-        if (layoutItem == nullptr){continue;}
+        if (layoutItem == nullptr)
+            continue;
 
         QWidget *widget = layoutItem->widget();
         delete layoutItem;
 
-        if (widget != nullptr){widget->deleteLater();}
+        if (widget != nullptr)
+            widget->deleteLater();
     }
 }
 
@@ -342,13 +319,9 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
 
         if (value.ownerId.has_value())
-        {
             ownerLabel_->setText(QString::number(value.ownerId.value()));
-        }
         else
-        {
             ownerLabel_->setText(localization_.text(QStringLiteral("project.owner.none")));
-        }
 
         createdLabel_->setText(QString::fromUtf8(value.createdAt.c_str()));
         updatedLabel_->setText(QString::fromUtf8(value.updatedAt.c_str()));

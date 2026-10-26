@@ -40,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     platformService_ = std::make_unique<PlatformService>(*platformRepository_);
     projectService_ = std::make_unique<ProjectService>(*projectRepository_, *contentTypeRepository_);
     taskService_ = std::make_unique<TaskService>(*taskRepository_, *projectRepository_, *contentRepository_);
-    auto *shell = new AppShell(*projectService_, *contentService_, *taskService_, this);
+    
+    auto *shell = new AppShell(*projectService_, *contentService_, *taskService_, *platformService_, this);
     setCentralWidget(shell);
 }
 

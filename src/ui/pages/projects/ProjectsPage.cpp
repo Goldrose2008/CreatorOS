@@ -18,10 +18,7 @@
 #include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/Project.h"
 
-ProjectsPage::ProjectsPage(
-    ProjectService &projectService,
-    LocalizationService &localization,
-    QWidget *parent)
+ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &localization, QWidget *parent)
     : QWidget(parent),
       projectService_(projectService),
       localization_(localization),
@@ -33,17 +30,13 @@ ProjectsPage::ProjectsPage(
       stateStack_(new QStackedWidget(this))
 {
     auto *layout = new QVBoxLayout(this);
-
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(CreatorMetrics::SpacingXLarge);
 
     header_->setTitle(localization_.text(QStringLiteral("projects")));
     header_->setDescription(localization_.text(QStringLiteral("projects.description")));
     
-    auto *createButton = new QPushButton(
-        localization_.text(QStringLiteral("projects.create")),
-        this
-    );
+    auto *createButton = new QPushButton(localization_.text(QStringLiteral("projects.create")), this);
 
     header_->addAction(createButton);
 
@@ -53,13 +46,10 @@ ProjectsPage::ProjectsPage(
         this,
         [this]()
         {
-            ProjectEditorDialog dialog(
-                projectService_,
-                localization_,
-                this
-            );
+            ProjectEditorDialog dialog(projectService_, localization_, this);
 
-            if (dialog.exec() == QDialog::Accepted){reload();}
+            if (dialog.exec() == QDialog::Accepted)
+                reload();
         }
     );
 

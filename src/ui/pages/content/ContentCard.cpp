@@ -47,62 +47,39 @@ ContentCard::ContentCard(
     LocalizationService &localization,
     QWidget *parent
 )
-    : EntityCard(parent),
-      content_(content)
+    : EntityCard(parent), content_(content)
 {
     setTitle(QString::fromUtf8(content_.name.c_str()));
     setDescription(QString::fromUtf8(content_.description.c_str()));
 
     auto *status = createStatusLabel(statusText(content_.status, localization));
-
     setStatusWidget(status);
 
     auto *roleLabel = new QLabel(this);
-
-    roleLabel->setText(
-        localization.text(QStringLiteral("content.role")) +
-        QStringLiteral(": ") + roleText(content_.role, localization)
-    );
-
+    roleLabel->setText(localization.text(QStringLiteral("content.role")) + QStringLiteral(": ") + roleText(content_.role, localization));
     addMetaWidget(roleLabel);
 
     if (!contentTypeName.isEmpty())
     {
         auto *typeLabel = new QLabel(this);
-
-        typeLabel->setText(
-            localization.text(QStringLiteral("content.type")) +
-            QStringLiteral(": ") + contentTypeName
-        );
-
+        typeLabel->setText(localization.text(QStringLiteral("content.type")) + QStringLiteral(": ") + contentTypeName);
         addMetaWidget(typeLabel);
     }
 
     auto *priorityLabel = new QLabel(this);
-
-    priorityLabel->setText(
-        localization.text(QStringLiteral("common.label.priority")) +
-        QStringLiteral(": ") + QString::number(content_.priority)
-    );
-
+    priorityLabel->setText(localization.text(QStringLiteral("common.label.priority")) + QStringLiteral(": ") + QString::number(content_.priority));
     addMetaWidget(priorityLabel);
 
     if (!content_.productionDeadlineAt.empty())
     {
         auto *deadlineLabel = new QLabel(this);
-
-        deadlineLabel->setText(
-            localization.text(QStringLiteral("content.deadline")) + QStringLiteral(": ") +
-            QString::fromUtf8(content_.productionDeadlineAt.c_str())
-        );
-
+        deadlineLabel->setText(localization.text(QStringLiteral("content.deadline")) + QStringLiteral(": ") + QString::fromUtf8(content_.productionDeadlineAt.c_str()));
         addMetaWidget(deadlineLabel);
     }
 
     setProgress(content_.progress);
 
     auto *openButton = new QPushButton(localization.text(QStringLiteral("common.action.open")), this);
-
     addAction(openButton);
 
     connect(

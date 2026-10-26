@@ -6,9 +6,7 @@
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
 
-SurfaceWidget::SurfaceWidget(QWidget *parent)
-    : QWidget(parent),
-      layout_(new QVBoxLayout(this))
+SurfaceWidget::SurfaceWidget(QWidget *parent) : QWidget(parent), layout_(new QVBoxLayout(this))
 {
     setAttribute(Qt::WA_StyledBackground, true);
 
@@ -30,7 +28,6 @@ QVBoxLayout *SurfaceWidget::contentLayout() const
 void SurfaceWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-
     painter.setRenderHint(QPainter::Antialiasing);
 
     const QRectF rect{
@@ -42,9 +39,5 @@ void SurfaceWidget::paintEvent(QPaintEvent *)
 
     painter.setBrush(fillColor());
     painter.setPen(CreatorColors::Border);
-    painter.drawRoundedRect(
-        rect,
-        CreatorMetrics::CornerRadius,
-        CreatorMetrics::CornerRadius
-    );
+    painter.drawRoundedRect(rect, CreatorMetrics::CornerRadius, CreatorMetrics::CornerRadius);
 }

@@ -9,10 +9,7 @@
 #include "../style/Colors.h"
 #include "../style/Metrics.h"
 
-Sidebar::Sidebar(QWidget *parent)
-    : QWidget(parent),
-      layout_(new QVBoxLayout(this)),
-      buttonGroup_(new QButtonGroup(this))
+Sidebar::Sidebar(QWidget *parent) : QWidget(parent), layout_(new QVBoxLayout(this)), buttonGroup_(new QButtonGroup(this))
 {
     setObjectName(QStringLiteral("Sidebar"));
     setFixedWidth(CreatorMetrics::SidebarWidth);
@@ -20,7 +17,6 @@ Sidebar::Sidebar(QWidget *parent)
 
     QPalette palette = this->palette();
     palette.setColor(QPalette::Window, CreatorColors::Surface);
-
     setPalette(palette);
 
     layout_->setContentsMargins(
@@ -59,7 +55,5 @@ void Sidebar::addItem(MenuItem *item)
 void Sidebar::setActiveRoute(const QString &route)
 {
     for (MenuItem *item : items_)
-    {
         item->setActive(item->route() == route);
-    }
 }

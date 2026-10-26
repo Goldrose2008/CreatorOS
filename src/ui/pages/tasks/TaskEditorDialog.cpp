@@ -29,12 +29,8 @@ TaskEditorDialog::TaskEditorDialog(
 )
     : EditorDialog(
         task.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
-        task.has_value()
-            ? localization.text(QStringLiteral("common.dialog.edit.title"))
-            : localization.text(QStringLiteral("task.create.title")),
-        task.has_value()
-            ? localization.text(QStringLiteral("common.action.save"))
-            : localization.text(QStringLiteral("common.action.create")),
+        task.has_value() ? localization.text(QStringLiteral("common.dialog.edit.title")) : localization.text(QStringLiteral("task.create.title")),
+        task.has_value() ? localization.text(QStringLiteral("common.action.save")) : localization.text(QStringLiteral("common.action.create")),
         localization.text(QStringLiteral("common.action.cancel")),
         parent
     ),
@@ -111,7 +107,6 @@ TaskEditorDialog::TaskEditorDialog(
             }
         }
 
-        // При редактировании не меняем контекст задачи.
         parentTypeCombo_->setEnabled(false);
         parentCombo_->setEnabled(false);
     }
@@ -128,9 +123,7 @@ TaskEditorDialog::TaskEditorDialog(
     reloadParentChoices();
 
     if (task_.has_value())
-    {
         parentCombo_->setCurrentIndex(parentCombo_->findData(QVariant::fromValue<qlonglong>(static_cast<qlonglong>(task_->parentId))));
-    }
 }
 
 void TaskEditorDialog::reloadParentChoices()
@@ -146,30 +139,19 @@ void TaskEditorDialog::reloadParentChoices()
             const auto projects = projectService_.getProjects();
 
             for (const Project &project : projects)
-            {
-                parentCombo_->addItem(
-                    QString::fromUtf8(project.name.c_str()),
-                    QVariant::fromValue<qlonglong>(static_cast<qlonglong>(project.id)));
-            }
+                parentCombo_->addItem(QString::fromUtf8(project.name.c_str()), QVariant::fromValue<qlonglong>(static_cast<qlonglong>(project.id)));
         }
         else
         {
             const auto contents = contentService_.getAllContents();
 
             for (const Content &content : contents)
-            {
-                parentCombo_->addItem(
-                    QString::fromUtf8(content.name.c_str()),
-                    QVariant::fromValue<qlonglong>(static_cast<qlonglong>(content.id)));
-            }
+                parentCombo_->addItem(QString::fromUtf8(content.name.c_str()), QVariant::fromValue<qlonglong>(static_cast<qlonglong>(content.id)));
         }
     }
     catch (const std::exception &)
     {
-        QMessageBox::critical(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("common.state.error.load")));
+        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.state.error.load")));
     }
 
     setSaveEnabled(isEditMode() || parentCombo_->count() > 0);
@@ -179,47 +161,29 @@ bool TaskEditorDialog::save()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("common.validation.name_required")));
-
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         nameEdit_->setFocus();
         return false;
     }
 
     if (!isEditMode() && parentCombo_->currentIndex() < 0)
     {
-        QMessageBox::warning(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("task.parent.none")));
-
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.parent.none")));
         return false;
     }
 
     std::string deadlineAt;
 
     if (deadlineEnabledCheck_->isChecked())
-    {
         deadlineAt = deadlineEdit_->date().toString(Qt::ISODate).toStdString();
-    }
 
     try
     {
         if (isEditMode())
         {
-            if (!taskService_.updateTask(
-                    task_->id,
-                    nameEdit_->text().toStdString(),
-                    descriptionEdit_->toPlainText().toStdString(),
-                    deadlineAt))
+            if (!taskService_.updateTask(task_->id, nameEdit_->text().toStdString(), descriptionEdit_->toPlainText().toStdString(), deadlineAt))
             {
-                QMessageBox::critical(
-                    this,
-                    localization_.text(QStringLiteral("common.state.error.title")),
-                    localization_.text(QStringLiteral("task.save.error.description")));
-
+                QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.save.error.description")));
                 return false;
             }
 
@@ -241,11 +205,7 @@ bool TaskEditorDialog::save()
     }
     catch (const std::exception &)
     {
-        QMessageBox::critical(
-            this,
-            localization_.text(QStringLiteral("common.state.error.title")),
-            localization_.text(QStringLiteral("task.save.error.description")));
-
+        QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.save.error.description")));
         return false;
     }
 }
