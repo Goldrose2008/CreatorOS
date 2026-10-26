@@ -11,6 +11,7 @@ namespace
         {
         case IconId::Home: return QStyle::SP_DirHomeIcon;
         case IconId::Projects: return QStyle::SP_FileDialogDetailedView;
+        case IconId::Platforms: return QStyle::SP_ComputerIcon;
         case IconId::Planning: return QStyle::SP_FileDialogContentsView;
         case IconId::Tasks: return QStyle::SP_FileDialogListView;
         case IconId::Library: return QStyle::SP_DirOpenIcon;

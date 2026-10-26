@@ -6,6 +6,7 @@ enum class IconId
 {
     Home,
     Projects,
+    Platforms,
     Planning,
     Tasks,
     Library,

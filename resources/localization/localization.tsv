@@ -1,5 +1,6 @@
 id	ru	en
 analytics	Аналитика	Analytics
+
 common.action.back	Назад	Back
 common.action.cancel	Отмена	Cancel
 common.action.create	Создать	Create
@@ -35,6 +36,7 @@ common.status.draft	Черновик	Draft
 common.status.in_progress	В работе	In progress
 common.status.ready	Готов	Ready
 common.validation.name_required	Введите название.	Enter a name.
+
 content.create.title	Новый контент	New content
 content.create.type	Тип контента	Content type
 content.deadline	Производственный дедлайн	Production deadline
@@ -45,12 +47,25 @@ content.role.main	Основной	Main
 content.save.error	Не удалось сохранить изменения контента. Проверьте введённые данные.	Could not save the content changes. Check the entered data.
 content.type	Тип	Type
 content.type.none_available	Нет доступных типов контента.	No content types are available.
+
 home	Главная	Home
+
 library	Библиотека	Library
+
 planning	Планирование	Planning
+
+platform.create.title	Новая платформа	New platform
+platform.delete.error	Не удалось удалить платформу. Возможно, к ней привязаны аккаунты.	Could not delete the platform. It may have linked accounts.
+platform.delete.has_accounts	Эту платформу нельзя удалить, пока к ней привязаны аккаунты. Сначала измените или удалите связанные аккаунты.	This platform cannot be deleted while accounts are linked to it. Change or delete the linked accounts first.
+platform.field.name.placeholder	Например, YouTube	For example, YouTube
+platform.field.url	Сайт платформы	Platform website
+platform.field.url.placeholder	https://example.com	https://example.com
+platform.save.error	Не удалось сохранить платформу. Проверьте введённые данные и попробуйте ещё раз.	Could not save the platform. Check the data and try again.
 platforms	Платформы	Platforms
+platforms.create	Добавить платформу	Add platform
 platforms.description	Платформы, с которыми связаны аккаунты CreatorOS.	Platforms associated with CreatorOS accounts.
-platforms.empty.description	Платформ пока нет. На следующем шаге добавим создание платформ.	There are no platforms yet. Platform creation will be added in the next step.
+platforms.empty.description	Пока не добавлено ни одной платформы. Создай платформу, чтобы затем привязать к ней аккаунты.	No platforms have been added yet. Create a platform to link accounts to it.
+
 project.create.content_type	Тип основного контента	Main content type
 project.create.error.description	Не удалось сохранить проект. Проверьте введённые данные.	Could not save the project. Check the entered data.
 project.create.title	Новый проект	New project
@@ -63,8 +78,11 @@ projects	Проекты	Projects
 projects.create	Создать проект	Create project
 projects.description	Все проекты CreatorOS в одном рабочем пространстве.	All CreatorOS projects in one workspace.
 projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
+
 settings	Настройки	Settings
+
 system	Система	System
+
 task.create.parent	Родительская сущность	Parent item
 task.create.parent_type	Тип родительской сущности	Parent type
 task.create.title	Новая задача	New task

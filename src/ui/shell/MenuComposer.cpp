@@ -50,6 +50,14 @@ void MenuComposer::build(Sidebar *sidebar, const LocalizationService *localizati
     addItem(
         sidebar,
         localization,
+        QStringLiteral("platforms"),
+        IconId::Platforms,
+        QStringLiteral("platforms")
+    );
+
+    addItem(
+        sidebar,
+        localization,
         QStringLiteral("planning"),
         IconId::Planning,
         QStringLiteral("planning")

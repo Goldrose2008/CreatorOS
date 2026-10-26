@@ -129,6 +129,8 @@ qt_add_executable(CreatorOS
 
     src/ui/pages/platforms/PlatformsPage.cpp
     src/ui/pages/platforms/PlatformsPage.h
+    src/ui/pages/platforms/PlatformEditorDialog.cpp
+    src/ui/pages/platforms/PlatformEditorDialog.h
 
     src/ui/pages/projects/ProjectCard.cpp
     src/ui/pages/projects/ProjectCard.h
