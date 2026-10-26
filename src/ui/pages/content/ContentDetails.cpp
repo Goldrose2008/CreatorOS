@@ -30,11 +30,6 @@ namespace
     {
         return localization.text(QStringLiteral("content.role.") + QString::fromStdString(contentRoleToString(role)));
     }
-
-    QString localizedContentStatus(ContentStatus status, const LocalizationService &localization)
-    {
-        return localization.text(QStringLiteral("common.status.") + QString::fromStdString(contentStatusToString(status)));
-    }
 }
 
 ContentDetails::ContentDetails(
@@ -53,7 +48,6 @@ ContentDetails::ContentDetails(
       projectLabel_(createLabel(this)),
       typeLabel_(createLabel(this)),
       roleLabel_(createLabel(this)),
-      statusLabel_(createLabel(this)),
       priorityLabel_(createLabel(this)),
       deadlineLabel_(createLabel(this)),
       progressLabel_(createLabel(this)),
@@ -164,8 +158,6 @@ ContentDetails::ContentDetails(
     grid->addWidget(typeLabel_, 1, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.role")), summarySection_), 2, 0);
     grid->addWidget(roleLabel_, 2, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.status")), summarySection_), 3, 0);
-    grid->addWidget(statusLabel_, 3, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.priority")), summarySection_), 4, 0);
     grid->addWidget(priorityLabel_, 4, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.deadline")), summarySection_), 5, 0);
@@ -248,7 +240,6 @@ void ContentDetails::showContent(std::int64_t contentId)
         projectLabel_->setText(QString::fromUtf8(project->name.c_str()));
         typeLabel_->setText(contentTypeName);
         roleLabel_->setText(localizedContentRole(value.role, localization_));
-        statusLabel_->setText(localizedContentStatus(value.status, localization_));
         priorityLabel_->setText(QString::number(value.priority));
         editButton_->setVisible(true);
         deleteButton_->setVisible(value.role == ContentRole::Additional);

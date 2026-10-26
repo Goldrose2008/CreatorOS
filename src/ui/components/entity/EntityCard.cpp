@@ -78,27 +78,6 @@ void EntityCard::setDescription(const QString &description)
     descriptionLabel_->setVisible(!description.isEmpty());
 }
 
-void EntityCard::setStatusWidget(QWidget *widget)
-{
-    if (statusWidget_ == widget)
-        return;
-
-    if (statusWidget_ != nullptr)
-    {
-        titleLayout_->removeWidget(statusWidget_);
-        statusWidget_->deleteLater();
-        statusWidget_ = nullptr;
-    }
-
-    if (widget == nullptr)
-        return;
-
-    widget->setParent(this);
-    const int insertIndex = titleLayout_->count() - 1;
-    titleLayout_->insertWidget(insertIndex, widget);
-    statusWidget_ = widget;
-}
-
 void EntityCard::setProgress(int value)
 {
     if (value < 0)

@@ -47,7 +47,6 @@ private:
     QPushButton *deleteButton_;
 
     QLabel *parentLabel_;
-    QLabel *statusLabel_;
     QLabel *deadlineLabel_;
     QLabel *createdLabel_;
     QLabel *updatedLabel_;

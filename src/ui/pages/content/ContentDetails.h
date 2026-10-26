@@ -43,7 +43,6 @@ private:
     QLabel *projectLabel_;
     QLabel *typeLabel_;
     QLabel *roleLabel_;
-    QLabel *statusLabel_;
     QLabel *priorityLabel_;
     QLabel *deadlineLabel_;
     QLabel *progressLabel_;

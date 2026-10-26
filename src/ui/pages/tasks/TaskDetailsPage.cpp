@@ -28,22 +28,6 @@ namespace
         label->setWordWrap(true);
         return label;
     }
-
-    QString taskStatusText(TaskStatus status, const LocalizationService &localization)
-    {
-        switch (status)
-        {
-        case TaskStatus::Todo:
-            return localization.text(QStringLiteral("task.status.todo"));
-        case TaskStatus::InProgress:
-            return localization.text(QStringLiteral("common.status.in_progress"));
-        case TaskStatus::Done:
-            return localization.text(QStringLiteral("task.status.done"));
-        case TaskStatus::Cancelled:
-            return localization.text(QStringLiteral("task.status.cancelled"));
-        }
-        return QString();
-    }
 }
 
 TaskDetailsPage::TaskDetailsPage(
@@ -62,7 +46,6 @@ TaskDetailsPage::TaskDetailsPage(
       editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
       parentLabel_(createLabel(this)),
-      statusLabel_(createLabel(this)),
       deadlineLabel_(createLabel(this)),
       createdLabel_(createLabel(this)),
       updatedLabel_(createLabel(this)),
@@ -148,8 +131,6 @@ TaskDetailsPage::TaskDetailsPage(
     summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
     summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("task.create.parent")), summarySection_), 0, 0);
     summaryGrid->addWidget(parentLabel_, 0, 1);
-    summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.status")), summarySection_), 1, 0);
-    summaryGrid->addWidget(statusLabel_, 1, 1);
     summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("task.deadline")), summarySection_), 2, 0);
     summaryGrid->addWidget(deadlineLabel_, 2, 1);
     summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 3, 0);
@@ -230,7 +211,6 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
         header_->setDescription(QString::fromUtf8(task_.description.c_str()));
 
         parentLabel_->setText(parentName);
-        statusLabel_->setText(taskStatusText(task_.status, localization_));
 
         deadlineLabel_->setText(task_.deadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(task_.deadlineAt.c_str()));
 

@@ -23,21 +23,6 @@
 
 namespace
 {
-    QString statusText(ProjectStatus status, const LocalizationService &localization)
-    {
-        switch (status)
-        {
-        case ProjectStatus::Draft:
-            return localization.text(QStringLiteral("common.status.draft"));
-        case ProjectStatus::Active:
-            return localization.text(QStringLiteral("common.status.in_progress"));
-        case ProjectStatus::Archived:
-            return localization.text(QStringLiteral("common.status.archived"));
-        }
-
-        return QString();
-    }
-
     QLabel *createLabel(QWidget *parent)
     {
         auto *label = new QLabel(parent);
@@ -58,7 +43,6 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
       editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
       addContentButton_(new QPushButton(localization.text(QStringLiteral("content.create.title")), this)),
-      statusLabel_(createLabel(this)),
       releaseLabel_(createLabel(this)),
       progressLabel_(createLabel(this)),
       ownerLabel_(createLabel(this)),
@@ -176,8 +160,6 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setHorizontalSpacing(CreatorMetrics::SpacingLarge);
     grid->setVerticalSpacing(CreatorMetrics::SpacingSmall);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.status")), summarySection_), 0, 0);
-    grid->addWidget(statusLabel_, 0, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.release")), summarySection_), 1, 0);
     grid->addWidget(releaseLabel_, 1, 1);
     grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.progress")), summarySection_), 2, 0);
@@ -311,10 +293,6 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
         header_->setDescription(QString::fromUtf8(value.description.c_str()));
 
-        auto *statusWidget = new QLabel(statusText(value.status, localization_), header_);
-
-        header_->setStatusWidget(statusWidget);
-        statusLabel_->setText(statusText(value.status, localization_));
         releaseLabel_->setText(QString::fromUtf8(value.plannedReleaseAt.c_str()));
         progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
 

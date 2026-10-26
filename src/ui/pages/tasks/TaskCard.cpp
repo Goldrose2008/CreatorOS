@@ -4,33 +4,10 @@
 
 #include "../../../ui/localization/LocalizationService.h"
 
-namespace
-{
-    QString statusText(TaskStatus status, const LocalizationService &localization)
-    {
-        switch (status)
-        {
-        case TaskStatus::Todo:
-            return localization.text(QStringLiteral("task.status.todo"));
-        case TaskStatus::InProgress:
-            return localization.text(QStringLiteral("common.status.in_progress"));
-        case TaskStatus::Done:
-            return localization.text(QStringLiteral("task.status.done"));
-        case TaskStatus::Cancelled:
-            return localization.text(QStringLiteral("task.status.cancelled"));
-        }
-
-        return QString();
-    }
-}
-
 TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget *parent) : EntityCard(parent), task_(task)
 {
     setTitle(QString::fromUtf8(task_.name.c_str()));
     setDescription(QString::fromUtf8(task_.description.c_str()));
-
-    auto *status = createStatusLabel(statusText(task_.status, localization));
-    setStatusWidget(status);
 
     if (!task_.deadlineAt.empty())
     {

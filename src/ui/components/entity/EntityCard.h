@@ -18,8 +18,7 @@ public:
 
     void setTitle(const QString &title);
     void setDescription(const QString &description);
-    void setStatusWidget(QWidget *widget);
-    void setProgress(int value);
+      void setProgress(int value);
     void clearProgress();
 
     void addContentWidget(QWidget *widget);
@@ -40,6 +39,4 @@ private:
     QVBoxLayout *contentWidgetsLayout_;
 
     QProgressBar *progressBar_;
-
-    QWidget *statusWidget_;
 };

@@ -18,23 +18,6 @@ namespace
 
         return QString();
     }
-
-    QString statusText(ContentStatus status, const LocalizationService &localization)
-    {
-        switch (status)
-        {
-        case ContentStatus::Draft:
-            return localization.text(QStringLiteral("common.status.draft"));
-        case ContentStatus::InProgress:
-            return localization.text(QStringLiteral("common.status.in_progress"));
-        case ContentStatus::Ready:
-            return localization.text(QStringLiteral("common.status.ready"));
-        case ContentStatus::Archived:
-            return localization.text(QStringLiteral("common.status.archived"));
-        }
-
-        return QString();
-    }
 }
 
 ContentCard::ContentCard(
@@ -47,9 +30,6 @@ ContentCard::ContentCard(
 {
     setTitle(QString::fromUtf8(content_.name.c_str()));
     setDescription(QString::fromUtf8(content_.description.c_str()));
-
-    auto *status = createStatusLabel(statusText(content_.status, localization));
-    setStatusWidget(status);
 
     auto *roleLabel = new QLabel(this);
     roleLabel->setText(localization.text(QStringLiteral("content.role")) + QStringLiteral(": ") + roleText(content_.role, localization));
