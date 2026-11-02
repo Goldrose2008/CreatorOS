@@ -102,8 +102,8 @@ system	Система	System
 task.create.parent	Родительская сущность	Parent item
 task.create.parent_type	Тип родительской сущности	Parent type
 task.create.title	Новая задача	New task
-task.deadline	Дедлайн	Deadline
-task.deadline.enabled	Указать дедлайн	Set a deadline
+task.deadline	Срок исполнения	Deadline
+task.deadline.enabled	Указать срок исполнения	Set a deadline
 task.delete.error.description	Не удалось удалить задачу. Попробуйте ещё раз.	Could not delete the task. Try again.
 task.parent.none	Сначала создайте проект или контент, к которому будет относиться задача.	Create a project or content item first.
 task.save.error.description	Не удалось сохранить задачу. Проверьте введённые данные.	Could not save the task. Check the entered data.

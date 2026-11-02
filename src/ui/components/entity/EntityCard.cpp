@@ -77,6 +77,16 @@ void EntityCard::setDescription(const QString &description)
     descriptionLabel_->setVisible(!description.isEmpty());
 }
 
+void EntityCard::setDeadline(const QString &label, const QString &value)
+{
+    if (value.isEmpty())
+        return;
+
+    auto *deadlineLabel = new QLabel(this);
+    deadlineLabel->setText(label + QStringLiteral(": ") + value);
+    addMetaWidget(deadlineLabel);
+}
+
 void EntityCard::setProgress(int value)
 {
     if (value < 0)

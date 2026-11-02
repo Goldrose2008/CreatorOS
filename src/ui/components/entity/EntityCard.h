@@ -18,6 +18,7 @@ public:
 
     void setTitle(const QString &title);
     void setDescription(const QString &description);
+    void setDeadline(const QString &label, const QString &value);
     void setProgress(int value);
     void clearProgress();
 
