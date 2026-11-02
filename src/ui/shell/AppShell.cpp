@@ -135,6 +135,26 @@ AppShell::AppShell(
     );
 
     connect(
+        navigation_,
+        &NavigationController::currentPageChanged,
+        this,
+        [projectsPage](const QString &route)
+        {
+            if (route == QStringLiteral("projects"))
+                projectsPage->reload();
+        });
+
+    connect(
+        navigation_,
+        &NavigationController::currentPageChanged,
+        this,
+        [tasksPage](const QString &route)
+        {
+            if (route == QStringLiteral("tasks"))
+                tasksPage->reload();
+        });
+
+    connect(
         projectsPage,
         &ProjectsPage::projectOpenRequested,
         this,
@@ -142,8 +162,7 @@ AppShell::AppShell(
         {
             projectDetailsPage->showProject(projectId);
             navigation_->navigateTo(QStringLiteral("project-details"));
-        }
-    );
+        });
 
     connect(
         projectDetailsPage,
@@ -153,20 +172,17 @@ AppShell::AppShell(
         {
             contentDetails->showContent(contentId);
             navigation_->navigateTo(QStringLiteral("content-details"));
-        }
-    );
+        });
 
     connect(
         projectDetailsPage,
         &ProjectDetailsPage::backRequested,
         this,
-        [this, projectsPage]()
+        [this]()
         {
-            projectsPage->reload();
             navigation_->navigateTo(QStringLiteral("projects"));
-        }
-    );
-
+        });
+        
     connect(
         contentDetails,
         &ContentDetails::backRequested,
@@ -175,8 +191,7 @@ AppShell::AppShell(
         {
             projectDetailsPage->showProject(projectId);
             navigation_->navigateTo(QStringLiteral("project-details"));
-        }
-    );
+        });
 
     connect(
         tasksPage,
@@ -192,9 +207,8 @@ AppShell::AppShell(
         taskDetailsPage,
         &TaskDetailsPage::backRequested,
         this,
-        [this, tasksPage]()
+        [this]()
         {
-            tasksPage->reload();
             navigation_->navigateTo(QStringLiteral("tasks"));
         });
 
