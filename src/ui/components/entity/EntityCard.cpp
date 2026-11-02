@@ -133,7 +133,7 @@ void EntityCard::addAction(QWidget *widget)
     actionsLayout_->addWidget(widget);
 }
 
-void EntityCard::setOpenAction(std::function<void()> handler, const QString &text = QString())
+void EntityCard::setOpenAction(std::function<void()> handler, const QString &text)
 {
     const QString buttonText = text.isEmpty() ? localization_.text(QStringLiteral("common.action.open")) : text;
 
