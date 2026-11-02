@@ -11,9 +11,11 @@
 
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
+#include "../../localization/LocalizationService.h"
 
-EntityCard::EntityCard(QWidget *parent)
+EntityCard::EntityCard(LocalizationService &localization, QWidget *parent)
     : Card(parent),
+      localization_(localization),
       titleLabel_(new QLabel(this)),
       descriptionLabel_(new QLabel(this)),
       titleLayout_(new QHBoxLayout()),
@@ -131,9 +133,11 @@ void EntityCard::addAction(QWidget *widget)
     actionsLayout_->addWidget(widget);
 }
 
-void EntityCard::setOpenAction(const QString &text, std::function<void()> handler)
+void EntityCard::setOpenAction(std::function<void()> handler, const QString &text = QString())
 {
-    auto *openButton = new QPushButton(text, this);
+    const QString buttonText = text.isEmpty() ? localization_.text(QStringLiteral("common.action.open")) : text;
+
+    auto *openButton = new QPushButton(buttonText, this);
     addAction(openButton);
 
     connect(

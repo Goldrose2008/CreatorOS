@@ -2,7 +2,8 @@
 
 #include "../../../ui/localization/LocalizationService.h"
 
-TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget *parent) : EntityCard(parent), task_(task)
+TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget *parent) 
+    : EntityCard(localization, parent), task_(task)
 {
     setTitle(QString::fromUtf8(task_.name.c_str()));
     setDescription(QString::fromUtf8(task_.description.c_str()));
@@ -11,8 +12,5 @@ TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget 
         QString::fromUtf8(task_.deadlineAt.c_str())
     );
 
-    setOpenAction(
-        localization.text(QStringLiteral("common.action.open")),
-        [this](){emit openRequested(task_.id);}
-    );
+    setOpenAction([this](){emit openRequested(task_.id);});
 }

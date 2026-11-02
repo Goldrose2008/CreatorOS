@@ -8,13 +8,14 @@ class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
 class QProgressBar;
+class LocalizationService;
 
 class EntityCard : public Card
 {
     Q_OBJECT
 
 public:
-    explicit EntityCard(QWidget *parent = nullptr);
+    explicit EntityCard(LocalizationService &localization, QWidget *parent = nullptr);
 
     void setTitle(const QString &title);
     void setDescription(const QString &description);
@@ -25,12 +26,12 @@ public:
     void addContentWidget(QWidget *widget);
     void addMetaWidget(QWidget *widget);
     void addAction(QWidget *widget);
-    void setOpenAction(const QString &text, std::function<void()> handler);
+    void setOpenAction(std::function<void()> handler, const QString &text = QString());
         
 private:
+    LocalizationService &localization_;
     QLabel *titleLabel_;
     QLabel *descriptionLabel_;
-
     QHBoxLayout *titleLayout_;
     QHBoxLayout *metaLayout_;
     QHBoxLayout *actionsLayout_;
