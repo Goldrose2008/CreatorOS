@@ -2,6 +2,8 @@
 
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QGridLayout>
+#include <QLabel>
 
 #include "../../style/Metrics.h"
 
@@ -68,6 +70,31 @@ EntityDetails::EntityDetails(QWidget *parent)
     layout_->addLayout(summaryLayout_);
     layout_->addLayout(contentLayout_);
     layout_->addStretch();
+}
+
+void EntityDetails::setMetadata(QGridLayout *layout, const QList<EntityMetadata> &metadata)
+{
+    if (layout == nullptr)
+        return;
+
+    while (QLayoutItem *item = layout->takeAt(0))
+    {
+        delete item->widget();
+        delete item;
+    }
+
+    for (qsizetype i = 0; i < metadata.size(); ++i)
+    {
+        const EntityMetadata &item = metadata.at(i);
+
+        auto *label = new QLabel(item.label, this);
+        auto *value = new QLabel(item.value, this);
+
+        value->setWordWrap(true);
+
+        layout->addWidget(label, static_cast<int>(i), 0);
+        layout->addWidget(value, static_cast<int>(i), 1);
+    }
 }
 
 void EntityDetails::setNavigationWidget(QWidget *widget)

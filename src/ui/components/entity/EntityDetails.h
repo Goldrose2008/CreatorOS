@@ -1,9 +1,18 @@
 #pragma once
 
+#include <QList>
+#include <QString>
 #include <QScrollArea>
 
 class QVBoxLayout;
 class QWidget;
+class QGridLayout;
+
+struct EntityMetadata
+{
+    QString label;
+    QString value;
+};
 
 class EntityDetails : public QScrollArea
 {
@@ -12,6 +21,8 @@ class EntityDetails : public QScrollArea
 public:
     explicit EntityDetails(QWidget *parent = nullptr);
 
+    void setMetadata(QGridLayout *layout, const QList<EntityMetadata> &metadata);
+    
     void setNavigationWidget(QWidget *widget);
     void setHeaderWidget(QWidget *widget);
     void setStateWidget(QWidget *widget);
