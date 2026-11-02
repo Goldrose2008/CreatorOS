@@ -16,13 +16,6 @@ TaskCard::TaskCard(const Task &task, LocalizationService &localization, QWidget 
         addMetaWidget(deadlineLabel);
     }
 
-    if (task_.parentTaskId.has_value())
-    {
-        auto *parentTaskLabel = new QLabel(this);
-        parentTaskLabel->setText(localization.text(QStringLiteral("task.parent_task")) + QStringLiteral(": #") + QString::number(task_.parentTaskId.value()));
-        addMetaWidget(parentTaskLabel);
-    }
-
     setOpenAction(
         localization.text(QStringLiteral("common.action.open")),
         [this](){emit openRequested(task_.id);}

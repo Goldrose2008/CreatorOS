@@ -272,7 +272,6 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
 
             auto *card = new ContentCard(
                 content,
-                contentTypeName,
                 localization_,
                 this
             );

@@ -12,7 +12,6 @@ class ContentCard final : public EntityCard
 public:
     explicit ContentCard(
         const Content &content,
-        const QString &contentTypeName,
         LocalizationService &localization,
         QWidget *parent = nullptr
     );
