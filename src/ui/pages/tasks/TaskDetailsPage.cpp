@@ -45,10 +45,7 @@ TaskDetailsPage::TaskDetailsPage(
       header_(new EntityHeader(this)),
       editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
-      parentLabel_(createLabel(this)),
-      deadlineLabel_(createLabel(this)),
-      createdLabel_(createLabel(this)),
-      updatedLabel_(createLabel(this)),
+      summaryGrid_(new QGridLayout()),
       descriptionLabel_(createLabel(this)),
       summarySection_(new Section(this)),
       descriptionSection_(new Section(this))
@@ -126,18 +123,9 @@ TaskDetailsPage::TaskDetailsPage(
                 });
         });
 
-    auto *summaryGrid = new QGridLayout();
-    summaryGrid->setContentsMargins(0, 0, 0, 0);
     summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
-    summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("task.create.parent")), summarySection_), 0, 0);
-    summaryGrid->addWidget(parentLabel_, 0, 1);
-    summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("task.deadline")), summarySection_), 2, 0);
-    summaryGrid->addWidget(deadlineLabel_, 2, 1);
-    summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 3, 0);
-    summaryGrid->addWidget(createdLabel_, 3, 1);
-    summaryGrid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.updated")), summarySection_), 4, 0);
-    summaryGrid->addWidget(updatedLabel_, 4, 1);
-    summarySection_->contentLayout()->addLayout(summaryGrid);
+    summaryGrid_->setContentsMargins(0, 0, 0, 0);
+    summarySection_->contentLayout()->addLayout(summaryGrid_);
 
     descriptionSection_->setTitle(localization_.text(QStringLiteral("common.label.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
@@ -210,12 +198,26 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
         header_->setTitle(QString::fromUtf8(task_.name.c_str()));
         header_->setDescription(QString::fromUtf8(task_.description.c_str()));
 
-        parentLabel_->setText(parentName);
+        const QList<EntityMetadata> metadata{
+            {
+                localization_.text(QStringLiteral("task.create.parent")),
+                parentName
+            },
+            {
+                localization_.text(QStringLiteral("task.deadline")),
+                task_.deadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(task_.deadlineAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.created")),
+                QString::fromUtf8(task_.createdAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.updated")),
+                QString::fromUtf8(task_.updatedAt.c_str())
+            }
+        };
 
-        deadlineLabel_->setText(task_.deadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(task_.deadlineAt.c_str()));
-
-        createdLabel_->setText(QString::fromUtf8(task_.createdAt.c_str()));
-        updatedLabel_->setText(QString::fromUtf8(task_.updatedAt.c_str()));
+    setMetadata(summaryGrid_, metadata);
         descriptionLabel_->setText(QString::fromUtf8(task_.description.c_str()));
 
         summarySection_->setVisible(true);

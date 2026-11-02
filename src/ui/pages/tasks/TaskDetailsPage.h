@@ -7,6 +7,7 @@
 
 class QLabel;
 class QPushButton;
+class QGridLayout;
 class Section;
 class EntityHeader;
 
@@ -46,10 +47,7 @@ private:
     QPushButton *editButton_;
     QPushButton *deleteButton_;
 
-    QLabel *parentLabel_;
-    QLabel *deadlineLabel_;
-    QLabel *createdLabel_;
-    QLabel *updatedLabel_;
+    QGridLayout *summaryGrid_;
     QLabel *descriptionLabel_;
 
     Section *summarySection_;
