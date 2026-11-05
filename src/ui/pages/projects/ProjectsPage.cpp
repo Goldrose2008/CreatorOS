@@ -63,33 +63,27 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
 void ProjectsPage::reload()
 {
     projectList_->showLoading();
-    projectList_->clearItems();
 
     try
     {
         const std::vector<Project> projects = projectService_.getProjects();
 
-        if (projects.empty())
-        {
-            projectList_->showEmpty();
-            return;
-        }
+        projectList_->setItems(
+            projects,
+            [this](const Project &project) -> QWidget *
+            {
+                auto *card = new ProjectCard(project, localization_, projectList_);
 
-        for (const Project &project : projects)
-        {
-            auto *card = new ProjectCard(project, localization_, projectList_);
+                connect(
+                    card,
+                    &ProjectCard::openRequested,
+                    this,
+                    &ProjectsPage::projectOpenRequested
+                );
 
-            connect(
-                card,
-                &ProjectCard::openRequested,
-                this,
-                &ProjectsPage::projectOpenRequested
-            );
-
-            projectList_->addItem(card);
-        }
-
-        projectList_->showList();
+                return card;
+            }
+        );
     }
     catch (const std::exception &)
     {

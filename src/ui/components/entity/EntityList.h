@@ -32,6 +32,23 @@ public:
     void showEmpty();
     void showError();
 
+    template <typename Range, typename Factory>
+    void setItems(const Range &items, Factory &&factory)
+    {
+        clearItems();
+
+        if (items.empty())
+        {
+            showEmpty();
+            return;
+        }
+
+        for (const auto &item : items)
+            addItem(factory(item));
+
+        showList();
+    }
+
 signals:
     void retryRequested();
 

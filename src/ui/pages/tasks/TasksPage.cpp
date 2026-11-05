@@ -65,33 +65,27 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
 void TasksPage::reload()
 {
     taskList_->showLoading();
-    taskList_->clearItems();
 
     try
     {
         const std::vector<Task> tasks = taskService_.getTasks();
 
-        if (tasks.empty())
-        {
-            taskList_->showEmpty();
-            return;
-        }
+        taskList_->setItems(
+            tasks,
+            [this](const Task &task) -> QWidget *
+            {
+                auto *card = new TaskCard(task, localization_, taskList_);
 
-        for (const Task &task : tasks)
-        {
-            auto *card = new TaskCard(task, localization_, taskList_);
-           
-            connect(
-                card,
-                &TaskCard::openRequested,
-                this,
-                &TasksPage::taskOpenRequested
-            );
-            
-            taskList_->addItem(card);
-        }
+                connect(
+                    card,
+                    &TaskCard::openRequested,
+                    this,
+                    &TasksPage::taskOpenRequested
+                );
 
-        taskList_->showList();
+                return card;
+            }
+        );
     }
     catch (const std::exception &)
     {
