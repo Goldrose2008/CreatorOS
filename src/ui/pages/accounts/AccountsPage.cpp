@@ -87,7 +87,6 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
 void AccountsPage::reload()
 {
     accountList_->showLoading();
-    accountList_->clearItems();
 
     try
     {
@@ -99,130 +98,125 @@ void AccountsPage::reload()
 
         const std::vector<Account> accounts = accountService_.getAccounts();
 
-        if (accounts.empty())
-        {
-            accountList_->showEmpty();
-            return;
-        }
-
-        for (const Account &account : accounts)
-        {
-            auto *item = new QWidget(accountList_);
-            auto *itemLayout = new QHBoxLayout(item);
-            auto *textLayout = new QVBoxLayout();
-
-            itemLayout->setContentsMargins(
-                CreatorMetrics::SpacingLarge,
-                CreatorMetrics::SpacingMedium,
-                CreatorMetrics::SpacingLarge,
-                CreatorMetrics::SpacingMedium
-            );
-            itemLayout->setSpacing(CreatorMetrics::SpacingMedium);
-            textLayout->setContentsMargins(0, 0, 0, 0);
-            textLayout->setSpacing(CreatorMetrics::SpacingSmall);
-
-            auto *nameLabel = new QLabel(QString::fromUtf8(account.name.c_str()), item);
-            QFont nameFont = nameLabel->font();
-            nameFont.setBold(true);
-            nameLabel->setFont(nameFont);
-            textLayout->addWidget(nameLabel);
-
-            QString details = localization_.text(QStringLiteral("account.field.platform"));
-            details += QStringLiteral(": ");
-
-            const auto platformIt = platformNames.find(account.platformId);
-
-            if (platformIt != platformNames.end())
-                details += QString::fromUtf8(platformIt->second.c_str());
-            else
-                details += QStringLiteral("—");
-
-            if (!account.username.empty())
+        accountList_->setItems(
+            accounts,
+            [this, &platformNames](const Account &account) -> QWidget *
             {
-                details += QStringLiteral("  ·  ");
-                details += localization_.text(QStringLiteral("account.field.username"));
+
+                auto *item = new QWidget(accountList_);
+                auto *itemLayout = new QHBoxLayout(item);
+                auto *textLayout = new QVBoxLayout();
+
+                itemLayout->setContentsMargins(
+                    CreatorMetrics::SpacingLarge,
+                    CreatorMetrics::SpacingMedium,
+                    CreatorMetrics::SpacingLarge,
+                    CreatorMetrics::SpacingMedium
+                );
+                itemLayout->setSpacing(CreatorMetrics::SpacingMedium);
+                textLayout->setContentsMargins(0, 0, 0, 0);
+                textLayout->setSpacing(CreatorMetrics::SpacingSmall);
+
+                auto *nameLabel = new QLabel(QString::fromUtf8(account.name.c_str()), item);
+                QFont nameFont = nameLabel->font();
+                nameFont.setBold(true);
+                nameLabel->setFont(nameFont);
+                textLayout->addWidget(nameLabel);
+
+                QString details = localization_.text(QStringLiteral("account.field.platform"));
                 details += QStringLiteral(": ");
-                details += QString::fromUtf8(account.username.c_str());
-            }
 
-            auto *detailsLabel = new QLabel(details, item);
-            detailsLabel->setWordWrap(true);
-            textLayout->addWidget(detailsLabel);
+                const auto platformIt = platformNames.find(account.platformId);
 
-            if (!account.profileUrl.empty())
-            {
-                auto *urlLabel = new QLabel(QString::fromUtf8(account.profileUrl.c_str()), item);
-                urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                urlLabel->setWordWrap(true);
-                textLayout->addWidget(urlLabel);
-            }
+                if (platformIt != platformNames.end())
+                    details += QString::fromUtf8(platformIt->second.c_str());
+                else
+                    details += QStringLiteral("—");
 
-            if (!account.externalId.empty())
-            {
-                auto *externalIdLabel = new QLabel(localization_.text(QStringLiteral("account.field.external_id")) + QStringLiteral(": ") + QString::fromUtf8(account.externalId.c_str()), item);
-                externalIdLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                externalIdLabel->setWordWrap(true);
-                textLayout->addWidget(externalIdLabel);
-            }
-
-            itemLayout->addLayout(textLayout, 1);
-
-            auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
-            auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
-
-            itemLayout->addWidget(editButton);
-            itemLayout->addWidget(deleteButton);
-
-            connect(
-                editButton,
-                &QPushButton::clicked,
-                this,
-                [this, account]()
+                if (!account.username.empty())
                 {
-                    AccountEditorDialog dialog(accountService_, platformService_, localization_, this, account);
-
-                    if (dialog.exec() == QDialog::Accepted)
-                        reload();
+                    details += QStringLiteral("  ·  ");
+                    details += localization_.text(QStringLiteral("account.field.username"));
+                    details += QStringLiteral(": ");
+                    details += QString::fromUtf8(account.username.c_str());
                 }
-            );
 
-            connect(
-                deleteButton,
-                &QPushButton::clicked,
-                this,
-                [this, account]()
+                auto *detailsLabel = new QLabel(details, item);
+                detailsLabel->setWordWrap(true);
+                textLayout->addWidget(detailsLabel);
+
+                if (!account.profileUrl.empty())
                 {
-                    ConfirmModal::confirm(
-                        this,
-                        localization_.text(QStringLiteral("common.dialog.delete.title")),
-                        localization_.text(QStringLiteral("common.dialog.delete.description")),
-                        localization_.text(QStringLiteral("common.action.delete")),
-                        localization_.text(QStringLiteral("common.action.cancel")),
-                        [this, account]()
-                        {
-                            try
+                    auto *urlLabel = new QLabel(QString::fromUtf8(account.profileUrl.c_str()), item);
+                    urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                    urlLabel->setWordWrap(true);
+                    textLayout->addWidget(urlLabel);
+                }
+
+                if (!account.externalId.empty())
+                {
+                    auto *externalIdLabel = new QLabel(localization_.text(QStringLiteral("account.field.external_id")) + QStringLiteral(": ") + QString::fromUtf8(account.externalId.c_str()), item);
+                    externalIdLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                    externalIdLabel->setWordWrap(true);
+                    textLayout->addWidget(externalIdLabel);
+                }
+
+                itemLayout->addLayout(textLayout, 1);
+
+                auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
+                auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
+
+                itemLayout->addWidget(editButton);
+                itemLayout->addWidget(deleteButton);
+
+                connect(
+                    editButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, account]()
+                    {
+                        AccountEditorDialog dialog(accountService_, platformService_, localization_, this, account);
+
+                        if (dialog.exec() == QDialog::Accepted)
+                            reload();
+                    }
+                );
+
+                connect(
+                    deleteButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, account]()
+                    {
+                        ConfirmModal::confirm(
+                            this,
+                            localization_.text(QStringLiteral("common.dialog.delete.title")),
+                            localization_.text(QStringLiteral("common.dialog.delete.description")),
+                            localization_.text(QStringLiteral("common.action.delete")),
+                            localization_.text(QStringLiteral("common.action.cancel")),
+                            [this, account]()
                             {
-                                if (!accountService_.deleteAccount(account.id))
+                                try
                                 {
-                                    QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.delete.error")));
-                                    return;
+                                    if (!accountService_.deleteAccount(account.id))
+                                    {
+                                        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.delete.error")));
+                                        return;
+                                    }
+
+                                    reload();
                                 }
-
-                                reload();
+                                catch (const std::exception &)
+                                {
+                                    QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.delete.error")));
+                                }
                             }
-                            catch (const std::exception &)
-                            {
-                                QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.delete.error")));
-                            }
-                        }
-                    );
-                }
-            );
-
-            accountList_->addItem(item);
-        }
-
-        accountList_->showList();
+                        );
+                    }
+                );
+                return item;
+            }
+        );
     }
     catch (const std::exception &)
     {

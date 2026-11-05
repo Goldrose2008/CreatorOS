@@ -68,117 +68,110 @@ PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationServi
 void PlatformsPage::reload()
 {
     platformList_->showLoading();
-    platformList_->clearItems();
 
     try
     {
         const std::vector<Platform> platforms = platformService_.getPlatforms();
 
-        if (platforms.empty())
-        {
-            platformList_->showEmpty();
-            return;
-        }
-
-        for (const Platform &platform : platforms)
-        {
-            auto *item = new QWidget(platformList_);
-            auto *itemLayout = new QHBoxLayout(item);
-            auto *textLayout = new QVBoxLayout();
-
-            itemLayout->setContentsMargins(
-                CreatorMetrics::SpacingLarge,
-                CreatorMetrics::SpacingMedium,
-                CreatorMetrics::SpacingLarge,
-                CreatorMetrics::SpacingMedium
-            );
-            itemLayout->setSpacing(CreatorMetrics::SpacingMedium);
-            textLayout->setContentsMargins(0, 0, 0, 0);
-            textLayout->setSpacing(CreatorMetrics::SpacingSmall);
-
-            auto *nameLabel = new QLabel(QString::fromUtf8(platform.name.c_str()), item);
-            QFont nameFont = nameLabel->font();
-            nameFont.setBold(true);
-            nameLabel->setFont(nameFont);
-
-            textLayout->addWidget(nameLabel);
-
-            if (!platform.websiteUrl.empty())
+        platformList_->setItems(
+            platforms,
+            [this](const Platform &platform) -> QWidget *
             {
-                auto *urlLabel = new QLabel(QString::fromUtf8(platform.websiteUrl.c_str()), item);
+                auto *item = new QWidget(platformList_);
+                auto *itemLayout = new QHBoxLayout(item);
+                auto *textLayout = new QVBoxLayout();
 
-                QPalette palette = urlLabel->palette();
-                palette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
-                urlLabel->setPalette(palette);
-                urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                itemLayout->setContentsMargins(
+                    CreatorMetrics::SpacingLarge,
+                    CreatorMetrics::SpacingMedium,
+                    CreatorMetrics::SpacingLarge,
+                    CreatorMetrics::SpacingMedium
+                );
+                itemLayout->setSpacing(CreatorMetrics::SpacingMedium);
+                textLayout->setContentsMargins(0, 0, 0, 0);
+                textLayout->setSpacing(CreatorMetrics::SpacingSmall);
 
-                textLayout->addWidget(urlLabel);
-            }
+                auto *nameLabel = new QLabel(QString::fromUtf8(platform.name.c_str()), item);
+                QFont nameFont = nameLabel->font();
+                nameFont.setBold(true);
+                nameLabel->setFont(nameFont);
 
-            itemLayout->addLayout(textLayout, 1);
+                textLayout->addWidget(nameLabel);
 
-            auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
-            auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
-
-            itemLayout->addWidget(editButton);
-            itemLayout->addWidget(deleteButton);
-
-            connect(
-                editButton,
-                &QPushButton::clicked,
-                this,
-                [this, platform]()
+                if (!platform.websiteUrl.empty())
                 {
-                    PlatformEditorDialog dialog(platformService_, localization_, this, platform);
+                    auto *urlLabel = new QLabel(QString::fromUtf8(platform.websiteUrl.c_str()), item);
 
-                    if (dialog.exec() == QDialog::Accepted)
-                        reload();
+                    QPalette palette = urlLabel->palette();
+                    palette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
+                    urlLabel->setPalette(palette);
+                    urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+                    textLayout->addWidget(urlLabel);
                 }
-            );
 
-            connect(
-                deleteButton,
-                &QPushButton::clicked,
-                this,
-                [this, platform]()
-                {
-                    ConfirmModal::confirm(
-                        this,
-                        localization_.text(QStringLiteral("common.dialog.delete.title")),
-                        localization_.text(QStringLiteral("common.dialog.delete.description")),
-                        localization_.text(QStringLiteral("common.action.delete")),
-                        localization_.text(QStringLiteral("common.action.cancel")),
-                        [this, platform]()
-                        {
-                            try
+                itemLayout->addLayout(textLayout, 1);
+
+                auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
+                auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
+
+                itemLayout->addWidget(editButton);
+                itemLayout->addWidget(deleteButton);
+
+                connect(
+                    editButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, platform]()
+                    {
+                        PlatformEditorDialog dialog(platformService_, localization_, this, platform);
+
+                        if (dialog.exec() == QDialog::Accepted)
+                            reload();
+                    }
+                );
+
+                connect(
+                    deleteButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, platform]()
+                    {
+                        ConfirmModal::confirm(
+                            this,
+                            localization_.text(QStringLiteral("common.dialog.delete.title")),
+                            localization_.text(QStringLiteral("common.dialog.delete.description")),
+                            localization_.text(QStringLiteral("common.action.delete")),
+                            localization_.text(QStringLiteral("common.action.cancel")),
+                            [this, platform]()
                             {
-                                if (!platformService_.deletePlatform(platform.id))
+                                try
                                 {
-                                    QMessageBox::warning(
-                                        this,
-                                        localization_.text(QStringLiteral("common.state.error.title")),
-                                        platformService_.hasAccounts(platform.id)
-                                            ? localization_.text(QStringLiteral("platform.delete.has_accounts"))
-                                            : localization_.text(QStringLiteral("platform.delete.error"))
-                                    );
-                                    return;
+                                    if (!platformService_.deletePlatform(platform.id))
+                                    {
+                                        QMessageBox::warning(
+                                            this,
+                                            localization_.text(QStringLiteral("common.state.error.title")),
+                                            platformService_.hasAccounts(platform.id)
+                                                ? localization_.text(QStringLiteral("platform.delete.has_accounts"))
+                                                : localization_.text(QStringLiteral("platform.delete.error"))
+                                        );
+                                        return;
+                                    }
+
+                                    reload();
                                 }
-
-                                reload();
+                                catch (const std::exception &)
+                                {
+                                    QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("platform.delete.error")));
+                                }
                             }
-                            catch (const std::exception &)
-                            {
-                                QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("platform.delete.error")));
-                            }
-                        }
-                    );
-                }
-            );
-
-            platformList_->addItem(item);
-        }
-
-        platformList_->showList();
+                        );
+                    }
+                );
+                return item;
+            }
+        );
     }
     catch (const std::exception &)
     {
