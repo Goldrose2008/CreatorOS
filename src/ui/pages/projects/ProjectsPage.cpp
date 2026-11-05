@@ -19,7 +19,7 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
       projectService_(projectService),
       localization_(localization),
       header_(new PageHeader(this)),
-      projectList_(new EntityList(this))
+      projectList_(new EntityList(localization_, this))
 {
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -45,13 +45,7 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
         }
     );
 
-    projectList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
-    projectList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("projects.empty.description")));
-    projectList_->setErrorState(
-        localization_.text(QStringLiteral("common.state.error.title")),
-        localization_.text(QStringLiteral("common.state.error.load")),
-        localization_.text(QStringLiteral("common.action.retry"))
-    );
+    projectList_->setEmptyState(QString(), localization_.text(QStringLiteral("projects.empty.description")));
 
     layout->addWidget(header_);
     layout->addWidget(projectList_, 1);

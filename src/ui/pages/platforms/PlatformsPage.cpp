@@ -24,7 +24,7 @@ PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationServi
     : QWidget(parent),
       platformService_(platformService),
       localization_(localization),
-      platformList_(new EntityList(this))
+      platformList_(new EntityList(localization_, this))
 {
     auto *layout = new QVBoxLayout(this);
 
@@ -50,13 +50,7 @@ PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationServi
         }
     );
 
-    platformList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
-    platformList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("platforms.empty.description")));
-    platformList_->setErrorState(
-        localization_.text(QStringLiteral("common.state.error.title")),
-        localization_.text(QStringLiteral("common.state.error.load")),
-        localization_.text(QStringLiteral("common.action.retry"))
-    );
+    platformList_->setEmptyState(QString(), localization_.text(QStringLiteral("platforms.empty.description")));
 
     layout->addWidget(header);
     layout->addWidget(platformList_, 1);

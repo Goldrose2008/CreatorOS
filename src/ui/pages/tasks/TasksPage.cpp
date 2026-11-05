@@ -24,7 +24,7 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
       contentService_(contentService),
       localization_(localization),
       header_(new PageHeader(this)),
-      taskList_(new EntityList(this))
+      taskList_(new EntityList(localization_, this))
 {
     auto *layout = new QVBoxLayout(this);
 
@@ -48,14 +48,6 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
             if (dialog.exec() == QDialog::Accepted)
                 reload();
         });
-
-    taskList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
-    taskList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("common.state.empty.description")));
-    taskList_->setErrorState(
-        localization_.text(QStringLiteral("common.state.error.title")),
-        localization_.text(QStringLiteral("common.state.error.load")),
-        localization_.text(QStringLiteral("common.action.retry"))
-    );
 
     layout->addWidget(header_);
     layout->addWidget(taskList_, 1);

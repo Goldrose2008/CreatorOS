@@ -27,7 +27,7 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
       accountService_(accountService),
       platformService_(platformService),
       localization_(localization),
-      accountList_(new EntityList(this))
+      accountList_(new EntityList(localization_, this))
 {
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -69,14 +69,7 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
         }
     );
 
-
-    accountList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
-    accountList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("accounts.empty.description")));
-    accountList_->setErrorState(
-        localization_.text(QStringLiteral("common.state.error.title")),
-        localization_.text(QStringLiteral("common.state.error.load")),
-        localization_.text(QStringLiteral("common.action.retry"))
-    );
+    accountList_->setEmptyState(QString(), localization_.text(QStringLiteral("accounts.empty.description")));
 
     layout->addWidget(header);
     layout->addWidget(accountList_, 1);

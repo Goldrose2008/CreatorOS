@@ -10,21 +10,22 @@ class QWidget;
 class EmptyState;
 class ErrorState;
 class LoadingState;
+class LocalizationService;
 
 class EntityList final : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit EntityList(QWidget *parent = nullptr);
+    explicit EntityList(LocalizationService &localization, QWidget *parent = nullptr);
 
     void addItem(QWidget *item);
     void clearItems();
     int count() const;
 
-    void setLoadingTitle(const QString &title);
-    void setEmptyState(const QString &title, const QString &description);
-    void setErrorState(const QString &title, const QString &description, const QString &retryText);
+    void setLoadingTitle(const QString &title = QString());
+    void setEmptyState(const QString &title = QString(), const QString &description = QString());
+    void setErrorState(const QString &title = QString(), const QString &description = QString(), const QString &retryText = QString());
 
     void showLoading();
     void showList();
@@ -43,6 +44,8 @@ private:
     LoadingState *loadingState_;
     EmptyState *emptyState_;
     ErrorState *errorState_;
+
+    LocalizationService &localization_;
 
     int itemCount_;
 };

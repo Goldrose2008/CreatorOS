@@ -7,12 +7,13 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "../../style/Metrics.h"
 #include "../states/EmptyState.h"
 #include "../states/ErrorState.h"
 #include "../states/LoadingState.h"
+#include "../../localization/LocalizationService.h"
+#include "../../style/Metrics.h"
 
-EntityList::EntityList(QWidget *parent)
+EntityList::EntityList(LocalizationService &localization, QWidget *parent)
     : QWidget(parent),
       scrollArea_(new QScrollArea(this)),
       contentWidget_(new QWidget(scrollArea_)),
@@ -21,6 +22,7 @@ EntityList::EntityList(QWidget *parent)
       loadingState_(new LoadingState(this)),
       emptyState_(new EmptyState(this)),
       errorState_(new ErrorState(this)),
+      localization_(localization),
       itemCount_(0)
 {
     scrollArea_->setWidget(contentWidget_);
@@ -35,6 +37,10 @@ EntityList::EntityList(QWidget *parent)
     stateStack_->addWidget(loadingState_);
     stateStack_->addWidget(emptyState_);
     stateStack_->addWidget(errorState_);
+
+    setLoadingTitle();
+    setEmptyState();
+    setErrorState();
 
     auto *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -86,20 +92,20 @@ int EntityList::count() const
 
 void EntityList::setLoadingTitle(const QString &title)
 {
-    loadingState_->setTitle(title);
+    loadingState_->setTitle(title.isEmpty() ? localization_.text(QStringLiteral("common.state.loading")) : title);
 }
 
 void EntityList::setEmptyState(const QString &title, const QString &description)
 {
-    emptyState_->setTitle(title);
-    emptyState_->setDescription(description);
+    emptyState_->setTitle(title.isEmpty() ? localization_.text(QStringLiteral("common.state.empty.title")) : title);
+    emptyState_->setDescription(description.isEmpty() ? localization_.text(QStringLiteral("common.state.empty.description")) : description);
 }
 
 void EntityList::setErrorState(const QString &title, const QString &description, const QString &retryText)
 {
-    errorState_->setTitle(title);
-    errorState_->setDescription(description);
-    errorState_->setRetryText(retryText);
+    errorState_->setTitle(title.isEmpty() ? localization_.text(QStringLiteral("common.state.error.title")) : title);
+    errorState_->setDescription(description.isEmpty() ? localization_.text(QStringLiteral("common.state.error.load")) : description);
+    errorState_->setRetryText(retryText.isEmpty() ? localization_.text(QStringLiteral("common.action.retry")) : retryText);
 }
 
 void EntityList::showLoading()
