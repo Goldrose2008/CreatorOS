@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <cstdint>
 
-class LoadingState;
+class EntityList;
 class LocalizationService;
 class ContentService;
 class ProjectService;
