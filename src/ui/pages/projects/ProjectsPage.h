@@ -4,13 +4,9 @@
 #include <cstdint>
 
 class EntityList;
-class EmptyState;
-class ErrorState;
-class LoadingState;
 class LocalizationService;
 class PageHeader;
 class ProjectService;
-class QStackedWidget;
 
 class ProjectsPage final : public QWidget
 {
@@ -31,10 +27,4 @@ private:
     PageHeader *header_;
 
     EntityList *projectList_;
-
-    LoadingState *loadingState_;
-    EmptyState *emptyState_;
-    ErrorState *errorState_;
-
-    QStackedWidget *stateStack_;
 };

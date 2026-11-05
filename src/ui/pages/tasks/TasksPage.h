@@ -3,16 +3,12 @@
 #include <QWidget>
 #include <cstdint>
 
-class EntityList;
-class EmptyState;
-class ErrorState;
 class LoadingState;
 class LocalizationService;
 class ContentService;
 class ProjectService;
 class TaskService;
 class PageHeader;
-class QStackedWidget;
 
 class TasksPage final : public QWidget
 {
@@ -35,10 +31,4 @@ private:
     PageHeader *header_;
 
     EntityList *taskList_;
-
-    LoadingState *loadingState_;
-    EmptyState *emptyState_;
-    ErrorState *errorState_;
-
-    QStackedWidget *stateStack_;
 };

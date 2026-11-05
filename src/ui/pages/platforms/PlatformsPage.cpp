@@ -7,7 +7,6 @@
 #include <QMessageBox>
 #include <QPalette>
 #include <QPushButton>
-#include <QStackedWidget>
 #include <QVBoxLayout>
 #include <exception>
 
@@ -15,25 +14,17 @@
 #include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../components/entity/EntityList.h"
-#include "../../components/states/EmptyState.h"
-#include "../../components/states/ErrorState.h"
-#include "../../components/states/LoadingState.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Colors.h"
 #include "../../style/Metrics.h"
 #include "../../../application/platforms/PlatformService.h"
 #include "../../../domain/models/Platform.h"
 
-PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationService &localization, QWidget *parent
-)
+PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationService &localization, QWidget *parent)
     : QWidget(parent),
       platformService_(platformService),
       localization_(localization),
-      platformList_(new EntityList(this)),
-      loadingState_(new LoadingState(this)),
-      emptyState_(new EmptyState(this)),
-      errorState_(new ErrorState(this)),
-      stateStack_(new QStackedWidget(this))
+      platformList_(new EntityList(this))
 {
     auto *layout = new QVBoxLayout(this);
 
@@ -59,26 +50,20 @@ PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationServi
         }
     );
 
-    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
-
-    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("platforms.empty.description")));
-
-    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
-
-    stateStack_->addWidget(platformList_);
-    stateStack_->addWidget(loadingState_);
-    stateStack_->addWidget(emptyState_);
-    stateStack_->addWidget(errorState_);
+    platformList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
+    platformList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("platforms.empty.description")));
+    platformList_->setErrorState(
+        localization_.text(QStringLiteral("common.state.error.title")),
+        localization_.text(QStringLiteral("common.state.error.load")),
+        localization_.text(QStringLiteral("common.action.retry"))
+    );
 
     layout->addWidget(header);
-    layout->addWidget(stateStack_, 1);
+    layout->addWidget(platformList_, 1);
 
     connect(
-        errorState_,
-        &ErrorState::retryRequested,
+        platformList_,
+        &EntityList::retryRequested,
         this,
         &PlatformsPage::reload
     );
@@ -88,7 +73,7 @@ PlatformsPage::PlatformsPage(PlatformService &platformService, LocalizationServi
 
 void PlatformsPage::reload()
 {
-    stateStack_->setCurrentWidget(loadingState_);
+    platformList_->showLoading();
     platformList_->clearItems();
 
     try
@@ -97,7 +82,7 @@ void PlatformsPage::reload()
 
         if (platforms.empty())
         {
-            stateStack_->setCurrentWidget(emptyState_);
+            platformList_->showEmpty();
             return;
         }
 
@@ -199,10 +184,10 @@ void PlatformsPage::reload()
             platformList_->addItem(item);
         }
 
-        stateStack_->setCurrentWidget(platformList_);
+        platformList_->showList();
     }
     catch (const std::exception &)
     {
-        stateStack_->setCurrentWidget(errorState_);
+        platformList_->showError();
     }
 }

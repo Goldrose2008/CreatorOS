@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QStackedWidget>
 #include <QVBoxLayout>
 
 #include <exception>
@@ -16,9 +15,6 @@
 #include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../components/entity/EntityList.h"
-#include "../../components/states/EmptyState.h"
-#include "../../components/states/ErrorState.h"
-#include "../../components/states/LoadingState.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Metrics.h"
 #include "../../../application/accounts/AccountService.h"
@@ -31,11 +27,7 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
       accountService_(accountService),
       platformService_(platformService),
       localization_(localization),
-      accountList_(new EntityList(this)),
-      loadingState_(new LoadingState(this)),
-      emptyState_(new EmptyState(this)),
-      errorState_(new ErrorState(this)),
-      stateStack_(new QStackedWidget(this))
+      accountList_(new EntityList(this))
 {
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -78,26 +70,20 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
     );
 
 
-    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
-
-    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("accounts.empty.description")));
-
-    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
-
-    stateStack_->addWidget(accountList_);
-    stateStack_->addWidget(loadingState_);
-    stateStack_->addWidget(emptyState_);
-    stateStack_->addWidget(errorState_);
+    accountList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
+    accountList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("accounts.empty.description")));
+    accountList_->setErrorState(
+        localization_.text(QStringLiteral("common.state.error.title")),
+        localization_.text(QStringLiteral("common.state.error.load")),
+        localization_.text(QStringLiteral("common.action.retry"))
+    );
 
     layout->addWidget(header);
-    layout->addWidget(stateStack_, 1);
+    layout->addWidget(accountList_, 1);
 
     connect(
-        errorState_,
-        &ErrorState::retryRequested,
+        accountList_,
+        &EntityList::retryRequested,
         this,
         &AccountsPage::reload
     );
@@ -107,7 +93,7 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
 
 void AccountsPage::reload()
 {
-    stateStack_->setCurrentWidget(loadingState_);
+    accountList_->showLoading();
     accountList_->clearItems();
 
     try
@@ -122,7 +108,7 @@ void AccountsPage::reload()
 
         if (accounts.empty())
         {
-            stateStack_->setCurrentWidget(emptyState_);
+            accountList_->showEmpty();
             return;
         }
 
@@ -243,10 +229,10 @@ void AccountsPage::reload()
             accountList_->addItem(item);
         }
 
-        stateStack_->setCurrentWidget(accountList_);
+        accountList_->showList();
     }
     catch (const std::exception &)
     {
-        stateStack_->setCurrentWidget(errorState_);
+        accountList_->showError();
     }
 }

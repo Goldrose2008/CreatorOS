@@ -1,7 +1,6 @@
 #include "TasksPage.h"
 
 #include <QVBoxLayout>
-#include <QStackedWidget>
 #include <QDialog>
 #include <QPushButton>
 #include <exception>
@@ -11,9 +10,6 @@
 #include "../../components/forms/EditorDialog.h"
 #include "../../components/entity/EntityList.h"
 #include "../../components/layout/PageHeader.h"
-#include "../../components/states/EmptyState.h"
-#include "../../components/states/ErrorState.h"
-#include "../../components/states/LoadingState.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Metrics.h"
 #include "../../../application/tasks/TaskService.h"
@@ -28,11 +24,7 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
       contentService_(contentService),
       localization_(localization),
       header_(new PageHeader(this)),
-      taskList_(new EntityList(this)),
-      loadingState_(new LoadingState(this)),
-      emptyState_(new EmptyState(this)),
-      errorState_(new ErrorState(this)),
-      stateStack_(new QStackedWidget(this))
+      taskList_(new EntityList(this))
 {
     auto *layout = new QVBoxLayout(this);
 
@@ -57,26 +49,20 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
                 reload();
         });
 
-    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
-    
-    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("common.state.empty.description")));
-    
-    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
-
-    stateStack_->addWidget(taskList_);
-    stateStack_->addWidget(loadingState_);
-    stateStack_->addWidget(emptyState_);
-    stateStack_->addWidget(errorState_);
+    taskList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
+    taskList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("common.state.empty.description")));
+    taskList_->setErrorState(
+        localization_.text(QStringLiteral("common.state.error.title")),
+        localization_.text(QStringLiteral("common.state.error.load")),
+        localization_.text(QStringLiteral("common.action.retry"))
+    );
 
     layout->addWidget(header_);
-    layout->addWidget(stateStack_, 1);
+    layout->addWidget(taskList_, 1);
 
     connect(
-        errorState_,
-        &ErrorState::retryRequested,
+        taskList_,
+        &EntityList::retryRequested,
         this,
         &TasksPage::reload
     );
@@ -86,7 +72,7 @@ TasksPage::TasksPage(TaskService &taskService, ProjectService &projectService, C
 
 void TasksPage::reload()
 {
-    stateStack_->setCurrentWidget(loadingState_);
+    taskList_->showLoading();
     taskList_->clearItems();
 
     try
@@ -95,7 +81,7 @@ void TasksPage::reload()
 
         if (tasks.empty())
         {
-            stateStack_->setCurrentWidget(emptyState_);
+            taskList_->showEmpty();
             return;
         }
 
@@ -113,10 +99,10 @@ void TasksPage::reload()
             taskList_->addItem(card);
         }
 
-        stateStack_->setCurrentWidget(taskList_);
+        taskList_->showList();
     }
     catch (const std::exception &)
     {
-        stateStack_->setCurrentWidget(errorState_);
+        taskList_->showError();
     }
 }

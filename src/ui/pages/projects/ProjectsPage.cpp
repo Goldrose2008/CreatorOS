@@ -3,16 +3,12 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QStackedWidget>
 #include <exception>
 
 #include "ProjectCard.h"
 #include "ProjectEditorDialog.h"
 #include "../../components/entity/EntityList.h"
 #include "../../components/layout/PageHeader.h"
-#include "../../components/states/EmptyState.h"
-#include "../../components/states/ErrorState.h"
-#include "../../components/states/LoadingState.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Metrics.h"
 #include "../../../application/projects/ProjectService.h"
@@ -23,11 +19,7 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
       projectService_(projectService),
       localization_(localization),
       header_(new PageHeader(this)),
-      projectList_(new EntityList(this)),
-      loadingState_(new LoadingState(this)),
-      emptyState_(new EmptyState(this)),
-      errorState_(new ErrorState(this)),
-      stateStack_(new QStackedWidget(this))
+      projectList_(new EntityList(this))
 {
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -53,26 +45,20 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
         }
     );
 
-    loadingState_->setTitle(localization_.text(QStringLiteral("common.state.loading")));
-    
-    emptyState_->setTitle(localization_.text(QStringLiteral("common.state.empty.title")));
-    emptyState_->setDescription(localization_.text(QStringLiteral("projects.empty.description")));
-
-    errorState_->setTitle(localization_.text(QStringLiteral("common.state.error.title")));
-    errorState_->setDescription(localization_.text(QStringLiteral("common.state.error.load")));
-    errorState_->setRetryText(localization_.text(QStringLiteral("common.action.retry")));
-
-    stateStack_->addWidget(projectList_);
-    stateStack_->addWidget(loadingState_);
-    stateStack_->addWidget(emptyState_);
-    stateStack_->addWidget(errorState_);
+    projectList_->setLoadingTitle(localization_.text(QStringLiteral("common.state.loading")));
+    projectList_->setEmptyState(localization_.text(QStringLiteral("common.state.empty.title")), localization_.text(QStringLiteral("projects.empty.description")));
+    projectList_->setErrorState(
+        localization_.text(QStringLiteral("common.state.error.title")),
+        localization_.text(QStringLiteral("common.state.error.load")),
+        localization_.text(QStringLiteral("common.action.retry"))
+    );
 
     layout->addWidget(header_);
-    layout->addWidget(stateStack_, 1);
+    layout->addWidget(projectList_, 1);
 
     connect(
-        errorState_,
-        &ErrorState::retryRequested,
+        projectList_,
+        &EntityList::retryRequested,
         this,
         &ProjectsPage::reload
     );
@@ -82,7 +68,7 @@ ProjectsPage::ProjectsPage(ProjectService &projectService, LocalizationService &
 
 void ProjectsPage::reload()
 {
-    stateStack_->setCurrentWidget(loadingState_);
+    projectList_->showLoading();
     projectList_->clearItems();
 
     try
@@ -91,7 +77,7 @@ void ProjectsPage::reload()
 
         if (projects.empty())
         {
-            stateStack_->setCurrentWidget(emptyState_);
+            projectList_->showEmpty();
             return;
         }
 
@@ -109,10 +95,10 @@ void ProjectsPage::reload()
             projectList_->addItem(card);
         }
 
-        stateStack_->setCurrentWidget(projectList_);
+        projectList_->showList();
     }
     catch (const std::exception &)
     {
-        stateStack_->setCurrentWidget(errorState_);
+        projectList_->showError();
     }
 }
