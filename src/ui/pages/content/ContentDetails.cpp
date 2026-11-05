@@ -1,7 +1,6 @@
 #include "ContentDetails.h"
 
 #include <QGridLayout>
-#include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QDialog>
@@ -45,14 +44,7 @@ ContentDetails::ContentDetails(
       header_(new EntityHeader(this)),
       editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
-      projectLabel_(createLabel(this)),
-      typeLabel_(createLabel(this)),
-      roleLabel_(createLabel(this)),
-      priorityLabel_(createLabel(this)),
-      deadlineLabel_(createLabel(this)),
-      progressLabel_(createLabel(this)),
-      createdLabel_(createLabel(this)),
-      updatedLabel_(createLabel(this)),
+      summaryGrid_(new QGridLayout()),
       descriptionLabel_(createLabel(this)),
       summarySection_(new Section(this)),
       descriptionSection_(new Section(this))
@@ -149,26 +141,8 @@ ContentDetails::ContentDetails(
 
     summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
 
-    auto *summaryLayout = summarySection_->contentLayout();
-    auto *grid = new QGridLayout();
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.entity.project")), summarySection_), 0, 0);
-    grid->addWidget(projectLabel_, 0, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.type")), summarySection_), 1, 0);
-    grid->addWidget(typeLabel_, 1, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.role")), summarySection_), 2, 0);
-    grid->addWidget(roleLabel_, 2, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.priority")), summarySection_), 4, 0);
-    grid->addWidget(priorityLabel_, 4, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("content.deadline")), summarySection_), 5, 0);
-    grid->addWidget(deadlineLabel_, 5, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.progress")), summarySection_), 6, 0);
-    grid->addWidget(progressLabel_, 6, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 7, 0);
-    grid->addWidget(createdLabel_, 7, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.updated")), summarySection_), 8, 0);
-    grid->addWidget(updatedLabel_, 8, 1);
-    summaryLayout->addLayout(grid);
+    summaryGrid_->setContentsMargins(0, 0, 0, 0);
+    summarySection_->contentLayout()->addLayout(summaryGrid_);
 
     descriptionSection_->setTitle(localization_.text(QStringLiteral("common.label.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
@@ -237,10 +211,44 @@ void ContentDetails::showContent(std::int64_t contentId)
         content_ = value;
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
         header_->setDescription(QString::fromUtf8(value.description.c_str()));
-        projectLabel_->setText(QString::fromUtf8(project->name.c_str()));
-        typeLabel_->setText(contentTypeName);
-        roleLabel_->setText(localizedContentRole(value.role, localization_));
-        priorityLabel_->setText(QString::number(value.priority));
+        
+        const QList<EntityMetadata> metadata{
+        {
+            localization_.text(QStringLiteral("common.entity.project")),
+            QString::fromUtf8(project->name.c_str())
+        },
+        {
+            localization_.text(QStringLiteral("content.type")),
+            contentTypeName
+        },
+        {
+            localization_.text(QStringLiteral("content.role")),
+            localizedContentRole(value.role, localization_)
+        },
+        {
+            localization_.text(QStringLiteral("common.label.priority")),
+            QString::number(value.priority)
+        },
+        {
+            localization_.text(QStringLiteral("content.deadline")),
+            value.productionDeadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(value.productionDeadlineAt.c_str())
+        },
+        {
+            localization_.text(QStringLiteral("common.label.progress")),
+            QString::number(value.progress) + QStringLiteral("%")
+        },
+        {
+            localization_.text(QStringLiteral("common.meta.created")),
+            QString::fromUtf8(value.createdAt.c_str())
+        },
+        {
+            localization_.text(QStringLiteral("common.meta.updated")),
+            QString::fromUtf8(value.updatedAt.c_str())
+        }
+    };
+
+    setMetadata(summaryGrid_, metadata);
+
         editButton_->setVisible(true);
         deleteButton_->setVisible(value.role == ContentRole::Additional);
 

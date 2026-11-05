@@ -7,6 +7,7 @@
 
 class QLabel;
 class QPushButton;
+class QGridLayout;
 class Section;
 class EntityHeader;
 class LocalizationService;
@@ -40,14 +41,7 @@ private:
     QPushButton *editButton_;
     QPushButton *deleteButton_;
 
-    QLabel *projectLabel_;
-    QLabel *typeLabel_;
-    QLabel *roleLabel_;
-    QLabel *priorityLabel_;
-    QLabel *deadlineLabel_;
-    QLabel *progressLabel_;
-    QLabel *createdLabel_;
-    QLabel *updatedLabel_;
+    QGridLayout *summaryGrid_;
     QLabel *descriptionLabel_;
 
     Content content_;
