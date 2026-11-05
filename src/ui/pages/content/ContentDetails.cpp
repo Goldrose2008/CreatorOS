@@ -1,5 +1,6 @@
 #include "ContentDetails.h"
 
+#include <QLabel>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -212,54 +213,47 @@ void ContentDetails::showContent(std::int64_t contentId)
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
         header_->setDescription(QString::fromUtf8(value.description.c_str()));
         
-        const QList<EntityMetadata> metadata{
+        const QList<EntityMetadata> metadata
         {
-            localization_.text(QStringLiteral("common.entity.project")),
-            QString::fromUtf8(project->name.c_str())
-        },
-        {
-            localization_.text(QStringLiteral("content.type")),
-            contentTypeName
-        },
-        {
-            localization_.text(QStringLiteral("content.role")),
-            localizedContentRole(value.role, localization_)
-        },
-        {
-            localization_.text(QStringLiteral("common.label.priority")),
-            QString::number(value.priority)
-        },
-        {
-            localization_.text(QStringLiteral("content.deadline")),
-            value.productionDeadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(value.productionDeadlineAt.c_str())
-        },
-        {
-            localization_.text(QStringLiteral("common.label.progress")),
-            QString::number(value.progress) + QStringLiteral("%")
-        },
-        {
-            localization_.text(QStringLiteral("common.meta.created")),
-            QString::fromUtf8(value.createdAt.c_str())
-        },
-        {
-            localization_.text(QStringLiteral("common.meta.updated")),
-            QString::fromUtf8(value.updatedAt.c_str())
-        }
-    };
+            {
+                localization_.text(QStringLiteral("common.entity.project")),
+                QString::fromUtf8(project->name.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("content.type")),
+                contentTypeName
+            },
+            {
+                localization_.text(QStringLiteral("content.role")),
+                localizedContentRole(value.role, localization_)
+            },
+            {
+                localization_.text(QStringLiteral("common.label.priority")),
+                QString::number(value.priority)
+            },
+            {
+                localization_.text(QStringLiteral("content.deadline")),
+                value.productionDeadlineAt.empty() ? QStringLiteral("—") : QString::fromUtf8(value.productionDeadlineAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.label.progress")),
+                QString::number(value.progress) + QStringLiteral("%")
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.created")),
+                QString::fromUtf8(value.createdAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.updated")),
+                QString::fromUtf8(value.updatedAt.c_str())
+            }
+        };
 
     setMetadata(summaryGrid_, metadata);
 
         editButton_->setVisible(true);
         deleteButton_->setVisible(value.role == ContentRole::Additional);
 
-        if (value.productionDeadlineAt.empty())
-            deadlineLabel_->setText(QStringLiteral("—"));
-        else
-            deadlineLabel_->setText(QString::fromUtf8(value.productionDeadlineAt.c_str()));
-
-        progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
-        createdLabel_->setText(QString::fromUtf8(value.createdAt.c_str()));
-        updatedLabel_->setText(QString::fromUtf8(value.updatedAt.c_str()));
         descriptionLabel_->setText(QString::fromUtf8(value.description.c_str()));
         summarySection_->setVisible(true);
         descriptionSection_->setVisible(!value.description.empty());
