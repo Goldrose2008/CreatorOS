@@ -43,11 +43,7 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
       editButton_(new QPushButton(localization.text(QStringLiteral("common.action.edit")), this)),
       deleteButton_(new QPushButton(localization.text(QStringLiteral("common.action.delete")), this)),
       addContentButton_(new QPushButton(localization.text(QStringLiteral("content.create.title")), this)),
-      releaseLabel_(createLabel(this)),
-      progressLabel_(createLabel(this)),
-      ownerLabel_(createLabel(this)),
-      createdLabel_(createLabel(this)),
-      updatedLabel_(createLabel(this)),
+      summaryGrid_(new QGridLayout()),
       descriptionLabel_(createLabel(this)),
       summarySection_(new Section(this)),
       descriptionSection_(new Section(this)),
@@ -155,23 +151,11 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
 
     summarySection_->setTitle(localization_.text(QStringLiteral("common.label.summary")));
 
-    auto *summaryLayout = summarySection_->contentLayout();
-    auto *grid = new QGridLayout();
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->setHorizontalSpacing(CreatorMetrics::SpacingLarge);
-    grid->setVerticalSpacing(CreatorMetrics::SpacingSmall);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.release")), summarySection_), 1, 0);
-    grid->addWidget(releaseLabel_, 1, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.label.progress")), summarySection_), 2, 0);
-    grid->addWidget(progressLabel_, 2, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("project.owner")), summarySection_), 3, 0);
-    grid->addWidget(ownerLabel_, 3, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.created")), summarySection_), 4, 0);
-    grid->addWidget(createdLabel_, 4, 1);
-    grid->addWidget(new QLabel(localization_.text(QStringLiteral("common.meta.updated")), summarySection_), 5, 0);
-    grid->addWidget(updatedLabel_, 5, 1);
+    summaryGrid_->setContentsMargins(0, 0, 0, 0);
+    summaryGrid_->setHorizontalSpacing(CreatorMetrics::SpacingLarge);
+    summaryGrid_->setVerticalSpacing(CreatorMetrics::SpacingSmall);
 
-    summaryLayout->addLayout(grid);
+    summarySection_->contentLayout()->addLayout(summaryGrid_);
 
     descriptionSection_->setTitle(localization_.text(QStringLiteral("common.label.description")));
     descriptionSection_->contentLayout()->addWidget(descriptionLabel_);
@@ -292,16 +276,32 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         header_->setTitle(QString::fromUtf8(value.name.c_str()));
         header_->setDescription(QString::fromUtf8(value.description.c_str()));
 
-        releaseLabel_->setText(QString::fromUtf8(value.plannedReleaseAt.c_str()));
-        progressLabel_->setText(QString::number(value.progress) + QStringLiteral("%"));
+        const QList<EntityMetadata> metadata
+        {
+            {
+                localization_.text(QStringLiteral("project.release")),
+                QString::fromUtf8(value.plannedReleaseAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.label.progress")),
+                QString::number(value.progress) + QStringLiteral("%")
+            },
+            {
+                localization_.text(QStringLiteral("project.owner")),
+                value.ownerId.has_value() ? QString::number(value.ownerId.value()) : localization_.text(QStringLiteral("project.owner.none"))
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.created")),
+                QString::fromUtf8(value.createdAt.c_str())
+            },
+            {
+                localization_.text(QStringLiteral("common.meta.updated")),
+                QString::fromUtf8(value.updatedAt.c_str())
+            }
+        };
 
-        if (value.ownerId.has_value())
-            ownerLabel_->setText(QString::number(value.ownerId.value()));
-        else
-            ownerLabel_->setText(localization_.text(QStringLiteral("project.owner.none")));
+        setMetadata(summaryGrid_, metadata);
 
-        createdLabel_->setText(QString::fromUtf8(value.createdAt.c_str()));
-        updatedLabel_->setText(QString::fromUtf8(value.updatedAt.c_str()));
         descriptionLabel_->setText(QString::fromUtf8(value.description.c_str()));
     }
     catch (const std::exception &)

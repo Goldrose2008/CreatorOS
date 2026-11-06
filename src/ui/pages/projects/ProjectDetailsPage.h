@@ -6,6 +6,7 @@
 #include "../../../domain/models/Project.h"
 
 class QLabel;
+class QGridLayout;
 class QPushButton;
 class QVBoxLayout;
 class Section;
@@ -39,11 +40,7 @@ private:
     QPushButton *deleteButton_;
     QPushButton *addContentButton_;
 
-    QLabel *releaseLabel_;
-    QLabel *progressLabel_;
-    QLabel *ownerLabel_;
-    QLabel *createdLabel_;
-    QLabel *updatedLabel_;
+    QGridLayout *summaryGrid_;
     QLabel *descriptionLabel_;
     
     Project project_;
