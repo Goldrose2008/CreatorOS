@@ -1,82 +1,22 @@
 # Структура программы CreatorOS
+Карта фактических каталогов и файлов репозитория CreatorOS. 
 
-## 1. Назначение документа
+# 1. Корень репозитория
+`CMakeLists.txt` - Основное описание сборки CreatorOS: C++ standard, Qt-модули, исходные файлы, ресурсы, библиотеки и post-build deployment. 
 
-Карта фактических каталогов и файлов репозитория CreatorOS. Для каждой программной единицы указано краткое назначение. Пары заголовочного и исходного файлов C++ относятся к одной программной единице.
+`database/` - SQL-структура базы данных и миграции. 
+`resources/` - Qt-ресурсы приложения: локализация, database migrations. 
+`src/` - Исходный код актуальной C++/Qt версии. 
 
+# 2. `src/`
+## 2.1. Точка входа
+`main.cpp` - Точка входа приложения: создаёт `QApplication`, подключает `CreatorStyle`, устанавливает имя/версию приложения, создаёт и показывает главного окна CreatorOS - `MainWindow`. 
 
----
+## 2.2. `src/app` - запуск приложения
+`AppInfo.h` - Единственный источник основных данных приложения. На текущий момент содержит название и версию приложения. 
+`MainWindow` - Создаёт главное окно, инициализирует БД, собирает Project/Content/Task/Platform/Account application-слои, создаёт **AppShell** и устанавливает его как центральный виджет. 
 
-# 2. Корень репозитория
-
-| Путь | Назначение |
-|---|---|
-| `.vscode/c_cpp_properties.json` | Настройки IntelliSense и путей заголовков C++/Qt для VS Code. |
-| `.vscode/settings.json` | Настройки CMake, генератора Visual Studio, архитектуры x64 и пути к Qt для VS Code. |
-| `.gitignore` | Список файлов и каталогов, которые Git не должен отслеживать. |
-| `CMakeLists.txt` | Основное описание сборки CreatorOS: C++ standard, Qt-модули, исходные файлы, ресурсы, библиотеки и post-build deployment. |
-| `docs/DEVELOPMENT_LOG.md` | Журнал этапов разработки, контрольных точек, архитектурных изменений и результатов сборки. |
-| `docs/TECHNICAL_SPEC.md` | Требования к функциям, модели данных, пользовательскому интерфейсу и технологиям CreatorOS. |
-| `docs/USER_GUIDE.md` | Пользовательская документация приложения. |
-| `docs/PROGRAM_STRUCTURE.md` | Карта структуры проекта с описанием назначения каждого файла. |
-| `docs/THIRD_PARTY_LICENSES.md` | Реестр лицензий Qt и сторонних компонентов, лицензионных обязательств и release-проверок. |
-| `docs/LOCALIZATION.md` | Спецификация системы локализации: правила text ID, устранение дублей и канонические общие ключи. |
-| `database/` | SQL-структура базы данных и миграции. |
-| `resources/` | Qt-ресурсы приложения: локализация, database migrations. |
-| `src/` | Исходный код актуальной C++/Qt версии. |
-| `backup/` | Архив предыдущей React/Electron реализации; не используется как рабочая основа актуальной версии. |
-
----
-
-# 3. Актуальная программа — `src/`
-## 3.1. Запуск приложения — `src/app`
-```text
-src/app/
-├── AppInfo.h
-├── MainWindow.cpp
-└── MainWindow.h
-```
-
-| Файл | Назначение |
-|---|---|
-| `src/app/AppInfo.h` | Единственный источник имени и версии приложения. |
-| `src/app/MainWindow.h + MainWindow.cpp` | Создаёт главное окно, инициализирует БД, собирает Project/Content/Task/Platform/Account application-слои, создаёт `AppShell` и устанавливает его как центральный виджет. |
-
-## 3.2. Точка входа
-
-| Файл | Назначение |
-|---|---|
-| `src/main.cpp` | Точка входа приложения: создаёт `QApplication`, подключает `CreatorStyle`, устанавливает имя/версию приложения, создаёт и показывает главного окна CreatorOS - `MainWindow`. |
-
----
-
-# 4. Domain — `src/domain`
-Модели предметных сущностей и их значения.
-
-```text
-src/domain/
-└── models/
-    ├── Account.h
-    ├── Platform.h
-    ├── Project.h
-    ├── Project.cpp
-    ├── Content.h
-    ├── Content.cpp
-    └── ContentType.h
-```
-
-| Файл | Назначение |
-|---|---|
-| `src/domain/models/Platform.h` | Доменная модель Platform: идентификатор, название, URL сайта и временные метки. |
-| `src/domain/models/Account.h` | Доменная модель Account: связь с Platform, имя, username, URL профиля, внешний ID и временные метки. |
-| `src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
-| `src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
-| `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
-| `src/domain/models/Task.h + Task.cpp` | Доменная модель Task: контекст родителя, иерархия задач, название, описание, дедлайн, статус, приоритет и временные метки. |
-
----
-
-# 5. Application — `src/application`
+## 2.3 `src/application`
 Прикладные сервисы и контракты доступа к данным.
 
 ```text
@@ -121,9 +61,31 @@ src/application/
 | `src/application/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
 | `src/application/tasks/TaskService.h + TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
 
----
+## 2.4 `src/domain`
+Модели предметных сущностей и их значения.
 
-# 6. Infrastructure — `src/infrastructure`
+```text
+src/domain/
+└── models/
+    ├── Account.h
+    ├── Platform.h
+    ├── Project.h
+    ├── Project.cpp
+    ├── Content.h
+    ├── Content.cpp
+    └── ContentType.h
+```
+
+| Файл | Назначение |
+|---|---|
+| `src/domain/models/Platform.h` | Доменная модель Platform: идентификатор, название, URL сайта и временные метки. |
+| `src/domain/models/Account.h` | Доменная модель Account: связь с Platform, имя, username, URL профиля, внешний ID и временные метки. |
+| `src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
+| `src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
+| `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
+| `src/domain/models/Task.h + Task.cpp` | Доменная модель Task: контекст родителя, иерархия задач, название, описание, дедлайн, статус, приоритет и временные метки. |
+
+## 2.5 `src/infrastructure`
 Реализации хранилища и технических интеграций.
 
 ```text
@@ -157,28 +119,8 @@ src/infrastructure/
 
 ---
 
-# 7. Database — `database/`
 
-```text
-database/
-└── migrations/
-    ├── 001_initial.sql
-    ├── 002_content_and_content_types.sql
-    ├── 003_full_content.sql
-    └── 004_tasks.sql
-```
-
-| Файл | Назначение |
-|---|---|
-| `database/migrations/001_initial.sql` | Первая версия структуры SQLite: создаёт таблицу `projects` с ограничениями статуса и диапазона прогресса. |
-| `database/migrations/002_content_and_content_types.sql` | Создаёт `content_types` и `contents`, задаёт связи и ограничение одного Main Content на Project. |
-| `database/migrations/003_full_content.sql` | Третья версия структуры SQLite: расширяет `contents` полями description, priority, production deadline, status, progress и временными метками. |
-| `database/migrations/004_tasks.sql` | Четвёртая версия структуры SQLite: создаёт `tasks` с контекстом Project/Content, иерархией через `parent_task_id`, статусами, приоритетом и дедлайном. |
-| `database/migrations/005_platforms_and_accounts.sql` | Пятая версия структуры SQLite: создаёт `platforms` и `accounts`, связь Account → Platform и индекс по `platform_id`. |
-
----
-
-# 8. UI — `src/ui`
+## 2.6 `src/ui`
 UI-компоненты, страницы, навигация, shell и визуальные стили на Qt Widgets.
 
 ```text
@@ -193,7 +135,7 @@ src/ui/
 
 ---
 
-## 8.1. UI Components — `src/ui/components`
+### 8.1. UI Components — `src/ui/components`
 ### Entity
 
 ```text
