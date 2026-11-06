@@ -1,13 +1,17 @@
 
 #include "PlatformsPage.h"
 
+#include <QAbstractScrollArea>
 #include <QDialog>
+#include <QFrame>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPalette>
 #include <QPushButton>
-#include <QVBoxLayout>
 #include <QSizePolicy>
+#include <QTextEdit>
+#include <QTextOption>
+#include <QVBoxLayout>
 #include <exception>
 
 #include "PlatformEditorDialog.h"
@@ -83,17 +87,24 @@ void PlatformsPage::reload()
 
                 if (!platform.websiteUrl.empty())
                 {
-                    auto *urlLabel = new QLabel(QString::fromUtf8(platform.websiteUrl.c_str()), item);
+                    auto *urlText = new QTextEdit(item);
+                    urlText->setPlainText(QString::fromUtf8(platform.websiteUrl.c_str()));
+                    urlText->setReadOnly(true);
+                    urlText->setFrameShape(QFrame::NoFrame);
+                    urlText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                    urlText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                    urlText->setLineWrapMode(QTextEdit::WidgetWidth);
+                    urlText->setWordWrapMode(QTextOption::WrapAnywhere);
+                    urlText->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                    urlText->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+                    urlText->setMinimumWidth(0);
+                    urlText->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
 
-                    QPalette palette = urlLabel->palette();
-                    palette.setColor(QPalette::WindowText, CreatorColors::TextSecondary);
-                    urlLabel->setPalette(palette);
-                    urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                    urlLabel->setWordWrap(true);
-                    urlLabel->setMinimumWidth(0);
-                    urlLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+                    QPalette palette = urlText->palette();
+                    palette.setColor(QPalette::Text, CreatorColors::TextSecondary);
+                    urlText->setPalette(palette);
 
-                    item->addContentWidget(urlLabel);
+                    item->addContentWidget(urlText);
                 }
 
                 auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
