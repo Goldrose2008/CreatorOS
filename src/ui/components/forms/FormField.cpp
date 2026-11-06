@@ -39,6 +39,7 @@ FormField::FormField(QWidget *parent)
     errorLabel_->setVisible(false);
     layout_->addWidget(label_);
     layout_->addWidget(descriptionLabel_);
+    layout_->addWidget(errorLabel_);
 }
 
 void FormField::setLabel(const QString &label)
