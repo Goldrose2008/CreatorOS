@@ -1,7 +1,5 @@
 #include "MainWindow.h"
 
-#include <QMessageBox>
-
 #include "AppInfo.h"
 #include "../ui/shell/AppShell.h"
 #include "../application/accounts/AccountService.h"
@@ -20,12 +18,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowTitle(QString::fromLatin1(AppInfo::Name));
     resize(1280, 800);
-    QString databaseError;
+}
 
-    if (!databaseManager_.initialize(&databaseError))
+bool MainWindow::initialize(QString *errorMessage)
+{
+    if (!databaseManager_.initialize(errorMessage))
     {
-        QMessageBox::critical(this, QString::fromLatin1(AppInfo::Name), databaseError);
-        return;
+        return false;
     }
 
     accountRepository_ = std::make_unique<AccountRepository>(databaseManager_);
@@ -49,7 +48,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         *platformService_,
         this
     );
+    
     setCentralWidget(shell);
+
+    return true;
 }
 
 MainWindow::~MainWindow() = default;

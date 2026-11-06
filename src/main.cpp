@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QMessageBox>
 
 #include "app/MainWindow.h"
 #include "app/AppInfo.h"
@@ -14,6 +15,14 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion(AppInfo::Version);
 
     MainWindow window;
+    QString initializationError;
+
+    if (!window.initialize(&initializationError))
+    {
+        QMessageBox::critical(nullptr, QString::fromLatin1(AppInfo::Name), initializationError);
+        return 1;
+    }
+
     window.show();
 
     return application.exec();

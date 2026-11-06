@@ -23,6 +23,8 @@ class MainWindow final : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
+    bool initialize(QString *errorMessage = nullptr);
     
     ~MainWindow() override;
 
