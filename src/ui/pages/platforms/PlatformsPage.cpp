@@ -1,7 +1,7 @@
 
 #include "PlatformsPage.h"
 
-#include <QAbstractScrollArea>
+#include <QAbstractTextDocumentLayout>
 #include <QDialog>
 #include <QFrame>
 #include <QLabel>
@@ -10,8 +10,10 @@
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QTextEdit>
+#include <QTextDocument>
 #include <QTextOption>
 #include <QVBoxLayout>
+#include <QtMath>
 #include <exception>
 
 #include "PlatformEditorDialog.h"
@@ -89,6 +91,7 @@ void PlatformsPage::reload()
                 {
                     auto *urlText = new QTextEdit(item);
                     urlText->setPlainText(QString::fromUtf8(platform.websiteUrl.c_str()));
+                    urlText->document()->setDocumentMargin(0);
                     urlText->setReadOnly(true);
                     urlText->setFrameShape(QFrame::NoFrame);
                     urlText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -96,13 +99,24 @@ void PlatformsPage::reload()
                     urlText->setLineWrapMode(QTextEdit::WidgetWidth);
                     urlText->setWordWrapMode(QTextOption::WrapAnywhere);
                     urlText->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                    urlText->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
                     urlText->setMinimumWidth(0);
                     urlText->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
 
                     QPalette palette = urlText->palette();
                     palette.setColor(QPalette::Text, CreatorColors::TextSecondary);
                     urlText->setPalette(palette);
+
+                    connect
+                    (
+                        urlText->document()->documentLayout(),
+                        &QAbstractTextDocumentLayout::documentSizeChanged,
+                        urlText,
+                        [urlText](const QSizeF &documentSize)
+                        {
+                            const int textHeight = qCeil(documentSize.height());
+                            urlText->setFixedHeight(textHeight + 2);
+                        }
+                    );
 
                     item->addContentWidget(urlText);
                 }
