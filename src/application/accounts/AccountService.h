@@ -13,10 +13,7 @@ class IPlatformRepository;
 class AccountService
 {
 public:
-    AccountService(
-        IAccountRepository &repository,
-        IPlatformRepository &platformRepository
-    );
+    AccountService(IAccountRepository &repository, IPlatformRepository &platformRepository);
 
     std::vector<Account> getAccounts() const;
     std::optional<Account> getAccount(std::int64_t id) const;

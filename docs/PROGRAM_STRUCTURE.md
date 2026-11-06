@@ -17,49 +17,26 @@
 `MainWindow` - Создаёт главное окно, инициализирует БД, собирает Project/Content/Task/Platform/Account application-слои, создаёт **AppShell** и устанавливает его как центральный виджет. 
 
 ## 2.3 `src/application`
-Прикладные сервисы и контракты доступа к данным.
+Что приложение умеет делать с сущностью
 
-```text
-src/application/
-├── common/
-│   └── StringUtils.h
-├── accounts/
-│   ├── AccountService.cpp
-│   ├── AccountService.h
-│   └── IAccountRepository.h
-├── content/
-│   ├── ContentService.cpp
-│   ├── ContentService.h
-│   ├── IContentRepository.h
-│   └── IContentTypeRepository.h
-├── platforms/
-│   ├── IPlatformRepository.h
-│   ├── PlatformService.cpp
-│   └── PlatformService.h
-├── projects/
-│   ├── IProjectRepository.h
-│   ├── ProjectService.cpp
-│   └── ProjectService.h
-└── tasks/
-    ├── ITaskRepository.h
-    ├── TaskService.cpp
-    └── TaskService.h
-```
+`/accounts/AccountService` - Что можно делать с сущностью Account: создание, редактирование, удаление и так далее.
+`/accounts/IAccountRepository` - перечень доступных операций в БД с сущностью Account.
 
-| Файл | Назначение |
-|---|---|
-| `src/application/accounts/IAccountRepository.h` | Контракт хранилища Account: список, получение по ID, создание, изменение и удаление. |
-| `src/application/accounts/AccountService.h + AccountService.cpp` | Сценарии Account: проверка существования Platform, нормализация и проверка полей, CRUD. |
-| `src/application/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
-| `src/application/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
-| `src/application/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
-| `src/application/content/IContentRepository.h` | Application-контракт хранилища Content: получение всех записей, выборка по Project/ID, создание, изменение и удаление. |
-| `src/application/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая получение всех записей, проверки Project/ContentType и запрет удаления Main Content. |
-| `src/application/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
-| `src/application/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
-| `src/application/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
-| `src/application/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
-| `src/application/tasks/TaskService.h + TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
+
+`/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
+`/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
+
+`/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
+`/content/IContentRepository.h` | Application-контракт хранилища Content: получение всех записей, выборка по Project/ID, создание, изменение и удаление. |
+`/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая получение всех записей, проверки Project/ContentType и запрет удаления Main Content. |
+
+`/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
+`/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
+
+`/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
+
+`/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
+`/tasks/TaskService.h + TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
 
 ## 2.4 `src/domain`
 Модели предметных сущностей и их значения.
