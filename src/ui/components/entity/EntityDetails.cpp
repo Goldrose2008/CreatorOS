@@ -79,7 +79,9 @@ void EntityDetails::setMetadata(QGridLayout *layout, const QList<EntityMetadata>
 
     while (QLayoutItem *item = layout->takeAt(0))
     {
-        delete item->widget();
+        if (QWidget *widget = item->widget())
+            delete widget;
+        
         delete item;
     }
 
@@ -87,8 +89,8 @@ void EntityDetails::setMetadata(QGridLayout *layout, const QList<EntityMetadata>
     {
         const EntityMetadata &item = metadata.at(i);
 
-        auto *label = new QLabel(item.label, this);
-        auto *value = new QLabel(item.value, this);
+        auto *label = new QLabel(item.label, layout->parentWidget());
+        auto *value = new QLabel(item.value, layout->parentWidget());
 
         value->setWordWrap(true);
 
