@@ -25,6 +25,7 @@ public:
 
     void addContentWidget(QWidget *widget);
     void addMetaWidget(QWidget *widget);
+    void addUrl(const QString &url);
     void addAction(QWidget *widget);
     void setOpenAction(std::function<void()> handler, const QString &text = QString());
         

@@ -1,12 +1,20 @@
 #include "EntityCard.h"
 
+#include <QAbstractTextDocumentLayout>
 #include <QFont>
+#include <QFrame>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QPalette>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QSizePolicy>
+#include <QTextEdit>
+#include <QTextDocument>
+#include <QTextOption>
+#include <QtMath>
+#include <QVBoxLayout>
+
 #include <utility>
 
 #include "../../style/Colors.h"
@@ -122,6 +130,42 @@ void EntityCard::addMetaWidget(QWidget *widget)
     widget->setParent(this);
     const int insertIndex = metaLayout_->count() - 1;
     metaLayout_->insertWidget(insertIndex, widget);
+}
+
+void EntityCard::addUrl(const QString &url)
+{
+    if (url.isEmpty())
+        return;
+
+    auto *urlText = new QTextEdit(this);
+    urlText->setPlainText(url);
+    urlText->document()->setDocumentMargin(0);
+    urlText->setReadOnly(true);
+    urlText->setFrameShape(QFrame::NoFrame);
+    urlText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    urlText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    urlText->setLineWrapMode(QTextEdit::WidgetWidth);
+    urlText->setWordWrapMode(QTextOption::WrapAnywhere);
+    urlText->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    urlText->setMinimumWidth(0);
+    urlText->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+
+    QPalette palette = urlText->palette();
+    palette.setColor(QPalette::Text, CreatorColors::TextSecondary);
+    urlText->setPalette(palette);
+
+    connect(
+        urlText->document()->documentLayout(),
+        &QAbstractTextDocumentLayout::documentSizeChanged,
+        urlText,
+        [urlText](const QSizeF &documentSize)
+        {
+            const int textHeight = qCeil(documentSize.height());
+            urlText->setFixedHeight(textHeight + 2);
+        }
+    );
+
+    addContentWidget(urlText);
 }
 
 void EntityCard::addAction(QWidget *widget)

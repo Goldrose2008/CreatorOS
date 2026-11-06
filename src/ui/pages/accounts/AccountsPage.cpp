@@ -1,16 +1,9 @@
 #include "AccountsPage.h"
 
-#include <QAbstractTextDocumentLayout>
 #include <QDialog>
-#include <QFrame>
 #include <QLabel>
 #include <QMessageBox>
-#include <QPalette>
 #include <QPushButton>
-#include <QTextEdit>
-#include <QTextDocument>
-#include <QTextOption>
-#include <QtMath>
 #include <QVBoxLayout>
 
 #include <exception>
@@ -138,35 +131,7 @@ void AccountsPage::reload()
 
                 if (!account.profileUrl.empty())
                 {
-                    auto *urlText = new QTextEdit(item);
-                    urlText->setPlainText(QString::fromUtf8(account.profileUrl.c_str()));
-                    urlText->document()->setDocumentMargin(0);
-                    urlText->setReadOnly(true);
-                    urlText->setFrameShape(QFrame::NoFrame);
-                    urlText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                    urlText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                    urlText->setLineWrapMode(QTextEdit::WidgetWidth);
-                    urlText->setWordWrapMode(QTextOption::WrapAnywhere);
-                    urlText->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                    urlText->setMinimumWidth(0);
-                    urlText->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
-
-                    QPalette palette = urlText->palette();
-                    palette.setColor(QPalette::Text, CreatorColors::TextSecondary);
-                    urlText->setPalette(palette);
-
-                    connect(
-                        urlText->document()->documentLayout(),
-                        &QAbstractTextDocumentLayout::documentSizeChanged,
-                        urlText,
-                        [urlText](const QSizeF &documentSize)
-                        {
-                            const int textHeight = qCeil(documentSize.height());
-                            urlText->setFixedHeight(textHeight + 2);
-                        }
-                    );
-
-                    item->addContentWidget(urlText);
+                    item->addUrl(QString::fromUtf8(account.profileUrl.c_str()));
                 }
 
                 if (!account.externalId.empty())
