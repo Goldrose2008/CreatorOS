@@ -7,6 +7,7 @@
 #include <QPalette>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QSizePolicy>
 #include <exception>
 
 #include "PlatformEditorDialog.h"
@@ -89,8 +90,10 @@ void PlatformsPage::reload()
                     urlLabel->setPalette(palette);
                     urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
                     urlLabel->setWordWrap(true);
+                    urlLabel->setMinimumWidth(0);
+                    urlLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
 
-                    item->addMetaWidget(urlLabel);
+                    item->addContentWidget(urlLabel);
                 }
 
                 auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
