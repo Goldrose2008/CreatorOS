@@ -1,10 +1,16 @@
 #include "AccountsPage.h"
 
+#include <QAbstractTextDocumentLayout>
 #include <QDialog>
-#include <QHBoxLayout>
+#include <QFrame>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPalette>
 #include <QPushButton>
+#include <QTextEdit>
+#include <QTextDocument>
+#include <QTextOption>
+#include <QtMath>
 #include <QVBoxLayout>
 
 #include <exception>
@@ -12,10 +18,12 @@
 #include <vector>
 
 #include "AccountEditorDialog.h"
+#include "../../components/entity/EntityCard.h"
+#include "../../components/entity/EntityList.h"
 #include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/PageHeader.h"
-#include "../../components/entity/EntityList.h"
 #include "../../localization/LocalizationService.h"
+#include "../../style/Colors.h"
 #include "../../style/Metrics.h"
 #include "../../../application/accounts/AccountService.h"
 #include "../../../application/platforms/PlatformService.h"
@@ -103,25 +111,8 @@ void AccountsPage::reload()
             [this, &platformNames](const Account &account) -> QWidget *
             {
 
-                auto *item = new QWidget(accountList_);
-                auto *itemLayout = new QHBoxLayout(item);
-                auto *textLayout = new QVBoxLayout();
-
-                itemLayout->setContentsMargins(
-                    CreatorMetrics::SpacingLarge,
-                    CreatorMetrics::SpacingMedium,
-                    CreatorMetrics::SpacingLarge,
-                    CreatorMetrics::SpacingMedium
-                );
-                itemLayout->setSpacing(CreatorMetrics::SpacingMedium);
-                textLayout->setContentsMargins(0, 0, 0, 0);
-                textLayout->setSpacing(CreatorMetrics::SpacingSmall);
-
-                auto *nameLabel = new QLabel(QString::fromUtf8(account.name.c_str()), item);
-                QFont nameFont = nameLabel->font();
-                nameFont.setBold(true);
-                nameLabel->setFont(nameFont);
-                textLayout->addWidget(nameLabel);
+                auto *item = new EntityCard(localization_, accountList_);
+                item->setTitle(QString::fromUtf8(account.name.c_str()));
 
                 QString details = localization_.text(QStringLiteral("account.field.platform"));
                 details += QStringLiteral(": ");
@@ -143,31 +134,55 @@ void AccountsPage::reload()
 
                 auto *detailsLabel = new QLabel(details, item);
                 detailsLabel->setWordWrap(true);
-                textLayout->addWidget(detailsLabel);
+                item->addContentWidget(detailsLabel);
 
                 if (!account.profileUrl.empty())
                 {
-                    auto *urlLabel = new QLabel(QString::fromUtf8(account.profileUrl.c_str()), item);
-                    urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                    urlLabel->setWordWrap(true);
-                    textLayout->addWidget(urlLabel);
+                    auto *urlText = new QTextEdit(item);
+                    urlText->setPlainText(QString::fromUtf8(account.profileUrl.c_str()));
+                    urlText->document()->setDocumentMargin(0);
+                    urlText->setReadOnly(true);
+                    urlText->setFrameShape(QFrame::NoFrame);
+                    urlText->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                    urlText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                    urlText->setLineWrapMode(QTextEdit::WidgetWidth);
+                    urlText->setWordWrapMode(QTextOption::WrapAnywhere);
+                    urlText->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                    urlText->setMinimumWidth(0);
+                    urlText->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+
+                    QPalette palette = urlText->palette();
+                    palette.setColor(QPalette::Text, CreatorColors::TextSecondary);
+                    urlText->setPalette(palette);
+
+                    connect(
+                        urlText->document()->documentLayout(),
+                        &QAbstractTextDocumentLayout::documentSizeChanged,
+                        urlText,
+                        [urlText](const QSizeF &documentSize)
+                        {
+                            const int textHeight = qCeil(documentSize.height());
+                            urlText->setFixedHeight(textHeight + 2);
+                        }
+                    );
+
+                    item->addContentWidget(urlText);
                 }
 
                 if (!account.externalId.empty())
                 {
                     auto *externalIdLabel = new QLabel(localization_.text(QStringLiteral("account.field.external_id")) + QStringLiteral(": ") + QString::fromUtf8(account.externalId.c_str()), item);
-                    externalIdLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-                    externalIdLabel->setWordWrap(true);
-                    textLayout->addWidget(externalIdLabel);
-                }
 
-                itemLayout->addLayout(textLayout, 1);
+                    externalIdLabel->setWordWrap(true);
+                    externalIdLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                    item->addContentWidget(externalIdLabel);
+                }
 
                 auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
                 auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
 
-                itemLayout->addWidget(editButton);
-                itemLayout->addWidget(deleteButton);
+                item->addAction(editButton);
+                item->addAction(deleteButton);
 
                 connect(
                     editButton,
