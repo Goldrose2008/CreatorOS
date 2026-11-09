@@ -91,7 +91,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
     }
 }
 
-bool ProjectEditorDialog::save()
+bool ProjectEditorDialog::applyChanges()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {

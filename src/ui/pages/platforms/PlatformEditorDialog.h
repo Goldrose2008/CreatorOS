@@ -23,7 +23,7 @@ public:
     );
 
 protected:
-    bool save() override;
+    bool applyChanges() override;
 
 private:
     PlatformService &platformService_;

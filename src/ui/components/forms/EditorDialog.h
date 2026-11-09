@@ -30,7 +30,7 @@ protected:
 
     void setSaveEnabled(bool enabled);
 
-    virtual bool save() = 0;
+    virtual bool applyChanges() = 0;
 
 private slots:
     void handleSave();

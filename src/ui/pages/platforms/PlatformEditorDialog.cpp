@@ -52,7 +52,7 @@ PlatformEditorDialog::PlatformEditorDialog(
     }
 }
 
-bool PlatformEditorDialog::save()
+bool PlatformEditorDialog::applyChanges()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {

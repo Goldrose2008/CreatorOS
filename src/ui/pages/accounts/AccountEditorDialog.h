@@ -26,7 +26,7 @@ public:
     );
 
 protected:
-    bool save() override;
+    bool applyChanges() override;
 
 private:
     AccountService &accountService_;

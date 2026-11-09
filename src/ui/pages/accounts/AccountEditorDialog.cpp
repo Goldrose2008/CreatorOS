@@ -129,7 +129,7 @@ AccountEditorDialog::AccountEditorDialog(
     }
 }
 
-bool AccountEditorDialog::save()
+bool AccountEditorDialog::applyChanges()
 {
     if (!accountService_.isAccountNameValid(nameEdit_->text().toStdString()))
     {
@@ -138,16 +138,16 @@ bool AccountEditorDialog::save()
         return false;
     }
 
-    if (platformCombo_->currentIndex() < 0)
-        return false;
+    //if (platformCombo_->currentIndex() < 0)
+        //return false;
 
     const std::int64_t platformId = platformCombo_->currentData().toLongLong();
 
-    if (!accountService_.isPlatformValid(platformId))
-    {
-        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.save.error")));
-        return false;
-    }
+    //if (!accountService_.isPlatformValid(platformId))
+    //{
+        //QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.save.error")));
+        //return false;
+    //}
 
     try
     {

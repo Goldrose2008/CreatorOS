@@ -72,6 +72,6 @@ void EditorDialog::setSaveEnabled(bool enabled)
 
 void EditorDialog::handleSave()
 {
-    if (save())
+    if (applyChanges())
         accept();
 }

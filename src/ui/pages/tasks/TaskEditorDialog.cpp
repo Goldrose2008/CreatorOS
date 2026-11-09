@@ -157,7 +157,7 @@ void TaskEditorDialog::reloadParentChoices()
     setSaveEnabled(isEditMode() || parentCombo_->count() > 0);
 }
 
-bool TaskEditorDialog::save()
+bool TaskEditorDialog::applyChanges()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {

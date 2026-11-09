@@ -29,7 +29,7 @@ public:
     );
 
 protected:
-    bool save() override;
+    bool applyChanges() override;
 
 private:
     ContentService &contentService_;

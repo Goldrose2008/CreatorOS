@@ -87,7 +87,7 @@ ContentEditorDialog::ContentEditorDialog(
     }
 }
 
-bool ContentEditorDialog::save()
+bool ContentEditorDialog::applyChanges()
 {
     if (nameEdit_->text().trimmed().isEmpty())
     {

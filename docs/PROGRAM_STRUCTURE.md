@@ -161,7 +161,7 @@ src/ui/components/forms/
 | Файл | Назначение |
 |---|---|
 | `src/ui/components/forms/FormField.h + FormField.cpp` | Реализация визуальной структуры и состояний FormField. |
-| `src/ui/components/forms/EditorDialog.h + EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `save()` перед закрытием диалога. |
+| `src/ui/components/forms/EditorDialog.h + EditorDialog.cpp` | Реализация общего layout, кнопок Save/Cancel, хранения режима и вызова виртуального `applyChanges()` перед закрытием диалога. |
 | `src/ui/components/forms/ConfirmModal.h + ConfirmModal.cpp` | Реализация общего layout, текста подтверждения, кнопок подтверждения/отмены и выполнения переданного callback только после подтверждения. |
 
 ### Layout

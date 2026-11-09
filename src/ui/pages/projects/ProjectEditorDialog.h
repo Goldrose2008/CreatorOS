@@ -21,7 +21,7 @@ public:
     explicit ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent = nullptr,std::optional<Project> project = std::nullopt);
 
 protected:
-    bool save() override;
+    bool applyChanges() override;
 
 private:
     ProjectService &projectService_;
