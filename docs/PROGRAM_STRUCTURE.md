@@ -22,6 +22,7 @@
 `/accounts/AccountService` - Что можно делать с сущностью Account: создание, редактирование, удаление и так далее.
 `/accounts/IAccountRepository` - перечень доступных операций в БД с сущностью Account.
 
+`/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
 
 `/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
 `/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
@@ -32,8 +33,6 @@
 
 `/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 `/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |
-
-`/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
 
 `/tasks/ITaskRepository.h` | Application-контракт хранилища Task: список, выборка по родителю/ID, создание, изменение и удаление. |
 `/tasks/TaskService.h + TaskService.cpp` | Реализация сценариев Task с проверкой контекста Project/Content и иерархической связи с родительской Task. |
