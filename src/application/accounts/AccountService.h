@@ -18,8 +18,8 @@ public:
     bool isAccountNameValid(const std::string &name) const;
     bool isPlatformValid(std::int64_t platformId) const;
 
-    std::vector<Account> getAccounts() const;
-    std::optional<Account> getAccount(std::int64_t id) const;
+    std::vector<Account> getAllAccounts() const;
+    std::optional<Account> getAccountByID(std::int64_t id) const;
 
     Account createAccount(
         std::int64_t platformId,

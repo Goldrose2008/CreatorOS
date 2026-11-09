@@ -79,8 +79,9 @@ AccountService.cpp	Существует ли Platform с переданным ID
 ##### 2.1.4 метод save() - завершён
 может метод save() перенести из `src/ui/pages/accounts/AccountEditorDialog.cpp` в `src/application/accounts/AccountService`?
 
-##### 2.1.5 переименовать функцию getAccount() - в работе
+##### 2.1.5 переименовать функции getAccounts() и getAccount() - завершён
 переименовать функцию getAccount() в getAccountByID() 
+переименовать функцию getAccounts() в getAllAccounts() 
 
 #### 2.2 Файл src/application/common/StringUtils.h завершён 
 Добавить функцию `isBlank(std::string_view value)`, возвращающую `bool`. Она использует существующую `trim()` для проверки, состоит ли строка только из пробельных символов, но не изменяет исходную строку и не возвращает нормализованное значение.

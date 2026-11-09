@@ -21,12 +21,12 @@ bool AccountService::isPlatformValid(std::int64_t platformId) const
     return platformId > 0 && platformRepository_.findById(platformId).has_value();
 }
 
-std::vector<Account> AccountService::getAccounts() const
+std::vector<Account> AccountService::getAllAccounts() const
 {
     return repository_.findAll();
 }
 
-std::optional<Account> AccountService::getAccount(std::int64_t id) const
+std::optional<Account> AccountService::getAccountByID(std::int64_t id) const
 {
     if (id <= 0)
         return std::nullopt;

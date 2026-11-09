@@ -97,7 +97,7 @@ void AccountsPage::reload()
         for (const Platform &platform : platforms)
             platformNames[platform.id] = platform.name;
 
-        const std::vector<Account> accounts = accountService_.getAccounts();
+        const std::vector<Account> accounts = accountService_.getAllAccounts();
 
         accountList_->setItems(
             accounts,
