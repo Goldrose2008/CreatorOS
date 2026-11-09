@@ -77,10 +77,10 @@ AccountService.cpp	Существует ли Platform с переданным ID
 
 А вот две UI-проверки отсутствия Platform выглядят повторяющимися. Но я бы пока не меняла их: сначала завершим текущую проверку AccountService и согласуем, какие изменения действительно нужны.
 
-##### 2.1.4 метод save() - в работе
+##### 2.1.4 метод save() - завершён
 может метод save() перенести из `src/ui/pages/accounts/AccountEditorDialog.cpp` в `src/application/accounts/AccountService`?
 
-##### 2.1.5 удаление Account
+##### 2.1.5 удаление Account - в работе
 Сейчас deleteAccount() просто вызывает repository_.remove(id). В текущей модели это допустимо, но в техническом задании предусмотрены публикации, связанные с аккаунтами. Нужно учитывать будущую целостность этих связей, чтобы не заложить сейчас поведение, которое придётся переделывать.
 
 #### 2.2 Файл src/application/common/StringUtils.h
@@ -262,6 +262,15 @@ TaskCard отличается только наличием срока выпо�
 
 #### 5.15 account
 
+### 6. ...Service.cpp
+улучшить обработку ошибок в файлах ...Service.cpp, чтобы он возвращал не просто false или выбрасывал исключение, а сообщал конкретную причину отказа. Тогда UI сможет показывать точные сообщения, не выполняя предварительные проверки самостоятельно. 
+Например, вот такую проверку в файле `AccountEditorDialog.cpp`:
+`if (!accountService_.isAccountNameValid(nameEdit_->text().toStdString()))
+    {
+        QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
+        nameEdit_->setFocus();
+        return false;
+    }`
 
 ## План рефакторинга CreatorOS — до начала этапа K-1
 
