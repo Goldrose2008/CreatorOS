@@ -68,7 +68,7 @@ void TasksPage::reload()
 
     try
     {
-        const std::vector<Task> tasks = taskService_.getTasks();
+        const std::vector<Task> tasks = taskService_.getAllTasks();
 
         taskList_->setItems(
             tasks,

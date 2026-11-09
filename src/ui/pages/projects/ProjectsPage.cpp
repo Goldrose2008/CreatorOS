@@ -66,7 +66,7 @@ void ProjectsPage::reload()
 
     try
     {
-        const std::vector<Project> projects = projectService_.getProjects();
+        const std::vector<Project> projects = projectService_.getAllProjects();
 
         projectList_->setItems(
             projects,

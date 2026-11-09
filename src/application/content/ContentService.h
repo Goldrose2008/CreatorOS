@@ -18,7 +18,7 @@ public:
 
     std::vector<Content> getAllContents() const;
     std::vector<Content> getProjectContents(std::int64_t projectId) const;
-    std::optional<Content> getContent(std::int64_t id) const;
+    std::optional<Content> getContentByID(std::int64_t id) const;
 
     Content createAdditionalContent(
         std::int64_t projectId,

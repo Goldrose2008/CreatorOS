@@ -136,7 +136,7 @@ void TaskEditorDialog::reloadParentChoices()
 
         if (parentType == TaskParentType::Project)
         {
-            const auto projects = projectService_.getProjects();
+            const auto projects = projectService_.getAllProjects();
 
             for (const Project &project : projects)
                 parentCombo_->addItem(QString::fromUtf8(project.name.c_str()), QVariant::fromValue<qlonglong>(static_cast<qlonglong>(project.id)));

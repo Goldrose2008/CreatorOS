@@ -14,8 +14,8 @@ class PlatformService
 public:
     explicit PlatformService(IPlatformRepository &repository);
 
-    std::vector<Platform> getPlatforms() const;
-    std::optional<Platform> getPlatform(std::int64_t id) const;
+    std::vector<Platform> getAllPlatforms() const;
+    std::optional<Platform> getPlatformByID(std::int64_t id) const;
 
     Platform createPlatform(
         const std::string &name,

@@ -35,7 +35,7 @@ ProjectService::ProjectService(IProjectRepository &repository, IContentTypeRepos
 {
 }
 
-std::vector<Project> ProjectService::getProjects() const
+std::vector<Project> ProjectService::getAllProjects() const
 {
     return repository_.findAll();
 }
@@ -45,7 +45,7 @@ std::vector<ContentType> ProjectService::getContentTypes() const
     return contentTypeRepository_.findAll();
 }
 
-std::optional<Project> ProjectService::getProject(std::int64_t id) const
+std::optional<Project> ProjectService::getProjectByID(std::int64_t id) const
 {
     return repository_.findById(id);
 }

@@ -173,7 +173,7 @@ void ContentDetails::showContent(std::int64_t contentId)
 
     try
     {
-        const auto content = contentService_.getContent(contentId);
+        const auto content = contentService_.getContentByID(contentId);
 
         if (!content.has_value())
         {
@@ -189,7 +189,7 @@ void ContentDetails::showContent(std::int64_t contentId)
         }
 
         const Content &value = content.value();
-        const auto project = projectService_.getProject(value.projectId);
+        const auto project = projectService_.getProjectByID(value.projectId);
 
         if (!project.has_value())
             throw std::runtime_error("Content project was not found.");

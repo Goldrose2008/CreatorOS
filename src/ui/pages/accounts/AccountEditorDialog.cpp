@@ -104,7 +104,7 @@ AccountEditorDialog::AccountEditorDialog(
     contentLayout()->addWidget(profileUrlField);
     contentLayout()->addWidget(externalIdField);
 
-    const std::vector<Platform> platforms = platformService.getPlatforms();
+    const std::vector<Platform> platforms = platformService.getAllPlatforms();
 
     for (const Platform &platform : platforms)
         platformCombo_->addItem(QString::fromUtf8(platform.name.c_str()), QVariant::fromValue<qlonglong>(platform.id));

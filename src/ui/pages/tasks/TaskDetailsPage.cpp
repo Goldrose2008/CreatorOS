@@ -152,7 +152,7 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
 
     try
     {
-        const auto task = taskService_.getTask(taskId);
+        const auto task = taskService_.getTaskByID(taskId);
 
         if (!task.has_value())
         {
@@ -171,14 +171,14 @@ void TaskDetailsPage::showTask(std::int64_t taskId)
 
         if (task_.parentType == TaskParentType::Project)
         {
-            const auto project = projectService_.getProject(task_.parentId);
+            const auto project = projectService_.getProjectByID(task_.parentId);
 
             if (project.has_value())
                 parentName = QString::fromUtf8(project->name.c_str());
         }
         else
         {
-            const auto content = contentService_.getContent(task_.parentId);
+            const auto content = contentService_.getContentByID(task_.parentId);
 
             if (content.has_value())
                 parentName = QString::fromUtf8(content->name.c_str());

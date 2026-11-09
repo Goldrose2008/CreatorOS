@@ -9,12 +9,12 @@ PlatformService::PlatformService(IPlatformRepository &repository) : repository_(
 {
 }
 
-std::vector<Platform> PlatformService::getPlatforms() const
+std::vector<Platform> PlatformService::getAllPlatforms() const
 {
     return repository_.findAll();
 }
 
-std::optional<Platform> PlatformService::getPlatform(std::int64_t id) const
+std::optional<Platform> PlatformService::getPlatformByID(std::int64_t id) const
 {
     if (id <= 0)
         return std::nullopt;

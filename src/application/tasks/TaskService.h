@@ -16,9 +16,9 @@ class TaskService
 public:
     explicit TaskService(ITaskRepository &repository, IProjectRepository &projectRepository, IContentRepository &contentRepository);
 
-    std::vector<Task> getTasks() const;
+    std::vector<Task> getAllTasks() const;
     std::vector<Task> getTasksForParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId = std::nullopt) const;
-    std::optional<Task> getTask(std::int64_t id) const;
+    std::optional<Task> getTaskByID(std::int64_t id) const;
     
     Task createTask(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId, const std::string &name, const std::string &description, const std::string &deadlineAt);
 

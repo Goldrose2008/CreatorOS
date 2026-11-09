@@ -69,7 +69,7 @@ void PlatformsPage::reload()
 
     try
     {
-        const std::vector<Platform> platforms = platformService_.getPlatforms();
+        const std::vector<Platform> platforms = platformService_.getAllPlatforms();
 
         platformList_->setItems(
             platforms,

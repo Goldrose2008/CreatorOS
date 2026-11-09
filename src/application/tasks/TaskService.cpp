@@ -12,7 +12,7 @@ TaskService::TaskService(ITaskRepository &repository, IProjectRepository &projec
 {
 }
 
-std::vector<Task> TaskService::getTasks() const
+std::vector<Task> TaskService::getAllTasks() const
 {
     return repository_.findAll();
 }
@@ -25,7 +25,7 @@ std::vector<Task> TaskService::getTasksForParent(TaskParentType parentType, std:
     return repository_.findByParent(parentType, parentId, parentTaskId);
 }
 
-std::optional<Task> TaskService::getTask(std::int64_t id) const
+std::optional<Task> TaskService::getTaskByID(std::int64_t id) const
 {
     if (id <= 0)
         return std::nullopt;

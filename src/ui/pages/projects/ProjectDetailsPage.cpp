@@ -212,7 +212,7 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
 
     try
     {
-        const auto project = projectService_.getProject(projectId);
+        const auto project = projectService_.getProjectByID(projectId);
 
         if (!project.has_value())
         {

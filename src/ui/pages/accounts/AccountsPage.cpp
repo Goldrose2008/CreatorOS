@@ -50,7 +50,7 @@ AccountsPage::AccountsPage(AccountService &accountService, PlatformService &plat
         {
             try
             {
-                const auto platforms = platformService_.getPlatforms();
+                const auto platforms = platformService_.getAllPlatforms();
 
                 if (platforms.empty())
                 {
@@ -91,7 +91,7 @@ void AccountsPage::reload()
 
     try
     {
-        const std::vector<Platform> platforms = platformService_.getPlatforms();
+        const std::vector<Platform> platforms = platformService_.getAllPlatforms();
         std::unordered_map<std::int64_t, std::string> platformNames;
 
         for (const Platform &platform : platforms)

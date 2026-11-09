@@ -18,9 +18,9 @@ public:
     IContentTypeRepository &contentTypeRepository
 );
 
-    std::vector<Project> getProjects() const;
+    std::vector<Project> getAllProjects() const;
     std::vector<ContentType> getContentTypes() const;
-    std::optional<Project> getProject(std::int64_t id) const;
+    std::optional<Project> getProjectByID(std::int64_t id) const;
 
     Project createProject(
         const std::string &name,

@@ -25,7 +25,7 @@ std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) 
     return repository_.findByProjectId(projectId);
 }
 
-std::optional<Content> ContentService::getContent(std::int64_t id) const
+std::optional<Content> ContentService::getContentByID(std::int64_t id) const
 {
     if (id <= 0){return std::nullopt;}
     return repository_.findById(id);
