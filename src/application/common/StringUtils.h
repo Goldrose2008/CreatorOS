@@ -20,4 +20,9 @@ namespace CreatorStringUtils
 
         return std::string(value.substr(first, last - first));
     }
+
+        inline bool isBlank(std::string_view value)
+    {
+        return trim(value).empty();
+    }
 }

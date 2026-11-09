@@ -13,7 +13,7 @@ AccountService::AccountService(IAccountRepository &repository, IPlatformReposito
 
 bool AccountService::isAccountNameValid(const std::string &name) const
 {
-    return !CreatorStringUtils::trim(name).empty();
+    return !CreatorStringUtils::isBlank(name);
 }
 
 bool AccountService::isPlatformValid(std::int64_t platformId) const
