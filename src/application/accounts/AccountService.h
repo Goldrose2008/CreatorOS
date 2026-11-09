@@ -16,7 +16,8 @@ public:
     AccountService(IAccountRepository &repository, IPlatformRepository &platformRepository);
 
     bool isAccountNameValid(const std::string &name) const;
-    
+    bool isPlatformValid(std::int64_t platformId) const;
+
     std::vector<Account> getAccounts() const;
     std::optional<Account> getAccount(std::int64_t id) const;
 

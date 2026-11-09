@@ -16,6 +16,11 @@ bool AccountService::isAccountNameValid(const std::string &name) const
     return !CreatorStringUtils::trim(name).empty();
 }
 
+bool AccountService::isPlatformValid(std::int64_t platformId) const
+{
+    return platformId > 0 && platformRepository_.findById(platformId).has_value();
+}
+
 std::vector<Account> AccountService::getAccounts() const
 {
     return repository_.findAll();
@@ -31,7 +36,7 @@ std::optional<Account> AccountService::getAccount(std::int64_t id) const
 
 void AccountService::validatePlatform(std::int64_t platformId) const
 {
-    if (platformId <= 0 || !platformRepository_.findById(platformId).has_value())
+    if (!isPlatformValid(platformId))
         throw std::invalid_argument("Account platform was not found.");
 }
 
