@@ -150,10 +150,10 @@ bool AccountEditorDialog::save()
             const bool updated = accountService_.updateAccount(
                 accountId_,
                 platformId,
-                nameEdit_->text().trimmed().toStdString(),
-                usernameEdit_->text().trimmed().toStdString(),
-                profileUrlEdit_->text().trimmed().toStdString(),
-                externalIdEdit_->text().trimmed().toStdString()
+                nameEdit_->text().toStdString(),
+                usernameEdit_->text().toStdString(),
+                profileUrlEdit_->text().toStdString(),
+                externalIdEdit_->text().toStdString()
             );
 
             if (!updated)
@@ -164,10 +164,10 @@ bool AccountEditorDialog::save()
 
         accountService_.createAccount(
             platformId,
-            nameEdit_->text().trimmed().toStdString(),
-            usernameEdit_->text().trimmed().toStdString(),
-            profileUrlEdit_->text().trimmed().toStdString(),
-            externalIdEdit_->text().trimmed().toStdString()
+            nameEdit_->text().toStdString(),
+            usernameEdit_->text().toStdString(),
+            profileUrlEdit_->text().toStdString(),
+            externalIdEdit_->text().toStdString()
         );
 
         return true;
