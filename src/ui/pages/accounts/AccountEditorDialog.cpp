@@ -131,7 +131,7 @@ AccountEditorDialog::AccountEditorDialog(
 
 bool AccountEditorDialog::save()
 {
-    if (nameEdit_->text().trimmed().isEmpty())
+    if (!accountService_.isAccountNameValid(nameEdit_->text().toStdString()))
     {
         QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         nameEdit_->setFocus();

@@ -11,6 +11,11 @@ AccountService::AccountService(IAccountRepository &repository, IPlatformReposito
 {
 }
 
+bool AccountService::isAccountNameValid(const std::string &name) const
+{
+    return !CreatorStringUtils::trim(name).empty();
+}
+
 std::vector<Account> AccountService::getAccounts() const
 {
     return repository_.findAll();
@@ -47,7 +52,7 @@ Account AccountService::createAccount(
     account.profileUrl = CreatorStringUtils::trim(profileUrl);
     account.externalId = CreatorStringUtils::trim(externalId);
 
-    if (account.name.empty())
+    if (!isAccountNameValid(account.name))
         throw std::invalid_argument("Account name cannot be empty.");
 
     const std::int64_t id = repository_.create(account);
@@ -83,7 +88,7 @@ bool AccountService::updateAccount(
     account.profileUrl = CreatorStringUtils::trim(profileUrl);
     account.externalId = CreatorStringUtils::trim(externalId);
 
-    if (account.name.empty())
+    if (!isAccountNameValid(account.name))
         throw std::invalid_argument("Account name cannot be empty.");
 
     return repository_.update(account);
