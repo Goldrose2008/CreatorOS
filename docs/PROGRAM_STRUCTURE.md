@@ -22,7 +22,12 @@
 `/accounts/AccountService` - Что можно делать с сущностью Account: создание, редактирование, удаление и так далее.
 `/accounts/IAccountRepository` - перечень доступных операций в БД с сущностью Account.
 
-`/common/StringUtils.h` | Общая прикладная утилита нормализации строк, используемая несколькими application services вместо дублирования одинаковой реализации. |
+`/common/StringUtils.h` | Общая прикладная утилита для работы со строками, используемая несколькими application services.
+
+
+
+
+
 
 `/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
 `/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
