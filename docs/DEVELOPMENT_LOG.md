@@ -94,8 +94,8 @@ AccountService.cpp	Существует ли Platform с переданным ID
 `if (CreatorStringUtils::isBlank(name))
     throw std::invalid_argument("Name cannot be empty.");`
 
-#### 2.3 Унификация методов Service
-##### 2.3.1. Подготовить общий механизм создания
+#### 2.3 Унификация методов Service - в работе
+##### 2.3.1. Подготовить общий механизм создания - в работе
 Создать в src/application/common/ файл для общих методов, используемых сервисами.
 
 ##### 2.3.2. Перевести AccountService
