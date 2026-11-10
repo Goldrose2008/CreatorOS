@@ -72,7 +72,7 @@ std::optional<Project> ProjectRepository::findById(std::int64_t id) const
     return readProject(query);
 }
 
-std::int64_t ProjectRepository::createWithMainContent(const Project &project, const Content &mainContent)
+std::int64_t ProjectRepository::create(const Project &project, const Content &mainContent)
 {
     QSqlDatabase database = database_;
 

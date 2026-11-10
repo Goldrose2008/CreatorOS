@@ -30,13 +30,10 @@ Platform PlatformService::createPlatform(const std::string &name, const std::str
     if (platform.name.empty())
         throw std::invalid_argument("Platform name cannot be empty.");
 
-    const std::int64_t id = repository_.create(platform);
-    const auto createdPlatform = repository_.findById(id);
-
-    if (!createdPlatform.has_value())
-        throw std::runtime_error("Created platform could not be loaded.");
-
-    return createdPlatform.value();
+    return CreatorServiceUtils::createAndLoadEntity(
+        repository_,
+        "Created platform could not be loaded.",
+        platform);
 }
 
 bool PlatformService::updatePlatform(std::int64_t id, const std::string &name, const std::string &websiteUrl)

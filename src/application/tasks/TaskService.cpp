@@ -92,13 +92,10 @@ Task TaskService::createTask(
     task.status = TaskStatus::Todo;
     task.priority = 0;
 
-    const std::int64_t id = repository_.create(task);
-    const auto createdTask = repository_.findById(id);
-
-    if (!createdTask.has_value())
-        throw std::runtime_error("Created task could not be loaded.");
-
-    return createdTask.value();
+    return CreatorServiceUtils::createAndLoadEntity(
+        repository_,
+        "Created task could not be loaded.",
+        task);
 }
 
 bool TaskService::updateTask(std::int64_t id, const std::string &name, const std::string &description, const std::string &deadlineAt)

@@ -67,14 +67,10 @@ Content ContentService::createAdditionalContent(
     content.status = ContentStatus::Draft;
     content.progress = 0;
 
-    const std::int64_t id = repository_.create(content);
-
-    const auto createdContent = repository_.findById(id);
-
-    if (!createdContent.has_value())
-        throw std::runtime_error("Created content could not be loaded.");
-
-    return createdContent.value();
+    return CreatorServiceUtils::createAndLoadEntity(
+        repository_,
+        "Created content could not be loaded.",
+        content);
 }
 
 bool ContentService::updateContent(

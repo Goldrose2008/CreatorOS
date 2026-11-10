@@ -58,13 +58,10 @@ Account AccountService::createAccount(
     if (!isAccountNameValid(account.name))
         throw std::invalid_argument("Account name cannot be empty.");
 
-    const std::int64_t id = repository_.create(account);
-    const auto createdAccount = repository_.findById(id);
-
-    if (!createdAccount.has_value())
-        throw std::runtime_error("Created account could not be loaded.");
-
-    return createdAccount.value();
+    return CreatorServiceUtils::createAndLoadEntity(
+        repository_,
+        "Created account could not be loaded.",
+        account);
 }
 
 bool AccountService::updateAccount(

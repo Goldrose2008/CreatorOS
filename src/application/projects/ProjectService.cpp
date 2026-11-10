@@ -82,13 +82,11 @@ Project ProjectService::createProject(
     mainContent.role = ContentRole::Main;
     mainContent.name = normalizedContentName;
 
-    const std::int64_t id = repository_.createWithMainContent(project, mainContent);
-    const auto createdProject = repository_.findById(id);
-
-    if (!createdProject.has_value())
-        throw std::runtime_error("Created project could not be loaded.");
-
-    return createdProject.value();
+    return CreatorServiceUtils::createAndLoadEntity(
+        repository_,
+        "Created project could not be loaded.",
+        project,
+        mainContent);
 }
 
 bool ProjectService::updateProject(std::int64_t id, const std::string &name, const std::string &description, const std::string &plannedReleaseAt)
