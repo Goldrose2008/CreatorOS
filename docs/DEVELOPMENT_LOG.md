@@ -101,14 +101,14 @@ AccountService.cpp	Существует ли Platform с переданным ID
 Создать в src/application/common/ файл для общих методов, используемых сервисами.
 
 #### 2.4 `src/application/content` - в работе
-##### 2.4.1 Ревизия - в работе
+##### 2.4.1 Ревизия - завершён
 Пересмотреть структуру и содержание файлов.
 
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/content/`
 
 Кроме того, в ProjectDetailsPage.cpp обнаружила небольшой лишний фрагмент: там загружается список ContentType и вычисляется contentTypeName, но результат нигде не используется. Его можно удалить вместе с ненужным #include "ContentType.h".
 
-##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent()
+##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent() в работе
 добавить вспомогательную функцию setContentFields() по аналогии с функцией setAccountFields().
 
 ##### 2.4.3 IContentTypeRepository.h

@@ -32,6 +32,10 @@
 `/common/StringUtils.h` - Общие типизированные механизмы для работы со строками, используемая несколькими application services.
 `/common/ServiceUtils.h` - Общие типизированные механизмы для Services.
 
+`/content/ContentService` - Что можно делать с сущностью Content: создание, редактирование, удаление и так далее.
+`/content/IContentRepository.h` - перечень доступных операций в БД с сущностью Content.
+`/content/IContentTypeRepository` - Application-контракт чтения справочника типов контента. 
+
 
 
 
@@ -40,9 +44,7 @@
 `/platforms/IPlatformRepository.h` | Контракт хранилища Platform, включая проверку наличия связанных Accounts. |
 `/platforms/PlatformService.h + PlatformService.cpp` | Сценарии Platform: CRUD и запрет удаления при наличии связанных Accounts. |
 
-`/content/IContentTypeRepository.h` | Application-контракт чтения справочника типов контента. |
-`/content/IContentRepository.h` | Application-контракт хранилища Content: получение всех записей, выборка по Project/ID, создание, изменение и удаление. |
-`/content/ContentService.h + ContentService.cpp` | Реализация сценариев Content, включая получение всех записей, проверки Project/ContentType и запрет удаления Main Content. |
+
 
 `/projects/IProjectRepository.h` | Абстрактный контракт хранилища Project: получение списка, получение по ID, создание, изменение и удаление. |
 `/projects/ProjectService.h + ProjectService.cpp` | Реализация сценариев Project, включая нормализацию и базовую проверку входных данных, проверку ContentType и обращение к репозиториям. |

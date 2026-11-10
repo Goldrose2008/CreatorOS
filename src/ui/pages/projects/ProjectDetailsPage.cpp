@@ -19,7 +19,6 @@
 #include "../../../application/projects/ProjectService.h"
 #include "../../../application/content/ContentService.h"
 #include "../../../domain/models/Project.h"
-#include "../../../domain/models/ContentType.h"
 
 namespace
 {
@@ -239,21 +238,9 @@ void ProjectDetailsPage::showProject(std::int64_t projectId)
         clearContentCards();
 
         const auto contents = contentService_.getProjectContents(value.id);
-        const auto contentTypes = projectService_.getContentTypes();
 
         for (const Content &content : contents)
         {
-            QString contentTypeName;
-
-            for (const ContentType &contentType : contentTypes)
-            {
-                if (contentType.id == content.contentTypeId)
-                {
-                    contentTypeName = QString::fromUtf8(contentType.name.c_str());
-                    break;
-                }
-            }
-
             auto *card = new ContentCard(
                 content,
                 localization_,
