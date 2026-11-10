@@ -33,37 +33,24 @@ void AccountService::validatePlatform(std::int64_t platformId) const
         throw std::invalid_argument("Account platform was not found.");
 }
 
-void AccountService::setAccountFields(
-    Account &account,
-    std::int64_t platformId,
-    const std::string &name,
-    const std::string &username,
-    const std::string &profileUrl,
-    const std::string &externalId
-) const
+void AccountService::setAccountFields(Account &account, const Account &source) const
 {
-    if (!isAccountNameValid(name))
+    if (!isAccountNameValid(source.name))
         throw std::invalid_argument("Account name cannot be empty.");
 
-    account.platformId = platformId;
-    account.name = CreatorStringUtils::trim(name);
-    account.username = CreatorStringUtils::trim(username);
-    account.profileUrl = CreatorStringUtils::trim(profileUrl);
-    account.externalId = CreatorStringUtils::trim(externalId);
+    validatePlatform(source.platformId);
+
+    account.platformId = source.platformId;
+    account.name = CreatorStringUtils::trim(source.name);
+    account.username = CreatorStringUtils::trim(source.username);
+    account.profileUrl = CreatorStringUtils::trim(source.profileUrl);
+    account.externalId = CreatorStringUtils::trim(source.externalId);
 }
 
-Account AccountService::createAccount(
-    std::int64_t platformId,
-    const std::string &name,
-    const std::string &username,
-    const std::string &profileUrl,
-    const std::string &externalId
-)
+Account AccountService::createAccount(const Account &sourceAccount)
 {
-    validatePlatform(platformId);
-
     Account account;
-    setAccountFields(account, platformId, name, username, profileUrl, externalId);
+    setAccountFields(account, sourceAccount);
 
     return CreatorServiceUtils::createAndLoadEntity(
         repository_,
@@ -71,24 +58,15 @@ Account AccountService::createAccount(
         account);
 }
 
-bool AccountService::updateAccount(
-    std::int64_t id,
-    std::int64_t platformId,
-    const std::string &name,
-    const std::string &username,
-    const std::string &profileUrl,
-    const std::string &externalId
-)
+bool AccountService::updateAccount(const Account &sourceAccount)
 {
-    const auto existing = CreatorServiceUtils::findEntityByID(repository_, id);
+    const auto existingAccount = CreatorServiceUtils::findEntityByID(repository_, sourceAccount.id);
 
-    if (!existing.has_value())
+    if (!existingAccount.has_value())
         return false;
 
-    validatePlatform(platformId);
-
-    Account account = existing.value();
-    setAccountFields(account, platformId, name, username, profileUrl, externalId);  
+    Account account = existingAccount.value();
+    setAccountFields(account, sourceAccount);  
 
     return repository_.update(account);
 }
