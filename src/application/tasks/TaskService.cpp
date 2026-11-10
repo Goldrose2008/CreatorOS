@@ -57,7 +57,7 @@ void TaskService::validateParent(TaskParentType parentType, std::int64_t parentI
     if (parentTaskId.value() <= 0)
         throw std::invalid_argument("Parent task is invalid.");
 
-    const auto parentTask = repository_.findById(parentTaskId.value());
+    const auto parentTask = CreatorServiceUtils::findEntityByID(repository_, parentTaskId.value());
 
     if (!parentTask.has_value())
         throw std::invalid_argument("Parent task was not found.");
@@ -100,7 +100,7 @@ Task TaskService::createTask(
 
 bool TaskService::updateTask(std::int64_t id, const std::string &name, const std::string &description, const std::string &deadlineAt)
 {
-    const auto existingTask = repository_.findById(id);
+    const auto existingTask = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existingTask.has_value())
         return false;

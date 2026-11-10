@@ -73,7 +73,7 @@ bool AccountService::updateAccount(
     const std::string &externalId
 )
 {
-    const auto existing = repository_.findById(id);
+    const auto existing = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existing.has_value())
         return false;

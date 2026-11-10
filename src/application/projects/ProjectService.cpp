@@ -91,7 +91,7 @@ Project ProjectService::createProject(
 
 bool ProjectService::updateProject(std::int64_t id, const std::string &name, const std::string &description, const std::string &plannedReleaseAt)
 {
-    const auto existingProject = repository_.findById(id);
+    const auto existingProject = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existingProject.has_value())
         return false;

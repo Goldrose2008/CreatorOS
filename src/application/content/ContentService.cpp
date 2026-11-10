@@ -109,7 +109,7 @@ bool ContentService::updateContent(
 
 bool ContentService::deleteContent(std::int64_t id) const
 {
-    const auto existingContent = repository_.findById(id);
+    const auto existingContent = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existingContent.has_value())
         return false;

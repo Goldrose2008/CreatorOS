@@ -38,7 +38,7 @@ Platform PlatformService::createPlatform(const std::string &name, const std::str
 
 bool PlatformService::updatePlatform(std::int64_t id, const std::string &name, const std::string &websiteUrl)
 {
-    const auto existing = repository_.findById(id);
+    const auto existing = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existing.has_value())
         return false;
