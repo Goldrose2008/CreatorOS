@@ -47,7 +47,8 @@
 При этом инициализация будет запускаться явно из main.cpp. — ГОТОВО.
 
 ### 2. `src/application/` - в работе
-#### 2.1  `src/application/accounts/` - завершён
+#### 2.1  `src/application/accounts/` - в работе
+Ревизия
 ##### 2.1.1 Проверка пустого названия аккаунта - завершён
 проверку в AccountService выносим в отдельную функцию, которую вызываем в нужных местах в самом файле AccountService, а также в файлах `ui/pages/accounts/`, в зависимости от результата этой функции будет вызываться модальное окно или происходить сохранение. 
 
@@ -83,7 +84,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 переименовать функцию getAccount() в getAccountByID() 
 переименовать функцию getAccounts() в getAllAccounts() 
 
-#### 2.2 Файл src/application/common/StringUtils.h завершён 
+#### 2.2 Файл src/application/common/StringUtils.h - завершён
 Добавить функцию `isBlank(std::string_view value)`, возвращающую `bool`. Она использует существующую `trim()` для проверки, состоит ли строка только из пробельных символов, но не изменяет исходную строку и не возвращает нормализованное значение.
 
 `trim()` остаётся отдельной функцией: если нормализованную строку нужно сохранить в сущности, Service по-прежнему вызывает `trim()`.
@@ -94,9 +95,8 @@ AccountService.cpp	Существует ли Platform с переданным ID
 `if (CreatorStringUtils::isBlank(name))
     throw std::invalid_argument("Name cannot be empty.");`
 
-#### 2.3 Унификация методов Service - в работе
+#### 2.3 Унификация методов Service - завершён
 Создать в src/application/common/ файл для общих методов, используемых сервисами.
-
 
 #### 2.4 `src/application/content`
 Пересмотреть структуру и содержание файлов.

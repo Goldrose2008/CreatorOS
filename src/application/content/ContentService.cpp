@@ -42,7 +42,7 @@ Content ContentService::createAdditionalContent(
     if (projectId <= 0)
         throw std::invalid_argument("Project is required.");
 
-    if (!CreatorServiceUtils::findEntityByID(projectRepository_,projectId).has_value())
+    if (!CreatorServiceUtils::findEntityByID(projectRepository_, projectId).has_value())
         throw std::invalid_argument("Project was not found.");
 
     if (contentTypeId <= 0)
