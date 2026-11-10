@@ -39,13 +39,13 @@ void TaskService::validateParent(TaskParentType parentType, std::int64_t parentI
     switch (parentType)
     {
     case TaskParentType::Project:
-        if (!projectRepository_.findById(parentId).has_value())
+        if (!CreatorServiceUtils::findEntityByID(projectRepository_, parentId).has_value())
             throw std::invalid_argument("Task parent project was not found.");
 
         break;
 
     case TaskParentType::Content:
-        if (!contentRepository_.findById(parentId).has_value())
+        if (!CreatorServiceUtils::findEntityByID(contentRepository_, parentId).has_value())
             throw std::invalid_argument("Task parent content was not found.");
 
         break;

@@ -42,13 +42,13 @@ Content ContentService::createAdditionalContent(
     if (projectId <= 0)
         throw std::invalid_argument("Project is required.");
 
-    if (!projectRepository_.findById(projectId).has_value())
+    if (!CreatorServiceUtils::findEntityByID(projectRepository_,projectId).has_value())
         throw std::invalid_argument("Project was not found.");
 
     if (contentTypeId <= 0)
         throw std::invalid_argument("Content type is required.");
 
-    if (!contentTypeRepository_.findById(contentTypeId).has_value())
+    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, contentTypeId).has_value())
         throw std::invalid_argument("Content type was not found.");
 
     const std::string normalizedName = CreatorStringUtils::trim(name);
@@ -81,7 +81,7 @@ bool ContentService::updateContent(
     int priority
 )
 {
-    const auto existingContent = repository_.findById(id);
+    const auto existingContent = CreatorServiceUtils::findEntityByID(repository_, id);
 
     if (!existingContent.has_value())
         return false;
@@ -89,7 +89,7 @@ bool ContentService::updateContent(
     if (contentTypeId <= 0)
         throw std::invalid_argument("Content type is required.");
 
-    if (!contentTypeRepository_.findById(contentTypeId).has_value())
+    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, contentTypeId).has_value())
         throw std::invalid_argument("Content type was not found.");
 
     const std::string normalizedName = CreatorStringUtils::trim(name);

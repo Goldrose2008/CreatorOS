@@ -69,7 +69,7 @@ Project ProjectService::createProject(
     if (mainContentTypeId <= 0)
         throw std::invalid_argument("Main content type is required.");
 
-    const auto mainContentType = contentTypeRepository_.findById(mainContentTypeId);
+    const auto mainContentType = CreatorServiceUtils::findEntityByID(contentTypeRepository_, mainContentTypeId);
     
     if (!mainContentType.has_value())
         throw std::invalid_argument("Main content type was not found.");

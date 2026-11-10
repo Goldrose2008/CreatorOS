@@ -19,7 +19,7 @@ bool AccountService::isAccountNameValid(const std::string &name) const
 
 bool AccountService::isPlatformValid(std::int64_t platformId) const
 {
-    return platformId > 0 && platformRepository_.findById(platformId).has_value();
+    return CreatorServiceUtils::findEntityByID(platformRepository_, platformId).has_value();
 }
 
 std::vector<Account> AccountService::getAllAccounts() const
