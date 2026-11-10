@@ -143,7 +143,7 @@ bool ProjectRepository::update(const Project &project)
     if (!query.exec())
         throw std::runtime_error(query.lastError().text().toStdString());
 
-    return true;
+    return query.numRowsAffected() > 0;
 }
 
 bool ProjectRepository::remove(std::int64_t id)
