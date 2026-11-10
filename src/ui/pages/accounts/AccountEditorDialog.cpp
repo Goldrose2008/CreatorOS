@@ -141,20 +141,19 @@ bool AccountEditorDialog::applyChanges()
     if (platformCombo_->currentIndex() < 0)
         return false;
 
-    const std::int64_t platformId = platformCombo_->currentData().toLongLong();
+    Account sourceAccount;
+    sourceAccount.id = accountId_;
+    sourceAccount.platformId = platformCombo_->currentData().toLongLong();
+    sourceAccount.name = nameEdit_->text().toStdString();
+    sourceAccount.username = usernameEdit_->text().toStdString();
+    sourceAccount.profileUrl = profileUrlEdit_->text().toStdString();
+    sourceAccount.externalId = externalIdEdit_->text().toStdString();
 
     try
     {
         if (isEditMode())
         {
-            const bool updated = accountService_.updateAccount(
-                accountId_,
-                platformId,
-                nameEdit_->text().toStdString(),
-                usernameEdit_->text().toStdString(),
-                profileUrlEdit_->text().toStdString(),
-                externalIdEdit_->text().toStdString()
-            );
+            const bool updated = accountService_.updateAccount(sourceAccount);
 
             if (!updated)
                 QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("account.save.error")));
@@ -162,13 +161,7 @@ bool AccountEditorDialog::applyChanges()
             return updated;
         }
 
-        accountService_.createAccount(
-            platformId,
-            nameEdit_->text().toStdString(),
-            usernameEdit_->text().toStdString(),
-            profileUrlEdit_->text().toStdString(),
-            externalIdEdit_->text().toStdString()
-        );
+        accountService_.createAccount(sourceAccount);
 
         return true;
     }
