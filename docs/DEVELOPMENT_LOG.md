@@ -134,8 +134,13 @@ AccountService.cpp	Существует ли Platform с переданным ID
 - UI-классы будут получать список типов через ContentService.
 
 #### 2.5 `src/application/platforms`
+
+##### 2.5.1 Ревизия - завершён
 Пересмотреть структуру и содержание файлов.
-Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/.../`.
+Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/platforms/`
+
+##### 2.5.2 Рефакторинг createPlatform() и updatePlatform() в работе
+добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
 #### 2.6 `src/application/projects`
 Пересмотреть структуру и содержание файлов.

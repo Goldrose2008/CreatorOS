@@ -20,25 +20,13 @@ public:
     std::optional<Content> getContentByID(std::int64_t id) const;
     std::vector<Content> getProjectContents(std::int64_t projectId) const;
 
-    Content createAdditionalContent(
-        std::int64_t projectId,
-        std::int64_t contentTypeId,
-        const std::string &name,
-        const std::string &description,
-        int priority
-    );
-
-    bool updateContent(
-        std::int64_t id,
-        std::int64_t contentTypeId,
-        const std::string &name,
-        const std::string &description,
-        int priority
-    );
-
+    Content createAdditionalContent(const Content &sourceContent);
+    bool updateContent(const Content &sourceContent);
     bool deleteContent(std::int64_t id) const;
 
 private:
+    void setContentFields(Content &content, const Content &source) const;
+    
     IContentRepository &repository_;
     IProjectRepository &projectRepository_;
     IContentTypeRepository &contentTypeRepository_;

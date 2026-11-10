@@ -103,24 +103,18 @@ bool ContentEditorDialog::applyChanges()
 
     try
     {
-        if (isEditMode())
-        {
-            return contentService_.updateContent(
-                contentId_,
-                contentTypeId,
-                nameEdit_->text().toStdString(),
-                descriptionEdit_->toPlainText().toStdString(),
-                prioritySpin_->value()
-            );
-        }
+        Content sourceContent;
+        sourceContent.id = contentId_;
+        sourceContent.projectId = projectId_;
+        sourceContent.contentTypeId = contentTypeId;
+        sourceContent.name = nameEdit_->text().toStdString();
+        sourceContent.description = descriptionEdit_->toPlainText().toStdString();
+        sourceContent.priority = prioritySpin_->value();
 
-        contentService_.createAdditionalContent(
-            projectId_,
-            contentTypeId,
-            nameEdit_->text().toStdString(),
-            descriptionEdit_->toPlainText().toStdString(),
-            prioritySpin_->value()
-        );
+        if (isEditMode())
+            return contentService_.updateContent(sourceContent);
+
+        contentService_.createAdditionalContent(sourceContent);
 
         return true;
     }

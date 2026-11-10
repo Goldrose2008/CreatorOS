@@ -31,41 +31,38 @@ std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) 
     return repository_.findByProjectId(projectId);
 }
 
-Content ContentService::createAdditionalContent(
-    std::int64_t projectId,
-    std::int64_t contentTypeId,
-    const std::string &name,
-    const std::string &description,
-    int priority
-)
+void ContentService::setContentFields(Content &content, const Content &source) const
 {
-    if (projectId <= 0)
-        throw std::invalid_argument("Project is required.");
-
-    if (!CreatorServiceUtils::findEntityByID(projectRepository_, projectId).has_value())
-        throw std::invalid_argument("Project was not found.");
-
-    if (contentTypeId <= 0)
+    if (source.contentTypeId <= 0)
         throw std::invalid_argument("Content type is required.");
 
-    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, contentTypeId).has_value())
+    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())
         throw std::invalid_argument("Content type was not found.");
 
-    const std::string normalizedName = CreatorStringUtils::trim(name);
-
-    if (normalizedName.empty())
+    if (CreatorStringUtils::isBlank(source.name))
         throw std::invalid_argument("Content name cannot be empty.");
 
-    Content content;
+    content.contentTypeId = source.contentTypeId;
+    content.name = CreatorStringUtils::trim(source.name);
+    content.description = CreatorStringUtils::trim(source.description);
+    content.priority = source.priority;
+}
 
-    content.projectId = projectId;
-    content.contentTypeId = contentTypeId;
+Content ContentService::createAdditionalContent(const Content &sourceContent)
+{
+    if (sourceContent.projectId <= 0)
+        throw std::invalid_argument("Project is required.");
+
+    if (!CreatorServiceUtils::findEntityByID(projectRepository_, sourceContent.projectId).has_value())
+        throw std::invalid_argument("Project was not found.");
+
+    Content content;
+    content.projectId = sourceContent.projectId;
     content.role = ContentRole::Additional;
-    content.name = normalizedName;
-    content.description = CreatorStringUtils::trim(description);
-    content.priority = priority;
     content.status = ContentStatus::Draft;
     content.progress = 0;
+
+    setContentFields(content, sourceContent);
 
     return CreatorServiceUtils::createAndLoadEntity(
         repository_,
@@ -73,36 +70,15 @@ Content ContentService::createAdditionalContent(
         content);
 }
 
-bool ContentService::updateContent(
-    std::int64_t id,
-    std::int64_t contentTypeId,
-    const std::string &name,
-    const std::string &description,
-    int priority
-)
+bool ContentService::updateContent(const Content &sourceContent)
 {
-    const auto existingContent = CreatorServiceUtils::findEntityByID(repository_, id);
+    const auto existingContent = CreatorServiceUtils::findEntityByID(repository_, sourceContent.id);
 
     if (!existingContent.has_value())
         return false;
 
-    if (contentTypeId <= 0)
-        throw std::invalid_argument("Content type is required.");
-
-    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, contentTypeId).has_value())
-        throw std::invalid_argument("Content type was not found.");
-
-    const std::string normalizedName = CreatorStringUtils::trim(name);
-
-    if (normalizedName.empty())
-        throw std::invalid_argument("Content name cannot be empty.");
-
     Content content = existingContent.value();
-
-    content.contentTypeId = contentTypeId;
-    content.name = normalizedName;
-    content.description = CreatorStringUtils::trim(description);
-    content.priority = priority;
+    setContentFields(content, sourceContent);
 
     return repository_.update(content);
 }
