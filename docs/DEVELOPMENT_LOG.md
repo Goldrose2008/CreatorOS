@@ -108,10 +108,10 @@ AccountService.cpp	Существует ли Platform с переданным ID
 
 Кроме того, в ProjectDetailsPage.cpp обнаружила небольшой лишний фрагмент: там загружается список ContentType и вычисляется contentTypeName, но результат нигде не используется. Его можно удалить вместе с ненужным #include "ContentType.h".
 
-##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent() в работе
+##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent() - завершён
 добавить вспомогательную функцию setContentFields() по аналогии с функцией setAccountFields().
 
-##### 2.4.3 IContentTypeRepository.h
+##### 2.4.3 IContentTypeRepository.h - в работе
 Можно ли избавиться от него?
 
 Да, потенциально можно.
