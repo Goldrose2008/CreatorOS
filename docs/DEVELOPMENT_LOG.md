@@ -47,7 +47,7 @@
 При этом инициализация будет запускаться явно из main.cpp. — ГОТОВО.
 
 ### 2. `src/application/` - в работе
-#### 2.1  `src/application/accounts/` - в работе
+#### 2.1  `src/application/accounts/` - завершён
 ##### 2.1.1 Проверка пустого названия аккаунта - завершён
 проверку в AccountService выносим в отдельную функцию, которую вызываем в нужных местах в самом файле AccountService, а также в файлах `ui/pages/accounts/`, в зависимости от результата этой функции будет вызываться модальное окно или происходить сохранение. 
 
@@ -83,7 +83,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 переименовать функцию getAccount() в getAccountByID() 
 переименовать функцию getAccounts() в getAllAccounts() 
 
-##### 2.1.6 Ревизия IAccountRepository - в работе
+##### 2.1.6 Ревизия IAccountRepository - завершён
 провести ревизию IAccountRepository, а также всех I...Repository
 
 #### 2.2 Файл src/application/common/StringUtils.h - завершён
@@ -100,7 +100,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 #### 2.3 Унификация методов Service - завершён
 Создать в src/application/common/ файл для общих методов, используемых сервисами.
 
-#### 2.4 `src/application/content`
+#### 2.4 `src/application/content` - в работе
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/.../`.
 
