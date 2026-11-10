@@ -2,8 +2,9 @@
 
 #include <stdexcept>
 
-#include "../content/IContentTypeRepository.h"
+#include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
+#include "../content/IContentTypeRepository.h"
 
 namespace
 {
@@ -47,7 +48,7 @@ std::vector<ContentType> ProjectService::getContentTypes() const
 
 std::optional<Project> ProjectService::getProjectByID(std::int64_t id) const
 {
-    return repository_.findById(id);
+    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 Project ProjectService::createProject(

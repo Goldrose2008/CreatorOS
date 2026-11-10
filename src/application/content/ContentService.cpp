@@ -4,8 +4,9 @@
 
 #include "IContentRepository.h"
 #include "IContentTypeRepository.h"
-#include "../projects/IProjectRepository.h"
+#include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
+#include "../projects/IProjectRepository.h"
 
 ContentService::ContentService(IContentRepository &repository, IProjectRepository &projectRepository, IContentTypeRepository &contentTypeRepository)
     : repository_(repository), projectRepository_(projectRepository), contentTypeRepository_(contentTypeRepository)
@@ -27,8 +28,7 @@ std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) 
 
 std::optional<Content> ContentService::getContentByID(std::int64_t id) const
 {
-    if (id <= 0){return std::nullopt;}
-    return repository_.findById(id);
+    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 Content ContentService::createAdditionalContent(

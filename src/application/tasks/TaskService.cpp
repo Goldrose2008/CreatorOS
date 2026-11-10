@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "ITaskRepository.h"
+#include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
 #include "../content/IContentRepository.h"
 #include "../projects/IProjectRepository.h"
@@ -27,10 +28,7 @@ std::vector<Task> TaskService::getTasksForParent(TaskParentType parentType, std:
 
 std::optional<Task> TaskService::getTaskByID(std::int64_t id) const
 {
-    if (id <= 0)
-        return std::nullopt;
-
-    return repository_.findById(id);
+    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 void TaskService::validateParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId) const

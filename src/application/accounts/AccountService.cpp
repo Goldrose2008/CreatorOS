@@ -3,8 +3,9 @@
 #include <stdexcept>
 
 #include "IAccountRepository.h"
-#include "../platforms/IPlatformRepository.h"
+#include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
+#include "../platforms/IPlatformRepository.h"
 
 AccountService::AccountService(IAccountRepository &repository, IPlatformRepository &platformRepository)
     : repository_(repository), platformRepository_(platformRepository)
@@ -28,10 +29,7 @@ std::vector<Account> AccountService::getAllAccounts() const
 
 std::optional<Account> AccountService::getAccountByID(std::int64_t id) const
 {
-    if (id <= 0)
-        return std::nullopt;
-
-    return repository_.findById(id);
+    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 void AccountService::validatePlatform(std::int64_t platformId) const

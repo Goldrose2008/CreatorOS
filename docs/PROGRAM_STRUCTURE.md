@@ -22,7 +22,8 @@
 `/accounts/AccountService` - Что можно делать с сущностью Account: создание, редактирование, удаление и так далее.
 `/accounts/IAccountRepository` - перечень доступных операций в БД с сущностью Account.
 
-`/common/StringUtils.h` | Общая прикладная утилита для работы со строками, используемая несколькими application services.
+`/common/StringUtils.h` - Общие типизированные механизмы для работы со строками, используемая несколькими application services.
+`/common/ServiceUtils.h` - Общие типизированные механизмы для Services.
 
 
 

@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include "IPlatformRepository.h"
+#include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
 
 PlatformService::PlatformService(IPlatformRepository &repository) : repository_(repository)
@@ -16,10 +17,7 @@ std::vector<Platform> PlatformService::getAllPlatforms() const
 
 std::optional<Platform> PlatformService::getPlatformByID(std::int64_t id) const
 {
-    if (id <= 0)
-        return std::nullopt;
-
-    return repository_.findById(id);
+    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 Platform PlatformService::createPlatform(const std::string &name, const std::string &websiteUrl)
