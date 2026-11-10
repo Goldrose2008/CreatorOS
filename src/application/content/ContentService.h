@@ -17,8 +17,8 @@ public:
     explicit ContentService(IContentRepository &repository, IProjectRepository &projectRepository, IContentTypeRepository &contentTypeRepository);
 
     std::vector<Content> getAllContents() const;
-    std::vector<Content> getProjectContents(std::int64_t projectId) const;
     std::optional<Content> getContentByID(std::int64_t id) const;
+    std::vector<Content> getProjectContents(std::int64_t projectId) const;
 
     Content createAdditionalContent(
         std::int64_t projectId,

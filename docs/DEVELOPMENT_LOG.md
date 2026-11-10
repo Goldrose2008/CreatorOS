@@ -103,11 +103,15 @@ AccountService.cpp	Существует ли Platform с переданным ID
 #### 2.4 `src/application/content` - в работе
 ##### 2.4.1 Ревизия - в работе
 Пересмотреть структуру и содержание файлов.
-Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/.../`.
+
+Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/content/`
 
 Кроме того, в ProjectDetailsPage.cpp обнаружила небольшой лишний фрагмент: там загружается список ContentType и вычисляется contentTypeName, но результат нигде не используется. Его можно удалить вместе с ненужным #include "ContentType.h".
 
-##### 2.4.2 IContentTypeRepository.h
+##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent()
+добавить вспомогательную функцию setContentFields() по аналогии с функцией setAccountFields().
+
+##### 2.4.3 IContentTypeRepository.h
 Можно ли избавиться от него?
 
 Да, потенциально можно.
@@ -121,7 +125,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 
 Мой предварительный вывод: это хороший кандидат на упрощение, но сначала нужно посмотреть, как именно будут развиваться типы контента и другие справочники. Пока удалять его не будем.
 
-##### 2.4.3 перенести метод ProjectService::getContentTypes() в ContentService
+##### 2.4.4 перенести метод ProjectService::getContentTypes() в ContentService
 Нашла один архитектурный момент: получение списка типов контента сейчас находится в ProjectService::getContentTypes(), хотя этот справочник используется не только при создании Project, но и при создании, редактировании и отображении Content.
 
 Предлагаю перенести этот метод в ContentService. Тогда:

@@ -18,17 +18,17 @@ std::vector<Content> ContentService::getAllContents() const
     return repository_.findAll();
 }
 
+std::optional<Content> ContentService::getContentByID(std::int64_t id) const
+{
+    return CreatorServiceUtils::findEntityByID(repository_, id);
+}
+
 std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) const
 {
     if (projectId <= 0)
         return {};
 
     return repository_.findByProjectId(projectId);
-}
-
-std::optional<Content> ContentService::getContentByID(std::int64_t id) const
-{
-    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 Content ContentService::createAdditionalContent(
