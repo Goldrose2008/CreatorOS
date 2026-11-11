@@ -41,11 +41,6 @@ std::vector<Project> ProjectService::getAllProjects() const
     return repository_.findAll();
 }
 
-std::vector<ContentType> ProjectService::getContentTypes() const
-{
-    return contentTypeRepository_.findAll();
-}
-
 std::optional<Project> ProjectService::getProjectByID(std::int64_t id) const
 {
     return CreatorServiceUtils::findEntityByID(repository_, id);

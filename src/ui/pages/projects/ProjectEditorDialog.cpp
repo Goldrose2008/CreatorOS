@@ -8,12 +8,13 @@
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 
+#include "../../../application/content/ContentService.h"
 #include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/ContentType.h"
 #include "../../components/forms/FormField.h"
 #include "../../localization/LocalizationService.h"
 
-ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
+ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent, std::optional<Project> project)
     : EditorDialog(
         project.has_value() ? EditorDialog::Mode::Edit : EditorDialog::Mode::Create,
         project.has_value() ? localization.text(QStringLiteral("common.dialog.edit.title")) : localization.text(QStringLiteral("project.create.title")),
@@ -22,6 +23,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
         parent
     ),
       projectService_(projectService),
+      contentService_(contentService),
       localization_(localization),
       projectId_(project.has_value() ? project->id : 0),
       nameEdit_(new QLineEdit(this)),
@@ -78,7 +80,7 @@ ProjectEditorDialog::ProjectEditorDialog(ProjectService &projectService, Localiz
         contentLayout()->addWidget(contentTypeField);
         contentLayout()->addWidget(contentNameField);
 
-        const auto contentTypes = projectService_.getContentTypes();
+        const auto contentTypes = contentService_.getContentTypes();
 
         for (const ContentType &contentType : contentTypes)
             contentTypeCombo_->addItem(QString::fromUtf8(contentType.name.c_str()), QVariant::fromValue(contentType.id));

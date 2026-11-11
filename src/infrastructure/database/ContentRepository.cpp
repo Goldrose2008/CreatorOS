@@ -80,6 +80,22 @@ std::vector<Content> ContentRepository::findAll() const
     return contents;
 }
 
+std::optional<Content> ContentRepository::findById(std::int64_t id) const
+{
+    QSqlQuery query(database_);
+
+    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM contents WHERE id = :id"));
+    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
+
+    if (!query.exec())
+        throw std::runtime_error(query.lastError().text().toStdString());
+
+    if (!query.next())
+        return std::nullopt;
+
+    return readContent(query);
+}
+
 std::vector<Content> ContentRepository::findByProjectId(std::int64_t projectId) const
 {
     QSqlQuery query(database_);
@@ -96,22 +112,6 @@ std::vector<Content> ContentRepository::findByProjectId(std::int64_t projectId) 
         contents.push_back(readContent(query));
 
     return contents;
-}
-
-std::optional<Content> ContentRepository::findById(std::int64_t id) const
-{
-    QSqlQuery query(database_);
-
-    query.prepare(QStringLiteral("SELECT ") + selectColumns() + QStringLiteral("FROM contents WHERE id = :id"));
-    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(id));
-
-    if (!query.exec())
-        throw std::runtime_error(query.lastError().text().toStdString());
-
-    if (!query.next())
-        return std::nullopt;
-
-    return readContent(query);
 }
 
 std::int64_t ContentRepository::create(const Content &content)

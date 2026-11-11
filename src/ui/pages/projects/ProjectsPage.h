@@ -6,6 +6,7 @@
 class EntityList;
 class LocalizationService;
 class PageHeader;
+class ContentService;
 class ProjectService;
 
 class ProjectsPage final : public QWidget
@@ -13,7 +14,7 @@ class ProjectsPage final : public QWidget
     Q_OBJECT
 
 public:
-    explicit ProjectsPage(ProjectService &projectService, LocalizationService &localization, QWidget *parent = nullptr);
+    explicit ProjectsPage(ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent = nullptr);
 
     void reload();
 
@@ -22,6 +23,7 @@ signals:
 
 private:
     ProjectService &projectService_;
+    ContentService &contentService_;
     LocalizationService &localization_;
 
     PageHeader *header_;

@@ -81,6 +81,7 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
 
             ProjectEditorDialog dialog(
                 projectService_,
+                contentService_,
                 localization_,
                 this,
                 project_
@@ -141,7 +142,7 @@ ProjectDetailsPage::ProjectDetailsPage(ProjectService &projectService, ContentSe
             if (project_.id <= 0)
                 return;
 
-            ContentEditorDialog dialog(contentService_, projectService_, localization_, this, project_.id);
+            ContentEditorDialog dialog(contentService_, localization_, this, project_.id);
 
             if (dialog.exec() == QDialog::Accepted)
                 showProject(project_.id);

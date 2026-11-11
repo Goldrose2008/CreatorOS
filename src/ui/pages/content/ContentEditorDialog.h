@@ -12,7 +12,6 @@ class QPlainTextEdit;
 class QSpinBox;
 class ContentService;
 class LocalizationService;
-class ProjectService;
 
 class ContentEditorDialog final : public EditorDialog
 {
@@ -21,7 +20,6 @@ class ContentEditorDialog final : public EditorDialog
 public:
     explicit ContentEditorDialog(
         ContentService &contentService,
-        ProjectService &projectService,
         LocalizationService &localization,
         QWidget *parent = nullptr,
         std::int64_t projectId = 0,
@@ -33,7 +31,6 @@ protected:
 
 private:
     ContentService &contentService_;
-    ProjectService &projectService_;
     LocalizationService &localization_;
 
     std::int64_t projectId_;

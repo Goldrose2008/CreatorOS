@@ -23,6 +23,11 @@ std::optional<Content> ContentService::getContentByID(std::int64_t id) const
     return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
+std::vector<ContentType> ContentService::getContentTypes() const
+{
+    return contentTypeRepository_.findAll();
+}
+
 std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) const
 {
     if (projectId <= 0)

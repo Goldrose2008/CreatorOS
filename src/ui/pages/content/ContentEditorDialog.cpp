@@ -8,14 +8,12 @@
 #include <QVBoxLayout>
 
 #include "../../../application/content/ContentService.h"
-#include "../../../application/projects/ProjectService.h"
 #include "../../../domain/models/ContentType.h"
 #include "../../components/forms/FormField.h"
 #include "../../localization/LocalizationService.h"
 
 ContentEditorDialog::ContentEditorDialog(
     ContentService &contentService,
-    ProjectService &projectService,
     LocalizationService &localization,
     QWidget *parent,
     std::int64_t projectId,
@@ -29,7 +27,6 @@ ContentEditorDialog::ContentEditorDialog(
         parent
     ),
       contentService_(contentService),
-      projectService_(projectService),
       localization_(localization),
       projectId_(content.has_value() ? content->projectId : projectId),
       contentId_(content.has_value() ? content->id : 0),
@@ -63,7 +60,7 @@ ContentEditorDialog::ContentEditorDialog(
     contentLayout()->addWidget(descriptionField);
     contentLayout()->addWidget(priorityField);
 
-    const auto contentTypes = projectService_.getContentTypes();
+    const auto contentTypes = contentService_.getContentTypes();
 
     for (const ContentType &contentType : contentTypes)
         contentTypeCombo_->addItem(QString::fromUtf8(contentType.name.c_str()), QVariant::fromValue(contentType.id));

@@ -111,13 +111,44 @@ AccountService.cpp	Существует ли Platform с переданным ID
 ##### 2.4.2 Рефакторинг createAdditionalContent() и updateContent() - завершён
 добавить вспомогательную функцию setContentFields() по аналогии с функцией setAccountFields().
 
-##### 2.4.3 перенести метод ProjectService::getContentTypes() в ContentService - в работе
+##### 2.4.3 перенести метод ProjectService::getContentTypes() в ContentService - завершён
 Нашла один архитектурный момент: получение списка типов контента сейчас находится в ProjectService::getContentTypes(), хотя этот справочник используется не только при создании Project, но и при создании, редактировании и отображении Content.
 
 Предлагаю перенести этот метод в ContentService. Тогда:
 - ContentService будет предоставлять UI список ContentType и проверять их существование;
 - ProjectService продолжит проверять ContentType при создании Project, используя свой Repository, но перестанет предоставлять UI метод получения списка типов;
 - UI-классы будут получать список типов через ContentService.
+
+##### 2.4.4 Ревизия функции getProjectContents - в работе
+Разобраться, зачем нужна функция getProjectContents()
+
+##### 2.4.5 Ревизия функции setContentFields()
+Считаю, что в функции setContentFields() не нужна проверка `if (source.contentTypeId <= 0)`, т.к. эта проверка проводится в функции findEntityByID(), которая вызывается в следующей проверке `if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())`. Делать проверку `if (source.contentTypeId <= 0)` только ради сообщения `Content type is required.` нецелесообразно. Для этой цели можно в функции findEntityByID() добавить сообщение о некорректности ID.
+
+```
+void ContentService::setContentFields(Content &content, const Content &source) const
+{
+    if (source.contentTypeId <= 0)
+        throw std::invalid_argument("Content type is required.");
+
+    if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())
+        throw std::invalid_argument("Content type was not found.");
+
+    if (CreatorStringUtils::isBlank(source.name))
+        throw std::invalid_argument("Content name cannot be empty.");
+
+    content.contentTypeId = source.contentTypeId;
+    content.name = CreatorStringUtils::trim(source.name);
+    content.description = CreatorStringUtils::trim(source.description);
+    content.priority = source.priority;
+}
+```
+##### 2.4.6 Ревизия функции createAdditionalContent
+просмотреть где и как создается основной контент и возможно ли в одной функции объединить создание основного и доп. контента. 
+
+##### 2.4.7 Ревизия функции updateContent
+
+##### 2.4.8 Ревизия функции deleteContent
 
 #### 2.5 `src/application/platforms`
 

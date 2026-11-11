@@ -86,7 +86,6 @@ ContentDetails::ContentDetails(
 
             ContentEditorDialog dialog(
                 contentService_,
-                projectService_,
                 localization_,
                 this,
                 content_.projectId,
@@ -194,7 +193,7 @@ void ContentDetails::showContent(std::int64_t contentId)
         if (!project.has_value())
             throw std::runtime_error("Content project was not found.");
 
-        const auto contentTypes = projectService_.getContentTypes();
+        const auto contentTypes = contentService_.getContentTypes();
         QString contentTypeName;
 
         for (const ContentType &contentType : contentTypes)

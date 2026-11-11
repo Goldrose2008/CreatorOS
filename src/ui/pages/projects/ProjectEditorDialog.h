@@ -12,19 +12,21 @@ class QLineEdit;
 class QPlainTextEdit;
 class LocalizationService;
 class ProjectService;
+class ContentService;
 
 class ProjectEditorDialog final : public EditorDialog
 {
     Q_OBJECT
 
 public:
-    explicit ProjectEditorDialog(ProjectService &projectService, LocalizationService &localization, QWidget *parent = nullptr,std::optional<Project> project = std::nullopt);
+    explicit ProjectEditorDialog(ProjectService &projectService, ContentService &contentService, LocalizationService &localization, QWidget *parent = nullptr,std::optional<Project> project = std::nullopt);
 
 protected:
     bool applyChanges() override;
 
 private:
     ProjectService &projectService_;
+    ContentService &contentService_;
     LocalizationService &localization_;
 
     std::int64_t projectId_ = 0;

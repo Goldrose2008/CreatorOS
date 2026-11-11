@@ -93,7 +93,7 @@ AppShell::AppShell(
         localization_->text(QStringLiteral("home"))
     );
 
-    auto *projectsPage = new ProjectsPage(*projectService_, *localization_, workspace_);
+    auto *projectsPage = new ProjectsPage(*projectService_, *contentService_, *localization_, workspace_);
     auto *projectDetailsPage = new ProjectDetailsPage(*projectService_, *contentService_, *localization_, workspace_);
 
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
