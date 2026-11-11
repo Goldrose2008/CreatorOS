@@ -119,10 +119,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 - ProjectService продолжит проверять ContentType при создании Project, используя свой Repository, но перестанет предоставлять UI метод получения списка типов;
 - UI-классы будут получать список типов через ContentService.
 
-##### 2.4.4 Ревизия функции getProjectContents - в работе
-Разобраться, зачем нужна функция getProjectContents()
-
-##### 2.4.5 Ревизия функции setContentFields()
+##### 2.4.4 Ревизия функции setContentFields() - в работе
 Считаю, что в функции setContentFields() не нужна проверка `if (source.contentTypeId <= 0)`, т.к. эта проверка проводится в функции findEntityByID(), которая вызывается в следующей проверке `if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())`. Делать проверку `if (source.contentTypeId <= 0)` только ради сообщения `Content type is required.` нецелесообразно. Для этой цели можно в функции findEntityByID() добавить сообщение о некорректности ID.
 
 ```
@@ -143,12 +140,12 @@ void ContentService::setContentFields(Content &content, const Content &source) c
     content.priority = source.priority;
 }
 ```
-##### 2.4.6 Ревизия функции createAdditionalContent
+##### 2.4.5 Ревизия функции createAdditionalContent
 просмотреть где и как создается основной контент и возможно ли в одной функции объединить создание основного и доп. контента. 
 
-##### 2.4.7 Ревизия функции updateContent
+##### 2.4.6 Ревизия функции updateContent
 
-##### 2.4.8 Ревизия функции deleteContent
+##### 2.4.7 Ревизия функции deleteContent
 
 #### 2.5 `src/application/platforms`
 
