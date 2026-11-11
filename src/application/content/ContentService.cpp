@@ -38,9 +38,6 @@ std::vector<Content> ContentService::getProjectContents(std::int64_t projectId) 
 
 void ContentService::setContentFields(Content &content, const Content &source) const
 {
-    if (source.contentTypeId <= 0)
-        throw std::invalid_argument("Content type is required.");
-
     if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())
         throw std::invalid_argument("Content type was not found.");
 
@@ -55,9 +52,6 @@ void ContentService::setContentFields(Content &content, const Content &source) c
 
 Content ContentService::createAdditionalContent(const Content &sourceContent)
 {
-    if (sourceContent.projectId <= 0)
-        throw std::invalid_argument("Project is required.");
-
     if (!CreatorServiceUtils::findEntityByID(projectRepository_, sourceContent.projectId).has_value())
         throw std::invalid_argument("Project was not found.");
 
