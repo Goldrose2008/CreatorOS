@@ -42,7 +42,6 @@ namespace
     };
 }
 
-
 AccountEditorDialog::AccountEditorDialog(
     AccountService &accountService,
     PlatformService &platformService,

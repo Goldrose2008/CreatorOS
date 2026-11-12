@@ -25,7 +25,6 @@ public:
     bool deleteAccount(std::int64_t id) const;
 
 private:
-    void validatePlatform(std::int64_t platformId) const;
     void setAccountFields(Account &account, const Account &source) const;
 
     IAccountRepository &repository_;

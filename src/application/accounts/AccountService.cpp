@@ -27,18 +27,13 @@ bool AccountService::isAccountNameValid(const std::string &name) const
     return !CreatorStringUtils::isBlank(name);
 }
 
-void AccountService::validatePlatform(std::int64_t platformId) const
-{
-    if (!CreatorServiceUtils::findEntityByID(platformRepository_, platformId).has_value())
-        throw std::invalid_argument("Account platform was not found.");
-}
-
 void AccountService::setAccountFields(Account &account, const Account &source) const
 {
     if (!isAccountNameValid(source.name))
         throw std::invalid_argument("Account name cannot be empty.");
 
-    validatePlatform(source.platformId);
+    if (!CreatorServiceUtils::findEntityByID(platformRepository_, source.platformId).has_value())
+        throw std::invalid_argument("Account platform was not found.");
 
     account.platformId = source.platformId;
     account.name = CreatorStringUtils::trim(source.name);
