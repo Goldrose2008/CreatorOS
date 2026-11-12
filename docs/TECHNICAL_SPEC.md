@@ -93,7 +93,7 @@ Specialized UI class
 Внутри класса используется обычная composition из Qt-объектов:
 
 ~~~text
-ProjectCard
+ObjectCard
 ├── QLabel
 ├── QPushButton
 ├── QProgressBar
@@ -106,8 +106,6 @@ ProjectCard
 Card
   ↓
 EntityCard
-  ├── ProjectCard
-  ├── ContentCard
   └── TaskCard
 ~~~
 
@@ -374,8 +372,8 @@ EntityCard — базовый C++/Qt-класс для целостного UI-�
 Card
   ↓
 EntityCard
-  ├── ProjectCard
-  ├── ContentCard
+  ├── ObjectCard
+  ├── ObjectCard
   ├── TaskCard
   ├── AssetCard
   └── PublicationCard
