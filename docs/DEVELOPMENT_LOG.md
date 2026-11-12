@@ -100,7 +100,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 #### 2.3 Унификация методов Service - завершён
 Создать в src/application/common/ файл для общих методов, используемых сервисами.
 
-#### 2.4 `src/application/content` - в работе
+#### 2.4 `src/application/content` - завершён
 ##### 2.4.1 Ревизия - завершён
 Пересмотреть структуру и содержание файлов.
 
@@ -122,31 +122,25 @@ AccountService.cpp	Существует ли Platform с переданным ID
 ##### 2.4.4 Ревизия функции setContentFields() - завершён
 Считаю, что в функции setContentFields() не нужна проверка `if (source.contentTypeId <= 0)`, т.к. эта проверка проводится в функции findEntityByID(), которая вызывается в следующей проверке `if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())`. Делать проверку `if (source.contentTypeId <= 0)` только ради сообщения `Content type is required.` нецелесообразно. Для этой цели можно в функции findEntityByID() добавить сообщение о некорректности ID.
 
-##### 2.4.5 Ревизия создания основного и дополнительного контента - в работе
-Считаю неправильным, что проект сам создает основной контент. Правильнее, если за создание любого контента будет отвечаеть contentService, а при создании проекта будет вызываться функция создания осн.контента из contentService. 
-Также считаю правильным, если одна функция в contentService будет отвечать и за создание основного и за создание доп. контента. Роль контента можно получать как параметр функции. При создании контента будет передавать "основной", при нажатии на кнопку "Создать контент" на странице проекта - "дополнительный". 
-В связи с вышесказанным необходимо переименовать функцию createAdditionalContent() в createContent().
+#### 2.5 `src/application/platforms` - в работе
 
-##### 2.4.6 Ревизия функции updateContent
-
-##### 2.4.7 Ревизия функции deleteContent
-
-#### 2.5 `src/application/platforms`
-
-##### 2.5.1 Ревизия - завершён
+##### 2.5.1 Ревизия - в работе
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/platforms/`
 
-##### 2.5.2 Рефакторинг createPlatform() и updatePlatform() в работе
+##### 2.5.2 Рефакторинг createPlatform() и updatePlatform() 
 добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
-#### 2.6 `src/application/projects`
+#### 2.6 `src/application/tasks`
+##### 2.6.1 Ревизия
 Пересмотреть структуру и содержание файлов.
-Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/.../`.
+Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/tasks/`
 
-#### 2.7 `src/application/tasks`
-Пересмотреть структуру и содержание файлов.
-Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/.../`.
+##### 2.6.2 Рефакторинг createPlatform() и updatePlatform() 
+добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
+
+#### 2.7 `src/application/content` и `src/application/projects`
+Объединить project и content в один Объект
 
 ### 3. `src/domain/models/`
 Пересмотреть структуру и содержание файлов.
