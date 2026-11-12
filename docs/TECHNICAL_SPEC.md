@@ -106,6 +106,7 @@ ObjectCard
 Card
   ↓
 EntityCard
+  ├── ObjectCard
   └── TaskCard
 ~~~
 
@@ -372,7 +373,6 @@ EntityCard — базовый C++/Qt-класс для целостного UI-�
 Card
   ↓
 EntityCard
-  ├── ObjectCard
   ├── ObjectCard
   ├── TaskCard
   ├── AssetCard
