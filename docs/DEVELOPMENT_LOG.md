@@ -128,7 +128,30 @@ AccountService.cpp	Существует ли Platform с переданным ID
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/platforms/`
 
-##### 2.5.2 Рефакторинг createPlatform() и updatePlatform() 
+##### 2.5.2 повторная нормализация URL.
+в PlatformEditorDialog при сохранении URL передаётся в сервис так
+```
+websiteUrlEdit_->text().trimmed().toStdString()
+```
+При этом PlatformService::createPlatform() и PlatformService::updatePlatform() самостоятельно вызывают CreatorStringUtils::trim().
+Получается, что очистка URL выполняется дважды. Это противоречит уже принятому нами решению на этапе 2.1.2: UI должен передавать исходное содержимое поля, а нормализация должна выполняться в Application-слое.
+
+##### 2.5.3 дублирование проверки обязательного названия
+В PlatformEditorDialog::applyChanges():
+if (nameEdit_->text().trimmed().isEmpty())
+
+
+В PlatformService::createPlatform() и PlatformService::updatePlatform() есть аналогичная проверка:
+if (platform.name.empty())
+    throw std::invalid_argument("Platform name cannot be empty.");
+Здесь важно различать два уровня:
+- UI должен обеспечить понятную обратную связь пользователю;
+- Service должен гарантировать соблюдение инварианта независимо от источника данных.
+Но само правило обязательности названия не должно независимо реализовываться в двух местах. Хороший пример уже есть в AccountService: публичный метод isAccountNameValid() используется UI для предварительной проверки, а Service повторно гарантирует правило при сохранении.
+
+Для Platform можно придерживаться такого же подхода.
+
+##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() 
 добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
 #### 2.6 `src/application/tasks`
