@@ -156,8 +156,8 @@ if (platform.name.empty())
 
 #### 2.6 `src/application/tasks` - в работе
 
-##### 2.6.1 Рефакторинг createPlatform() и updatePlatform()  - в работе
-добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
+##### 2.6.1 Рефакторинг createTask() и updateTask()  - в работе
+добавить вспомогательную функцию setTaskFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setTaskFields не поля, а объект Task, по тому же принципу, что и у AccountService.
 
 ##### 2.6.2 Ревизия
 Пересмотреть структуру и содержание файлов.
