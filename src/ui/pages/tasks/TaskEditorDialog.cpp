@@ -179,9 +179,16 @@ bool TaskEditorDialog::applyChanges()
 
     try
     {
+        Task sourceTask;
+        sourceTask.name = nameEdit_->text().toStdString();
+        sourceTask.description = descriptionEdit_->toPlainText().toStdString();
+        sourceTask.deadlineAt = deadlineAt;
+
         if (isEditMode())
         {
-            if (!taskService_.updateTask(task_->id, nameEdit_->text().toStdString(), descriptionEdit_->toPlainText().toStdString(), deadlineAt))
+            sourceTask.id = task_->id;
+
+            if (!taskService_.updateTask(sourceTask))
             {
                 QMessageBox::critical(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("task.save.error.description")));
                 return false;
@@ -190,16 +197,11 @@ bool TaskEditorDialog::applyChanges()
             return true;
         }
 
-        const auto parentType = static_cast<TaskParentType>(parentTypeCombo_->currentData().toInt());
-        const std::int64_t parentId = parentCombo_->currentData().toLongLong();
+        sourceTask.parentType = static_cast<TaskParentType>(parentTypeCombo_->currentData().toInt());
+        sourceTask.parentId = parentCombo_->currentData().toLongLong();
+        sourceTask.parentTaskId = std::nullopt;
 
-        taskService_.createTask(
-            parentType,
-            parentId,
-            std::nullopt,
-            nameEdit_->text().toStdString(),
-            descriptionEdit_->toPlainText().toStdString(),
-            deadlineAt);
+        taskService_.createTask(sourceTask);
 
         return true;
     }

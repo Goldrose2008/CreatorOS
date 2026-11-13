@@ -18,17 +18,17 @@ std::vector<Task> TaskService::getAllTasks() const
     return repository_.findAll();
 }
 
+std::optional<Task> TaskService::getTaskByID(std::int64_t id) const
+{
+    return CreatorServiceUtils::findEntityByID(repository_, id);
+}
+
 std::vector<Task> TaskService::getTasksForParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId) const
 {
     if (parentId <= 0)
         return {};
 
     return repository_.findByParent(parentType, parentId, parentTaskId);
-}
-
-std::optional<Task> TaskService::getTaskByID(std::int64_t id) const
-{
-    return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
 void TaskService::validateParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId) const
@@ -66,31 +66,28 @@ void TaskService::validateParent(TaskParentType parentType, std::int64_t parentI
         throw std::invalid_argument("Parent task belongs to another parent context.");
 }
 
-Task TaskService::createTask(
-    TaskParentType parentType,
-    std::int64_t parentId,
-    const std::optional<std::int64_t> &parentTaskId,
-    const std::string &name,
-    const std::string &description,
-    const std::string &deadlineAt
-)
+void TaskService::setTaskFields(Task &task, const Task &source) const
 {
-    validateParent(parentType, parentId, parentTaskId);
-
-    const std::string normalizedName = CreatorStringUtils::trim(name);
-
-    if (normalizedName.empty())
+    if (CreatorStringUtils::isBlank(source.name))
         throw std::invalid_argument("Task name cannot be empty.");
 
+    task.name = CreatorStringUtils::trim(source.name);
+    task.description = CreatorStringUtils::trim(source.description);
+    task.deadlineAt = CreatorStringUtils::trim(source.deadlineAt);
+}
+
+Task TaskService::createTask(const Task &sourceTask)
+{
+    validateParent(sourceTask.parentType, sourceTask.parentId, sourceTask.parentTaskId);
+
     Task task;
-    task.parentId = parentId;
-    task.parentType = parentType;
-    task.parentTaskId = parentTaskId;
-    task.name = normalizedName;
-    task.description = CreatorStringUtils::trim(description);
-    task.deadlineAt = CreatorStringUtils::trim(deadlineAt);
+    task.parentId = sourceTask.parentId;
+    task.parentType = sourceTask.parentType;
+    task.parentTaskId = sourceTask.parentTaskId;
     task.status = TaskStatus::Todo;
     task.priority = 0;
+
+    setTaskFields(task, sourceTask);
 
     return CreatorServiceUtils::createAndLoadEntity(
         repository_,
@@ -98,22 +95,15 @@ Task TaskService::createTask(
         task);
 }
 
-bool TaskService::updateTask(std::int64_t id, const std::string &name, const std::string &description, const std::string &deadlineAt)
+bool TaskService::updateTask(const Task &sourceTask)
 {
-    const auto existingTask = CreatorServiceUtils::findEntityByID(repository_, id);
+    const auto existingTask = CreatorServiceUtils::findEntityByID(repository_, sourceTask.id);
 
     if (!existingTask.has_value())
         return false;
 
-    const std::string normalizedName = CreatorStringUtils::trim(name);
-
-    if (normalizedName.empty())
-        throw std::invalid_argument("Task name cannot be empty.");
-
     Task task = existingTask.value();
-    task.name = normalizedName;
-    task.description = CreatorStringUtils::trim(description);
-    task.deadlineAt = CreatorStringUtils::trim(deadlineAt);
+    setTaskFields(task, sourceTask);
 
     return repository_.update(task);
 }
