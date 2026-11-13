@@ -46,7 +46,7 @@
 - создание и установку AppShell.
 При этом инициализация будет запускаться явно из main.cpp. — ГОТОВО.
 
-### 2. `src/application/` - в работе
+### 2. `src/application/` - завершён
 #### 2.1  `src/application/accounts/` - завершён
 ##### 2.1.1 Проверка пустого названия аккаунта - завершён
 проверку в AccountService выносим в отдельную функцию, которую вызываем в нужных местах в самом файле AccountService, а также в файлах `ui/pages/accounts/`, в зависимости от результата этой функции будет вызываться модальное окно или происходить сохранение. 
@@ -163,11 +163,11 @@ if (platform.name.empty())
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/tasks/`
 
-#### 2.7 Определить структуру и правила написания файлов ...Service и I...Repository - в работе
+#### 2.7 Определить структуру и правила написания файлов ...Service и I...Repository - завершён
 занести определенные правила в PROGRAM_STRUCTURE, за основу можно взять данные из `src/application/accounts/`.
 Не учитывать `src/application/content/` и `src/application/projects/`.
 
-### 3. `src/domain/models/`
+### 3. `src/domain/models/`  - в работе
 Пересмотреть структуру и содержание файлов.
 
 ### 4. `infrastructure/database/`
@@ -231,7 +231,7 @@ void PlatformService::setPlatformFields(Platform &platform, const Platform &sour
 `...Repository` - конкретная реализация этих операций через SQLite.
 
 
-#### 5. Объединить project и content в один Объект
+### 5. Объединить project и content в один Объект
 
 ### 6. `ui/`
 Пересмотреть структуру и содержание файлов.
