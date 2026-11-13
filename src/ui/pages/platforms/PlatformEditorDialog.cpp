@@ -63,9 +63,14 @@ bool PlatformEditorDialog::applyChanges()
 
     try
     {
+        Platform sourcePlatform;
+        sourcePlatform.id = platformId_;
+        sourcePlatform.name = nameEdit_->text().toStdString();
+        sourcePlatform.websiteUrl = websiteUrlEdit_->text().toStdString();
+
         if (isEditMode())
         {
-            const bool updated = platformService_.updatePlatform(platformId_, nameEdit_->text().toStdString(), websiteUrlEdit_->text().toStdString());
+            const bool updated = platformService_.updatePlatform(sourcePlatform);
 
             if (!updated)
                 QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("platform.save.error")));
@@ -73,7 +78,7 @@ bool PlatformEditorDialog::applyChanges()
             return updated;
         }
 
-        platformService_.createPlatform(nameEdit_->text().toStdString(), websiteUrlEdit_->text().toStdString());
+        platformService_.createPlatform(sourcePlatform);
 
         return true;
     }

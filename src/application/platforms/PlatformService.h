@@ -20,10 +20,12 @@ public:
     bool hasAccounts(std::int64_t id) const;
     bool isPlatformNameValid(const std::string &name) const;
     
-    Platform createPlatform(const std::string &name, const std::string &websiteUrl);
-    bool updatePlatform(std::int64_t id, const std::string &name, const std::string &websiteUrl);
+    Platform createPlatform(const Platform &sourcePlatform);
+    bool updatePlatform(const Platform &sourcePlatform);
     bool deletePlatform(std::int64_t id) const;
 
 private:
+    void setPlatformFields(Platform &platform, const Platform &source) const;
+
     IPlatformRepository &repository_;
 };

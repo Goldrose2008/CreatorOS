@@ -122,7 +122,7 @@ AccountService.cpp	Существует ли Platform с переданным ID
 ##### 2.4.4 Ревизия функции setContentFields() - завершён
 Считаю, что в функции setContentFields() не нужна проверка `if (source.contentTypeId <= 0)`, т.к. эта проверка проводится в функции findEntityByID(), которая вызывается в следующей проверке `if (!CreatorServiceUtils::findEntityByID(contentTypeRepository_, source.contentTypeId).has_value())`. Делать проверку `if (source.contentTypeId <= 0)` только ради сообщения `Content type is required.` нецелесообразно. Для этой цели можно в функции findEntityByID() добавить сообщение о некорректности ID.
 
-#### 2.5 `src/application/platforms` - в работе
+#### 2.5 `src/application/platforms` - завершён
 
 ##### 2.5.1 Ревизия - завершён
 Пересмотреть структуру и содержание файлов.
@@ -151,11 +151,11 @@ if (platform.name.empty())
 
 Для Platform можно придерживаться такого же подхода.
 
-##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() - в работе
+##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() - завершён
 добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
-#### 2.6 `src/application/tasks`
-##### 2.6.1 Ревизия
+#### 2.6 `src/application/tasks` - в работе
+##### 2.6.1 Ревизия - в работе
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/tasks/`
 
@@ -170,6 +170,59 @@ if (platform.name.empty())
 
 ### 4. `infrastructure/database/`
 Пересмотреть структуру и содержание файлов.
+
+#### заполнение и обновление данных в базе
+на примере платформ:
+1. При создании Platform
+В файле database/migrations/005_platforms_and_accounts.sql таблица platforms объявлена так:
+created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+
+Это означает, что SQLite автоматически подставляет текущую дату и время, если при добавлении записи значения этих столбцов не указаны.
+
+В PlatformRepository.cpp запрос создания выглядит следующим образом:
+query.prepare(QStringLiteral(
+    "INSERT INTO platforms (name, website_url) "
+    "VALUES (:name, :website_url)"
+));
+
+
+Обрати внимание: created_at и updated_at в запросе отсутствуют. Поэтому SQLite использует значения по умолчанию CURRENT_TIMESTAMP для обоих полей.
+
+Далее CreatorServiceUtils::createAndLoadEntity() получает созданную запись из базы. При чтении PlatformRepository::readPlatform() заполняет поля:
+platform.createdAt = query.value("created_at").toString().toStdString();
+platform.updatedAt = query.value("updated_at").toString().toStdString();
+
+
+Таким образом, сервис получает уже заполненный объект.
+2. При редактировании Platform
+В PlatformRepository.cpp, в методе update(), есть явное обновление времени:
+"UPDATE platforms SET "
+"name = :name, "
+"website_url = :website_url, "
+"updated_at = CURRENT_TIMESTAMP "
+"WHERE id = :id"
+
+Здесь SQLite обновляет updated_at, а created_at остаётся прежним.
+
+3. Что это означает 
+Моё предложение относительно setPlatformFields() остаётся правильным:
+void PlatformService::setPlatformFields(Platform &platform, const Platform &source) const
+{
+    if (!isPlatformNameValid(source.name))
+        throw std::invalid_argument("Platform name cannot be empty.");
+
+    platform.name = CreatorStringUtils::trim(source.name);
+    platform.websiteUrl = CreatorStringUtils::trim(source.websiteUrl);
+}
+
+
+Функция не должна заполнять createdAt и updatedAt.
+- При создании их заполнит SQLite.
+- При редактировании createdAt сохранится из существующей записи, а updatedAt обновит SQLite.
+- При повторной загрузке записи оба значения будут прочитаны из базы.
+Именно поэтому в updatePlatform() мы сначала загружаем существующий объект и только затем изменяем его поля. Это позволяет сохранить createdAt и другие поля, которые не относятся к редактируемым данным.
 
 #### Файлы Repository
 `I...Repository` (находятся в `src/application/`) - перечень операций, которые должны быть доступны для работы с определенной сущностью.
