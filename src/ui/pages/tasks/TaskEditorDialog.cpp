@@ -159,7 +159,7 @@ void TaskEditorDialog::reloadParentChoices()
 
 bool TaskEditorDialog::applyChanges()
 {
-    if (nameEdit_->text().trimmed().isEmpty())
+    if (!taskService_.isTaskNameValid(nameEdit_->text().toStdString()))
     {
         QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         nameEdit_->setFocus();

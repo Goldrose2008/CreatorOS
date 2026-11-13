@@ -31,6 +31,11 @@ std::vector<Task> TaskService::getTasksForParent(TaskParentType parentType, std:
     return repository_.findByParent(parentType, parentId, parentTaskId);
 }
 
+bool TaskService::isTaskNameValid(const std::string &name) const
+{
+    return !CreatorStringUtils::isBlank(name);
+}
+
 void TaskService::validateParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId) const
 {
     if (parentId <= 0)
@@ -68,7 +73,7 @@ void TaskService::validateParent(TaskParentType parentType, std::int64_t parentI
 
 void TaskService::setTaskFields(Task &task, const Task &source) const
 {
-    if (CreatorStringUtils::isBlank(source.name))
+    if (!isTaskNameValid(source.name))
         throw std::invalid_argument("Task name cannot be empty.");
 
     task.name = CreatorStringUtils::trim(source.name);

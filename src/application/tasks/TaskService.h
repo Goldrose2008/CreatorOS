@@ -20,6 +20,8 @@ public:
     std::optional<Task> getTaskByID(std::int64_t id) const;
     std::vector<Task> getTasksForParent(TaskParentType parentType, std::int64_t parentId, const std::optional<std::int64_t> &parentTaskId = std::nullopt) const;
 
+    bool isTaskNameValid(const std::string &name) const;
+    
     Task createTask(const Task &sourceTask);
     bool updateTask(const Task &sourceTask);
     bool deleteTask(std::int64_t id) const;

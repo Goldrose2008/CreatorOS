@@ -154,21 +154,17 @@ if (platform.name.empty())
 ##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() - завершён
 добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
-#### 2.6 `src/application/tasks` - в работе
+#### 2.6 `src/application/tasks` - завершён
 
 ##### 2.6.1 Рефакторинг createTask() и updateTask() - завершён
 добавить вспомогательную функцию setTaskFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setTaskFields не поля, а объект Task, по тому же принципу, что и у AccountService.
 
-##### 2.6.2 Ревизия - в работе
+##### 2.6.2 Ревизия - завершён
 Пересмотреть структуру и содержание файлов.
 Нужно проверить нет ли повторения кода из файлов ...Service в файлах `ui/pages/tasks/`
 
-
-
-
-
-#### 2.7 Определить структуру и правила написания файлов ...Service и I...Repository
-занести определенные правила в PROGRAM_STRUCTURE.
+#### 2.7 Определить структуру и правила написания файлов ...Service и I...Repository - в работе
+занести определенные правила в PROGRAM_STRUCTURE, за основу можно взять данные из `src/application/accounts/`.
 
 ### 3. `src/domain/models/`
 Пересмотреть структуру и содержание файлов.
