@@ -165,6 +165,7 @@ if (platform.name.empty())
 
 #### 2.7 Определить структуру и правила написания файлов ...Service и I...Repository - в работе
 занести определенные правила в PROGRAM_STRUCTURE, за основу можно взять данные из `src/application/accounts/`.
+Не учитывать `src/application/content/` и `src/application/projects/`.
 
 ### 3. `src/domain/models/`
 Пересмотреть структуру и содержание файлов.
