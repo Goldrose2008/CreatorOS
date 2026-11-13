@@ -20,6 +20,19 @@ std::optional<Platform> PlatformService::getPlatformByID(std::int64_t id) const
     return CreatorServiceUtils::findEntityByID(repository_, id);
 }
 
+bool PlatformService::hasAccounts(std::int64_t id) const
+{
+    if (id <= 0)
+        return false;
+
+    return repository_.hasAccounts(id);
+}
+
+bool PlatformService::isPlatformNameValid(const std::string &name) const
+{
+    return !CreatorStringUtils::isBlank(name);
+}
+
 Platform PlatformService::createPlatform(const std::string &name, const std::string &websiteUrl)
 {
     Platform platform;
@@ -27,7 +40,7 @@ Platform PlatformService::createPlatform(const std::string &name, const std::str
     platform.name = CreatorStringUtils::trim(name);
     platform.websiteUrl = CreatorStringUtils::trim(websiteUrl);
 
-    if (platform.name.empty())
+    if (!isPlatformNameValid(name))
         throw std::invalid_argument("Platform name cannot be empty.");
 
     return CreatorServiceUtils::createAndLoadEntity(
@@ -47,18 +60,10 @@ bool PlatformService::updatePlatform(std::int64_t id, const std::string &name, c
     platform.name = CreatorStringUtils::trim(name);
     platform.websiteUrl = CreatorStringUtils::trim(websiteUrl);
 
-    if (platform.name.empty())
+    if (!isPlatformNameValid(name))
         throw std::invalid_argument("Platform name cannot be empty.");
 
     return repository_.update(platform);
-}
-
-bool PlatformService::hasAccounts(std::int64_t id) const
-{
-    if (id <= 0)
-        return false;
-
-    return repository_.hasAccounts(id);
 }
 
 bool PlatformService::deletePlatform(std::int64_t id) const

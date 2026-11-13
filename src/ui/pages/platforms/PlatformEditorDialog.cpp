@@ -54,7 +54,7 @@ PlatformEditorDialog::PlatformEditorDialog(
 
 bool PlatformEditorDialog::applyChanges()
 {
-    if (nameEdit_->text().trimmed().isEmpty())
+    if (!platformService_.isPlatformNameValid(nameEdit_->text().toStdString()))
     {
         QMessageBox::warning(this, localization_.text(QStringLiteral("common.state.error.title")), localization_.text(QStringLiteral("common.validation.name_required")));
         nameEdit_->setFocus();

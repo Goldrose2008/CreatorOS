@@ -136,7 +136,7 @@ websiteUrlEdit_->text().trimmed().toStdString()
 При этом PlatformService::createPlatform() и PlatformService::updatePlatform() самостоятельно вызывают CreatorStringUtils::trim().
 Получается, что очистка URL выполняется дважды. Это противоречит уже принятому нами решению на этапе 2.1.2: UI должен передавать исходное содержимое поля, а нормализация должна выполняться в Application-слое.
 
-##### 2.5.3 дублирование проверки обязательного названия - в работе
+##### 2.5.3 дублирование проверки обязательного названия - завершён
 В PlatformEditorDialog::applyChanges():
 if (nameEdit_->text().trimmed().isEmpty())
 
@@ -151,7 +151,7 @@ if (platform.name.empty())
 
 Для Platform можно придерживаться такого же подхода.
 
-##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() 
+##### 2.5.4 Рефакторинг createPlatform() и updatePlatform() - в работе
 добавить вспомогательную функцию setPlatformFields() по аналогии с функцией setAccountFields().При этом передаем в функцию setPlatformFields не поля, а объект Platform, по тому же принципу, что и у AccountService.
 
 #### 2.6 `src/application/tasks`
