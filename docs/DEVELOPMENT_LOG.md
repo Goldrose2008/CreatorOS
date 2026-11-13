@@ -167,10 +167,13 @@ if (platform.name.empty())
 занести определенные правила в PROGRAM_STRUCTURE, за основу можно взять данные из `src/application/accounts/`.
 Не учитывать `src/application/content/` и `src/application/projects/`.
 
-### 3. `src/domain/models/`  - в работе
+### 3. Объединить project и content в один Объект - в работе
+сначала разработать план, чтобы плавно провести рефакторинг и не сломать приложение.
+
+### 4. `src/domain/models/`
 Пересмотреть структуру и содержание файлов.
 
-### 4. `infrastructure/database/`
+### 5. `infrastructure/database/`
 Пересмотреть структуру и содержание файлов.
 
 #### заполнение и обновление данных в базе
@@ -231,7 +234,7 @@ void PlatformService::setPlatformFields(Platform &platform, const Platform &sour
 `...Repository` - конкретная реализация этих операций через SQLite.
 
 
-### 5. Объединить project и content в один Объект
+
 
 ### 6. `ui/`
 Пересмотреть структуру и содержание файлов.

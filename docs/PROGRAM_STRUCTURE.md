@@ -92,26 +92,19 @@ Service реализует прикладные сценарии работы с
 ## 2.4 `src/domain`
 Модели предметных сущностей и их значения.
 
-```text
-src/domain/
-└── models/
-    ├── Account.h
-    ├── Platform.h
-    ├── Project.h
-    ├── Project.cpp
-    ├── Content.h
-    ├── Content.cpp
-    └── ContentType.h
-```
+`src/domain/models/Account.h` - Доменная модель Account.
 
-| Файл | Назначение |
-|---|---|
-| `src/domain/models/Platform.h` | Доменная модель Platform: идентификатор, название, URL сайта и временные метки. |
-| `src/domain/models/Account.h` | Доменная модель Account: связь с Platform, имя, username, URL профиля, внешний ID и временные метки. |
-| `src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
-| `src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
-| `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
-| `src/domain/models/Task.h + Task.cpp` | Доменная модель Task: контекст родителя, иерархия задач, название, описание, дедлайн, статус, приоритет и временные метки. |
+`src/domain/models/Platform.h` - Доменная модель Platform.
+
+
+
+
+
+
+`src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
+`src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
+`src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |
+`src/domain/models/Task.h + Task.cpp` | Доменная модель Task: контекст родителя, иерархия задач, название, описание, дедлайн, статус, приоритет и временные метки. |
 
 ## 2.5 `src/infrastructure`
 Реализации хранилища и технических интеграций.
