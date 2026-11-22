@@ -68,7 +68,7 @@ namespace
         return statements;
     }
 
-    bool applyMigration(QSqlDatabase &database, int version, const QString &resourcePath, QString *errorMessage)
+    bool applyInitialSchema(QSqlDatabase &database, const QString &resourcePath, QString *errorMessage)
     {
         QFile migrationFile(resourcePath);
 
@@ -109,7 +109,7 @@ namespace
 
         QSqlQuery versionUpdate(database);
 
-        if (!versionUpdate.exec(QStringLiteral("PRAGMA user_version = %1").arg(version)))
+        if (!versionUpdate.exec(QStringLiteral("PRAGMA user_version = 1")))
         {
             database.rollback();
 
@@ -192,6 +192,19 @@ bool DatabaseManager::initialize(QString *errorMessage)
 
         return false;
     }
+
+    QSqlQuery foreignKeysCheckQuery(database_);
+
+    if (!foreignKeysCheckQuery.exec(QStringLiteral("PRAGMA foreign_keys"))
+        || !foreignKeysCheckQuery.next()
+        || foreignKeysCheckQuery.value(0).toInt() != 1)
+    {
+        if (errorMessage != nullptr)
+            *errorMessage = QStringLiteral("Failed to enable SQLite foreign keys.");
+
+        return false;
+    }
+
     return applySchema(errorMessage);
 }
 
@@ -225,43 +238,21 @@ bool DatabaseManager::applySchema(QString *errorMessage)
         return false;
     }
 
-    int currentVersion = versionQuery.value(0).toInt();
+    const int currentVersion = versionQuery.value(0).toInt();
+    versionQuery.finish();
 
-    struct Migration
-    {
-        int version;
-        QString resourcePath;
-    };
+    if (currentVersion == 1)
+        return true;
 
-    const Migration migrations[] =
+    if (currentVersion != 0)
     {
+        if (errorMessage != nullptr)
         {
-            1, QStringLiteral(":/database/migrations/001_initial.sql")
-        },
-        {
-            2, QStringLiteral(":/database/migrations/002_content_and_content_types.sql")
-        },
-        {
-            3, QStringLiteral(":/database/migrations/003_full_content.sql")
-        },
-        {
-            4, QStringLiteral(":/database/migrations/004_tasks.sql")
-        },
-        {
-            5, QStringLiteral(":/database/migrations/005_platforms_and_accounts.sql")
+            *errorMessage = QStringLiteral("Unsupported database schema version (%1). Delete the old creatoros.sqlite database before starting this version of CreatorOS.").arg(currentVersion);
         }
-    };
 
-    for (const Migration &migration : migrations)
-    {
-        if (currentVersion >= migration.version)
-            continue;
-
-        if (!applyMigration(database_, migration.version, migration.resourcePath, errorMessage))
-            return false;
-
-        currentVersion = migration.version;
+        return false;
     }
 
-    return true;
+    return applyInitialSchema(database_, QStringLiteral(":/database/migrations/001_initial_schema.sql"), errorMessage);
 }

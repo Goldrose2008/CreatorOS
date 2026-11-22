@@ -1,10 +1,5 @@
 <RCC>
     <qresource prefix="/database">
-        <file alias="migrations/001_initial.sql">../database/migrations/001_initial.sql</file>
-        <file alias="migrations/002_content_and_content_types.sql">../database/migrations/002_content_and_content_types.sql</file>
-        <file alias="migrations/003_full_content.sql">../database/migrations/003_full_content.sql</file>
-        <file alias="migrations/004_tasks.sql">../database/migrations/004_tasks.sql</file>
-        <file alias="migrations/005_platforms_and_accounts.sql">../database/migrations/005_platforms_and_accounts.sql</file>
-        
+        <file alias="migrations/001_initial_schema.sql">../database/migrations/001_initial_schema.sql</file>
     </qresource>
 </RCC>
