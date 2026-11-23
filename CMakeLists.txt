@@ -91,6 +91,8 @@ qt_add_executable(CreatorOS
     src/infrastructure/database/PlatformRepository.h
     src/infrastructure/database/ProjectRepository.cpp
     src/infrastructure/database/ProjectRepository.h
+    src/infrastructure/database/PropertyDefinitionRepository.cpp
+    src/infrastructure/database/PropertyDefinitionRepository.h
     src/infrastructure/database/TaskRepository.cpp
     src/infrastructure/database/TaskRepository.h
 
