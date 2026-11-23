@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-std::string objectRelationRoleToString(ObjectRelationRole role)
+std::string objectRelationRoleToDatabaseValue(ObjectRelationRole role)
 {
     switch (role)
     {
@@ -19,7 +19,7 @@ std::string objectRelationRoleToString(ObjectRelationRole role)
     throw std::logic_error("Unknown ObjectRelationRole.");
 }
 
-std::optional<ObjectRelationRole> objectRelationRoleFromString(std::string_view value)
+std::optional<ObjectRelationRole> objectRelationRoleFromDatabaseValue(std::string_view value)
 {
     if (value == "main")
         return ObjectRelationRole::Main;

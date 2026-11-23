@@ -12,8 +12,8 @@ enum class ObjectRelationRole
     Support
 };
 
-std::string objectRelationRoleToString(ObjectRelationRole role);
-std::optional<ObjectRelationRole> objectRelationRoleFromString(std::string_view value);
+std::string objectRelationRoleToDatabaseValue(ObjectRelationRole role);
+std::optional<ObjectRelationRole> objectRelationRoleFromDatabaseValue(std::string_view value);
 
 struct ObjectRelation
 {
