@@ -183,6 +183,8 @@ bool ObjectTypeRepository::remove(std::int64_t id)
     const QString formerUuid = findQuery.value("uuid").toString();
     const QString formerName = findQuery.value("name").toString();
 
+    findQuery.finish();
+    
     QSqlQuery updateObjectsQuery(database);
 
     updateObjectsQuery.prepare(QStringLiteral(
