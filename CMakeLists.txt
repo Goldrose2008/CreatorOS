@@ -45,6 +45,11 @@ qt_add_executable(CreatorOS
     src/application/projects/ProjectService.cpp
     src/application/projects/ProjectService.h
     
+    src/domain/models/ObjectType.h
+    src/domain/models/Object.h
+    src/domain/models/ObjectRelation.cpp
+    src/domain/models/ObjectRelation.h
+
     src/domain/models/Account.h
     src/domain/models/Content.cpp
     src/domain/models/Content.h
