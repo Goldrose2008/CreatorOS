@@ -32,15 +32,15 @@
 `/common/StringUtils.h` - Общие типизированные механизмы для работы со строками, используемая несколькими application services.
 `/common/ServiceUtils.h` - Общие типизированные механизмы для Services.
 
-`/object_relations/IObjectRelationRepository.h` - 
-`/object_types/IObjectTypeRepository.h` - 
-`/objects/IObjectRepository.h` - 
+`/object_relations/IObjectRelationRepository.h` - Определяет доступные операции для получения, создания, изменения и удаления связей между объектами.
+`/object_types/IObjectTypeRepository.h` - Определяет доступные операции для получения, создания, изменения и удаления типов объектов, а также проверки уникальности их названий.
+`/objects/IObjectRepository.h` - Определяет доступные операции для получения активных объектов и объектов из корзины, создания, изменения и окончательного удаления объектов, а также проверки уникальности названий.
 
 `/platforms/IPlatformRepository.h` - перечень доступных операций в БД с сущностью Platform.
 `/platforms/PlatformService` - Что можно делать с сущностью Platform: создание, редактирование, удаление и так далее.
 
-`/properties/IPropertyDefinitionRepository.h` - 
-`/properties/IPropertyValueRepository.h` - 
+`/properties/IPropertyDefinitionRepository.h` - Определяет доступные операции для работы с определениями пользовательских свойств: их получения, создания, изменения и удаления, а также управления настройками и допустимыми вариантами значений.
+`/properties/IPropertyValueRepository.h` - Определяет доступные операции для получения, сохранения и удаления значений пользовательских свойств, установленных для конкретных объектов.
 
 `/tasks/ITaskRepository.h` - перечень доступных операций в БД с сущностью Task.
 `/tasks/TaskService` - Что можно делать с сущностью Task: создание, редактирование, удаление и так далее.
@@ -126,27 +126,11 @@ Service реализует прикладные сценарии работы с
 ## 2.5 `src/infrastructure`
 Реализации хранилища и технических интеграций.
 
-```text
-src/infrastructure/
-└── database/
-    ├── AccountRepository.cpp
-    ├── AccountRepository.h
-    ├── ContentRepository.cpp
-    ├── ContentRepository.h
-    ├── ContentTypeRepository.cpp
-    ├── ContentTypeRepository.h
-    ├── DatabaseManager.cpp
-    ├── DatabaseManager.h
-    ├── PlatformRepository.cpp
-    ├── PlatformRepository.h
-    ├── ProjectRepository.cpp
-    ├── ProjectRepository.h
-    ├── TaskRepository.cpp
-    └── TaskRepository.h
-```
+`src/ObjectTypeRepository` - Реализует операции получения, создания, изменения и удаления типов объектов через SQLite, включая сохранение информации о прежнем типе у объектов, находящихся в корзине.
 
-| Файл | Назначение |
-|---|---|
+
+
+
 | `src/infrastructure/database/AccountRepository.h + AccountRepository.cpp` | SQL-операции с таблицей `accounts`: список, получение по ID, создание, изменение и удаление. |
 | `src/infrastructure/database/PlatformRepository.h + PlatformRepository.cpp` | SQL-операции с таблицей `platforms`: список, получение по ID, CRUD и проверка связанных Accounts. |
 | `src/infrastructure/database/ContentTypeRepository.h + ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
