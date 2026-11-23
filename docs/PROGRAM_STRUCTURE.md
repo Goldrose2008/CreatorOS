@@ -126,9 +126,10 @@ Service реализует прикладные сценарии работы с
 ## 2.5 `src/infrastructure`
 Реализации хранилища и технических интеграций.
 
+`/ObjectRelationRepository` -Реализует операции получения, создания, изменения и удаления отношений между Object через SQLite. Поддерживает поиск отношений по родительскому и дочернему объекту.
 `/ObjectRepository` - SQL-операции с таблицей `objects`: получение активных объектов и объектов из корзины, поиск по ID и ObjectType, проверка уникальности названия, создание, изменение и окончательное удаление Object.
 `/ObjectTypeRepository` - Реализует операции получения, создания, изменения и удаления типов объектов через SQLite, включая сохранение информации о прежнем типе у объектов, находящихся в корзине.
-
+`/DatabaseManager` - Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration.
 
 
 
@@ -136,7 +137,7 @@ Service реализует прикладные сценарии работы с
 | `src/infrastructure/database/PlatformRepository.h + PlatformRepository.cpp` | SQL-операции с таблицей `platforms`: список, получение по ID, CRUD и проверка связанных Accounts. |
 | `src/infrastructure/database/ContentTypeRepository.h + ContentTypeRepository.cpp` | SQL-чтение справочника `content_types`: получение всех типов и типа по ID. |
 | `src/infrastructure/database/ContentRepository.h + ContentRepository.cpp` | SQL-операции с таблицей `contents`: чтение всех записей и выборка по Project/ID, создание, изменение и удаление Content. |
-| `src/infrastructure/database/DatabaseManager.h + DatabaseManager.cpp` | Создаёт каталог данных приложения, открывает QSQLITE, включает foreign keys и выполняет database migration. |
+| 
 | `src/infrastructure/database/ProjectRepository.h + ProjectRepository.cpp` | SQL-операции с таблицей `projects`: чтение, создание, изменение и удаление проектов. |
 | `src/infrastructure/database/TaskRepository.h + TaskRepository.cpp` | SQL-операции с таблицей `tasks`: чтение списка, выборка по контексту родителя/иерархии, создание, изменение и удаление Task. |
 
