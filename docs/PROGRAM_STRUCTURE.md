@@ -32,11 +32,22 @@
 `/common/StringUtils.h` - Общие типизированные механизмы для работы со строками, используемая несколькими application services.
 `/common/ServiceUtils.h` - Общие типизированные механизмы для Services.
 
+`/object_relations/IObjectRelationRepository.h` - 
+`/object_types/IObjectTypeRepository.h` - 
+`/objects/IObjectRepository.h` - 
+
 `/platforms/IPlatformRepository.h` - перечень доступных операций в БД с сущностью Platform.
 `/platforms/PlatformService` - Что можно делать с сущностью Platform: создание, редактирование, удаление и так далее.
 
+`/properties/IPropertyDefinitionRepository.h` - 
+`/properties/IPropertyValueRepository.h` - 
+
 `/tasks/ITaskRepository.h` - перечень доступных операций в БД с сущностью Task.
 `/tasks/TaskService` - Что можно делать с сущностью Task: создание, редактирование, удаление и так далее.
+
+
+
+
 
 
 

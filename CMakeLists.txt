@@ -32,6 +32,10 @@ qt_add_executable(CreatorOS
     src/application/accounts/AccountService.cpp
     src/application/accounts/AccountService.h
 
+    src/application/object_types/IObjectTypeRepository.h
+    src/application/objects/IObjectRepository.h
+    src/application/object_relations/IObjectRelationRepository.h
+
     src/application/content/IContentTypeRepository.h
     src/application/content/IContentRepository.h
     src/application/content/ContentService.cpp
@@ -40,6 +44,9 @@ qt_add_executable(CreatorOS
     src/application/platforms/IPlatformRepository.h
     src/application/platforms/PlatformService.cpp
     src/application/platforms/PlatformService.h
+
+    src/application/properties/IPropertyDefinitionRepository.h
+    src/application/properties/IPropertyValueRepository.h
 
     src/application/projects/IProjectRepository.h
     src/application/projects/ProjectService.cpp
