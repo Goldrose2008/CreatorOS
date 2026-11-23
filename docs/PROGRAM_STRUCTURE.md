@@ -90,17 +90,23 @@ Service реализует прикладные сценарии работы с
 9. Конкретная реализация (AccountRepository, PlatformRepository и т. д.) находится в Infrastructure, наследуется от соответствующего интерфейса и реализует методы с override.
 
 ## 2.4 `src/domain`
-Модели предметных сущностей и их значения.
+Модели предметных сущностей и их значения. Взаимосвзять данных сущностей из БД с С++.
+
+`src/domain/models/Object.h` - Доменная модель Объекта.
+`src/domain/models/ObjectRelation` - Настройка отношений объектов (кто родитель, кто дочерний, какая роль у этой связи относительно родительского объекта). 
+`src/domain/models/ObjectType.h` - Доменная модель типа объектов.
+`src/domain/models/PropertyDefinition` - Определение пользовательского свойства и преобразование его перечислений в коды БД.
+`src/domain/models/PropertyEntityReferenceSettings.h` - Настройки ссылки на сущность: тип целевой сущности
+`src/domain/models/PropertyOption.h` - Допустимый вариант значения свойства
+`src/domain/models/PropertyTextSettings.h` - Настройки текстового свойства: минимальная и максимальная длина
+`src/domain/models/PropertyValue.h` - Значение свойства, сохранённое для конкретного Object 
+
+
+
+
 
 `src/domain/models/Account.h` - Доменная модель Account.
-
 `src/domain/models/Platform.h` - Доменная модель Platform.
-
-
-
-
-
-
 `src/domain/models/Project.h + Project.cpp` | Доменная модель проекта: идентификатор, название, описание, владелец, дата выхода, статус, прогресс и даты создания/изменения. |
 `src/domain/models/Content.h + Content.cpp` | Минимальная доменная модель Content: проект-владелец, тип контента, роль main/additional и название. |
 `src/domain/models/ContentType.h` | Минимальная доменная модель справочника ContentType: идентификатор и название типа контента. |

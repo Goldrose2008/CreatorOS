@@ -49,6 +49,12 @@ qt_add_executable(CreatorOS
     src/domain/models/Object.h
     src/domain/models/ObjectRelation.cpp
     src/domain/models/ObjectRelation.h
+    src/domain/models/PropertyDefinition.cpp
+    src/domain/models/PropertyDefinition.h
+    src/domain/models/PropertyEntityReferenceSettings.h
+    src/domain/models/PropertyOption.h
+    src/domain/models/PropertyTextSettings.h
+    src/domain/models/PropertyValue.h
 
     src/domain/models/Account.h
     src/domain/models/Content.cpp
