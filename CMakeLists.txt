@@ -33,6 +33,9 @@ qt_add_executable(CreatorOS
     src/application/accounts/AccountService.h
 
     src/application/object_types/IObjectTypeRepository.h
+    src/application/object_types/ObjectTypeService.cpp
+    src/application/object_types/ObjectTypeService.h
+
     src/application/objects/IObjectRepository.h
     src/application/object_relations/IObjectRelationRepository.h
 
