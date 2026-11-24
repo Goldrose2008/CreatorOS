@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "IObjectTypeRepository.h"
+#include "ObjectTypeDefaults.h"
 #include "../objects/IObjectRepository.h"
 #include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
@@ -102,24 +103,15 @@ bool ObjectTypeService::deleteObjectType(std::int64_t id) const
 
 void ObjectTypeService::createDefaultObjectTypes()
 {
-    const std::vector<std::string> defaultNames
+    for (const std::string_view name : CreatorObjectTypeDefaults::Names)
     {
-        "Project",
-        "Video",
-        "Shorts",
-        "Article",
-        "Post",
-        "Game",
-        "Book"
-    };
+        const std::string objectTypeName(name);
 
-    for (const std::string &name : defaultNames)
-    {
-        if (repository_.existsByName(name))
+        if (repository_.existsByName(objectTypeName))
             continue;
 
         ObjectType objectType;
-        objectType.name = name;
+        objectType.name = objectTypeName;
 
         createObjectType(objectType);
     }
