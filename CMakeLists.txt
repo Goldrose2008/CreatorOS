@@ -269,7 +269,7 @@ if(BUILD_TESTING)
 
 
     qt_add_executable(CreatorOSDatabaseTests
-        tests/database/DatabaseIntegrationTests.cpp
+        tools/localization/tests/database/DatabaseIntegrationTests.cpp
 
         src/infrastructure/database/DatabaseManager.cpp
         src/infrastructure/database/DatabaseManager.h

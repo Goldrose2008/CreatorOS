@@ -308,7 +308,7 @@ int main()
         LocalizationCatalog catalog;
         QString error;
         const bool loaded = loadTsvText(QStringLiteral("id\tru\ten\nhello\tПривет\tHello\nhello\tЕщё\tAgain\n"), catalog, &error);
-        check(QStringLiteral("Duplicate ID is rejected"), !loaded && error.contains(QStringLiteral("Line 3")) && error.contains(QStringLiteral("already exists")));
+        check(QStringLiteral("Duplicate ID is rejected"), !loaded && error.contains(QStringLiteral("Line 3")) && error.contains(QStringLiteral("ID локализации уже существует")));
     }
 
     // 21. Неудачная загрузка не заменяет существующий каталог.

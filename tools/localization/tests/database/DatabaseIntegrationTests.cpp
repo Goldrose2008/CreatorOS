@@ -1,5 +1,5 @@
 
-#include "../../src/infrastructure/database/DatabaseManager.h"
+#include "../../../../src/infrastructure/database/DatabaseManager.h"
 
 #include <QCoreApplication>
 #include <QDir>
