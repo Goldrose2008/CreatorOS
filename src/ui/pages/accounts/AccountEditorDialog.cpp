@@ -95,7 +95,7 @@ AccountEditorDialog::AccountEditorDialog(
     nameEdit_->setPlaceholderText(localization_.text(QStringLiteral("account.field.name.placeholder")));
     usernameEdit_->setPlaceholderText(localization_.text(QStringLiteral("account.field.username.placeholder")));
     profileUrlEdit_->setPlaceholderText(localization_.text(QStringLiteral("account.field.profile_url.placeholder")));
-    externalIdEdit_->setPlaceholderText(localization_.text(QStringLiteral("account.field.external_id.placeholder")));
+    externalIdEdit_->setPlaceholderText(localization_.text(QStringLiteral("account.field.external_id")));
 
     contentLayout()->addWidget(platformField);
     contentLayout()->addWidget(nameField);
