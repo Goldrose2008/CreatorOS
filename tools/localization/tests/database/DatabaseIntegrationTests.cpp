@@ -918,11 +918,21 @@ int main(int argc, char *argv[])
             const std::int64_t secondObjectId = objectRepository.create(secondObject);
             check(QStringLiteral("Object ID is not reused"), firstObjectRemoved && secondObjectId > firstObjectId);
 
+        // Дополнительный Object для проверки AUTOINCREMENT ObjectRelation.
+            Object relationTargetObject;
+            relationTargetObject.uuid = "autoincrement-relation-target-uuid";
+            relationTargetObject.objectTypeId = secondTypeId;
+            relationTargetObject.name = "Autoincrement Relation Target";
+            relationTargetObject.createdAt = "2026-11-24T10:00:00";
+            relationTargetObject.updatedAt = "2026-11-24T10:00:00";
+
+            const std::int64_t relationTargetObjectId = objectRepository.create(relationTargetObject);
+
         // ObjectRelation.
             ObjectRelation firstRelation;
             firstRelation.uuid = "autoincrement-relation-first-uuid";
             firstRelation.parentObjectId = secondObjectId;
-            firstRelation.childObjectId = relationObjectId;
+            firstRelation.childObjectId = relationTargetObjectId;
             firstRelation.role = ObjectRelationRole::Main;
             firstRelation.createdAt = "2026-11-24T10:00:00";
             firstRelation.updatedAt = "2026-11-24T10:00:00";
@@ -933,7 +943,7 @@ int main(int argc, char *argv[])
             ObjectRelation secondRelation;
             secondRelation.uuid = "autoincrement-relation-second-uuid";
             secondRelation.parentObjectId = secondObjectId;
-            secondRelation.childObjectId = relationObjectId;
+            secondRelation.childObjectId = relationTargetObjectId;
             secondRelation.role = ObjectRelationRole::Addition;
             secondRelation.createdAt = "2026-11-24T10:00:00";
             secondRelation.updatedAt = "2026-11-24T10:00:00";
