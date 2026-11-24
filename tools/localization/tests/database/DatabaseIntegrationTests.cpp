@@ -2,6 +2,7 @@
 #include "../../../../src/infrastructure/database/DatabaseManager.h"
 #include "../../../../src/infrastructure/database/ObjectTypeRepository.h"
 #include "../../../../src/infrastructure/database/ObjectRepository.h"
+#include "../../../../src/infrastructure/database/ObjectRelationRepository.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -253,6 +254,96 @@ int main(int argc, char *argv[])
             check(QStringLiteral("ObjectRepository operations"), false);
             qCritical() << exception.what();
         }
+
+    // Проверка ObjectRelationRepository.
+        try
+        {
+            ObjectTypeRepository objectTypeRepository(databaseManager);
+            ObjectRepository objectRepository(databaseManager);
+            ObjectRelationRepository relationRepository(databaseManager);
+
+            ObjectType objectType;
+            objectType.uuid = "relation-test-type-uuid";
+            objectType.name = "Relation Test Type";
+            objectType.createdAt = "2026-11-24T10:00:00";
+            objectType.updatedAt = "2026-11-24T10:00:00";
+
+            const std::int64_t objectTypeId = objectTypeRepository.create(objectType);
+
+            Object parentObject;
+            parentObject.uuid = "relation-test-parent-uuid";
+            parentObject.objectTypeId = objectTypeId;
+            parentObject.name = "Relation Test Parent";
+            parentObject.createdAt = "2026-11-24T10:00:00";
+            parentObject.updatedAt = "2026-11-24T10:00:00";
+
+            const std::int64_t parentObjectId = objectRepository.create(parentObject);
+
+            Object childObject;
+            childObject.uuid = "relation-test-child-uuid";
+            childObject.objectTypeId = objectTypeId;
+            childObject.name = "Relation Test Child";
+            childObject.createdAt = "2026-11-24T10:00:00";
+            childObject.updatedAt = "2026-11-24T10:00:00";
+
+            const std::int64_t childObjectId = objectRepository.create(childObject);
+
+            ObjectRelation relation;
+            relation.uuid = "test-object-relation-uuid";
+            relation.parentObjectId = parentObjectId;
+            relation.childObjectId = childObjectId;
+            relation.role = ObjectRelationRole::Main;
+            relation.createdAt = "2026-11-24T10:00:00";
+            relation.updatedAt = "2026-11-24T10:00:00";
+
+            const std::int64_t relationId = relationRepository.create(relation);
+            check(QStringLiteral("ObjectRelation is created"), relationId > 0);
+            const auto loadedRelation = relationRepository.findById(relationId);
+            check(
+                QStringLiteral("ObjectRelation is read correctly"),
+                loadedRelation.has_value()
+                && loadedRelation->uuid == relation.uuid
+                && loadedRelation->parentObjectId == parentObjectId
+                && loadedRelation->childObjectId == childObjectId
+                && loadedRelation->role == relation.role
+                && loadedRelation->createdAt == relation.createdAt
+            );
+
+            const auto parentRelations = relationRepository.findByParentObjectId(parentObjectId);
+            const auto childRelations = relationRepository.findByChildObjectId(childObjectId);
+
+            check(QStringLiteral("ObjectRelation is found by parent"), parentRelations.size() == 1 && parentRelations.front().id == relationId);
+            check(QStringLiteral("ObjectRelation is found by child"), childRelations.size() == 1 && childRelations.front().id == relationId);
+
+            if (loadedRelation.has_value())
+            {
+                ObjectRelation updatedRelation = loadedRelation.value();
+                updatedRelation.role = ObjectRelationRole::Support;
+                updatedRelation.updatedAt = "2026-11-24T11:00:00";
+
+                const bool updated = relationRepository.update(updatedRelation);
+                const auto reloadedRelation = relationRepository.findById(relationId);
+
+                check(
+                    QStringLiteral("ObjectRelation is updated correctly"),
+                    updated
+                    && reloadedRelation.has_value()
+                    && reloadedRelation->role == updatedRelation.role
+                    && reloadedRelation->updatedAt == updatedRelation.updatedAt
+                );
+            }
+
+            const bool removed = relationRepository.remove(relationId);
+            const auto removedRelation = relationRepository.findById(relationId);
+
+            check(QStringLiteral("ObjectRelation is removed"), removed && !removedRelation.has_value());
+        }
+        catch (const std::exception &exception)
+        {
+            check(QStringLiteral("ObjectRelationRepository operations"), false);
+            qCritical() << exception.what();
+        }
+
 
         qInfo() << "Passed:" << passedTests;
         qInfo() << "Failed:" << failedTests;
