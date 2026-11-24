@@ -1,8 +1,10 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "../../domain/models/ObjectType.h"
@@ -31,4 +33,15 @@ private:
 
     IObjectTypeRepository &repository_;
     IObjectRepository &objectRepository_;
+
+    inline static constexpr std::array<std::string_view, 7> DefaultObjectTypeNames
+    {
+        "Project",
+        "Video",
+        "Shorts",
+        "Article",
+        "Post",
+        "Game",
+        "Book"
+    };
 };
