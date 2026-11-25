@@ -71,40 +71,106 @@ PropertyValueRepository::findByObjectAndProperty(std::int64_t objectId, std::int
     return readPropertyValue(query);
 }
 
-bool PropertyValueRepository::save(const PropertyValue &value)
+bool PropertyValueRepository::save(const PropertyValue &value, const std::string &updatedAt)
 {
-    QSqlQuery query(database_);
+    QSqlDatabase database = database_;
 
-    query.prepare(QStringLiteral(
-        "INSERT INTO property_values (object_id, property_id, value) "
-        "VALUES (:object_id, :property_id, :value) "
-        "ON CONFLICT(object_id, property_id) DO UPDATE SET "
-        "value = excluded.value"
-    ));
-    query.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(value.objectId));
-    query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(value.propertyId));
-    query.bindValue(QStringLiteral(":value"), QString::fromUtf8(value.value.c_str()));
+    if (!database.transaction())
+        throw std::runtime_error(database.lastError().text().toStdString());
 
-    if (!query.exec())
-        throw std::runtime_error(query.lastError().text().toStdString());
+    try
+    {
+        QSqlQuery query(database);
 
-    return query.numRowsAffected() > 0;
+        query.prepare(QStringLiteral(
+            "INSERT INTO property_values (object_id, property_id, value) "
+            "VALUES (:object_id, :property_id, :value) "
+            "ON CONFLICT(object_id, property_id) DO UPDATE SET value = excluded.value"
+        ));
+        query.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(value.objectId));
+        query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(value.propertyId));
+        query.bindValue(QStringLiteral(":value"), QString::fromUtf8(value.value.c_str()));
+
+        if (!query.exec())
+            throw std::runtime_error(query.lastError().text().toStdString());
+
+        query.finish();
+
+        QSqlQuery updateObjectQuery(database);
+        updateObjectQuery.prepare(QStringLiteral("UPDATE objects SET updated_at = :updated_at WHERE id = :object_id"));
+        updateObjectQuery.bindValue(QStringLiteral(":updated_at"), QString::fromUtf8(updatedAt.c_str()));
+        updateObjectQuery.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(value.objectId));
+
+        if (!updateObjectQuery.exec())
+            throw std::runtime_error(updateObjectQuery.lastError().text().toStdString());
+
+        if (updateObjectQuery.numRowsAffected() <= 0)
+            throw std::runtime_error("Object could not be updated.");
+
+        if (!database.commit())
+            throw std::runtime_error(database.lastError().text().toStdString());
+
+        return true;
+    }
+    catch (...)
+    {
+        database.rollback();
+        throw;
+    }
 }
 
-bool PropertyValueRepository::remove(std::int64_t objectId, std::int64_t propertyId)
+bool PropertyValueRepository::remove(std::int64_t objectId, std::int64_t propertyId, const std::string &updatedAt)
 {
-    QSqlQuery query(database_);
+    QSqlDatabase database = database_;
 
-    query.prepare(QStringLiteral(
-        "DELETE FROM property_values "
-        "WHERE object_id = :object_id "
-        "AND property_id = :property_id"
-    ));
-    query.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(objectId));
-    query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+    if (!database.transaction())
+        throw std::runtime_error(database.lastError().text().toStdString());
 
-    if (!query.exec())
-        throw std::runtime_error(query.lastError().text().toStdString());
+    try
+    {
+        QSqlQuery query(database);
 
-    return query.numRowsAffected() > 0;
+        query.prepare(QStringLiteral("DELETE FROM property_values "
+            "WHERE object_id = :object_id AND property_id = :property_id"));
+        query.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(objectId));
+        query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+
+        if (!query.exec())
+            throw std::runtime_error(query.lastError().text().toStdString());
+
+        const bool wasRemoved = query.numRowsAffected() > 0;
+
+        query.finish();
+
+        // Если значения не было, Object не изменился.
+        if (!wasRemoved)
+        {
+            if (!database.commit())
+                throw std::runtime_error(database.lastError().text().toStdString());
+
+            return false;
+        }
+
+        QSqlQuery updateObjectQuery(database);
+
+        updateObjectQuery.prepare(QStringLiteral("UPDATE objects SET updated_at = :updated_at WHERE id = :object_id"));
+        updateObjectQuery.bindValue(QStringLiteral(":updated_at"), QString::fromUtf8(updatedAt.c_str()));
+        updateObjectQuery.bindValue(QStringLiteral(":object_id"), QVariant::fromValue(objectId));
+
+        if (!updateObjectQuery.exec())
+            throw std::runtime_error(updateObjectQuery.lastError().text().toStdString());
+
+        if (updateObjectQuery.numRowsAffected() <= 0)
+            throw std::runtime_error("Object could not be updated.");
+
+        if (!database.commit())
+            throw std::runtime_error(database.lastError().text().toStdString());
+
+        return true;
+    }
+    catch (...)
+    {
+        database.rollback();
+        throw;
+    }
 }
