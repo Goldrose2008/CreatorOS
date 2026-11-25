@@ -4,6 +4,8 @@
 
 #include "../../application/properties/IPropertyDefinitionRepository.h"
 
+class QSqlQuery;
+class QString;
 class DatabaseManager;
 
 class PropertyDefinitionRepository final : public IPropertyDefinitionRepository
@@ -41,5 +43,13 @@ public:
     std::vector<PropertyOption> findOptions(std::int64_t propertyId) const override;
 
 private:
+    static PropertyDefinition readPropertyDefinition(const QSqlQuery &query);
+    static QString selectColumns();
+    static void bindDefinitionFields(QSqlQuery &query, const PropertyDefinition &definition);
+
+    static void saveTextSettings(QSqlDatabase &database, std::int64_t propertyId, const std::optional<PropertyTextSettings> &settings);
+    static void saveEntityReferenceSettings(QSqlDatabase &database, std::int64_t propertyId, const std::optional<PropertyEntityReferenceSettings> &settings);
+    static void saveOptions(QSqlDatabase &database, std::int64_t propertyId, const std::vector<PropertyOption> &options);
+
     QSqlDatabase database_;
 };
