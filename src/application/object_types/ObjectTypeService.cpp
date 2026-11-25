@@ -106,7 +106,7 @@ bool ObjectTypeService::deleteObjectType(std::int64_t id) const
 
 void ObjectTypeService::createDefaultObjectTypes()
 {
-    for (const std::string_view name : CreatorDefaultData::ObjectTypeNames)
+    for (const std::string_view name : DefaultObjectTypes::ObjectTypeNames)
     {
         const std::string objectTypeName(name);
 

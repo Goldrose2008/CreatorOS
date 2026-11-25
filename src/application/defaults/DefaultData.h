@@ -3,7 +3,7 @@
 #include <array>
 #include <string_view>
 
-namespace CreatorDefaultData
+namespace DefaultObjectTypes
 {
     inline constexpr std::array<std::string_view, 7> ObjectTypeNames
     {
