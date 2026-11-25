@@ -222,7 +222,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Property value must be a JSON string.");
 
             canonicalValue = QJsonValue(value.toString());
-            normalizedValue = canonicalValue.toCaseFolded();
+            normalizedValue = canonicalValue.toString().toCaseFolded();
             break;
         }
 
@@ -232,7 +232,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Property value must be a valid JSON number.");
 
             canonicalValue = QJsonValue(value.toDouble());
-            normalizedValue = canonicalValue;
+            normalizedValue = QString::number(value.toDouble(), 'g', 17);
             break;
         }
 
@@ -242,7 +242,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Property value must be a JSON boolean.");
 
             canonicalValue = QJsonValue(value.toBool());
-            normalizedValue = canonicalValue;
+            normalizedValue = value.toBool() ? QStringLiteral("true") : QStringLiteral("false");
             break;
         }
 
@@ -258,7 +258,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Date must use YYYY-MM-DD format.");
 
             canonicalValue = QJsonValue(date.toString(Qt::ISODate));
-            normalizedValue = canonicalValue;
+            normalizedValue = date.toString(Qt::ISODate);
             break;
         }
 
@@ -273,7 +273,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Property value must be a valid ISO 8601 date-time.");
 
             canonicalValue = QJsonValue(dateTime.toUTC().toString(Qt::ISODateWithMs));
-            normalizedValue = canonicalValue;
+            normalizedValue = dateTime.toUTC().toString(Qt::ISODateWithMs);
             break;
         }
 
@@ -288,7 +288,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Entity reference must contain a valid UUID.");
 
             canonicalValue = QJsonValue(uuid.toString(QUuid::WithoutBraces).toLower());
-            normalizedValue = canonicalValue;
+            normalizedValue = uuid.toString(QUuid::WithoutBraces).toLower();
             break;
         }
 
