@@ -11,6 +11,7 @@ class ContentTypeRepository;
 class ContentRepository;
 class ContentService;
 class ObjectRepository;
+class ObjectService;
 class ObjectTypeRepository;
 class ObjectTypeService;
 class PlatformRepository;
@@ -46,6 +47,7 @@ private:
     std::unique_ptr<AccountService> accountService_;
     std::unique_ptr<ContentService> contentService_;
     std::unique_ptr<ObjectTypeService> objectTypeService_;
+    std::unique_ptr<ObjectService> objectService_;
     std::unique_ptr<PlatformService> platformService_;
     std::unique_ptr<ProjectService> projectService_;
     std::unique_ptr<TaskService> taskService_;

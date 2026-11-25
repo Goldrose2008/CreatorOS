@@ -8,6 +8,7 @@
 #include "../ui/shell/AppShell.h"
 #include "../application/accounts/AccountService.h"
 #include "../application/content/ContentService.h"
+#include "../application/objects/ObjectService.h"
 #include "../application/object_types/ObjectTypeService.h"
 #include "../application/platforms/PlatformService.h"
 #include "../application/projects/ProjectService.h"
@@ -37,6 +38,8 @@ bool MainWindow::initialize(QString *errorMessage)
     objectTypeRepository_ = std::make_unique<ObjectTypeRepository>(databaseManager_);
     objectRepository_ = std::make_unique<ObjectRepository>(databaseManager_);
     objectTypeService_ = std::make_unique<ObjectTypeService>(*objectTypeRepository_, *objectRepository_);
+    objectService_ = std::make_unique<ObjectService>(*objectRepository_, *objectTypeRepository_);
+    
     QSqlDatabase database = databaseManager_.database();
 
     if (!database.transaction())
