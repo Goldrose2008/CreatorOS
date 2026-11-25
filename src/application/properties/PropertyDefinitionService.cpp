@@ -12,6 +12,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <unordered_set>
+#include <utility>
 
 #include "IPropertyDefinitionRepository.h"
 #include "../common/ServiceUtils.h"
@@ -156,6 +157,20 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
     std::vector<PropertyOption> &options
 ) const
 {
+    switch (definition.valueType)
+    {
+    case PropertyValueType::Text:
+    case PropertyValueType::Number:
+    case PropertyValueType::Boolean:
+    case PropertyValueType::Date:
+    case PropertyValueType::DateTime:
+    case PropertyValueType::EntityReference:
+        break;
+
+    default:
+        throw std::invalid_argument("Unknown property value type.");
+    }
+
     // Проверяем настройки, относящиеся к типу значения.
     if (definition.valueType == PropertyValueType::Text)
     {
@@ -194,10 +209,10 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
     }
 
     // Проверяем одно JSON-значение и возвращаем его каноническое представление.
-    const auto normalizeValue = [&definition](const QJsonValue &value) -> std::pair<QString, QString>
+    const auto normalizeValue = [&definition](const QJsonValue &value) -> std::pair<QString, QJsonValue>
     {
         QString normalizedValue;
-        QString canonicalValue;
+        QJsonValue canonicalValue;
 
         switch (definition.valueType)
         {
@@ -206,7 +221,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!value.isString())
                 throw std::invalid_argument("Property value must be a JSON string.");
 
-            canonicalValue = value.toString();
+            canonicalValue = QJsonValue(value.toString());
             normalizedValue = canonicalValue.toCaseFolded();
             break;
         }
@@ -216,7 +231,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!value.isDouble() || !std::isfinite(value.toDouble()))
                 throw std::invalid_argument("Property value must be a valid JSON number.");
 
-            canonicalValue = QString::number(value.toDouble(), 'g', 17);
+            canonicalValue = QJsonValue(value.toDouble());
             normalizedValue = canonicalValue;
             break;
         }
@@ -226,7 +241,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!value.isBool())
                 throw std::invalid_argument("Property value must be a JSON boolean.");
 
-            canonicalValue = value.toBool() ? QStringLiteral("true") : QStringLiteral("false");
+            canonicalValue = QJsonValue(value.toBool());
             normalizedValue = canonicalValue;
             break;
         }
@@ -242,7 +257,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!date.isValid() || date.toString(Qt::ISODate) != dateValue)
                 throw std::invalid_argument("Date must use YYYY-MM-DD format.");
 
-            canonicalValue = date.toString(Qt::ISODate);
+            canonicalValue = QJsonValue(date.toString(Qt::ISODate));
             normalizedValue = canonicalValue;
             break;
         }
@@ -257,7 +272,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!dateTime.isValid())
                 throw std::invalid_argument("Property value must be a valid ISO 8601 date-time.");
 
-            canonicalValue = dateTime.toUTC().toString(Qt::ISODateWithMs);
+            canonicalValue = QJsonValue(dateTime.toUTC().toString(Qt::ISODateWithMs));
             normalizedValue = canonicalValue;
             break;
         }
@@ -267,12 +282,12 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
             if (!value.isString())
                 throw std::invalid_argument("Entity reference must be a UUID string.");
 
-            const QUuid uuid(QString::fromUtf8(value.toString().toUtf8()));
+            const QUuid uuid(value.toString());
 
             if (uuid.isNull())
                 throw std::invalid_argument("Entity reference must contain a valid UUID.");
 
-            canonicalValue = uuid.toString(QUuid::WithoutBraces).toLower();
+            canonicalValue = QJsonValue(uuid.toString(QUuid::WithoutBraces).toLower());
             normalizedValue = canonicalValue;
             break;
         }
@@ -331,14 +346,7 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                     throw std::invalid_argument("Default text value exceeds the maximum length.");
             }
 
-            QJsonParseError valueError;
-            const QByteArray wrappedCanonical = QByteArray("[") + canonical.toUtf8() + QByteArray("]");
-            const QJsonDocument canonicalDocument = QJsonDocument::fromJson(wrappedCanonical, &valueError);
-
-            if (valueError.error != QJsonParseError::NoError || !canonicalDocument.isArray())
-                throw std::invalid_argument("Could not normalize property default value.");
-
-            normalizedDefaultValues.append(canonicalDocument.array().first());
+            normalizedDefaultValues.append(canonical);
         }
 
         if (definition.isMultiple)
@@ -382,14 +390,11 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
                 throw std::invalid_argument("Text option exceeds the maximum length.");
         }
 
-        QJsonParseError canonicalError;
-        const QByteArray canonicalJson = QByteArray("[") + canonical.toUtf8() + QByteArray("]");
-        const QJsonDocument canonicalDocument = QJsonDocument::fromJson(canonicalJson, &canonicalError);
+        QJsonArray canonicalOptionArray;
+        canonicalOptionArray.append(canonical);
 
-        if (canonicalError.error != QJsonParseError::NoError || !canonicalDocument.isArray())
-            throw std::invalid_argument("Could not normalize property option.");
+        const QByteArray serialized = QJsonDocument(canonicalOptionArray).toJson(QJsonDocument::Compact);
 
-        const QByteArray serialized = QJsonDocument(canonicalDocument.array()).toJson(QJsonDocument::Compact);
         option.value = serialized.mid(1, serialized.size() - 2).toStdString();
         option.normalizedValue = normalized.toStdString();
     }
