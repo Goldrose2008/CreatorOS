@@ -7,7 +7,7 @@
 #include <QVariant>
 #include <stdexcept>
 
-namespace
+namespace PropertyDefinitionRepositoryUtils
 {
     PropertyDefinition readPropertyDefinition(const QSqlQuery &query)
     {
@@ -75,10 +75,7 @@ namespace
         );
     }
 
-    void bindDefinitionFields(
-        QSqlQuery &query,
-        const PropertyDefinition &definition
-    )
+    void bindDefinitionFields(QSqlQuery &query, const PropertyDefinition &definition)
     {
         const std::string scopeValue =
             propertyDefinitionScopeToDatabaseValue(definition.scope);
@@ -157,6 +154,86 @@ namespace
             definition.showOnCard
         );
     }
+
+    void saveTextSettings(QSqlDatabase &database, std::int64_t propertyId, const std::optional<PropertyTextSettings> &settings)
+{
+    QSqlQuery query(database);
+
+    if (!settings.has_value())
+    {
+        query.prepare(QStringLiteral("DELETE FROM property_text_settings WHERE property_id = :property_id"));
+        query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+    }
+    else
+    {
+        query.prepare(QStringLiteral(
+            "INSERT INTO property_text_settings (property_id, min_length, max_length) "
+            "VALUES (:property_id, :min_length, :max_length) "
+            "ON CONFLICT(property_id) DO UPDATE SET "
+            "min_length = excluded.min_length, "
+            "max_length = excluded.max_length"
+        ));
+
+        query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+        query.bindValue(QStringLiteral(":min_length"), settings->minLength.has_value() ? QVariant::fromValue(settings->minLength.value()) : QVariant());
+        query.bindValue(QStringLiteral(":max_length"), settings->maxLength.has_value() ? QVariant::fromValue(settings->maxLength.value()) : QVariant());
+    }
+
+    if (!query.exec())
+        throw std::runtime_error(query.lastError().text().toStdString());
+}
+
+    void saveEntityReferenceSettings(QSqlDatabase &database, std::int64_t propertyId, const std::optional<PropertyEntityReferenceSettings> &settings)
+    {
+        QSqlQuery query(database);
+
+        if (!settings.has_value())
+        {
+            query.prepare(QStringLiteral("DELETE FROM property_entity_reference_settings WHERE property_id = :property_id"));
+            query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+        }
+        else
+        {
+            query.prepare(QStringLiteral(
+                "INSERT INTO property_entity_reference_settings (property_id, target_entity_type) "
+                "VALUES (:property_id, :target_entity_type) "
+                "ON CONFLICT(property_id) DO UPDATE SET "
+                "target_entity_type = excluded.target_entity_type"
+            ));
+
+            query.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+            query.bindValue(QStringLiteral(":target_entity_type"), QString::fromUtf8(settings->targetEntityType.c_str()));
+        }
+
+        if (!query.exec())
+            throw std::runtime_error(query.lastError().text().toStdString());
+    }
+
+    void saveOptions(QSqlDatabase &database, std::int64_t propertyId, const std::vector<PropertyOption> &options)
+    {
+        QSqlQuery deleteQuery(database);
+
+        deleteQuery.prepare(QStringLiteral("DELETE FROM property_options WHERE property_id = :property_id"));
+        deleteQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+
+        if (!deleteQuery.exec())
+            throw std::runtime_error(deleteQuery.lastError().text().toStdString());
+
+        for (const PropertyOption &option : options)
+        {
+            QSqlQuery insertQuery(database);
+
+            insertQuery.prepare(QStringLiteral("INSERT INTO property_options (property_id, value, normalized_value) "
+                "VALUES (:property_id, :value, :normalized_value)"));
+
+            insertQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(propertyId));
+            insertQuery.bindValue(QStringLiteral(":value"), QString::fromUtf8(option.value.c_str()));
+            insertQuery.bindValue(QStringLiteral(":normalized_value"), QString::fromUtf8(option.normalizedValue.c_str()));
+
+            if (!insertQuery.exec())
+                throw std::runtime_error(insertQuery.lastError().text().toStdString());
+        }
+    }
 }
 
 PropertyDefinitionRepository::PropertyDefinitionRepository(const DatabaseManager &databaseManager) : database_(databaseManager.database())
@@ -221,13 +298,56 @@ std::optional<PropertyDefinition> PropertyDefinitionRepository::findById(std::in
     return readPropertyDefinition(query);
 }
 
+bool PropertyDefinitionRepository::existsByName(
+    const std::string &name,
+    PropertyDefinitionScope scope,
+    const std::optional<std::int64_t> &objectTypeId,
+    const std::optional<std::int64_t> &excludeId) const
+{
+    QSqlQuery query(database_);
+
+    QString sql = QStringLiteral("SELECT 1 FROM property_definitions "
+        "WHERE name = :name COLLATE NOCASE AND scope = :scope"
+    );
+
+    if (scope == PropertyDefinitionScope::ObjectType)
+        sql += QStringLiteral(" AND object_type_id = :object_type_id");
+
+    if (excludeId.has_value())
+        sql += QStringLiteral(" AND id <> :exclude_id");
+
+    sql += QStringLiteral(" LIMIT 1");
+    query.prepare(sql);
+
+    const std::string scopeValue = propertyDefinitionScopeToDatabaseValue(scope);
+
+    query.bindValue(QStringLiteral(":name"), QString::fromUtf8(name.c_str()));
+    query.bindValue(QStringLiteral(":scope"), QString::fromUtf8(scopeValue.c_str()));
+
+    if (scope == PropertyDefinitionScope::ObjectType && objectTypeId.has_value())
+        query.bindValue(QStringLiteral(":object_type_id"), QVariant::fromValue(objectTypeId.value()));
+
+    if (excludeId.has_value())
+        query.bindValue(QStringLiteral(":exclude_id"), QVariant::fromValue(excludeId.value()));
+
+    if (!query.exec())
+        throw std::runtime_error(query.lastError().text().toStdString());
+
+    return query.next();
+}
+
 std::int64_t PropertyDefinitionRepository::create(
     const PropertyDefinition &definition,
     const std::optional<PropertyTextSettings> &textSettings,
     const std::optional<PropertyEntityReferenceSettings> &entityReferenceSettings,
     const std::vector<PropertyOption> &options)
 {
-    QSqlQuery query(database_);
+    QSqlDatabase database = database_;
+
+    if (!database.transaction())
+        throw std::runtime_error(database.lastError().text().toStdString());
+
+    QSqlQuery query(database);
 
     query.prepare(QStringLiteral(
         "INSERT INTO property_definitions ("
@@ -261,17 +381,16 @@ std::int64_t PropertyDefinitionRepository::create(
         ")"
     ));
 
-    query.bindValue(QStringLiteral(":uuid"), QString::fromUtf8(definition.uuid.c_str()));
+    const std::int64_t propertyId = query.lastInsertId().toLongLong();
 
-    bindDefinitionFields(query, definition);
+    PropertyDefinitionRepositoryUtils::saveTextSettings(database, propertyId, textSettings);
+    PropertyDefinitionRepositoryUtils::saveEntityReferenceSettings(database, propertyId, entityReferenceSettings);
+    PropertyDefinitionRepositoryUtils::saveOptions(database, propertyId, options);
 
-    query.bindValue(QStringLiteral(":created_at"), QString::fromUtf8(definition.createdAt.c_str()));
-    query.bindValue(QStringLiteral(":updated_at"), QString::fromUtf8(definition.updatedAt.c_str()));
-
-    if (!query.exec())
-        throw std::runtime_error(query.lastError().text().toStdString());
-
-    return query.lastInsertId().toLongLong();
+    if (!database.commit())
+    throw std::runtime_error(database.lastError().text().toStdString());
+ 
+    return propertyId;
 }
 
 bool PropertyDefinitionRepository::update(
@@ -284,6 +403,26 @@ bool PropertyDefinitionRepository::update(
 
     if (!database.transaction())
         throw std::runtime_error(database.lastError().text().toStdString());
+
+    QSqlQuery previousQuery(database);
+
+    previousQuery.prepare(QStringLiteral("SELECT is_multiple FROM property_definitions WHERE id = :id"));
+    previousQuery.bindValue(QStringLiteral(":id"), QVariant::fromValue(definition.id));
+
+    if (!previousQuery.exec())
+        throw std::runtime_error(previousQuery.lastError().text().toStdString());
+
+    if (!previousQuery.next())
+    {
+        if (!database.commit())
+            throw std::runtime_error(database.lastError().text().toStdString());
+
+        return false;
+    }
+
+    const bool wasMultiple = previousQuery.value("is_multiple").toBool();
+
+    previousQuery.finish();
 
     QSqlQuery query(database);
 
@@ -324,6 +463,17 @@ bool PropertyDefinitionRepository::update(
 
     query.finish();
 
+    if (!wasMultiple && definition.isMultiple)
+    {
+        QSqlQuery convertQuery(database);
+
+        convertQuery.prepare(QStringLiteral("UPDATE property_values SET value = '[' || value || ']' WHERE property_id = :property_id"));
+        convertQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(definition.id));
+
+        if (!convertQuery.exec())
+            throw std::runtime_error(convertQuery.lastError().text().toStdString());
+    }
+
     const std::string valueTypeValue = propertyValueTypeToDatabaseValue(definition.valueType);
     QSqlQuery removeTextSettingsQuery(database);
 
@@ -333,14 +483,9 @@ bool PropertyDefinitionRepository::update(
         "AND :value_type <> 'text'"
     ));
 
-    removeTextSettingsQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(definition.id));
-    removeTextSettingsQuery.bindValue(QStringLiteral(":value_type"), QString::fromUtf8(valueTypeValue.c_str()));
-
-    if (!removeTextSettingsQuery.exec())
-    {
-        database.rollback();
-        throw std::runtime_error(removeTextSettingsQuery.lastError().text().toStdString());
-    }
+    PropertyDefinitionRepositoryUtils::saveTextSettings(database, definition.id, definition.valueType == PropertyValueType::Text ? textSettings : std::nullopt);
+    PropertyDefinitionRepositoryUtils::saveEntityReferenceSettings(database, definition.id, definition.valueType == PropertyValueType::EntityReference ? entityReferenceSettings : std::nullopt);
+    PropertyDefinitionRepositoryUtils::saveOptions(database, definition.id, options);
 
     QSqlQuery removeEntityReferenceSettingsQuery(database);
 
