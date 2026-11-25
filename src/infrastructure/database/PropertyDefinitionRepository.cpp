@@ -4,6 +4,7 @@
 
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QString>
 #include <QVariant>
 #include <stdexcept>
 
@@ -78,9 +79,7 @@ bool PropertyDefinitionRepository::existsByName(
 {
     QSqlQuery query(database_);
 
-    QString sql = QStringLiteral("SELECT 1 FROM property_definitions "
-        "WHERE name = :name COLLATE NOCASE AND scope = :scope"
-    );
+    QString sql = QStringLiteral("SELECT name FROM property_definitions WHERE scope = :scope");
 
     if (scope == PropertyDefinitionScope::ObjectType)
         sql += QStringLiteral(" AND object_type_id = :object_type_id");
@@ -88,12 +87,10 @@ bool PropertyDefinitionRepository::existsByName(
     if (excludeId.has_value())
         sql += QStringLiteral(" AND id <> :exclude_id");
 
-    sql += QStringLiteral(" LIMIT 1");
     query.prepare(sql);
 
     const std::string scopeValue = propertyDefinitionScopeToDatabaseValue(scope);
 
-    query.bindValue(QStringLiteral(":name"), QString::fromUtf8(name.c_str()));
     query.bindValue(QStringLiteral(":scope"), QString::fromUtf8(scopeValue.c_str()));
 
     if (scope == PropertyDefinitionScope::ObjectType && objectTypeId.has_value())
@@ -105,7 +102,17 @@ bool PropertyDefinitionRepository::existsByName(
     if (!query.exec())
         throw std::runtime_error(query.lastError().text().toStdString());
 
-    return query.next();
+    const QString targetName = QString::fromUtf8(name.c_str());
+
+    while (query.next())
+    {
+        const QString existingName = query.value("name").toString();
+
+        if (QString::compare(existingName, targetName, Qt::CaseInsensitive) == 0)
+            return true;
+    }
+
+    return false;
 }
 
 std::int64_t PropertyDefinitionRepository::create(
