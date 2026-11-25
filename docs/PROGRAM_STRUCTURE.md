@@ -50,7 +50,7 @@
 `/properties/PropertyDefinitionRepository` - 
 
 `/properties/IPropertyValueRepository.h` - Определяет доступные операции для получения, сохранения и удаления значений пользовательских свойств, установленных для конкретных объектов.
-`/properties/PropertyValueService` - 
+`/properties/PropertyValueService` - Прикладные операции с сохранёнными значениями пользовательских свойств объектов: получение, проверка, нормализация, сохранение и удаление.
 
 `/tasks/ITaskRepository.h` - перечень доступных операций в БД с сущностью Task.
 `/tasks/TaskService` - Что можно делать с сущностью Task: создание, редактирование, удаление и так далее.
