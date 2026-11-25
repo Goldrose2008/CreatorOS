@@ -1,15 +1,22 @@
 #include "MainWindow.h"
 
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <exception>
+
 #include "AppInfo.h"
 #include "../ui/shell/AppShell.h"
 #include "../application/accounts/AccountService.h"
 #include "../application/content/ContentService.h"
+#include "../application/object_types/ObjectTypeService.h"
 #include "../application/platforms/PlatformService.h"
 #include "../application/projects/ProjectService.h"
 #include "../application/tasks/TaskService.h"
 #include "../infrastructure/database/AccountRepository.h"
 #include "../infrastructure/database/ContentRepository.h"
 #include "../infrastructure/database/ContentTypeRepository.h"
+#include "../infrastructure/database/ObjectRepository.h"
+#include "../infrastructure/database/ObjectTypeRepository.h"
 #include "../infrastructure/database/PlatformRepository.h"
 #include "../infrastructure/database/ProjectRepository.h"
 #include "../infrastructure/database/TaskRepository.h"
@@ -24,6 +31,49 @@ bool MainWindow::initialize(QString *errorMessage)
 {
     if (!databaseManager_.initialize(errorMessage))
     {
+        return false;
+    }
+
+    ObjectTypeRepository objectTypeRepository(databaseManager_);
+    ObjectRepository objectRepository(databaseManager_);
+    ObjectTypeService objectTypeService(objectTypeRepository, objectRepository);
+    QSqlDatabase database = databaseManager_.database();
+
+    if (!database.transaction())
+    {
+        if (errorMessage != nullptr)
+            *errorMessage = database.lastError().text();
+
+        return false;
+    }
+
+    try
+    {
+        if (objectTypeService.getAllObjectTypes().empty())
+        {
+            objectTypeService.createDefaultObjectTypes();
+
+            // Здесь в дальнейшем будут добавляться остальные начальные данные.
+        }
+
+        if (!database.commit())
+        {
+            const QString commitError = database.lastError().text();
+            database.rollback();
+
+            if (errorMessage != nullptr)
+                *errorMessage = commitError;
+
+            return false;
+        }
+    }
+    catch (const std::exception &error)
+    {
+        database.rollback();
+
+        if (errorMessage != nullptr)
+            *errorMessage = QString::fromUtf8(error.what());
+
         return false;
     }
 

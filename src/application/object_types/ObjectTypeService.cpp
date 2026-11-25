@@ -6,9 +6,10 @@
 #include <stdexcept>
 
 #include "IObjectTypeRepository.h"
-#include "../objects/IObjectRepository.h"
 #include "../common/ServiceUtils.h"
 #include "../common/StringUtils.h"
+#include "../defaults/DefaultData.h"
+#include "../objects/IObjectRepository.h"
 
 ObjectTypeService::ObjectTypeService(IObjectTypeRepository &repository, IObjectRepository &objectRepository)
     : repository_(repository), objectRepository_(objectRepository)
@@ -94,6 +95,9 @@ bool ObjectTypeService::deleteObjectType(std::int64_t id) const
     if (!objectType.has_value())
         return false;
 
+    if (repository_.findAll().size() <= 1)
+        throw std::invalid_argument("The last object type cannot be deleted.");
+
     if (!objectRepository_.findActiveByObjectTypeId(id).empty())
         throw std::invalid_argument("Object type is used by active objects. Reassign them before deletion.");
 
@@ -102,7 +106,7 @@ bool ObjectTypeService::deleteObjectType(std::int64_t id) const
 
 void ObjectTypeService::createDefaultObjectTypes()
 {
-    for (const std::string_view name : DefaultObjectTypeNames)
+    for (const std::string_view name : CreatorDefaultData::ObjectTypeNames)
     {
         const std::string objectTypeName(name);
 

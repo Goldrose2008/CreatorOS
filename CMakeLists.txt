@@ -44,6 +44,8 @@ qt_add_executable(CreatorOS
     src/application/content/ContentService.cpp
     src/application/content/ContentService.h
 
+    src/application/defaults/DefaultData.h
+
     src/application/platforms/IPlatformRepository.h
     src/application/platforms/PlatformService.cpp
     src/application/platforms/PlatformService.h
