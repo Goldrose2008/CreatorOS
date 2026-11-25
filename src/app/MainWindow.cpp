@@ -8,6 +8,7 @@
 #include "../ui/shell/AppShell.h"
 #include "../application/accounts/AccountService.h"
 #include "../application/content/ContentService.h"
+#include "../application/object_relations/ObjectRelationService.h"
 #include "../application/objects/ObjectService.h"
 #include "../application/object_types/ObjectTypeService.h"
 #include "../application/platforms/PlatformService.h"
@@ -16,6 +17,7 @@
 #include "../infrastructure/database/AccountRepository.h"
 #include "../infrastructure/database/ContentRepository.h"
 #include "../infrastructure/database/ContentTypeRepository.h"
+#include "../infrastructure/database/ObjectRelationRepository.h"
 #include "../infrastructure/database/ObjectRepository.h"
 #include "../infrastructure/database/ObjectTypeRepository.h"
 #include "../infrastructure/database/PlatformRepository.h"
@@ -37,9 +39,12 @@ bool MainWindow::initialize(QString *errorMessage)
 
     objectTypeRepository_ = std::make_unique<ObjectTypeRepository>(databaseManager_);
     objectRepository_ = std::make_unique<ObjectRepository>(databaseManager_);
+    objectRelationRepository_ = std::make_unique<ObjectRelationRepository>(databaseManager_);
+    
     objectTypeService_ = std::make_unique<ObjectTypeService>(*objectTypeRepository_, *objectRepository_);
     objectService_ = std::make_unique<ObjectService>(*objectRepository_, *objectTypeRepository_);
-    
+    objectRelationService_ = std::make_unique<ObjectRelationService>(*objectRelationRepository_, *objectRepository_);
+
     QSqlDatabase database = databaseManager_.database();
 
     if (!database.transaction())
