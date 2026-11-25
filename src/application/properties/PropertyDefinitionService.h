@@ -51,6 +51,12 @@ public:
 
 private:
     void setPropertyDefinitionFields(PropertyDefinition &definition, const PropertyDefinition &source) const;
+    void validateAndNormalizeDefinitionData(
+        PropertyDefinition &definition,
+        std::optional<PropertyTextSettings> &textSettings,
+        std::optional<PropertyEntityReferenceSettings> &entityReferenceSettings,
+        std::vector<PropertyOption> &options
+    ) const;
 
     IPropertyDefinitionRepository &repository_;
     IObjectTypeRepository &objectTypeRepository_;
