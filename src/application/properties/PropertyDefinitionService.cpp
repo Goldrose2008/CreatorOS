@@ -400,8 +400,69 @@ void PropertyDefinitionService::validateAndNormalizeDefinitionData(
     }
 }
 
+PropertyDefinition PropertyDefinitionService::createPropertyDefinition(
+    const PropertyDefinition &sourceDefinition,
+    const std::optional<PropertyTextSettings> &sourceTextSettings,
+    const std::optional<PropertyEntityReferenceSettings> &sourceEntityReferenceSettings,
+    const std::vector<PropertyOption> &sourceOptions
+)
+{
+    PropertyDefinition definition;
 
+    setPropertyDefinitionFields(definition, sourceDefinition);
 
+    auto textSettings = sourceTextSettings;
+    auto entityReferenceSettings = sourceEntityReferenceSettings;
+    auto options = sourceOptions;
 
+    validateAndNormalizeDefinitionData(definition, textSettings, entityReferenceSettings, options);
 
+    definition.uuid = QUuid::createUuid().toString(QUuid::WithoutBraces).toStdString();
+    
+    const std::string timestamp = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
+    definition.createdAt = timestamp;
+    definition.updatedAt = timestamp;
 
+    const std::int64_t id = repository_.create(definition, textSettings, entityReferenceSettings, options);
+    const auto createdDefinition = repository_.findById(id);
+
+    if (!createdDefinition.has_value())
+        throw std::runtime_error("Created property definition could not be loaded.");
+
+    return createdDefinition.value();
+}
+
+bool PropertyDefinitionService::updatePropertyDefinition(
+    const PropertyDefinition &sourceDefinition,
+    const std::optional<PropertyTextSettings> &sourceTextSettings,
+    const std::optional<PropertyEntityReferenceSettings> &sourceEntityReferenceSettings,
+    const std::vector<PropertyOption> &sourceOptions
+)
+{
+    const auto existingDefinition = CreatorServiceUtils::findEntityByID(repository_, sourceDefinition.id);
+
+    if (!existingDefinition.has_value())
+        return false;
+
+    PropertyDefinition definition = existingDefinition.value();
+
+    setPropertyDefinitionFields(definition, sourceDefinition);
+
+    auto textSettings = sourceTextSettings;
+    auto entityReferenceSettings = sourceEntityReferenceSettings;
+    auto options = sourceOptions;
+
+    validateAndNormalizeDefinitionData(definition, textSettings, entityReferenceSettings, options);
+
+    definition.updatedAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
+
+    return repository_.update(definition, textSettings, entityReferenceSettings, options);
+}
+
+bool PropertyDefinitionService::deletePropertyDefinition(std::int64_t id) const
+{
+    if (id <= 0)
+        return false;
+
+    return repository_.remove(id);
+}
