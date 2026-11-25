@@ -34,9 +34,9 @@ bool MainWindow::initialize(QString *errorMessage)
         return false;
     }
 
-    ObjectTypeRepository objectTypeRepository(databaseManager_);
-    ObjectRepository objectRepository(databaseManager_);
-    ObjectTypeService objectTypeService(objectTypeRepository, objectRepository);
+    objectTypeRepository_ = std::make_unique<ObjectTypeRepository>(databaseManager_);
+    objectRepository_ = std::make_unique<ObjectRepository>(databaseManager_);
+    objectTypeService_ = std::make_unique<ObjectTypeService>(*objectTypeRepository_, *objectRepository_);
     QSqlDatabase database = databaseManager_.database();
 
     if (!database.transaction())
@@ -49,9 +49,9 @@ bool MainWindow::initialize(QString *errorMessage)
 
     try
     {
-        if (objectTypeService.getAllObjectTypes().empty())
+        if (objectTypeService_->getAllObjectTypes().empty())
         {
-            objectTypeService.createDefaultObjectTypes();
+            objectTypeService_->createDefaultObjectTypes();
 
             // Здесь в дальнейшем будут добавляться остальные начальные данные.
         }
