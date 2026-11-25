@@ -121,6 +121,8 @@ std::int64_t PropertyDefinitionRepository::create(
 
     try
     {
+
+
         QSqlQuery query(database);
 
         query.prepare(QStringLiteral(
@@ -194,110 +196,92 @@ bool PropertyDefinitionRepository::update(
     if (!database.transaction())
         throw std::runtime_error(database.lastError().text().toStdString());
 
-    QSqlQuery previousQuery(database);
-
-    previousQuery.prepare(QStringLiteral("SELECT is_multiple FROM property_definitions WHERE id = :id"));
-    previousQuery.bindValue(QStringLiteral(":id"), QVariant::fromValue(definition.id));
-
-    if (!previousQuery.exec())
-        throw std::runtime_error(previousQuery.lastError().text().toStdString());
-
-    if (!previousQuery.next())
+    try
     {
+        // Получаем предыдущее значение is_multiple.
+        QSqlQuery previousQuery(database);
+
+        previousQuery.prepare(QStringLiteral("SELECT is_multiple FROM property_definitions WHERE id = :id"));
+        previousQuery.bindValue(QStringLiteral(":id"), QVariant::fromValue(definition.id));
+
+        if (!previousQuery.exec())
+            throw std::runtime_error(previousQuery.lastError().text().toStdString());
+
+        // Если определение не найдено, изменений не требуется.
+        if (!previousQuery.next())
+        {
+            database.rollback();
+            return false;
+        }
+
+        const bool wasMultiple = previousQuery.value("is_multiple").toBool();
+
+        previousQuery.finish();
+
+        // Обновляем само определение.
+        QSqlQuery query(database);
+
+        query.prepare(QStringLiteral(
+            "UPDATE property_definitions SET "
+            "scope = :scope, "
+            "object_type_id = :object_type_id, "
+            "name = :name, "
+            "description = :description, "
+            "value_type = :value_type, "
+            "is_multiple = :is_multiple, "
+            "is_required = :is_required, "
+            "default_value = :default_value, "
+            "is_enabled = :is_enabled, "
+            "show_on_card = :show_on_card, "
+            "updated_at = :updated_at "
+            "WHERE id = :id"
+        ));
+
+        bindDefinitionFields(query, definition);
+
+        query.bindValue(QStringLiteral(":updated_at"), QString::fromUtf8(definition.updatedAt.c_str()));
+        query.bindValue(QStringLiteral(":id"), QVariant::fromValue(definition.id));
+
+        if (!query.exec())
+            throw std::runtime_error(query.lastError().text().toStdString());
+
+        if (query.numRowsAffected() <= 0)
+        {
+            database.rollback();
+            return false;
+        }
+
+        query.finish();
+
+        // При переходе от одного значения к нескольким
+        // преобразуем ранее сохранённые значения в JSON-массивы.
+        if (!wasMultiple && definition.isMultiple)
+        {
+            QSqlQuery convertQuery(database);
+
+            convertQuery.prepare(QStringLiteral("UPDATE property_values SET value = '[' || value || ']' WHERE property_id = :property_id"));
+            convertQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(definition.id));
+
+            if (!convertQuery.exec())
+                throw std::runtime_error(convertQuery.lastError().text().toStdString());
+        }
+
+        // Сохраняем настройки, соответствующие новому типу свойства.
+        saveTextSettings(database, definition.id, definition.valueType == PropertyValueType::Text ? textSettings : std::nullopt);
+        saveEntityReferenceSettings(database, definition.id, definition.valueType == PropertyValueType::EntityReference ? entityReferenceSettings : std::nullopt);
+         // Полностью заменяем список допустимых вариантов.
+        saveOptions(database, definition.id, options);
+
         if (!database.commit())
-            throw std::runtime_error(database.lastError().text().toStdString());
-
-        return false;
-    }
-
-    const bool wasMultiple = previousQuery.value("is_multiple").toBool();
-
-    previousQuery.finish();
-
-    QSqlQuery query(database);
-
-    query.prepare(QStringLiteral(
-        "UPDATE property_definitions SET "
-        "scope = :scope, "
-        "object_type_id = :object_type_id, "
-        "name = :name, "
-        "description = :description, "
-        "value_type = :value_type, "
-        "is_multiple = :is_multiple, "
-        "is_required = :is_required, "
-        "default_value = :default_value, "
-        "is_enabled = :is_enabled, "
-        "show_on_card = :show_on_card, "
-        "updated_at = :updated_at "
-        "WHERE id = :id"
-    ));
-
-    bindDefinitionFields(query, definition);
-
-    query.bindValue(QStringLiteral(":updated_at"), QString::fromUtf8(definition.updatedAt.c_str()));
-    query.bindValue(QStringLiteral(":id"), QVariant::fromValue(definition.id));
-
-    if (!query.exec())
-    {
-        database.rollback();
-        throw std::runtime_error(query.lastError().text().toStdString());
-    }
-
-    if (query.numRowsAffected() <= 0)
-    {
-        if (!database.commit())
-            throw std::runtime_error(database.lastError().text().toStdString());
-
-        return false;
-    }
-
-    query.finish();
-
-    if (!wasMultiple && definition.isMultiple)
-    {
-        QSqlQuery convertQuery(database);
-
-        convertQuery.prepare(QStringLiteral("UPDATE property_values SET value = '[' || value || ']' WHERE property_id = :property_id"));
-        convertQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(definition.id));
-
-        if (!convertQuery.exec())
-            throw std::runtime_error(convertQuery.lastError().text().toStdString());
-    }
-
-    const std::string valueTypeValue = propertyValueTypeToDatabaseValue(definition.valueType);
-    QSqlQuery removeTextSettingsQuery(database);
-
-    removeTextSettingsQuery.prepare(QStringLiteral(
-        "DELETE FROM property_text_settings "
-        "WHERE property_id = :property_id "
-        "AND :value_type <> 'text'"
-    ));
-
-    saveTextSettings(database, definition.id, definition.valueType == PropertyValueType::Text ? textSettings : std::nullopt);
-    saveEntityReferenceSettings(database, definition.id, definition.valueType == PropertyValueType::EntityReference ? entityReferenceSettings : std::nullopt);
-    saveOptions(database, definition.id, options);
-
-    QSqlQuery removeEntityReferenceSettingsQuery(database);
-
-    removeEntityReferenceSettingsQuery.prepare(QStringLiteral(
-        "DELETE FROM property_entity_reference_settings "
-        "WHERE property_id = :property_id "
-        "AND :value_type <> 'entity_reference'"
-    ));
-
-    removeEntityReferenceSettingsQuery.bindValue(QStringLiteral(":property_id"), QVariant::fromValue(definition.id));
-    removeEntityReferenceSettingsQuery.bindValue(QStringLiteral(":value_type"), QString::fromUtf8(valueTypeValue.c_str()));
-
-    if (!removeEntityReferenceSettingsQuery.exec())
-    {
-        database.rollback();
-        throw std::runtime_error(removeEntityReferenceSettingsQuery.lastError().text().toStdString());
-    }
-
-    if (!database.commit())
         throw std::runtime_error(database.lastError().text().toStdString());
 
-    return true;
+        return true;
+    }
+    catch (...)
+    {
+        database.rollback();
+        throw;
+    }
 }
 
 bool PropertyDefinitionRepository::remove(std::int64_t id)
