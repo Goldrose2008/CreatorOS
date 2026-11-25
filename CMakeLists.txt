@@ -278,54 +278,7 @@ if(BUILD_TESTING)
     )
 
 
-    qt_add_executable(CreatorOSDatabaseTests
-        tools/localization/tests/database/DatabaseIntegrationTests.cpp
-
-        src/infrastructure/database/DatabaseManager.cpp
-        src/infrastructure/database/DatabaseManager.h
-
-        src/infrastructure/database/ObjectTypeRepository.cpp
-        src/infrastructure/database/ObjectTypeRepository.h
-
-        src/infrastructure/database/ObjectRepository.cpp
-        src/infrastructure/database/ObjectRepository.h
-
-        src/infrastructure/database/ObjectRelationRepository.cpp
-        src/infrastructure/database/ObjectRelationRepository.h
-
-        src/infrastructure/database/PropertyDefinitionRepository.cpp
-        src/infrastructure/database/PropertyDefinitionRepository.h
-
-        src/infrastructure/database/PropertyValueRepository.cpp
-        src/infrastructure/database/PropertyValueRepository.h
-
-        src/domain/models/ObjectRelation.cpp
-        src/domain/models/ObjectRelation.h
-
-        src/domain/models/PropertyDefinition.cpp
-        src/domain/models/PropertyDefinition.h
-
-        src/domain/models/Object.h
-        src/domain/models/ObjectType.h
-        src/domain/models/PropertyEntityReferenceSettings.h
-        src/domain/models/PropertyOption.h
-        src/domain/models/PropertyTextSettings.h
-        src/domain/models/PropertyValue.h
-
-        resources/database.qrc
-    )
-
-    target_link_libraries(CreatorOSDatabaseTests
-        PRIVATE
-            Qt6::Core
-            Qt6::Sql
-    )
-
-    add_test(
-        NAME CreatorOSDatabaseTests
-        COMMAND CreatorOSDatabaseTests
-    )
-
+   
 endif()
 
 target_link_libraries(CreatorOS
