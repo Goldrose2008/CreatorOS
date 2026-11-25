@@ -15,22 +15,30 @@ public:
     std::vector<PropertyDefinition> findByObjectTypeId(std::int64_t objectTypeId) const override;
     std::optional<PropertyDefinition> findById(std::int64_t id) const override;
 
-    std::int64_t create(const PropertyDefinition &definition) override;
-    bool update(const PropertyDefinition &definition) override;
+    bool existsByName(
+        const std::string &name,
+        PropertyDefinitionScope scope,
+        const std::optional<std::int64_t> &objectTypeId,
+        const std::optional<std::int64_t> &excludeId = std::nullopt
+    ) const override;
+
+    std::int64_t create(
+        const PropertyDefinition &definition,
+        const std::optional<PropertyTextSettings> &textSettings,
+        const std::optional<PropertyEntityReferenceSettings> &entityReferenceSettings,
+        const std::vector<PropertyOption> &options
+    ) override;
+    bool update(
+        const PropertyDefinition &definition,
+        const std::optional<PropertyTextSettings> &textSettings,
+        const std::optional<PropertyEntityReferenceSettings> &entityReferenceSettings,
+        const std::vector<PropertyOption> &options
+    ) override;
     bool remove(std::int64_t id) override;
 
     std::optional<PropertyTextSettings> findTextSettings(std::int64_t propertyId) const override;
-    bool saveTextSettings(const PropertyTextSettings &settings) override;
-    bool removeTextSettings(std::int64_t propertyId) override;
-
     std::optional<PropertyEntityReferenceSettings> findEntityReferenceSettings(std::int64_t propertyId) const override;
-    bool saveEntityReferenceSettings(const PropertyEntityReferenceSettings &settings) override;
-    bool removeEntityReferenceSettings(std::int64_t propertyId) override;
-
     std::vector<PropertyOption> findOptions(std::int64_t propertyId) const override;
-    std::int64_t createOption(const PropertyOption &option) override;
-    bool updateOption(const PropertyOption &option) override;
-    bool removeOption(std::int64_t id) override;
 
 private:
     QSqlDatabase database_;
