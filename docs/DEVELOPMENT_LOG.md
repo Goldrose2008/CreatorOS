@@ -288,12 +288,10 @@ if (platform.name.empty())
 Проверим состав зависимостей MainWindow, контракты Services, сборку и работоспособность. Затем зафиксируем завершение этапа 3.4.6 в DEVELOPMENT_LOG.md.
 
 #### 3.5. Ревизия и рефакторинг Application - в работе
-##### 3.5.1. Проверка и уточнение контрактов Object и ObjectType - в работе 
+##### 3.5.1. Проверка и уточнение ObjectRelationService, PropertyDefinitionService и PropertyValueService. - в работе 
 Убедиться, что новые сервисы предоставляют все необходимые прикладные операции.
 
-##### 3.5.2. Проверка и уточнение ObjectRelationService, PropertyDefinitionService и PropertyValueService.
-
-##### 3.5.3. Удаление устаревших Application-сценариев Project и Content — только после переключения всех потребителей.
+##### 3.5.2. Удаление устаревших Application-сценариев Project и Content — только после переключения всех потребителей.
 
 #### 3.6. Адаптация UI под единую модель Object
 
