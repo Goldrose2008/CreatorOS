@@ -20,6 +20,10 @@ class PlatformRepository;
 class PlatformService;
 class ProjectRepository;
 class ProjectService;
+class PropertyDefinitionRepository;
+class PropertyDefinitionService;
+class PropertyValueRepository;
+class PropertyValueService;
 class TaskRepository;
 class TaskService;
 
@@ -45,6 +49,8 @@ private:
     std::unique_ptr<ObjectTypeRepository> objectTypeRepository_;
     std::unique_ptr<PlatformRepository> platformRepository_;
     std::unique_ptr<ProjectRepository> projectRepository_;
+    std::unique_ptr<PropertyDefinitionRepository> propertyDefinitionRepository_;
+    std::unique_ptr<PropertyValueRepository> propertyValueRepository_;
     std::unique_ptr<TaskRepository> taskRepository_;
 
     std::unique_ptr<AccountService> accountService_;
@@ -54,5 +60,7 @@ private:
     std::unique_ptr<ObjectService> objectService_;
     std::unique_ptr<PlatformService> platformService_;
     std::unique_ptr<ProjectService> projectService_;
+    std::unique_ptr<PropertyDefinitionService> propertyDefinitionService_;
+    std::unique_ptr<PropertyValueService> propertyValueService_;
     std::unique_ptr<TaskService> taskService_;
 };

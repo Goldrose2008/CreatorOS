@@ -56,7 +56,11 @@ qt_add_executable(CreatorOS
     src/application/platforms/PlatformService.h
 
     src/application/properties/IPropertyDefinitionRepository.h
+    src/application/properties/PropertyDefinitionService.cpp
+    src/application/properties/PropertyDefinitionService.h
     src/application/properties/IPropertyValueRepository.h
+    src/application/properties/PropertyValueService.cpp
+    src/application/properties/PropertyValueService.h
 
     src/application/projects/IProjectRepository.h
     src/application/projects/ProjectService.cpp
