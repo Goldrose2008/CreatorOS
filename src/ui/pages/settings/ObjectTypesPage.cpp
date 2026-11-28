@@ -1,12 +1,16 @@
 #include "ObjectTypesPage.h"
 
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
+
 #include <exception>
+#include <stdexcept>
 
 #include "ObjectTypeEditorDialog.h"
 #include "../../components/entity/EntityCard.h"
 #include "../../components/entity/EntityList.h"
+#include "../../components/forms/ConfirmModal.h"
 #include "../../components/layout/PageHeader.h"
 #include "../../localization/LocalizationService.h"
 #include "../../style/Metrics.h"
@@ -73,10 +77,11 @@ void ObjectTypesPage::reload()
     try
     {
         const std::vector<ObjectType> objectTypes = objectTypeService_.getAllObjectTypes();
+        const bool canDelete = objectTypes.size() > 1;
 
         objectTypesList_->setItems(
             objectTypes,
-            [this](const ObjectType &objectType) -> QWidget *
+            [this, canDelete](const ObjectType &objectType) -> QWidget *
             {
                 auto *item = new EntityCard(localization_, objectTypesList_);
                 item->setTitle(QString::fromUtf8(objectType.name.c_str()));
@@ -87,6 +92,15 @@ void ObjectTypesPage::reload()
                 auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
                 item->addAction(editButton);
 
+                auto *deleteButton = new QPushButton(localization_.text(QStringLiteral("common.action.delete")), item);
+
+                deleteButton->setEnabled(canDelete);
+
+                if (!canDelete)
+                    deleteButton->setToolTip(localization_.text(QStringLiteral("object_types.delete.last_forbidden")));
+
+                item->addAction(deleteButton);
+
                 connect(
                     editButton,
                     &QPushButton::clicked,
@@ -96,6 +110,56 @@ void ObjectTypesPage::reload()
                         ObjectTypeEditorDialog dialog(objectTypeService_, localization_, this, objectType);
                         if (dialog.exec() == QDialog::Accepted)
                             reload();
+                    }
+                );
+
+                connect(
+                    deleteButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, objectType]()
+                    {
+                        ConfirmModal::confirm(
+                            this,
+                            localization_.text(QStringLiteral("object_types.delete.title")),
+                            localization_.text(QStringLiteral("object_types.delete.description")),
+                            localization_.text(QStringLiteral("common.action.delete")),
+                            localization_.text(QStringLiteral("common.action.cancel")),
+                            [this, objectType]()
+                            {
+                                try
+                                {
+                                    if (!objectTypeService_.deleteObjectType(objectType.id))
+                                    {
+                                        QMessageBox::warning(
+                                            this,
+                                            localization_.text(QStringLiteral("common.state.error.title")),
+                                            localization_.text(QStringLiteral("object_types.delete.error"))
+                                        );
+
+                                        return;
+                                    }
+
+                                    reload();
+                                }
+                                catch (const std::invalid_argument &)
+                                {
+                                    QMessageBox::warning(
+                                        this,
+                                        localization_.text(QStringLiteral("common.state.error.title")),
+                                        localization_.text(QStringLiteral("object_types.delete.blocked"))
+                                    );
+                                }
+                                catch (const std::exception &)
+                                {
+                                    QMessageBox::critical(
+                                        this,
+                                        localization_.text(QStringLiteral("common.state.error.title")),
+                                        localization_.text(QStringLiteral("object_types.delete.error"))
+                                    );
+                                }
+                            }
+                        );
                     }
                 );
 

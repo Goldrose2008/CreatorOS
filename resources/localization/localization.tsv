@@ -70,6 +70,11 @@ library	Библиотека	Library
 
 object_types	Типы объектов	Object types
 object_types.create.title	Новый тип объекта	New object type
+object_types.delete.title	Удаление типа объекта	Delete object type
+object_types.delete.blocked	Удаление невозможно. Убедитесь, что все активные объекты переназначены на другие типы и в приложении остаётся хотя бы один тип объектов.	Deletion is not possible. Make sure all active objects have been reassigned to other types and at least one object type remains.
+object_types.delete.description	Вы действительно хотите удалить этот тип объекта? \nВместе с ним будут удалены все связанные пользовательские свойства, их настройки, варианты и сохранённые значения. \nАктивные объекты, использующие этот тип, необходимо предварительно переназначить на другой тип. Если такие объекты существуют, удаление не будет выполнено. \nОбъекты, находящиеся в корзине, сохранятся. При их восстановлении потребуется выбрать существующий тип объекта.	Are you sure you want to delete this object type?\n\nAll associated custom properties, their settings, options and saved values will also be deleted.\n\nActive objects using this type must first be reassigned to another type. If such objects exist, deletion will not be performed.\n\nObjects in the trash will be preserved. When restored, they will require selecting an existing object type.
+object_types.delete.error	Не удалось удалить тип объекта. Попробуйте ещё раз.	Could not delete the object type. Please try again.
+object_types.delete.last_forbidden	Нельзя удалить последний оставшийся тип объектов.	The last remaining object type cannot be deleted.
 object_types.description	Управление типами, используемыми для классификации объектов CreatorOS.	Manage the types used to classify CreatorOS objects.
 object_types.empty.description	Список типов объектов пуст.	The object type list is empty.
 object_types.save.error	Не удалось сохранить тип объекта. Проверьте данные и попробуйте ещё раз.	Could not save the object type. Check the data and try again.
