@@ -29,6 +29,8 @@
 #include "../../application/object_types/ObjectTypeService.h"
 #include "../../application/platforms/PlatformService.h"
 #include "../../application/projects/ProjectService.h"
+#include "../../application/properties/PropertyDefinitionService.h"
+#include "../../application/properties/PropertyValueService.h"
 #include "../../application/tasks/TaskService.h"
 
 namespace
@@ -70,6 +72,8 @@ AppShell::AppShell(
     ObjectTypeService &objectTypeService,
     PlatformService &platformService,
     ProjectService &projectService,
+    PropertyDefinitionService &propertyDefinitionService,
+    PropertyValueService &propertyValueService,
     TaskService &taskService,
     QWidget *parent
 )
@@ -106,7 +110,7 @@ AppShell::AppShell(
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
     navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
 
-    auto *objectsPage = new ObjectsPage(objectService, objectTypeService, *localization_, workspace_);
+    auto *objectsPage = new ObjectsPage(objectService, objectTypeService, propertyDefinitionService, propertyValueService, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("objects"), objectsPage});
 
     auto *contentDetails = new ContentDetails(*contentService_, *projectService_, *localization_, workspace_);

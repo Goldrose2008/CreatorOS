@@ -111,6 +111,8 @@ bool MainWindow::initialize(QString *errorMessage)
         *objectTypeService_,
         *platformService_,
         *projectService_,
+        *propertyDefinitionService_,
+        *propertyValueService_,
         *taskService_,
         this
     );

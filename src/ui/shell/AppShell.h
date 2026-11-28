@@ -10,6 +10,8 @@ class ObjectService;
 class ObjectTypeService;
 class PlatformService;
 class ProjectService;
+class PropertyDefinitionService;
+class PropertyValueService;
 class Sidebar;
 class TaskService;
 class Workspace;
@@ -26,6 +28,8 @@ public:
         ObjectTypeService &objectTypeService,
         PlatformService &platformService,
         ProjectService &projectService, 
+        PropertyDefinitionService &propertyDefinitionService,
+        PropertyValueService &propertyValueService,
         TaskService &taskService,
         QWidget *parent = nullptr
     );
