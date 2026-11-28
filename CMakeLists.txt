@@ -173,6 +173,9 @@ qt_add_executable(CreatorOS
     src/ui/pages/content/ContentEditorDialog.cpp
     src/ui/pages/content/ContentEditorDialog.h
 
+    src/ui/pages/objects/ObjectsPage.cpp
+    src/ui/pages/objects/ObjectsPage.h
+
     src/ui/pages/platforms/PlatformsPage.cpp
     src/ui/pages/platforms/PlatformsPage.h
     src/ui/pages/platforms/PlatformEditorDialog.cpp

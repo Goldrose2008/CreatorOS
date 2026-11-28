@@ -68,6 +68,13 @@ home	Главная	Home
 
 library	Библиотека	Library
 
+objects	Объекты	Objects
+objects.description	Все объекты CreatorOS в одном рабочем пространстве.	All CreatorOS objects in one workspace.
+objects.empty.description	Список объектов пока пуст.	There are no objects yet.
+objects.type	Тип	Type
+objects.deadline	Дедлайн	Deadline
+
+
 object_types	Типы объектов	Object types
 object_types.create.title	Новый тип объекта	New object type
 object_types.delete.title	Удаление типа объекта	Delete object type

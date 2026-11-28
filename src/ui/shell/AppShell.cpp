@@ -15,6 +15,7 @@
 #include "../navigation/CurrentPage.h"
 #include "../pages/accounts/AccountsPage.h"
 #include "../pages/content/ContentDetails.h"
+#include "../pages/objects/ObjectsPage.h"
 #include "../pages/platforms/PlatformsPage.h"
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
@@ -24,6 +25,7 @@
 #include "../pages/tasks/TaskDetailsPage.h"
 #include "../../application/accounts/AccountService.h"
 #include "../../application/content/ContentService.h"
+#include "../../application/objects/ObjectService.h"
 #include "../../application/object_types/ObjectTypeService.h"
 #include "../../application/platforms/PlatformService.h"
 #include "../../application/projects/ProjectService.h"
@@ -64,6 +66,7 @@ namespace
 AppShell::AppShell(
     AccountService &accountService,
     ContentService &contentService,
+    ObjectService &objectService,
     ObjectTypeService &objectTypeService,
     PlatformService &platformService,
     ProjectService &projectService,
@@ -102,6 +105,9 @@ AppShell::AppShell(
 
     navigation_->addPage(CurrentPage{QStringLiteral("projects"), projectsPage});
     navigation_->addPage(CurrentPage{QStringLiteral("project-details"), projectDetailsPage});
+
+    auto *objectsPage = new ObjectsPage(objectService, objectTypeService, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("objects"), objectsPage});
 
     auto *contentDetails = new ContentDetails(*contentService_, *projectService_, *localization_, workspace_);
     navigation_->addPage(CurrentPage{QStringLiteral("content-details"), contentDetails});
@@ -152,6 +158,16 @@ AppShell::AppShell(
             if (route == QStringLiteral("projects"))
                 projectsPage->reload();
         });
+
+    connect(
+        navigation_,
+        &NavigationController::currentPageChanged,
+        this,
+        [objectsPage](const QString &route)
+        {
+            if (route == QStringLiteral("objects"))
+                objectsPage->reload();
+        });    
 
     connect(
         navigation_,

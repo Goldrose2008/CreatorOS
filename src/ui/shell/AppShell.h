@@ -6,6 +6,7 @@ class AccountService;
 class ContentService;
 class LocalizationService;
 class NavigationController;
+class ObjectService;
 class ObjectTypeService;
 class PlatformService;
 class ProjectService;
@@ -21,6 +22,7 @@ public:
     explicit AppShell(
         AccountService &accountService,
         ContentService &contentService,
+        ObjectService &objectService,
         ObjectTypeService &objectTypeService,
         PlatformService &platformService,
         ProjectService &projectService, 

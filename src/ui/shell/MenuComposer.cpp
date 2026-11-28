@@ -42,9 +42,9 @@ void MenuComposer::build(Sidebar *sidebar, const LocalizationService *localizati
     addItem(
         sidebar,
         localization,
-        QStringLiteral("projects"),
+        QStringLiteral("objects"),
         IconId::Projects,
-        QStringLiteral("projects")
+        QStringLiteral("objects")
     );
 
     addItem(
