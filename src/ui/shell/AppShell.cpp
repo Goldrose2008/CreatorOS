@@ -18,10 +18,13 @@
 #include "../pages/platforms/PlatformsPage.h"
 #include "../pages/projects/ProjectsPage.h"
 #include "../pages/projects/ProjectDetailsPage.h"
+#include "../pages/settings/SettingsPage.h"
+#include "../pages/settings/ObjectTypesPage.h"
 #include "../pages/tasks/TasksPage.h"
 #include "../pages/tasks/TaskDetailsPage.h"
 #include "../../application/accounts/AccountService.h"
 #include "../../application/content/ContentService.h"
+#include "../../application/object_types/ObjectTypeService.h"
 #include "../../application/platforms/PlatformService.h"
 #include "../../application/projects/ProjectService.h"
 #include "../../application/tasks/TaskService.h"
@@ -59,16 +62,17 @@ namespace
 }
 
 AppShell::AppShell(
-    ProjectService &projectService,
-    ContentService &contentService,
-    TaskService &taskService,
     AccountService &accountService,
+    ContentService &contentService,
+    ObjectTypeService &objectTypeService,
     PlatformService &platformService,
+    ProjectService &projectService,
+    TaskService &taskService,
     QWidget *parent
 )
     : QWidget(parent),
+    contentService_(&contentService),
       projectService_(&projectService),
-      contentService_(&contentService),
       taskService_(&taskService),
       localization_(new LocalizationService(this)),
       sidebar_(new Sidebar(this)),
@@ -118,7 +122,12 @@ AppShell::AppShell(
 
     addPlaceholderPage(navigation_, workspace_, QStringLiteral("library"), localization_->text(QStringLiteral("library")));
     addPlaceholderPage(navigation_, workspace_, QStringLiteral("analytics"), localization_->text(QStringLiteral("analytics")));
-    addPlaceholderPage(navigation_, workspace_, QStringLiteral("settings"), localization_->text(QStringLiteral("settings")));
+  
+// Настройки
+    auto *settingsPage = new SettingsPage(*localization_, workspace_);
+    auto *objectTypesPage = new ObjectTypesPage(objectTypeService, *localization_, workspace_);
+    navigation_->addPage(CurrentPage{QStringLiteral("settings"), settingsPage});
+    navigation_->addPage(CurrentPage{QStringLiteral("settings/object-types"), objectTypesPage});
 
     connect(
         sidebar_,
@@ -211,6 +220,37 @@ AppShell::AppShell(
         {
             navigation_->navigateTo(QStringLiteral("tasks"));
         });
+
+    connect(
+        settingsPage,
+        &SettingsPage::objectTypesRequested,
+        this,
+        [this]()
+        {
+            navigation_->navigateTo(QStringLiteral("settings/object-types"));
+        }
+    );
+
+    connect(
+        objectTypesPage,
+        &ObjectTypesPage::backRequested,
+        this,
+        [this]()
+        {
+            navigation_->navigateTo(QStringLiteral("settings"));
+        }
+    );
+
+    connect(
+        navigation_,
+        &NavigationController::currentPageChanged,
+        this,
+        [objectTypesPage](const QString &route)
+        {
+            if (route == QStringLiteral("settings/object-types"))
+                objectTypesPage->reload();
+        }
+    );
 
     navigation_->navigateTo(QStringLiteral("home"));
 }

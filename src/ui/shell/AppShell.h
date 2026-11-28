@@ -6,6 +6,7 @@ class AccountService;
 class ContentService;
 class LocalizationService;
 class NavigationController;
+class ObjectTypeService;
 class PlatformService;
 class ProjectService;
 class Sidebar;
@@ -18,11 +19,12 @@ class AppShell final : public QWidget
 
 public:
     explicit AppShell(
-        ProjectService &projectService,
-        ContentService &contentService,
-        TaskService &taskService,
         AccountService &accountService,
+        ContentService &contentService,
+        ObjectTypeService &objectTypeService,
         PlatformService &platformService,
+        ProjectService &projectService, 
+        TaskService &taskService,
         QWidget *parent = nullptr
     );
 

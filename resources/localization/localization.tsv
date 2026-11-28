@@ -68,6 +68,11 @@ home	Главная	Home
 
 library	Библиотека	Library
 
+object_types	Типы объектов	Object types
+object_types.description	Управление типами, используемыми для классификации объектов CreatorOS.	Manage the types used to classify CreatorOS objects.
+object_types.empty.description	Список типов объектов пуст.	The object type list is empty.
+
+
 planning	Планирование	Planning
 
 platform.create.title	Новая платформа	New platform
@@ -96,6 +101,7 @@ projects.description	Все проекты CreatorOS в одном рабоче�
 projects.empty.description	Создание проектов будет доступно после подключения основного контента.	Project creation will become available after main content is connected.
 
 settings	Настройки	Settings
+settings.description	Настройки и справочники приложения.	Application settings and reference data.
 
 system	Система	System
 

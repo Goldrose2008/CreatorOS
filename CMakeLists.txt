@@ -187,6 +187,11 @@ qt_add_executable(CreatorOS
     src/ui/pages/projects/ProjectEditorDialog.cpp
     src/ui/pages/projects/ProjectEditorDialog.h
 
+    src/ui/pages/settings/ObjectTypesPage.cpp
+    src/ui/pages/settings/ObjectTypesPage.h
+    src/ui/pages/settings/SettingsPage.cpp
+    src/ui/pages/settings/SettingsPage.h
+
     src/ui/pages/tasks/TaskCard.cpp
     src/ui/pages/tasks/TaskCard.h
     src/ui/pages/tasks/TasksPage.cpp

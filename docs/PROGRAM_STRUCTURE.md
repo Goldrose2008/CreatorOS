@@ -149,32 +149,8 @@ Service реализует прикладные сценарии работы с
 ## 2.6 `src/ui`
 UI-компоненты, страницы, навигация, shell и визуальные стили на Qt Widgets.
 
-```text
-src/ui/
-├── components/
-├── localization/
-├── navigation/
-├── pages/
-├── shell/
-└── style/
-```
-
----
-
 ### 8.1. UI Components — `src/ui/components`
 ### Entity
-
-```text
-src/ui/components/entity/
-├── EntityCard.cpp
-├── EntityCard.h
-├── EntityDetails.cpp
-├── EntityDetails.h
-├── EntityHeader.cpp
-├── EntityHeader.h
-├── EntityList.cpp
-└── EntityList.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -185,27 +161,11 @@ src/ui/components/entity/
 
 ### Foundation
 
-```text
-src/ui/components/foundation/
-├── SurfaceWidget.cpp
-└── SurfaceWidget.h
-```
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/components/foundation/SurfaceWidget.h + SurfaceWidget.cpp` | Общая отрисовка поверхности: фон, рамка, скругление, внутренние отступы и интервалы. |
 
 ### Forms
-
-```text
-src/ui/components/forms/
-├── ConfirmModal.cpp
-├── ConfirmModal.h
-├── EditorDialog.cpp
-├── EditorDialog.h
-├── FormField.cpp
-└── FormField.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -214,20 +174,6 @@ src/ui/components/forms/
 | `src/ui/components/forms/ConfirmModal.h + ConfirmModal.cpp` | Реализация общего layout, текста подтверждения, кнопок подтверждения/отмены и выполнения переданного callback только после подтверждения. |
 
 ### Layout
-
-```text
-src/ui/components/layout/
-├── Card.cpp
-├── Card.h
-├── PageHeader.cpp
-├── PageHeader.h
-├── Panel.cpp
-├── Panel.h
-├── Section.cpp
-├── Section.h
-├── Toolbar.cpp
-└── Toolbar.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -239,30 +185,12 @@ src/ui/components/layout/
 
 ### Navigation
 
-```text
-src/ui/components/navigation/
-├── MenuItem.cpp
-├── MenuItem.h
-├── MenuSection.cpp
-└── MenuSection.h
-```
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/components/navigation/MenuItem.h + MenuItem.cpp` | Реализация визуального элемента меню и сигнала маршрута/действия. |
 | `src/ui/components/navigation/MenuSection.h + MenuSection.cpp` | Реализация оформления и размещения элементов секции. |
 
 ### States
-
-```text
-src/ui/components/states/
-├── EmptyState.h
-├── ErrorState.cpp
-├── ErrorState.h
-├── LoadingState.h
-├── StateWidget.cpp
-└── StateWidget.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -275,12 +203,6 @@ src/ui/components/states/
 
 ## 8.2. Localization — `src/ui/localization`
 
-```text
-src/ui/localization/
-├── LocalizationService.cpp
-└── LocalizationService.h
-```
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/localization/LocalizationService.h + LocalizationService.cpp` | Загружает TSV из Qt Resource System и строит in-memory каталог переводов. |
@@ -288,13 +210,6 @@ src/ui/localization/
 ---
 
 ## 8.3. Navigation — `src/ui/navigation`
-
-```text
-src/ui/navigation/
-├── CurrentPage.h
-├── NavigationController.cpp
-└── NavigationController.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -305,11 +220,17 @@ src/ui/navigation/
 
 ## 8.4. Pages — `src/ui/pages`
 
-```text
-src/ui/pages/accounts/
-├── AccountEditorDialog.h
-└── AccountsPage.h
-```
+`settings/ObjectTypesPage` - Страница настроек типов объектов.
+`settings/SettingsPage` - 
+
+
+
+
+
+
+
+
+
 
 | Файл | Назначение |
 |---|---|
@@ -319,18 +240,6 @@ src/ui/pages/accounts/
 
 
 ### Projects
-
-```text
-src/ui/pages/projects/
-├── ProjectCard.cpp
-├── ProjectCard.h
-├── ProjectDetailsPage.cpp
-├── ProjectDetailsPage.h
-├── ProjectEditorDialog.cpp
-├── ProjectEditorDialog.h
-├── ProjectsPage.cpp
-└── ProjectsPage.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -344,16 +253,6 @@ src/ui/pages/projects/
 
 ## 8.4.1. Content
 
-```text
-src/ui/pages/content/
-├── ContentCard.cpp
-├── ContentCard.h
-├── ContentDetails.cpp
-├── ContentDetails.h
-├── ContentEditorDialog.cpp
-└── ContentEditorDialog.h
-```
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/pages/content/ContentCard.h + ContentCard.cpp` | Карточка Content с основными полями и событием открытия подробностей. |
@@ -364,18 +263,6 @@ src/ui/pages/content/
 
 ## 8.4.2. Tasks
 
-```text
-src/ui/pages/tasks/
-├── TaskCard.cpp
-├── TaskCard.h
-├── TaskDetailsPage.cpp
-├── TaskDetailsPage.h
-├── TaskEditorDialog.cpp
-├── TaskEditorDialog.h
-├── TasksPage.cpp
-└── TasksPage.h
-```
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/pages/tasks/TaskCard.h + TaskCard.cpp` | Карточка Task с основными полями, метаданными и действием открытия подробностей через сигнал `openRequested`. |
@@ -384,18 +271,6 @@ src/ui/pages/tasks/
 | `src/ui/pages/tasks/TaskDetailsPage.h + TaskDetailsPage.cpp` | Подробности Task, отображение родителя и метаданных, редактирование и удаление с подтверждением. |
 
 ## 8.5. Shell — `src/ui/shell`
-
-```text
-src/ui/shell/
-├── AppShell.cpp
-├── AppShell.h
-├── MenuComposer.cpp
-├── MenuComposer.h
-├── Sidebar.cpp
-├── Sidebar.h
-├── Workspace.cpp
-└── Workspace.h
-```
 
 | Файл | Назначение |
 |---|---|
@@ -407,16 +282,6 @@ src/ui/shell/
 ---
 
 ## 8.6. Style — `src/ui/style`
-
-```text
-src/ui/style/
-├── Colors.h
-├── CreatorStyle.cpp
-├── CreatorStyle.h
-├── Icons.cpp
-├── Icons.h
-└── Metrics.h
-```
 
 | Файл | Назначение |
 |---|---|

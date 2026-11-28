@@ -55,5 +55,9 @@ void Sidebar::addItem(MenuItem *item)
 void Sidebar::setActiveRoute(const QString &route)
 {
     for (MenuItem *item : items_)
-        item->setActive(item->route() == route);
+    {
+        const QString itemRoute = item->route();
+        item->setActive(route == itemRoute || route.startsWith(itemRoute + QStringLiteral("/")));
+    }
+        
 }

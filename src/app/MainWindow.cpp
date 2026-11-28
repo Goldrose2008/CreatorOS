@@ -105,11 +105,12 @@ bool MainWindow::initialize(QString *errorMessage)
     }
 
     auto *shell = new AppShell(
-        *projectService_,
-        *contentService_,
-        *taskService_,
         *accountService_,
+        *contentService_,
+        *objectTypeService_,
         *platformService_,
+        *projectService_,
+        *taskService_,
         this
     );
     
