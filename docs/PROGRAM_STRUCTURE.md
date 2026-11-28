@@ -205,7 +205,7 @@ UI-компоненты, страницы, навигация, shell и визу
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/localization/LocalizationService.h + LocalizationService.cpp` | Загружает TSV из Qt Resource System, строит каталог переводов и преобразует последовательность `\\n` в перевод строки. |
+| `src/ui/localization/LocalizationService.h + LocalizationService.cpp` | Загружает TSV из Qt Resource System, строит каталог переводов и преобразует последовательность `\n` в перевод строки. |
 
 ---
 
