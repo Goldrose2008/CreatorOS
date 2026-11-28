@@ -205,7 +205,7 @@ UI-компоненты, страницы, навигация, shell и визу
 
 | Файл | Назначение |
 |---|---|
-| `src/ui/localization/LocalizationService.h + LocalizationService.cpp` | Загружает TSV из Qt Resource System и строит in-memory каталог переводов. |
+| `src/ui/localization/LocalizationService.h + LocalizationService.cpp` | Загружает TSV из Qt Resource System, строит каталог переводов и преобразует последовательность `\\n` в перевод строки. |
 
 ---
 
@@ -220,16 +220,13 @@ UI-компоненты, страницы, навигация, shell и визу
 
 ## 8.4. Pages — `src/ui/pages`
 
-`settings/ObjectTypeEditorDialog` - Общая форма создания и редактирования ObjectType.
-`settings/ObjectTypesPage` - Страница списка ObjectType: отображение, создание и редактирование типов объектов.
-`settings/SettingsPage` - Страница настроек приложения.
-
-
-
 | Файл | Назначение |
 |---|---|
 | `src/ui/pages/accounts/AccountEditorDialog.h` | Форма создания и редактирования Account с выбором существующей Platform и полями профиля; сохранение выполняется через `AccountService`. |
 | `src/ui/pages/accounts/AccountsPage.h` | Страница списка Account: отображение платформы и сведений аккаунта, создание, редактирование, удаление с подтверждением и состояния загрузки/пустого списка/ошибки. |
+| `src/ui/pages/settings/SettingsPage.h` | Страница настроек приложения, содержащая переход к управлению типами объектов. |
+| `src/ui/pages/settings/ObjectTypesPage.h` | Страница списка ObjectType: отображение названий и описаний, создание, редактирование и удаление типов объектов. |
+| `src/ui/pages/settings/ObjectTypeEditorDialog.h` | Общая форма создания и редактирования ObjectType с обязательным названием и необязательным описанием. |
 
 
 
