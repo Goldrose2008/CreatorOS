@@ -56,8 +56,6 @@ void ObjectTypeService::setObjectTypeFields(ObjectType &objectType, const Object
     {
         objectType.description = std::nullopt;
     }
-
-    objectType.updatedAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
 }
 
 ObjectType ObjectTypeService::createObjectType(const ObjectType &sourceObjectType)
@@ -66,8 +64,10 @@ ObjectType ObjectTypeService::createObjectType(const ObjectType &sourceObjectTyp
 
     setObjectTypeFields(objectType, sourceObjectType);
 
+    const std::string now = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
     objectType.uuid = QUuid::createUuid().toString(QUuid::WithoutBraces).toStdString();
-    objectType.createdAt = objectType.updatedAt;
+    objectType.createdAt = now;
+    objectType.updatedAt = now;
 
     return CreatorServiceUtils::createAndLoadEntity(repository_, "Created object type could not be loaded.", objectType);
 }
@@ -81,6 +81,7 @@ bool ObjectTypeService::updateObjectType(const ObjectType &sourceObjectType)
 
     ObjectType objectType = existingObjectType.value();
     setObjectTypeFields(objectType, sourceObjectType);
+    objectType.updatedAt = QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs).toStdString();
 
     return repository_.update(objectType);
 }

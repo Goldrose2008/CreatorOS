@@ -69,9 +69,11 @@ home	Главная	Home
 library	Библиотека	Library
 
 object_types	Типы объектов	Object types
+object_types.create.title	Новый тип объекта	New object type
 object_types.description	Управление типами, используемыми для классификации объектов CreatorOS.	Manage the types used to classify CreatorOS objects.
 object_types.empty.description	Список типов объектов пуст.	The object type list is empty.
-
+object_types.save.error	Не удалось сохранить тип объекта. Проверьте данные и попробуйте ещё раз.	Could not save the object type. Check the data and try again.
+object_types.validation.name_exists	Тип объекта с таким названием уже существует.	Object type with this name already exists.
 
 planning	Планирование	Planning
 

@@ -220,15 +220,9 @@ UI-компоненты, страницы, навигация, shell и визу
 
 ## 8.4. Pages — `src/ui/pages`
 
-`settings/ObjectTypesPage` - Страница настроек типов объектов.
-`settings/SettingsPage` - 
-
-
-
-
-
-
-
+`settings/ObjectTypeEditorDialog` - Общая форма создания и редактирования ObjectType.
+`settings/ObjectTypesPage` - Страница списка ObjectType: отображение, создание и редактирование типов объектов.
+`settings/SettingsPage` - Страница настроек приложения.
 
 
 

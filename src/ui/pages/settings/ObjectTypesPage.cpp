@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <exception>
 
+#include "ObjectTypeEditorDialog.h"
 #include "../../components/entity/EntityCard.h"
 #include "../../components/entity/EntityList.h"
 #include "../../components/layout/PageHeader.h"
@@ -27,6 +28,9 @@ ObjectTypesPage::ObjectTypesPage(ObjectTypeService &objectTypeService, Localizat
     header->setTitle(localization_.text(QStringLiteral("object_types")));
     header->setDescription(localization_.text(QStringLiteral("object_types.description")));
 
+    auto *createButton = new QPushButton(localization_.text(QStringLiteral("common.action.create")), this);
+    header->addAction(createButton);
+
     auto *backButton = new QPushButton(localization_.text(QStringLiteral("common.action.back")), this);
     header->addAction(backButton);
     objectTypesList_->setEmptyState(QString(), localization_.text(QStringLiteral("object_types.empty.description")));
@@ -45,6 +49,18 @@ ObjectTypesPage::ObjectTypesPage(ObjectTypeService &objectTypeService, Localizat
         &EntityList::retryRequested,
         this,
         &ObjectTypesPage::reload
+    );
+
+    connect(
+        createButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            ObjectTypeEditorDialog dialog(objectTypeService_, localization_, this);
+            if (dialog.exec() == QDialog::Accepted)
+                reload();
+        }
     );
 
     reload();
@@ -67,6 +83,21 @@ void ObjectTypesPage::reload()
 
                 if (objectType.description.has_value())
                     item->setDescription(QString::fromUtf8(objectType.description->c_str()));
+
+                auto *editButton = new QPushButton(localization_.text(QStringLiteral("common.action.edit")), item);
+                item->addAction(editButton);
+
+                connect(
+                    editButton,
+                    &QPushButton::clicked,
+                    this,
+                    [this, objectType]()
+                    {
+                        ObjectTypeEditorDialog dialog(objectTypeService_, localization_, this, objectType);
+                        if (dialog.exec() == QDialog::Accepted)
+                            reload();
+                    }
+                );
 
                 return item;
             }
