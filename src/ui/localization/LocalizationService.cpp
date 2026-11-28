@@ -55,7 +55,12 @@ bool LocalizationService::load(const QString &resourcePath)
             const int index = it.value();
 
             if (index >= 0 && index < values.size())
-                localizedValues.insert(it.key(), values.at(index));
+            {
+                QString value = values.at(index);
+                value.replace(QStringLiteral("\\n"), QStringLiteral("\n"));
+                localizedValues.insert(it.key(), value);
+            }
+                
         }
 
         entries_.insert(id, localizedValues);
